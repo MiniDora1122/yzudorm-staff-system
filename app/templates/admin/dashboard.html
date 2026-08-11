@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_notification_panel.html" import notification_panel with context %}
 {% block title %}管理員儀表板 Admin Dashboard｜宿舍工讀生系統{% endblock %}
 {% block content %}
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-4">
@@ -9,6 +10,8 @@
   </div>
   <a class="btn btn-primary" href="{{ url_for('admin.schedule') }}" data-en="Open schedule"><i class="bi bi-calendar3 me-2"></i>查看排班入口</a>
 </div>
+
+{{ notification_panel(open_notifications) }}
 
 <div class="row g-3 mb-4">
   {% set cards = [
@@ -52,14 +55,6 @@
   </div>
   {% endfor %}
 </div>
-
-{% if expiry_alerts %}
-<div class="alert alert-warning border-0 shadow-sm mb-4">
-  <div class="d-flex justify-content-between align-items-center gap-3 mb-2"><strong data-en="Document expiry alerts"><i class="bi bi-exclamation-triangle me-2"></i>證件效期提醒</strong><a href="{{ url_for('admin.staff') }}" class="alert-link" data-en="View students">查看工讀生名冊</a></div>
-  <div class="row g-2">{% for item in expiry_alerts[:8] %}<div class="col-md-6 col-xl-3"><div class="bg-white rounded p-2 h-100"><strong>{{ item.profile.name }}</strong>｜{{ item.label }}<div class="small mt-1"><span class="badge text-bg-{{ item.state.class }}">{{ item.state.label }}</span> {{ item.date }}</div></div></div>{% endfor %}</div>
-  {% if expiry_alerts|length > 8 %}<div class="small mt-2">另有 {{ expiry_alerts|length - 8 }} 筆提醒，請至名冊查看。</div>{% endif %}
-</div>
-{% endif %}
 
 <div class="row g-4">
   <div class="col-lg-7">

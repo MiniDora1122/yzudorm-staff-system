@@ -201,6 +201,10 @@ def test_admin_rejection_requires_reason_and_student_can_correct(client, app):
     admin_review(client, document_id, "REJECT")
     with app.app_context():
         assert db.session.get(StaffDocument, document_id).status == DocumentStatus.PENDING_ADMIN
+    admin_dashboard = client.get("/admin/")
+    assert "重要未完成事項".encode("utf-8") in admin_dashboard.data
+    assert "測試學生的居留證等待審核".encode("utf-8") in admin_dashboard.data
+    assert b'href="/admin/documents"' in admin_dashboard.data
 
     client.post(
         f"/admin/documents/{document_id}/review",
@@ -214,6 +218,10 @@ def test_admin_rejection_requires_reason_and_student_can_correct(client, app):
 
     logout(client)
     login(client, "student-test", "StudentTest!2026")
+    dashboard = client.get("/student/")
+    assert "居留證已被退回，請修正".encode("utf-8") in dashboard.data
+    assert "影像反光".encode("utf-8") in dashboard.data
+    assert b"#documentReviewSection" in dashboard.data
     page = client.get("/student/profile")
     assert "影像反光".encode("utf-8") in page.data
     client.post(

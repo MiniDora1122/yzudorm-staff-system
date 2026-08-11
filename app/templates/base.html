@@ -36,6 +36,16 @@
           <li class="nav-item"><a class="nav-link" href="{{ url_for('student.requests_page') }}" data-en="Leave / Swap">請假／換班</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ url_for('student.profile') }}" data-en="My profile">我的資料</a></li>
           {% endif %}
+          {% set notification_url = url_for('admin.notifications_page') if current_user.role.value == 'ADMIN' else url_for('student.notifications_page') %}
+          <li class="nav-item">
+            <a class="nav-link navbar-notification-link" href="{{ notification_url }}">
+              <i class="bi bi-bell-fill me-1" aria-hidden="true"></i>通知
+              <span class="bilingual-english">Notifications</span>
+              {% if nav_open_notification_count %}
+              <span class="badge rounded-pill text-bg-danger navbar-notification-count" aria-label="{{ nav_open_notification_count }} 項未完成通知">{{ nav_open_notification_count }}</span>
+              {% endif %}
+            </a>
+          </li>
           <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.change_password') }}" data-en="Password">修改密碼</a></li>
           <li class="nav-item">
             <form method="post" action="{{ url_for('auth.logout') }}">

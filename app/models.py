@@ -7,7 +7,7 @@ from enum import Enum
 from argon2 import PasswordHasher
 from argon2.exceptions import InvalidHashError, VerificationError
 from flask_login import UserMixin
-from sqlalchemy import Boolean, Date, DateTime, Enum as SqlEnum, ForeignKey, Integer, Numeric, String, Text, Time, UniqueConstraint
+from sqlalchemy import Boolean, CheckConstraint, Date, DateTime, Enum as SqlEnum, ForeignKey, Integer, Numeric, String, Text, Time, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .extensions import db
@@ -73,6 +73,11 @@ class DocumentStatus(str, Enum):
     REPLACED = "REPLACED"
     FAILED = "FAILED"
     DELETED = "DELETED"
+
+
+class NotificationStatus(str, Enum):
+    OPEN = "OPEN"
+    COMPLETED = "COMPLETED"
 
 
 class User(UserMixin, db.Model):
@@ -333,6 +338,42 @@ class AuditLog(db.Model):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
 
     actor: Mapped[User] = relationship(foreign_keys=[actor_user_id])
+
+
+class Notification(db.Model):
+    __tablename__ = "notifications"
+    __table_args__ = (
+        CheckConstraint(
+            "(recipient_role IS NOT NULL AND recipient_user_id IS NULL) OR "
+            "(recipient_role IS NULL AND recipient_user_id IS NOT NULL)",
+            name="ck_notification_single_recipient",
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    notification_key: Mapped[str] = mapped_column(String(180), unique=True, nullable=False, index=True)
+    recipient_role: Mapped[Role | None] = mapped_column(SqlEnum(Role, native_enum=False), index=True)
+    recipient_user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), index=True)
+    category: Mapped[str] = mapped_column(String(40), nullable=False, index=True)
+    severity: Mapped[str] = mapped_column(String(20), nullable=False, default="INFO")
+    title_zh: Mapped[str] = mapped_column(String(200), nullable=False)
+    title_en: Mapped[str] = mapped_column(String(200), nullable=False)
+    message_zh: Mapped[str] = mapped_column(String(500), nullable=False)
+    message_en: Mapped[str] = mapped_column(String(500), nullable=False)
+    target_url: Mapped[str] = mapped_column(String(255), nullable=False)
+    status: Mapped[NotificationStatus] = mapped_column(
+        SqlEnum(NotificationStatus, native_enum=False),
+        default=NotificationStatus.OPEN,
+        nullable=False,
+        index=True,
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utc_now, onupdate=utc_now, nullable=False
+    )
+
+    recipient_user: Mapped[User | None] = relationship(foreign_keys=[recipient_user_id])
 
 
 class StaffDocument(db.Model):

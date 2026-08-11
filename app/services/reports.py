@@ -34,6 +34,11 @@ MEDIUM_DARK = Side(style="medium", color="303030")
 CALENDAR_FILL = PatternFill("solid", fgColor="D9EFD2")
 HEADER_FILL = PatternFill("solid", fgColor="EAF1F8")
 TOTAL_FILL = PatternFill("solid", fgColor="FFF2CC")
+TITLE_FILL = PatternFill("solid", fgColor="17365D")
+MATRIX_HEADER_FILL = PatternFill("solid", fgColor="DCE6F1")
+MATRIX_WEEKEND_FILL = PatternFill("solid", fgColor="FFF2E5")
+MATRIX_HOURS_FILL = PatternFill("solid", fgColor="DDEBF7")
+MATRIX_ALT_FILL = PatternFill("solid", fgColor="F7F9FC")
 
 
 def _roc_year(year: int) -> int:
@@ -44,6 +49,25 @@ def _active_profiles() -> list[StaffProfile]:
     return db.session.scalars(
         db.select(StaffProfile)
         .where(StaffProfile.user.has(is_active=True))
+        .order_by(StaffProfile.student_number, StaffProfile.name)
+    ).all()
+
+
+def _profiles_for_month(start: date, end: date) -> list[StaffProfile]:
+    """Include active students and archived students who still have reportable shifts."""
+    scheduled_staff = db.select(Shift.staff_id).where(
+        Shift.shift_date >= start,
+        Shift.shift_date < end,
+        Shift.status == ShiftStatus.SCHEDULED,
+    )
+    return db.session.scalars(
+        db.select(StaffProfile)
+        .where(
+            db.or_(
+                StaffProfile.user.has(is_active=True),
+                StaffProfile.id.in_(scheduled_staff),
+            )
+        )
         .order_by(StaffProfile.student_number, StaffProfile.name)
     ).all()
 
@@ -65,7 +89,7 @@ def _month_shifts(start: date, end: date) -> list[Shift]:
 
 def build_monthly_hours_workbook(start: date, end: date) -> bytes:
     """Create the reference-style per-student monthly appointment-hours calendar."""
-    profiles = _active_profiles()
+    profiles = _profiles_for_month(start, end)
     shifts = _month_shifts(start, end)
     hours_by_staff_date: dict[tuple[int, date], Decimal] = defaultdict(Decimal)
     for shift in shifts:
@@ -183,6 +207,135 @@ def build_monthly_hours_workbook(start: date, end: date) -> bytes:
     return output.getvalue()
 
 
+def build_daily_hours_matrix_workbook(start: date, end: date) -> bytes:
+    """Create a compact all-student matrix with one column per day of the month."""
+    profiles = _profiles_for_month(start, end)
+    shifts = _month_shifts(start, end)
+    hours_by_staff_date: dict[tuple[int, date], Decimal] = defaultdict(Decimal)
+    for shift in shifts:
+        hours_by_staff_date[(shift.staff_id, shift.shift_date)] += Decimal(
+            str(shift.shift_type.default_hours)
+        )
+
+    days = [start.replace(day=day) for day in range(1, (end - start).days + 1)]
+    workbook = Workbook()
+    sheet = workbook.active
+    sheet.title = f"{_roc_year(start.year)}年{start.month}月每日時數"
+    sheet.sheet_view.showGridLines = False
+    sheet.freeze_panes = "D3"
+
+    last_day_column = 3 + len(days)
+    total_column = last_day_column + 1
+    last_column_letter = get_column_letter(total_column)
+    title = f"工讀生約用時數月報－民國 {_roc_year(start.year)} 年 {start.month} 月"
+    sheet.merge_cells(start_row=1, start_column=1, end_row=1, end_column=total_column)
+    title_cell = sheet.cell(1, 1, title)
+    title_cell.font = Font(name="Microsoft JhengHei", size=16, bold=True, color="FFFFFF")
+    title_cell.fill = TITLE_FILL
+    title_cell.alignment = Alignment(horizontal="center", vertical="center")
+    sheet.row_dimensions[1].height = 32
+
+    headers = ["序號\nNo.", "學號\nStudent ID", "姓名\nName"]
+    headers.extend(f"{day.day}\n{WEEKDAYS[(day.weekday() + 1) % 7]}" for day in days)
+    headers.append("小計\nTotal")
+    for column, value in enumerate(headers, start=1):
+        cell = sheet.cell(2, column, value)
+        cell.font = Font(name="Microsoft JhengHei", size=10, bold=True, color="1F2937")
+        cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+        cell.fill = (
+            MATRIX_WEEKEND_FILL
+            if 4 <= column <= last_day_column and days[column - 4].weekday() >= 5
+            else TOTAL_FILL if column == total_column else MATRIX_HEADER_FILL
+        )
+    sheet.row_dimensions[2].height = 34
+
+    first_data_row = 3
+    for index, profile in enumerate(profiles, start=1):
+        row = first_data_row + index - 1
+        sheet.cell(row, 1, index)
+        sheet.cell(row, 2, profile.student_number)
+        sheet.cell(row, 3, profile.name)
+        sheet.cell(row, 2).number_format = "@"
+        for day_index, day in enumerate(days, start=4):
+            hours = hours_by_staff_date.get((profile.id, day), Decimal("0"))
+            cell = sheet.cell(row, day_index)
+            if hours:
+                cell.value = int(hours) if hours == hours.to_integral_value() else float(hours)
+                cell.fill = MATRIX_HOURS_FILL
+                cell.font = Font(name="Microsoft JhengHei", size=10, bold=True, color="1F4E78")
+            elif day.weekday() >= 5:
+                cell.fill = MATRIX_WEEKEND_FILL
+            elif index % 2 == 0:
+                cell.fill = MATRIX_ALT_FILL
+            cell.number_format = "General"
+            cell.alignment = Alignment(horizontal="center", vertical="center")
+        first_day_letter = get_column_letter(4)
+        last_day_letter = get_column_letter(last_day_column)
+        total_cell = sheet.cell(row, total_column, f"=SUM({first_day_letter}{row}:{last_day_letter}{row})")
+        total_cell.number_format = "General"
+        total_cell.font = Font(name="Microsoft JhengHei", size=10, bold=True, color="7F6000")
+        total_cell.fill = TOTAL_FILL
+        total_cell.alignment = Alignment(horizontal="center", vertical="center")
+        for column in (1, 2):
+            sheet.cell(row, column).alignment = Alignment(horizontal="center", vertical="center")
+        sheet.cell(row, 3).alignment = Alignment(horizontal="left", vertical="center")
+        for column in range(1, 4):
+            sheet.cell(row, column).font = Font(name="Microsoft JhengHei", size=10)
+            if index % 2 == 0:
+                sheet.cell(row, column).fill = MATRIX_ALT_FILL
+        sheet.row_dimensions[row].height = 25
+
+    total_row = first_data_row + len(profiles)
+    sheet.merge_cells(start_row=total_row, start_column=1, end_row=total_row, end_column=3)
+    sheet.cell(total_row, 1, "每日合計 Daily total")
+    sheet.cell(total_row, 1).alignment = Alignment(horizontal="right", vertical="center")
+    for column in range(4, total_column + 1):
+        letter = get_column_letter(column)
+        if profiles:
+            sheet.cell(total_row, column, f"=SUM({letter}{first_data_row}:{letter}{total_row - 1})")
+        else:
+            sheet.cell(total_row, column, 0)
+        sheet.cell(total_row, column).number_format = "General"
+        sheet.cell(total_row, column).alignment = Alignment(horizontal="center", vertical="center")
+    for column in range(1, total_column + 1):
+        sheet.cell(total_row, column).fill = TITLE_FILL
+        sheet.cell(total_row, column).font = Font(name="Microsoft JhengHei", size=10, bold=True, color="FFFFFF")
+    sheet.row_dimensions[total_row].height = 27
+
+    report_range = sheet.iter_rows(min_row=2, max_row=total_row, min_col=1, max_col=total_column)
+    light_side = Side(style="thin", color="B7C9DD")
+    for row in report_range:
+        for cell in row:
+            cell.border = Border(left=light_side, right=light_side, top=light_side, bottom=light_side)
+
+    sheet.column_dimensions["A"].width = 7
+    sheet.column_dimensions["B"].width = 15
+    sheet.column_dimensions["C"].width = 18
+    for column in range(4, last_day_column + 1):
+        sheet.column_dimensions[get_column_letter(column)].width = 4.5
+    sheet.column_dimensions[last_column_letter].width = 10
+
+    if profiles:
+        sheet.auto_filter.ref = f"A2:{last_column_letter}{total_row - 1}"
+    sheet.print_title_rows = "1:2"
+    sheet.print_area = f"A1:{last_column_letter}{total_row}"
+    sheet.sheet_properties.pageSetUpPr.fitToPage = True
+    sheet.page_setup.orientation = "landscape"
+    sheet.page_setup.paperSize = sheet.PAPERSIZE_A3
+    sheet.page_setup.fitToWidth = 1
+    sheet.page_setup.fitToHeight = 0
+    sheet.page_margins.left = 0.2
+    sheet.page_margins.right = 0.2
+    sheet.page_margins.top = 0.3
+    sheet.page_margins.bottom = 0.3
+    sheet.oddFooter.center.text = f"民國 {_roc_year(start.year)} 年 {start.month} 月｜第 &P 頁／共 &N 頁"
+    workbook.calculation.fullCalcOnLoad = True
+    workbook.calculation.forceFullCalc = True
+    output = BytesIO()
+    workbook.save(output)
+    return output.getvalue()
+
+
 def csv_bytes(headers: list[str], rows: list[list[object]]) -> bytes:
     output = StringIO(newline="")
     writer = csv.writer(output)
@@ -231,7 +384,7 @@ def payroll_cost_csv(start: date, end: date) -> bytes:
     ).all()
     hours_by_staff = {staff_id: Decimal(str(hours or 0)) for staff_id, hours in hours_rows}
     rows = []
-    for profile in _active_profiles():
+    for profile in _profiles_for_month(start, end):
         item = calculate_staff_cost(
             profile=profile,
             hours=hours_by_staff.get(profile.id, Decimal("0")),

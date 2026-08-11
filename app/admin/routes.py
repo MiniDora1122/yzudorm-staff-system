@@ -32,6 +32,7 @@ from ..models import (
     WorkLocation,
 )
 from ..services.payroll import calculate_staff_cost, get_payroll_setting, money
+from ..services.notifications import notifications_for_user
 from ..services.accounts import (
     AccountError,
     create_admin_account,
@@ -49,6 +50,7 @@ from ..services.documents import (
     review_document_set,
 )
 from ..services.reports import (
+    build_daily_hours_matrix_workbook,
     build_monthly_hours_workbook,
     document_expiry_csv,
     payroll_cost_csv,
@@ -124,23 +126,26 @@ def dashboard():
         today: [shift for shift in upcoming_shifts if shift.shift_date == today],
         tomorrow: [shift for shift in upcoming_shifts if shift.shift_date == tomorrow],
     }
-    expiry_alerts = []
-    for profile in db.session.scalars(
-        db.select(StaffProfile).join(StaffProfile.user).where(User.is_active.is_(True)).order_by(StaffProfile.name)
-    ):
-        for label, value in (("居留證", profile.residence_expiry), ("工作證", profile.work_permit_expiry)):
-            state = expiry_state(value)
-            if state["code"] in {"EXPIRED", "CRITICAL", "WARNING"}:
-                expiry_alerts.append({"profile": profile, "label": label, "date": value, "state": state})
-    expiry_alerts.sort(key=lambda item: item["date"])
     return render_template(
         "admin/dashboard.html",
         counts=counts,
         shift_types=shift_types,
-        expiry_alerts=expiry_alerts,
         schedule_by_day=schedule_by_day,
         today=today,
         tomorrow=tomorrow,
+        open_notifications=notifications_for_user(current_user)[0],
+    )
+
+
+@bp.get("/notifications")
+@role_required(Role.ADMIN)
+def notifications_page():
+    open_notifications, completed_notifications = notifications_for_user(current_user)
+    return render_template(
+        "notifications.html",
+        open_notifications=open_notifications,
+        completed_notifications=completed_notifications,
+        dashboard_url=url_for("admin.dashboard"),
     )
 
 
@@ -743,6 +748,24 @@ def monthly_hours_xlsx():
         filename,
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         "MONTHLY_HOURS_CALENDAR",
+        start,
+    )
+
+
+@bp.get("/reports/daily-hours-matrix.xlsx")
+@role_required(Role.ADMIN)
+def daily_hours_matrix_xlsx():
+    try:
+        start, end = _report_month()
+    except ValueError as exc:
+        flash(str(exc), "danger")
+        return redirect(url_for("admin.reports_page"))
+    filename = f"{start.year - 1911}年{start.month}月全體工讀生每日時數表.xlsx"
+    return _download_report(
+        build_daily_hours_matrix_workbook(start, end),
+        filename,
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "DAILY_HOURS_MATRIX",
         start,
     )
 

@@ -27,6 +27,7 @@ from ..models import (
     WorkLocation,
 )
 from ..services.payroll import calculate_staff_cost, get_payroll_setting
+from ..services.notifications import notifications_for_user
 from ..services.documents import (
     PRIVACY_NOTICE_VERSION,
     PAGE_LABELS,
@@ -132,6 +133,7 @@ def dashboard():
         hourly_wage=hourly_wage,
         pending_leave=pending_leave,
         pending_swap=pending_swap,
+        open_notifications=notifications_for_user(current_user)[0],
         residence_state=expiry_state(profile.residence_expiry) if profile else None,
         permit_state=expiry_state(profile.work_permit_expiry) if profile else None,
         locations=locations,
@@ -139,6 +141,18 @@ def dashboard():
             {"id": item.id, "code": item.code, "name": item.name, "nameEn": item.name_en, "color": item.color}
             for item in locations
         ],
+    )
+
+
+@bp.get("/notifications")
+@role_required(Role.STUDENT)
+def notifications_page():
+    open_notifications, completed_notifications = notifications_for_user(current_user)
+    return render_template(
+        "notifications.html",
+        open_notifications=open_notifications,
+        completed_notifications=completed_notifications,
+        dashboard_url=url_for("student.dashboard"),
     )
 
 

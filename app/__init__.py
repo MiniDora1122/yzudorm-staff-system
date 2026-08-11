@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, url_for
+from flask import Flask, redirect, render_template, request, url_for
 from flask_login import current_user
 from werkzeug.middleware.proxy_fix import ProxyFix
 
@@ -53,6 +53,24 @@ def create_app(config_object=Config):
     from .services.retention import init_document_cleanup_scheduler
 
     init_document_cleanup_scheduler(app)
+
+    @app.before_request
+    def refresh_action_notifications():
+        if current_user.is_authenticated and request.endpoint != "static":
+            from .services.notifications import sync_admin_notifications, sync_student_notifications
+
+            if current_user.role == Role.ADMIN:
+                sync_admin_notifications()
+            else:
+                sync_student_notifications(current_user)
+
+    @app.context_processor
+    def notification_navigation_context():
+        if not current_user.is_authenticated:
+            return {"nav_open_notification_count": 0}
+        from .services.notifications import open_notification_count
+
+        return {"nav_open_notification_count": open_notification_count(current_user)}
 
     @app.get("/")
     def index():

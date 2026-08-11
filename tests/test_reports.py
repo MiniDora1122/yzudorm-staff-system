@@ -51,6 +51,43 @@ def test_reference_style_monthly_report_contains_student_number_hours_and_formul
         ) == 1
 
 
+def test_daily_hours_matrix_report_has_students_dates_totals_and_polish(client, app):
+    add_august_shift(app)
+    with app.app_context():
+        archived = db.session.scalar(
+            db.select(StaffProfile).where(StaffProfile.student_number == "TEST001")
+        )
+        archived.user.is_active = False
+        db.session.commit()
+    login(client)
+    reports_page = client.get("/admin/reports")
+    assert b"/admin/reports/daily-hours-matrix.xlsx" in reports_page.data
+
+    response = client.get("/admin/reports/daily-hours-matrix.xlsx?month=2026-08")
+    assert response.status_code == 200
+    assert "spreadsheetml" in response.mimetype
+    workbook = load_workbook(BytesIO(response.data), data_only=False)
+    sheet = workbook.active
+    assert sheet["A2"].value == "序號\nNo."
+    assert sheet["B2"].value == "學號\nStudent ID"
+    assert sheet["C2"].value == "姓名\nName"
+    assert sheet["M2"].value.startswith("10\n")
+    assert sheet["B3"].value == "TEST001"
+    assert sheet["M3"].value == 4
+    assert sheet["AI3"].value == "=SUM(D3:AH3)"
+    assert sheet["M5"].value == "=SUM(M3:M4)"
+    assert sheet.freeze_panes == "D3"
+    assert sheet.sheet_view.showGridLines is False
+    assert sheet.page_setup.orientation == "landscape"
+    assert sheet["A1"].fill.fgColor.rgb.endswith("17365D")
+    assert sheet["M3"].fill.fgColor.rgb.endswith("DDEBF7")
+    with app.app_context():
+        audit = db.session.scalar(
+            db.select(AuditLog).where(AuditLog.safe_summary.contains("DAILY_HOURS_MATRIX"))
+        )
+        assert audit is not None
+
+
 def test_reports_are_admin_only_and_csv_has_utf8_bom_and_student_number(client, app):
     add_august_shift(app)
     login(client, "student-test", "StudentTest!2026")

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_notification_panel.html" import notification_panel with context %}
 {% block title %}我的首頁 My Home｜宿舍工讀生系統{% endblock %}
 {% block content %}
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-4">
@@ -9,6 +10,8 @@
   </div>
   <a class="btn btn-outline-primary" href="{{ url_for('student.profile') }}" data-en="My profile"><i class="bi bi-person me-2"></i>我的資料</a>
 </div>
+
+{{ notification_panel(open_notifications) }}
 
 <div class="row g-3 mb-4">
   <div class="col-md-6 col-xl-3">
@@ -24,13 +27,6 @@
     <a class="card app-card metric-card border-0 shadow-sm h-100 text-decoration-none text-body" href="{{ url_for('student.requests_page') }}"><div class="card-body"><span class="metric-icon text-bg-secondary"><i class="bi bi-arrow-left-right"></i></span><div class="h4 fw-bold mt-3 mb-2" data-en="Leave {{ pending_leave }} / Swaps {{ pending_swap }}">請假 {{ pending_leave }}｜換班 {{ pending_swap }}</div><span class="text-secondary" data-en="View applications and invitations">查看申請與待回覆邀請</span></div></a>
   </div>
 </div>
-
-{% if profile and (residence_state.code in ['EXPIRED', 'CRITICAL', 'WARNING'] or permit_state.code in ['EXPIRED', 'CRITICAL', 'WARNING']) %}
-<div class="alert alert-warning border-0 shadow-sm mb-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
-  <div><strong data-en="Document expiry alert"><i class="bi bi-person-vcard me-2"></i>證件效期提醒</strong><div class="small mt-1">{% if residence_state.code in ['EXPIRED', 'CRITICAL', 'WARNING'] %}居留證：{{ residence_state.label }}{% endif %}{% if residence_state.code in ['EXPIRED', 'CRITICAL', 'WARNING'] and permit_state.code in ['EXPIRED', 'CRITICAL', 'WARNING'] %}｜{% endif %}{% if permit_state.code in ['EXPIRED', 'CRITICAL', 'WARNING'] %}工作證：{{ permit_state.label }}{% endif %}</div></div>
-  <a class="btn btn-sm btn-warning" href="{{ url_for('student.profile') }}" data-en="View and update">查看並更新證件</a>
-</div>
-{% endif %}
 
 <div
   id="studentScheduleApp"
