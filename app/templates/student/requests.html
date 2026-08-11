@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% from "_status_badge.html" import status_badge, shift_text %}
+{% block title %}我的請假與換班 My Leave and Swaps｜宿舍工讀生系統{% endblock %}
+{% block content %}
+<div class="page-heading mb-4"><span class="eyebrow">MY REQUESTS</span><h1 class="h2 fw-bold mt-2 mb-1" data-en="My leave and swaps">我的請假與換班</h1><p class="text-secondary mb-0" data-en="Track progress below. Official schedules change only after administrator approval.">送出後可在下方查看進度；正式班表只會在管理員核准換班後更新。</p></div>
+
+<div class="card app-card border-0 shadow-sm mb-4"><div class="card-body py-3 px-4">
+  <div class="d-flex flex-column flex-md-row align-items-md-end gap-3">
+    <div><div class="form-label fw-semibold mb-2" data-en="Month filter">紀錄月份篩選</div><div class="btn-group" role="group" aria-label="申請月份篩選">
+      <a class="btn btn-{{ 'primary' if filter_scope == 'ALL' else 'outline-primary' }}" href="{{ url_for('student.requests_page', scope='ALL') }}" data-en="All">全部</a>
+      <span class="btn btn-{{ 'primary' if filter_scope == 'MONTH' else 'outline-primary' }} disabled" aria-hidden="true" data-en="Selected month">指定月份</span>
+    </div></div>
+    <form class="d-flex align-items-end gap-2" method="get"><input type="hidden" name="scope" value="MONTH"><div><label class="form-label" for="studentRequestMonth" data-en="Month">月份</label><input class="form-control" id="studentRequestMonth" name="month" type="month" value="{{ filter_month }}" required></div><button class="btn btn-primary" type="submit" data-en="Apply">套用</button></form>
+    <div class="small text-secondary ms-md-auto" data-en="Filtered by original or target shift date: {{ 'All months' if filter_scope == 'ALL' else filter_month }}">依原排班／交換班日期篩選：{{ '全部月份' if filter_scope == 'ALL' else filter_month }}</div>
+  </div>
+</div></div>
+
+<div class="card app-card border-0 shadow-sm mb-4" id="requestTypeChooser"><div class="card-body p-4 text-center">
+  <span class="eyebrow">NEW REQUEST</span>
+  <h2 class="h4 fw-bold mt-2" data-en="What would you like to do?">請先選擇要請假或換班</h2>
+  <p class="text-secondary" data-en="The matching form will appear after you choose.">選擇後才會顯示相應的申請表單。</p>
+  <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
+    <button class="btn btn-warning btn-lg request-type-button" type="button" data-request-target="leaveRequestPanel" aria-controls="leaveRequestPanel" aria-expanded="false"><i class="bi bi-calendar-x me-2"></i><span data-en="Request leave">我要請假</span></button>
+    <button class="btn btn-primary btn-lg request-type-button" type="button" data-request-target="swapRequestPanel" aria-controls="swapRequestPanel" aria-expanded="false"><i class="bi bi-arrow-left-right me-2"></i><span data-en="Request a swap">我要換班</span></button>
+  </div>
+</div></div>
+
+<div class="row g-4 mb-4" id="requestForms">
+  <div class="col-12 d-none request-form-panel" id="leaveRequestPanel"><div class="card app-card border-0 shadow-sm"><div class="card-body p-4">
+    <h2 class="h5 fw-bold" data-en="Request leave"><i class="bi bi-calendar-x text-warning me-2"></i>提出請假</h2><p class="small text-secondary" data-en="Only your active future shifts can be selected.">只能選擇自己尚未過期的有效排班。</p>
+    <form method="post" action="{{ url_for('student.create_leave') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="mb-3"><label class="form-label" for="leaveShift" data-en="Shift">排班</label><select class="form-select" id="leaveShift" name="shift_id" required><option value="">請選擇 Select</option>{% for shift in own_shifts %}<option value="{{ shift.id }}">{{ shift_text(shift) }}</option>{% endfor %}</select></div>
+      <div class="mb-3"><label class="form-label" for="leaveReason" data-en="Reason">原因</label><input class="form-control" id="leaveReason" name="reason" maxlength="255" required></div>
+      <div class="mb-3"><label class="form-label" for="leaveNote" data-en="Note">備註</label><textarea class="form-control" id="leaveNote" name="note" maxlength="1000" rows="2"></textarea></div>
+      <button class="btn btn-warning w-100" type="submit" data-en="Submit leave request">送出請假申請</button>
+    </form>
+  </div></div></div>
+  <div class="col-12 d-none request-form-panel" id="swapRequestPanel"><div class="card app-card border-0 shadow-sm"><div class="card-body p-4">
+    <h2 class="h5 fw-bold" data-en="Request a swap"><i class="bi bi-arrow-left-right text-primary me-2"></i>提出換班</h2><p class="small text-secondary" data-en="Ask another student to cover your shift or exchange one of their shifts.">可指定對方直接承接，或選擇對方的一筆班表互換。</p>
+    <form method="post" action="{{ url_for('student.create_swap') }}" id="swapRequestForm"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="mb-3"><label class="form-label" for="requesterShift" data-en="My shift">我的班</label><select class="form-select" id="requesterShift" name="requester_shift_id" required><option value="">請選擇 Select</option>{% for shift in own_shifts %}<option value="{{ shift.id }}">{{ shift_text(shift) }}</option>{% endfor %}</select></div>
+      <div class="row g-3 mb-3"><div class="col-md-5"><label class="form-label" for="targetStaff">換班對象</label><select class="form-select" id="targetStaff" name="target_staff_id" required><option value="">請選擇</option>{% for staff in target_profiles %}<option value="{{ staff.id }}">{{ staff.name }}</option>{% endfor %}</select></div>
+      <div class="col-md-7"><label class="form-label" for="targetShift">對方班表</label><select class="form-select" id="targetShift" name="target_shift_id"><option value="">不交換對方班表，直接請對方承接</option>{% for shift in target_shifts %}<option value="{{ shift.id }}" data-staff-id="{{ shift.staff_id }}">{{ shift.staff.name }}｜{{ shift_text(shift) }}</option>{% endfor %}</select></div></div>
+      <div class="mb-3"><label class="form-label" for="swapNote">說明</label><textarea class="form-control" id="swapNote" name="note" maxlength="1000" rows="2"></textarea></div>
+      <button class="btn btn-primary w-100" type="submit" data-en="Send swap invitation">送出換班邀請</button>
+    </form>
+  </div></div></div>
+</div>
+
+<div class="card app-card border-0 shadow-sm mb-4"><div class="card-body p-4"><h2 class="h5 fw-bold mb-3" data-en="My leave history">我的請假紀錄</h2><div class="table-responsive"><table class="table align-middle mb-0"><thead><tr><th data-en="Shift">排班</th><th data-en="Reason">原因</th><th data-en="Status">狀態</th><th></th></tr></thead><tbody>
+{% for item in leave_requests %}<tr><td>{{ shift_text(item.shift) }}</td><td>{{ item.reason }}{% if item.review_note %}<div class="small text-secondary">審核：{{ item.review_note }}</div>{% endif %}</td><td>{{ status_badge(item.status.value) }}</td><td>{% if item.status.value == 'PENDING' %}<form method="post" action="{{ url_for('student.cancel_leave', request_id=item.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn btn-sm btn-outline-secondary" data-confirm-action="確定取消這筆請假申請？">取消</button></form>{% endif %}</td></tr>{% else %}<tr><td colspan="4" class="text-center text-secondary py-4">尚無請假紀錄。</td></tr>{% endfor %}
+</tbody></table></div></div></div>
+
+<div class="card app-card border-0 shadow-sm"><div class="card-body p-4"><h2 class="h5 fw-bold mb-3" data-en="Swap progress">換班進度</h2><div class="table-responsive"><table class="table align-middle mb-0 request-table"><thead><tr><th data-en="Role">角色</th><th data-en="Original shift">申請人原班</th><th data-en="Target / Shift">換班對象／班表</th><th data-en="Status">狀態</th><th></th></tr></thead><tbody>
+{% for item in swap_requests %}<tr><td>{% if item.requester_id == profile.id %}<span class="badge text-bg-primary">我提出的</span>{% else %}<span class="badge text-bg-info">等我回覆</span>{% endif %}</td><td><strong>{{ item.requester.name }}</strong><div class="small text-secondary">{{ shift_text(item.requester_shift) }}</div>{% if item.note %}<div class="small mt-1">說明：{{ item.note }}</div>{% endif %}</td><td><strong>{{ item.target_staff.name }}</strong><div class="small text-secondary">{% if item.target_shift %}{{ shift_text(item.target_shift) }}{% else %}直接承接原班{% endif %}</div></td><td>{{ status_badge(item.display_status) }}{% if item.review_note %}<div class="small text-secondary mt-1">{{ item.review_note }}</div>{% endif %}</td><td>
+{% if item.target_staff_id == profile.id and item.display_status == 'PENDING_PEER' %}<form method="post" action="{{ url_for('student.respond_swap', request_id=item.id) }}" class="d-flex gap-2"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn btn-sm btn-success" name="decision" value="ACCEPT" data-confirm-action="接受後將送交管理員審核，確定接受？">接受</button><button class="btn btn-sm btn-outline-danger" name="decision" value="REJECT" data-confirm-action="確定拒絕換班邀請？">拒絕</button></form>
+{% elif item.requester_id == profile.id and item.admin_status.value in ['NOT_READY', 'PENDING'] %}<form method="post" action="{{ url_for('student.cancel_swap', request_id=item.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn btn-sm btn-outline-secondary" data-confirm-action="確定取消換班申請？">取消</button></form>{% endif %}
+</td></tr>{% else %}<tr><td colspan="5" class="text-center text-secondary py-4">尚無換班紀錄。</td></tr>{% endfor %}
+</tbody></table></div></div></div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/requests.js') }}"></script>{% endblock %}

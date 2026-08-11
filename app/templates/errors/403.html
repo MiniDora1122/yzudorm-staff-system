@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}沒有權限 Access Denied｜宿舍工讀生系統{% endblock %}
+{% block content %}
+<div class="card app-card border-0 shadow-sm mx-auto error-card">
+  <div class="card-body p-5 text-center">
+    <i class="bi bi-shield-lock display-3 text-danger"></i>
+    <h1 class="h3 fw-bold mt-3" data-en="Access denied">沒有權限存取此頁</h1>
+    <p class="text-secondary" data-en="Your role is verified by the server for every protected page.">系統已在後端驗證您的角色，而不是只隱藏畫面按鈕。</p>
+    <a class="btn btn-primary" href="{{ url_for('index') }}" data-en="Back to home">回到首頁</a>
+  </div>
+</div>
+{% endblock %}

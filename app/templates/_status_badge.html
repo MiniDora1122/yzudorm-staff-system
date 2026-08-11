@@ -1,0 +1,14 @@
+{% macro status_badge(status) -%}
+  {% if status == 'PENDING' %}<span class="badge text-bg-warning" data-en="Pending">待處理</span>
+  {% elif status == 'PENDING_PEER' %}<span class="badge text-bg-warning" data-en="Awaiting peer">等待對方</span>
+  {% elif status == 'PENDING_ADMIN' %}<span class="badge text-bg-warning" data-en="Awaiting admin">等待管理員</span>
+  {% elif status == 'APPROVED' %}<span class="badge text-bg-success" data-en="Approved">已核准</span>
+  {% elif status == 'REJECTED' %}<span class="badge text-bg-danger" data-en="Rejected">已拒絕</span>
+  {% elif status == 'PEER_REJECTED' %}<span class="badge text-bg-danger" data-en="Peer rejected">對方拒絕</span>
+  {% elif status == 'CANCELLED' %}<span class="badge text-bg-secondary" data-en="Cancelled">已取消</span>
+  {% else %}<span class="badge text-bg-secondary">{{ status }}</span>{% endif %}
+{%- endmacro %}
+
+{% macro shift_text(shift) -%}
+{{ shift.shift_date }}｜{{ shift.shift_type.work_location.name }}｜{{ shift.shift_type.name }}｜{{ shift.shift_type.start_time.strftime('%H:%M') }}–{{ shift.shift_type.end_time.strftime('%H:%M') }} / {{ shift.shift_type.work_location.name_en }}｜{{ shift.shift_type.name_en }}
+{%- endmacro %}

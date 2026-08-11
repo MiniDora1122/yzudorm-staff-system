@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %}管理員儀表板 Admin Dashboard｜宿舍工讀生系統{% endblock %}
+{% block content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-4">
+  <div class="page-heading">
+    <span class="eyebrow">ADMIN</span>
+    <h1 class="h2 fw-bold mt-2 mb-1" data-en="Admin dashboard">管理員儀表板</h1>
+    <p class="text-secondary mb-0" data-en="Schedules, conflict checks and monthly totals use the system database.">排班月曆、衝突檢查與月時數統計已連接正式資料庫。</p>
+  </div>
+  <a class="btn btn-primary" href="{{ url_for('admin.schedule') }}" data-en="Open schedule"><i class="bi bi-calendar3 me-2"></i>查看排班入口</a>
+</div>
+
+<div class="row g-3 mb-4">
+  {% set cards = [
+    ('工讀生帳號', 'Student accounts', counts.staff, 'bi-people', 'primary', url_for('admin.staff')),
+    ('本月排班', 'Shifts this month', counts.shifts, 'bi-calendar-check', 'success', url_for('admin.schedule')),
+    ('待審請假', 'Pending leave', counts.pending_leave, 'bi-calendar-x', 'warning', url_for('admin.requests_page') ~ '#leaveReview'),
+    ('待審換班', 'Pending swaps', counts.pending_swap, 'bi-arrow-left-right', 'info', url_for('admin.requests_page') ~ '#swapReview')
+  ] %}
+  {% for label, english, value, icon, color, href in cards %}
+  <div class="col-6 col-xl-3">
+    <a class="card app-card metric-card border-0 shadow-sm h-100 text-decoration-none text-body" href="{{ href }}">
+      <div class="card-body">
+        <span class="metric-icon text-bg-{{ color }}"><i class="bi {{ icon }}"></i></span>
+        <div class="display-6 fw-bold mt-3">{{ value }}</div>
+        <div class="text-secondary" data-en="{{ english }}">{{ label }}</div>
+      </div>
+    </a>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="row g-4 mb-4">
+  {% for day, day_label, day_english in [(today, '今天', 'Today'), (tomorrow, '明天', 'Tomorrow')] %}
+  <div class="col-lg-6">
+    <section class="card app-card border-0 shadow-sm h-100">
+      <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+          <div><span class="eyebrow">{{ day_english|upper }}</span><h2 class="h5 fw-bold mt-2 mb-0" data-en="{{ day_english }} shifts">{{ day_label }}排班</h2></div>
+          <span class="badge text-bg-primary">{{ day.strftime('%Y-%m-%d') }}</span>
+        </div>
+        <div class="d-grid gap-2">
+          {% for shift in schedule_by_day[day] %}
+          <div class="border rounded-3 p-3 d-flex flex-column flex-sm-row justify-content-between gap-2">
+            <div><strong>{{ '缺員（原 ' ~ shift.staff.name ~ '）' if shift.status.value == 'ON_LEAVE' else shift.staff.name }}</strong><div class="small text-secondary">{{ shift.shift_type.name }}<span class="bilingual-english">{{ shift.shift_type.name_en }}</span></div></div>
+            <div class="text-sm-end"><span class="badge text-white" style="background: {{ shift.shift_type.work_location.color }}">{{ shift.shift_type.work_location.name }} <small>{{ shift.shift_type.work_location.name_en }}</small></span><div class="fw-semibold mt-1">{{ shift.shift_type.start_time.strftime('%H:%M') }}–{{ shift.shift_type.end_time.strftime('%H:%M') }}</div></div>
+          </div>
+          {% else %}<div class="text-center text-secondary border rounded-3 py-4" data-en="No shifts scheduled.">目前沒有排班。</div>{% endfor %}
+        </div>
+      </div>
+    </section>
+  </div>
+  {% endfor %}
+</div>
+
+{% if expiry_alerts %}
+<div class="alert alert-warning border-0 shadow-sm mb-4">
+  <div class="d-flex justify-content-between align-items-center gap-3 mb-2"><strong data-en="Document expiry alerts"><i class="bi bi-exclamation-triangle me-2"></i>證件效期提醒</strong><a href="{{ url_for('admin.staff') }}" class="alert-link" data-en="View students">查看工讀生名冊</a></div>
+  <div class="row g-2">{% for item in expiry_alerts[:8] %}<div class="col-md-6 col-xl-3"><div class="bg-white rounded p-2 h-100"><strong>{{ item.profile.name }}</strong>｜{{ item.label }}<div class="small mt-1"><span class="badge text-bg-{{ item.state.class }}">{{ item.state.label }}</span> {{ item.date }}</div></div></div>{% endfor %}</div>
+  {% if expiry_alerts|length > 8 %}<div class="small mt-2">另有 {{ expiry_alerts|length - 8 }} 筆提醒，請至名冊查看。</div>{% endif %}
+</div>
+{% endif %}
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card app-card border-0 shadow-sm h-100">
+      <div class="card-body p-4">
+        <h2 class="h5 fw-bold mb-3" data-en="Shift types (database)">既有班別（資料庫）</h2>
+        <div class="table-responsive">
+          <table class="table align-middle mb-0">
+            <thead><tr><th data-en="Location">地點</th><th data-en="Shift type">班別</th><th data-en="Time">時間</th><th data-en="Hours">時數</th></tr></thead>
+            <tbody>
+              {% for item in shift_types %}
+              <tr>
+                <td><span class="badge text-white" style="background-color: {{ item.work_location.color }}">{{ item.work_location.name }} <small>{{ item.work_location.name_en }}</small></span></td>
+                <td>{{ item.name }}<span class="bilingual-english bilingual-english-block">{{ item.name_en }}</span></td>
+                <td>{{ item.start_time.strftime('%H:%M') }}–{{ item.end_time.strftime('%H:%M') }}</td>
+                <td>{{ '%g'|format(item.default_hours) }}</td>
+              </tr>
+              {% else %}
+              <tr><td colspan="4" class="text-secondary text-center py-4">請先執行 seed 指令。</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="card app-card border-0 shadow-sm h-100">
+      <div class="card-body p-4">
+        <h2 class="h5 fw-bold" data-en="Quick links">功能入口</h2>
+        <div class="list-group list-group-flush mt-3">
+          <a class="list-group-item list-group-item-action px-0 py-3" href="{{ url_for('admin.schedule') }}" data-en="Schedule management"><i class="bi bi-calendar3 text-primary me-2"></i>排班管理</a>
+          <a class="list-group-item list-group-item-action px-0 py-3" href="{{ url_for('admin.requests_page') }}" data-en="Leave and swap review"><i class="bi bi-inboxes text-primary me-2"></i>請假與換班審核</a>
+          <a class="list-group-item list-group-item-action px-0 py-3" href="{{ url_for('admin.staff') }}" data-en="Student roster"><i class="bi bi-people text-primary me-2"></i>工讀生名冊</a>
+          <a class="list-group-item list-group-item-action px-0 py-3" href="{{ url_for('admin.admin_accounts') }}" data-en="Administrator accounts"><i class="bi bi-person-badge text-primary me-2"></i>管理員帳號</a>
+          <a class="list-group-item list-group-item-action px-0 py-3" href="{{ url_for('admin.payroll') }}" data-en="Payroll and employer cost"><i class="bi bi-cash-stack text-primary me-2"></i>薪資與雇主成本試算</a>
+          <a class="list-group-item list-group-item-action px-0 py-3" href="{{ url_for('admin.reports_page') }}" data-en="Monthly and administrative reports"><i class="bi bi-file-earmark-bar-graph text-primary me-2"></i>月報與行政報表</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

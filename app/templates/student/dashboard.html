@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}我的首頁 My Home｜宿舍工讀生系統{% endblock %}
+{% block content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-4">
+  <div class="page-heading">
+    <span class="eyebrow">STUDENT</span>
+    <h1 class="h2 fw-bold mt-2 mb-1" data-en="Hello, {{ profile.name if profile else current_user.username }}">你好，{{ profile.name if profile else current_user.username }}</h1>
+    <p class="text-secondary mb-0" data-en="Only information associated with your account is shown here.">這裡只會顯示與你本人帳號相關的資料。</p>
+  </div>
+  <a class="btn btn-outline-primary" href="{{ url_for('student.profile') }}" data-en="My profile"><i class="bi bi-person me-2"></i>我的資料</a>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-6 col-xl-3">
+    <a class="card app-card metric-card border-0 shadow-sm h-100 text-decoration-none text-body" href="#studentScheduleApp"><div class="card-body"><span class="metric-icon text-bg-primary"><i class="bi bi-clock-history"></i></span><div class="display-6 fw-bold mt-3"><span id="studentMonthHours">{{ '%g'|format(month_hours) }}</span></div><div class="text-secondary" data-en="Scheduled hours this month"><span id="studentHoursMonthLabel">本月</span>排班時數</div></div></a>
+  </div>
+  <div class="col-md-6 col-xl-3">
+    <a class="card app-card metric-card border-0 shadow-sm h-100 text-decoration-none text-body" href="#upcomingShifts"><div class="card-body"><span class="metric-icon text-bg-success"><i class="bi bi-calendar-event"></i></span><div class="display-6 fw-bold mt-3">{{ shifts|length }}</div><div class="text-secondary" data-en="Upcoming shifts (up to 5)">近期排班（最多 5 筆）</div></div></a>
+  </div>
+  <div class="col-md-6 col-xl-3">
+    <a class="card app-card metric-card border-0 shadow-sm h-100 text-decoration-none text-body" href="#studentScheduleApp"><div class="card-body"><span class="metric-icon text-bg-warning"><i class="bi bi-cash-coin"></i></span><div class="h3 fw-bold mt-3 mb-1">$<span id="studentMonthWage">{{ month_wage|int }}</span></div><div class="text-secondary" data-en="Estimated wage"><span>預估工資（時薪 $<span id="studentHourlyWage">{{ hourly_wage|int }}</span>）</span></div><div class="small text-danger mt-2" data-en="Before labor and health insurance deductions; estimate for reference only.">尚未扣除勞保、健保等費用，僅供試算參考。</div></div></a>
+  </div>
+  <div class="col-md-6 col-xl-3">
+    <a class="card app-card metric-card border-0 shadow-sm h-100 text-decoration-none text-body" href="{{ url_for('student.requests_page') }}"><div class="card-body"><span class="metric-icon text-bg-secondary"><i class="bi bi-arrow-left-right"></i></span><div class="h4 fw-bold mt-3 mb-2" data-en="Leave {{ pending_leave }} / Swaps {{ pending_swap }}">請假 {{ pending_leave }}｜換班 {{ pending_swap }}</div><span class="text-secondary" data-en="View applications and invitations">查看申請與待回覆邀請</span></div></a>
+  </div>
+</div>
+
+{% if profile and (residence_state.code in ['EXPIRED', 'CRITICAL', 'WARNING'] or permit_state.code in ['EXPIRED', 'CRITICAL', 'WARNING']) %}
+<div class="alert alert-warning border-0 shadow-sm mb-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+  <div><strong data-en="Document expiry alert"><i class="bi bi-person-vcard me-2"></i>證件效期提醒</strong><div class="small mt-1">{% if residence_state.code in ['EXPIRED', 'CRITICAL', 'WARNING'] %}居留證：{{ residence_state.label }}{% endif %}{% if residence_state.code in ['EXPIRED', 'CRITICAL', 'WARNING'] and permit_state.code in ['EXPIRED', 'CRITICAL', 'WARNING'] %}｜{% endif %}{% if permit_state.code in ['EXPIRED', 'CRITICAL', 'WARNING'] %}工作證：{{ permit_state.label }}{% endif %}</div></div>
+  <a class="btn btn-sm btn-warning" href="{{ url_for('student.profile') }}" data-en="View and update">查看並更新證件</a>
+</div>
+{% endif %}
+
+<div
+  id="studentScheduleApp"
+  data-events-url="{{ url_for('student.shift_events') }}"
+  data-hours-url="{{ url_for('student.monthly_hours_api') }}"
+  class="card app-card border-0 shadow-sm mb-4"
+>
+  <div class="card-body p-2 p-md-4">
+    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 px-2 pt-2 mb-3">
+      <div>
+        <span class="eyebrow" data-en="MY SCHEDULE">我的班表</span>
+        <h2 class="h5 fw-bold mt-2 mb-0" data-en="Monthly calendar">月曆</h2>
+      </div>
+      <div class="d-flex gap-3 small text-secondary calendar-legend flex-wrap">
+        {% for location in locations %}<span><i class="legend-dot" style="background: {{ location.color }}"></i>{{ location.name }} <small>{{ location.name_en }}</small></span>{% endfor %}
+        <span data-en="Leave / swap status is shown in the calendar"><i class="bi bi-tag me-1"></i>請假／換班狀態顯示於班表內</span>
+      </div>
+    </div>
+    <div id="studentCalendar" class="schedule-calendar location-lane-calendar student-calendar" aria-label="我的排班月曆"></div>
+  </div>
+</div>
+<div class="card app-card border-0 shadow-sm" id="upcomingShifts">
+  <div class="card-body p-4">
+    <h2 class="h5 fw-bold mb-3" data-en="My upcoming shifts">我的近期排班</h2>
+    <div class="table-responsive">
+      <table class="table align-middle mb-0">
+        <thead><tr><th data-en="Date">日期</th><th data-en="Location">地點</th><th data-en="Shift type">班別</th><th data-en="Time">時間</th></tr></thead>
+        <tbody>
+          {% for shift in shifts %}
+          <tr><td>{{ shift.shift_date }}</td><td><span class="badge text-white" style="background-color: {{ shift.shift_type.work_location.color }}">{{ shift.shift_type.work_location.name }} <small>{{ shift.shift_type.work_location.name_en }}</small></span></td><td>{{ shift.shift_type.name }}<span class="bilingual-english bilingual-english-block">{{ shift.shift_type.name_en }}</span></td><td>{{ shift.shift_type.start_time.strftime('%H:%M') }}–{{ shift.shift_type.end_time.strftime('%H:%M') }}</td></tr>
+          {% else %}
+          <tr><td colspan="4" class="text-center text-secondary py-4">目前沒有近期排班。</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="studentShiftModal" tabindex="-1" aria-labelledby="studentShiftModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title h5" id="studentShiftModalTitle" data-en="Shift details">班表詳細資料</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="關閉"></button>
+      </div>
+      <div class="modal-body">
+        <dl class="row mb-0 shift-detail-list">
+          <dt class="col-4" data-en="Date">日期</dt><dd class="col-8" id="studentShiftDate">—</dd>
+          <dt class="col-4" data-en="Location">地點</dt><dd class="col-8"><span id="studentShiftLocation">—</span><small class="bilingual-english" id="studentShiftLocationEn"></small></dd>
+          <dt class="col-4" data-en="Shift type">班別</dt><dd class="col-8"><span id="studentShiftType">—</span><small class="bilingual-english" id="studentShiftTypeEn"></small></dd>
+          <dt class="col-4" data-en="Time">時間</dt><dd class="col-8" id="studentShiftTime">—</dd>
+          <dt class="col-4" data-en="Hours">時數</dt><dd class="col-8" id="studentShiftHours">—</dd>
+          <dt class="col-4" data-en="Request status">申請狀態</dt><dd class="col-8" id="studentShiftWorkflow">—</dd>
+        </dl>
+      </div>
+      <div class="modal-footer"><button class="btn btn-primary" type="button" data-bs-dismiss="modal" data-en="Close">知道了</button></div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script id="studentLocationsJson" type="application/json">{{ locations_data|tojson }}</script>
+<script src="{{ url_for('static', filename='vendor/fullcalendar/index.global.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/student_calendar.js') }}"></script>
+{% endblock %}

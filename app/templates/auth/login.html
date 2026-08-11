@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}登入 Sign in｜宿舍工讀生系統{% endblock %}
+{% block main_class %}login-shell d-flex align-items-center justify-content-center p-3{% endblock %}
+{% block content %}
+<section class="login-card card border-0 shadow-lg w-100">
+  <div class="row g-0">
+    <div class="col-md-5 login-brand-panel d-none d-md-flex flex-column justify-content-between p-5 text-white">
+      <div>
+        <i class="bi bi-building fs-1"></i>
+        <h1 class="h3 mt-4 fw-bold" data-en="Dormitory Student Worker System">宿舍工讀生系統</h1>
+        <p class="opacity-75 mb-0" data-en="Secure and clear account and schedule management.">安全、清楚地管理工讀生帳號與排班資料。</p>
+      </div>
+      <small class="opacity-75">Asia/Taipei</small>
+    </div>
+    <div class="col-md-7 p-4 p-lg-5 bg-white">
+      <div class="mb-4">
+        <span class="eyebrow" data-en="SIGN IN">帳號登入</span>
+        <h2 class="h3 fw-bold mt-2" data-en="Welcome back">歡迎回來</h2>
+        <p class="text-secondary" data-en="Sign in with an administrator or student account.">請使用管理員或工讀生帳號登入。</p>
+      </div>
+      <form method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+          <label class="form-label" for="{{ form.username.id }}" data-en="Username">{{ form.username.label.text }}</label>
+          {{ form.username(class="form-control form-control-lg" + (" is-invalid" if form.username.errors else ""), autocomplete="username", autofocus=true) }}
+          {% for error in form.username.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+        </div>
+        <div class="mb-4">
+          <label class="form-label" for="{{ form.password.id }}" data-en="Password">{{ form.password.label.text }}</label>
+          {{ form.password(class="form-control form-control-lg" + (" is-invalid" if form.password.errors else ""), autocomplete="current-password") }}
+          {% for error in form.password.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+        </div>
+        <button class="btn btn-primary btn-lg w-100" type="submit" data-en="Sign in">{{ form.submit.label.text }}</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

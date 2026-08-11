@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}證件文件庫 Document Library｜宿舍工讀生系統{% endblock %}
+{% block content %}
+<div class="page-heading mb-4"><span class="eyebrow">PRIVATE DOCUMENTS</span><h1 class="h2 fw-bold mt-2 mb-1" data-en="Document library">證件文件庫</h1><p class="text-secondary mb-0" data-en="Current and replaced document images are encrypted outside the public directory.">包含目前及已被新版本取代的證件照片；檔案以加密格式保存在非公開目錄。</p></div>
+<div class="alert alert-warning small"><i class="bi bi-shield-exclamation me-2"></i>僅能因工讀資格、居留或工作許可查核目的下載，不應轉存至未受保護的個人裝置。</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-lg-7"><div class="card app-card border-0 shadow-sm h-100"><div class="card-body p-4">
+    <h2 class="h5 fw-bold" data-en="Retention and scheduled cleanup">保存期限與排程清理</h2>
+    <p class="small text-secondary">目前有效文件會持續保留；排程只清除已取代、上傳失敗或逾期未確認的影像，資料列及稽核紀錄仍會保留。</p>
+    <form method="post" action="{{ url_for('admin.update_document_retention') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="row g-3 align-items-end"><div class="col-sm-5"><label class="form-label" for="retentionDays">保存天數</label><input class="form-control" id="retentionDays" name="retention_days" type="number" min="0" max="3650" value="{{ policy.retention_days if policy else default_retention_days }}" required><div class="form-text">0 代表不自動清理。</div></div>
+      <div class="col-sm-4"><label class="form-label" for="cleanupTime">每日清理時間</label><input class="form-control" id="cleanupTime" name="cleanup_time" type="time" value="{{ '%02d:%02d'|format(policy.cleanup_hour, policy.cleanup_minute) if policy else '03:00' }}" required></div>
+      <div class="col-sm-3"><button class="btn btn-primary w-100" type="submit">儲存設定</button></div></div>
+    </form>
+    <form class="mt-3" method="post" action="{{ url_for('admin.run_document_cleanup') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn btn-outline-danger" type="submit" data-confirm-action="確定立即依目前保存期限清理到期文件？此操作只保留稽核資料，影像無法復原。"><i class="bi bi-trash3 me-2"></i>立即執行到期清理</button></form>
+    <div class="small text-secondary mt-3">上次排程清理：{{ policy.last_cleanup_at.strftime('%Y-%m-%d %H:%M') if policy and policy.last_cleanup_at else '尚未執行' }}</div>
+  </div></div></div>
+  <div class="col-lg-5"><div class="card app-card border-0 shadow-sm h-100"><div class="card-body p-4">
+    <h2 class="h5 fw-bold" data-en="Encryption key backup">加密金鑰備份</h2><p class="small text-secondary" data-en="Both keys are verified at startup; a missing copy is restored automatically.">系統啟動時會驗證兩份金鑰一致；缺少其中一份時會自動由另一份復原。</p>
+    <dl class="small mb-0"><dt>主金鑰</dt><dd class="text-break"><code>{{ key_primary_path }}</code></dd><dt>自動備份</dt><dd class="text-break mb-0"><code>{{ key_backup_path }}</code></dd></dl>
+  </div></div></div>
+</div>
+
+<div class="card app-card border-0 shadow-sm"><div class="table-responsive"><table class="table align-middle mb-0"><thead><tr><th class="ps-4" data-en="Student">工讀生</th><th data-en="Type">類型</th><th data-en="Version">版本</th><th data-en="Submitted fields">送審欄位</th><th data-en="Uploaded">上傳時間</th><th data-en="Pages">頁面</th><th data-en="Review">審核</th></tr></thead><tbody>
+{% for group in document_groups %}
+{% set draft = group.primary.draft %}
+<tr>
+  <td class="ps-4"><strong>{{ group.primary.staff.name }}</strong><div class="small text-secondary">{{ group.primary.staff.student_number }}</div></td>
+  <td>{{ '居留證' if group.document_type.value == 'RESIDENCE_PERMIT' else '工作證' }}<div class="small text-secondary">共 {{ group.pages|length }} 頁</div></td>
+  <td><span class="badge text-bg-{{ 'success' if group.status.value == 'CONFIRMED' else 'danger' if group.status.value == 'REJECTED' else 'secondary' if group.status.value == 'REPLACED' else 'warning' }}">{{ group.status.value }}</span>{% if group.primary.rejection_reason %}<div class="small text-danger mt-1">退回原因：{{ group.primary.rejection_reason }}</div>{% endif %}{% if group.retention_until %}<div class="small text-secondary mt-1">清理日 {{ group.retention_until.strftime('%Y-%m-%d') }}</div>{% endif %}</td>
+  <td class="small" style="min-width: 210px">
+    {% if draft and group.document_type.value == 'RESIDENCE_PERMIT' %}
+      <div class="mb-2"><span class="text-secondary" data-en="Residence ID number">居留證號</span><div class="font-monospace user-select-all fw-semibold">{{ draft.residence_id or '—' }}</div></div>
+      <div><span class="text-secondary" data-en="Expiry date">截止日</span><div class="fw-semibold">{{ draft.residence_expiry.isoformat() if draft.residence_expiry else '—' }}</div></div>
+    {% elif draft and group.document_type.value == 'WORK_PERMIT' %}
+      <div class="mb-2"><span class="text-secondary" data-en="Start date">開始日</span><div class="fw-semibold">{{ draft.work_permit_start.isoformat() if draft.work_permit_start else '—' }}</div></div>
+      <div><span class="text-secondary" data-en="End date">截止日</span><div class="fw-semibold">{{ draft.work_permit_expiry.isoformat() if draft.work_permit_expiry else '—' }}</div></div>
+    {% else %}<span class="text-secondary">—</span>{% endif %}
+  </td>
+  <td>{{ group.uploaded_at.strftime('%Y-%m-%d %H:%M') }}</td>
+  <td class="small">{% for document in group.pages %}<div class="mb-1"><strong>{{ page_labels[document.page_kind] }}</strong> · {{ (document.file_size / 1024)|round|int }} KB · <a target="_blank" rel="noopener" href="{{ url_for('admin.view_staff_document', document_id=document.id) }}" data-en="Preview">預覽</a> · <a href="{{ url_for('admin.download_staff_document', document_id=document.id) }}" data-en="Download page">下載此頁</a></div>{% endfor %}</td>
+  <td style="min-width: 260px"><div class="d-grid gap-2"><a class="btn btn-sm btn-outline-primary" href="{{ url_for('admin.download_staff_document_set', set_id=group.set_id) }}" data-en="Download full document"><i class="bi bi-file-earmark-zip me-1"></i>下載整份</a>{% if group.status.value == 'PENDING_ADMIN' %}<form method="post" action="{{ url_for('admin.review_staff_document', document_id=group.primary.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><div class="form-check border rounded-3 p-2 ps-5 mb-2 bg-light"><input class="form-check-input" id="fieldsConfirmed{{ group.primary.id }}" name="fields_confirmed" type="checkbox" value="yes"><label class="form-check-label small fw-semibold" for="fieldsConfirmed{{ group.primary.id }}" data-en="I verified that the images match the submitted fields.">我已核對影像與送審欄位一致</label></div><label class="form-label small" for="reviewReason{{ group.primary.id }}" data-en="Reason required when returning">退回原因（退回時必填）</label><textarea class="form-control form-control-sm mb-2" id="reviewReason{{ group.primary.id }}" name="review_reason" maxlength="1000" rows="2"></textarea><div class="d-flex gap-2"><button class="btn btn-sm btn-success flex-fill" name="decision" value="APPROVE" type="submit" data-confirm-action="確定影像與送審欄位一致，並核准更新正式個人資料？" data-en="Approve">核准</button><button class="btn btn-sm btn-danger flex-fill" name="decision" value="REJECT" type="submit" data-confirm-action="確定退回這份證件給學生修正？退回原因為必填。" data-en="Return">退回</button></div></form>{% endif %}</div></td>
+</tr>
+{% else %}<tr><td colspan="7" class="text-center text-secondary py-5">目前沒有已保存的證件文件。</td></tr>{% endfor %}
+</tbody></table></div></div>
+
+<div class="card app-card border-0 shadow-sm mt-4"><div class="card-body p-4"><h2 class="h5 fw-bold mb-3">最近清理稽核</h2><div class="table-responsive"><table class="table table-sm align-middle mb-0"><thead><tr><th>時間</th><th>文件 ID</th><th>執行依據</th><th>紀錄人</th></tr></thead><tbody>{% for log in cleanup_logs %}<tr><td>{{ log.created_at.strftime('%Y-%m-%d %H:%M') }}</td><td>#{{ log.entity_id }}</td><td>{{ log.safe_summary }}</td><td>{{ log.actor.username }}</td></tr>{% else %}<tr><td colspan="4" class="text-center text-secondary py-3">尚無到期清理紀錄。</td></tr>{% endfor %}</tbody></table></div></div></div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/requests.js') }}"></script>{% endblock %}

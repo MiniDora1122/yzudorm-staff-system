@@ -1,0 +1,27 @@
+# 請先在 XAMPP Apache 啟用 mod_proxy、mod_proxy_http、mod_headers 與 mod_ssl。
+# 建議使用獨立網域或子網域，不要把 Flask 專案直接公開在 htdocs。
+
+<VirtualHost *:80>
+    ServerName shifts.example.edu.tw
+    Redirect permanent / https://shifts.example.edu.tw/
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName shifts.example.edu.tw
+
+    SSLEngine on
+    SSLCertificateFile "C:/xampp/apache/conf/ssl.crt/shifts.example.edu.tw.crt"
+    SSLCertificateKeyFile "C:/xampp/apache/conf/ssl.key/shifts.example.edu.tw.key"
+
+    ProxyRequests Off
+    ProxyPreserveHost On
+    RequestHeader set X-Forwarded-Proto "https"
+    RequestHeader set X-Forwarded-Port "443"
+
+    ProxyPass        / http://127.0.0.1:8000/ retry=0 timeout=60
+    ProxyPassReverse / http://127.0.0.1:8000/
+
+    ErrorLog  "logs/dorm-staff-error.log"
+    CustomLog "logs/dorm-staff-access.log" combined
+</VirtualHost>
+

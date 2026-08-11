@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}工讀生名冊 Student Roster｜宿舍工讀生系統{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+  <div class="page-heading">
+    <span class="eyebrow">STAFF</span>
+    <h1 class="h2 fw-bold mt-2 mb-1" data-en="Student roster">工讀生名冊</h1>
+    <p class="text-secondary mb-0" data-en="Create student accounts, temporary passwords and maintain student numbers. Sensitive IDs are masked.">管理員可建立學生帳號、設定臨時密碼及維護學號；敏感證號預設遮罩。</p>
+  </div>
+  <div class="d-flex flex-wrap gap-2">
+    <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#createStaffModal" data-en="Add student"><i class="bi bi-person-plus me-2"></i>新增工讀生</button>
+    <a class="btn btn-outline-primary" href="{{ url_for('admin.documents_page') }}" data-en="Document library">證件文件庫</a>
+    <a class="btn btn-outline-primary" href="{{ url_for('admin.reports_page') }}" data-en="Reports">產生報表</a>
+  </div>
+</div>
+
+<div class="card app-card border-0 shadow-sm"><div class="table-responsive"><table class="table align-middle mb-0 staff-table">
+  <thead><tr><th class="ps-4" data-en="Student / ID">工讀生／學號</th><th data-en="Contact">聯絡方式</th><th data-en="Nationality">國籍</th><th data-en="Residence permit">居留證</th><th data-en="Work permit">工作證</th><th data-en="Documents">文件</th><th data-en="Account actions">帳號操作</th></tr></thead>
+  <tbody>
+  {% for profile in profiles %}
+    <tr>
+      <td class="ps-4"><strong>{{ profile.name }}</strong><div class="small text-secondary">{{ profile.student_number }}｜{{ profile.user.username }}</div>{% if profile.user.must_change_password %}<span class="badge text-bg-warning mt-1">等待修改臨時密碼</span>{% endif %}</td>
+      <td>{{ profile.email or '—' }}<div class="small text-secondary">{{ profile.phone or '' }}</div></td>
+      <td>{{ profile.nationality }}</td>
+      <td>{{ mask_identifier(profile.residence_id) }}<div class="small">{{ profile.residence_expiry or '—' }} <span class="badge text-bg-{{ expiry_state(profile.residence_expiry).class }}">{{ expiry_state(profile.residence_expiry).label }}</span></div></td>
+      <td><div class="small">{{ profile.work_permit_start or '—' }} ～ {{ profile.work_permit_expiry or '—' }}</div><span class="badge text-bg-{{ expiry_state(profile.work_permit_expiry).class }}">{{ expiry_state(profile.work_permit_expiry).label }}</span></td>
+      <td>{% for group in documents_by_staff.get(profile.id, []) %}<div class="mb-2"><span class="badge text-bg-{{ 'success' if group.status.value == 'CONFIRMED' else 'danger' if group.status.value == 'REJECTED' else 'warning' }}">{{ '居留證' if group.document_type.value == 'RESIDENCE_PERMIT' else '工作證' }} · {{ group.pages|length }} 頁 · {{ group.status.value }}</span><div class="mt-1"><a class="small" href="{{ url_for('admin.download_staff_document_set', set_id=group.set_id) }}">下載整份</a></div></div>{% else %}<span class="text-secondary">—</span>{% endfor %}</td>
+      <td><div class="d-flex flex-wrap gap-2"><button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="modal" data-bs-target="#editStaff{{ profile.id }}"><i class="bi bi-pencil me-1"></i>編輯資料</button><button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="modal" data-bs-target="#resetPassword{{ profile.id }}"><i class="bi bi-key me-1"></i>重設密碼</button><form method="post" action="{{ url_for('admin.delete_staff', staff_id=profile.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn btn-sm btn-outline-danger" type="submit" data-confirm-action="確定刪除 {{ profile.name }} 的帳號？若仍有未來排班或進行中申請，系統會拒絕刪除。" data-en="Delete student"><i class="bi bi-trash3 me-1"></i>刪除</button></form></div></td>
+    </tr>
+  {% else %}<tr><td colspan="7" class="text-center text-secondary py-5">尚無工讀生資料，請使用右上角「新增工讀生」。</td></tr>{% endfor %}
+  </tbody>
+</table></div></div>
+
+<div class="modal fade" id="createStaffModal" tabindex="-1" aria-labelledby="createStaffTitle" aria-hidden="true"><div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable"><div class="modal-content">
+  <form method="post" action="{{ url_for('admin.create_staff') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="modal-header"><div><h2 class="modal-title h5 mb-1" id="createStaffTitle" data-en="Add student and account">新增工讀生與登入帳號</h2><div class="small text-secondary" data-en="The student must change the temporary password after first sign-in.">建立後即可排班；學生首次登入必須先修改臨時密碼。</div></div><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="關閉 Close"></button></div>
+    <div class="modal-body">
+      <h3 class="h6 fw-bold mb-3" data-en="Account information">帳號資料</h3>
+      <div class="row g-3 mb-4">
+        <div class="col-md-6"><label class="form-label" for="createUsername">登入帳號</label><input class="form-control" id="createUsername" name="username" maxlength="80" pattern="[A-Za-z0-9._-]{3,80}" autocomplete="off" required><div class="form-text">3–80 位英數字、句點、底線或連字號；系統會轉為小寫。</div></div>
+        <div class="col-md-6"><label class="form-label" for="createStudentNumber">學號</label><input class="form-control" id="createStudentNumber" name="student_number" maxlength="30" pattern="[A-Za-z0-9_-]{3,30}" autocomplete="off" required></div>
+        <div class="col-md-6"><label class="form-label" for="createTemporaryPassword">臨時密碼</label><div class="input-group"><input class="form-control temporary-password" id="createTemporaryPassword" name="temporary_password" type="password" minlength="8" maxlength="128" autocomplete="new-password" required><button class="btn btn-outline-secondary password-visibility" type="button" aria-label="顯示臨時密碼"><i class="bi bi-eye"></i></button></div></div>
+        <div class="col-md-6"><label class="form-label" for="createTemporaryPasswordConfirm">再次輸入臨時密碼</label><input class="form-control temporary-password-confirm" id="createTemporaryPasswordConfirm" name="confirm_temporary_password" type="password" minlength="8" maxlength="128" autocomplete="new-password" required></div>
+        <div class="col-12"><button class="btn btn-sm btn-outline-primary generate-password" type="button"><i class="bi bi-shuffle me-1"></i>產生安全臨時密碼</button><div class="form-text">密碼只會在建立時由管理員交付，不會在系統內再次顯示。</div></div>
+      </div>
+      <h3 class="h6 fw-bold mb-3" data-en="Basic information">基本資料</h3>
+      <div class="row g-3">
+        <div class="col-md-6"><label class="form-label" for="createName">姓名</label><input class="form-control" id="createName" name="name" maxlength="100" required></div>
+        <div class="col-md-6"><label class="form-label" for="createNationality">國籍</label><input class="form-control" id="createNationality" name="nationality" maxlength="80" value="台灣" required></div>
+        <div class="col-md-6"><label class="form-label" for="createEmail">Email</label><input class="form-control" id="createEmail" name="email" type="email" maxlength="255"></div>
+        <div class="col-md-6"><label class="form-label" for="createPhone">聯絡電話</label><input class="form-control" id="createPhone" name="phone" maxlength="30"></div>
+      </div>
+      <div class="alert alert-warning small mt-4 mb-0"><i class="bi bi-shield-exclamation me-2"></i>請使用安全管道交付臨時密碼，不要透過公開群組或名冊傳送。</div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline-secondary" type="button" data-bs-dismiss="modal">取消</button><button class="btn btn-primary" type="submit"><i class="bi bi-person-check me-2"></i>建立工讀生帳號</button></div>
+  </form>
+</div></div></div>
+
+{% for profile in profiles %}
+<div class="modal fade" id="editStaff{{ profile.id }}" tabindex="-1" aria-labelledby="editStaffTitle{{ profile.id }}" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+  <form method="post" action="{{ url_for('admin.update_staff', staff_id=profile.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="modal-header"><h2 class="modal-title h5" id="editStaffTitle{{ profile.id }}">編輯 {{ profile.name }} 的基本資料</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="關閉"></button></div>
+    <div class="modal-body"><div class="row g-3"><div class="col-sm-6"><label class="form-label" for="staffName{{ profile.id }}">姓名</label><input class="form-control" id="staffName{{ profile.id }}" name="name" maxlength="100" value="{{ profile.name }}" required></div><div class="col-sm-6"><label class="form-label" for="studentNumber{{ profile.id }}">學號</label><input class="form-control" id="studentNumber{{ profile.id }}" name="student_number" maxlength="30" pattern="[A-Za-z0-9_-]{3,30}" value="{{ profile.student_number }}" required><div class="form-text">會出現在月報與所有匯出檔。</div></div><div class="col-12"><label class="form-label" for="staffEmail{{ profile.id }}">Email</label><input class="form-control" id="staffEmail{{ profile.id }}" name="email" type="email" maxlength="255" value="{{ profile.email or '' }}"></div><div class="col-12"><label class="form-label" for="staffPhone{{ profile.id }}">聯絡電話</label><input class="form-control" id="staffPhone{{ profile.id }}" name="phone" maxlength="30" value="{{ profile.phone or '' }}"></div><div class="col-12"><label class="form-label" for="staffNationality{{ profile.id }}">國籍</label><input class="form-control" id="staffNationality{{ profile.id }}" name="nationality" maxlength="80" value="{{ profile.nationality }}" required></div></div></div>
+    <div class="modal-footer"><button class="btn btn-outline-secondary" type="button" data-bs-dismiss="modal">取消</button><button class="btn btn-primary" type="submit">儲存資料</button></div>
+  </form>
+</div></div></div>
+
+<div class="modal fade" id="resetPassword{{ profile.id }}" tabindex="-1" aria-labelledby="resetPasswordTitle{{ profile.id }}" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+  <form method="post" action="{{ url_for('admin.reset_staff_password', staff_id=profile.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="modal-header"><h2 class="modal-title h5" id="resetPasswordTitle{{ profile.id }}">重設 {{ profile.name }} 的密碼</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="關閉"></button></div>
+    <div class="modal-body"><div class="alert alert-warning small">儲存後原密碼立即失效，學生下次操作時必須先修改臨時密碼。</div><div class="mb-3"><label class="form-label" for="resetPasswordValue{{ profile.id }}">新臨時密碼</label><div class="input-group"><input class="form-control temporary-password" id="resetPasswordValue{{ profile.id }}" name="temporary_password" type="password" minlength="8" maxlength="128" autocomplete="new-password" required><button class="btn btn-outline-secondary password-visibility" type="button" aria-label="顯示臨時密碼"><i class="bi bi-eye"></i></button></div></div><div class="mb-3"><label class="form-label" for="resetPasswordConfirm{{ profile.id }}">再次輸入臨時密碼</label><input class="form-control temporary-password-confirm" id="resetPasswordConfirm{{ profile.id }}" name="confirm_temporary_password" type="password" minlength="8" maxlength="128" autocomplete="new-password" required></div><button class="btn btn-sm btn-outline-primary generate-password" type="button"><i class="bi bi-shuffle me-1"></i>產生安全臨時密碼</button></div>
+    <div class="modal-footer"><button class="btn btn-outline-secondary" type="button" data-bs-dismiss="modal">取消</button><button class="btn btn-danger" type="submit" data-confirm-action="確定重設 {{ profile.name }} 的密碼？原密碼會立即失效。">確認重設密碼</button></div>
+  </form>
+</div></div></div>
+{% endfor %}
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/requests.js') }}"></script><script src="{{ url_for('static', filename='js/staff_accounts.js') }}"></script>{% endblock %}

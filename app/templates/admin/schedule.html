@@ -1,0 +1,239 @@
+{% extends "base.html" %}
+{% block title %}排班管理 Schedule Management｜宿舍工讀生系統{% endblock %}
+{% block content %}
+<div
+  id="scheduleApp"
+  data-events-url="{{ url_for('admin.shift_events') }}"
+  data-create-url="{{ url_for('admin.create_shift_api') }}"
+  data-hours-url="{{ url_for('admin.monthly_hours_api') }}"
+  data-location-url="{{ url_for('admin.create_location_api') }}"
+  data-shift-type-url="{{ url_for('admin.create_shift_type_api') }}"
+  data-bulk-delete-url="{{ url_for('admin.bulk_delete_shifts_api') }}"
+>
+  <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-end gap-3 mb-4">
+    <div class="page-heading">
+      <span class="eyebrow" data-en="SCHEDULE MANAGEMENT">排班管理</span>
+      <h1 class="h2 fw-bold mt-2 mb-1" data-en="FullCalendar schedule">FullCalendar 排班</h1>
+      <p class="text-secondary mb-0" data-en="Select a date to add a shift, or select an existing shift to edit or delete it.">點選日期快速新增；點選既有班表可編輯或刪除。</p>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+      <button class="btn btn-outline-danger" id="toggleBulkDeleteButton" type="button" data-en="Select shifts to delete"><i class="bi bi-ui-checks me-2"></i>勾選刪除排班</button>
+      <button class="btn btn-outline-primary" type="button" data-bs-toggle="modal" data-bs-target="#bulkImportModal" data-en="Bulk import">
+        <i class="bi bi-file-earmark-arrow-up me-2"></i>批量匯入
+      </button>
+      <button class="btn btn-outline-primary" id="locationSettingsButton" type="button" data-en="Locations / Shifts">
+        <i class="bi bi-geo-alt me-2"></i>地點與班別
+      </button>
+      <button class="btn btn-primary" id="addShiftButton" type="button" data-en="Add shift">
+        <i class="bi bi-plus-lg me-2"></i>新增排班
+      </button>
+    </div>
+  </div>
+
+  <div id="scheduleAlert" class="alert d-none" role="alert"></div>
+  <div class="alert alert-warning d-none align-items-center justify-content-between gap-3" id="bulkDeleteToolbar" role="status">
+    <div><strong><span id="bulkDeleteCount">0</span> 筆已選取</strong><small class="d-block" lang="en"><span id="bulkDeleteCountEn">0</span> shifts selected</small></div>
+    <div class="d-flex gap-2"><button class="btn btn-sm btn-outline-secondary" id="cancelBulkDeleteButton" type="button" data-en="Cancel selection">取消選取</button><button class="btn btn-sm btn-danger" id="confirmBulkDeleteButton" type="button" data-en="Delete selected shifts">刪除已選排班</button></div>
+  </div>
+
+  <div class="card app-card border-0 shadow-sm mb-4">
+    <div class="card-body p-3 p-lg-4">
+      <div class="row g-3 align-items-end">
+        <div class="col-md-7 col-lg-6">
+          <label class="form-label d-block" data-en="Locations shown">顯示地點</label>
+          <div class="btn-group w-100" id="locationFilter" role="group" aria-label="篩選地點">
+            <input class="btn-check" type="radio" name="locationFilter" id="locationAll" value="ALL" checked>
+            <label class="btn btn-outline-secondary" for="locationAll" data-en="All">全部</label>
+            {% for location in locations %}
+            <input class="btn-check" type="radio" name="locationFilter" id="location{{ location.id }}" value="{{ location.code }}">
+            <label class="btn location-filter-button" for="location{{ location.id }}" style="--location-color: {{ location.color }}">{{ location.name }}<small class="d-block opacity-75">{{ location.name_en }}</small></label>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="col-md-5 col-lg-4">
+          <label class="form-label" for="staffFilter" data-en="Student worker">工讀生</label>
+          <select class="form-select" id="staffFilter">
+            <option value="">全部工讀生 All students</option>
+            {% for profile in profiles %}
+            <option value="{{ profile.id }}">{{ profile.name }}（{{ profile.student_number }}）</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-lg-2">
+          <div class="d-flex gap-3 small text-secondary calendar-legend flex-wrap" aria-label="地點顏色說明">
+            {% for location in locations %}
+            <span><i class="legend-dot" style="background: {{ location.color }}"></i>{{ location.name }} <small>{{ location.name_en }}</small></span>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card app-card border-0 shadow-sm mb-4">
+    <div class="card-body p-2 p-md-4">
+      <div class="calendar-usage-hint mx-2 mb-3" data-en="The calendar is divided by location. Leave, vacancies and swap progress appear on each shift.">
+        <i class="bi bi-layout-sidebar-inset me-2"></i>月曆左側依地點分區；請假、缺員及換班進度會直接標在班表事件上。點任一日期可新增班表。
+      </div>
+      <div id="adminCalendar" class="schedule-calendar location-lane-calendar admin-schedule-calendar" aria-label="排班月曆"></div>
+    </div>
+  </div>
+
+  <div class="card app-card border-0 shadow-sm hours-panel">
+    <div class="card-body p-4">
+      <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-end gap-2 mb-3">
+        <div>
+          <span class="eyebrow" id="hoursMonthLabel">本月</span>
+          <h2 class="h5 fw-bold mt-2 mb-0" data-en="Working hours">工讀時數</h2>
+        </div>
+        <div class="h3 fw-bold text-primary mb-0"><span id="allHoursValue">0</span><small class="fs-6 text-secondary ms-1">小時</small></div>
+      </div>
+      <div id="hoursList" class="hours-list"></div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="bulkImportModal" tabindex="-1" aria-labelledby="bulkImportTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+      <form method="post" action="{{ url_for('admin.import_shifts') }}" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="modal-header"><h2 class="modal-title h5" id="bulkImportTitle" data-en="Bulk import shifts">批量匯入排班</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="關閉 Close"></button></div>
+        <div class="modal-body">
+          <p class="text-secondary small" data-en="Upload a UTF-8 CSV with date, student ID and shift type code. The import is atomic: any invalid row cancels the entire import.">上傳包含日期、學號與班別代碼的 UTF-8 CSV。匯入採完整交易，任何一列錯誤都不會寫入資料。</p>
+          <a class="btn btn-sm btn-outline-primary mb-3" href="{{ url_for('admin.shift_import_template') }}" data-en="Download CSV template"><i class="bi bi-download me-1"></i>下載 CSV 範本</a>
+          <div class="mb-3"><label class="form-label" for="shiftImportFile" data-en="CSV file">CSV 檔案</label><input class="form-control" id="shiftImportFile" name="shift_file" type="file" accept=".csv,text/csv" required><div class="form-text" data-en="Up to 500 rows and 1MB per import.">每次最多 500 筆，檔案上限 1MB。</div></div>
+          <div class="form-check"><input class="form-check-input" id="importAllowOverlap" name="allow_location_overlap" value="yes" type="checkbox"><label class="form-check-label" for="importAllowOverlap" data-en="I confirm that multiple staff may work at the same location during overlapping times.">我已確認這批資料可讓多人於同一地點的重疊時段上班。</label></div>
+        </div>
+        <div class="modal-footer"><button class="btn btn-outline-secondary" type="button" data-bs-dismiss="modal" data-en="Cancel">取消</button><button class="btn btn-primary" type="submit" data-confirm-action="確定匯入這份排班 CSV？若有任何錯誤，整批都不會寫入。" data-en="Import shifts">開始匯入</button></div>
+      </form>
+    </div></div>
+  </div>
+
+  <div class="modal fade" id="shiftModal" tabindex="-1" aria-labelledby="shiftModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <form id="shiftForm">
+          <div class="modal-header">
+            <h2 class="modal-title h5" id="shiftModalTitle" data-en="Add shift">新增排班</h2>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="關閉"></button>
+          </div>
+          <div class="modal-body">
+            <div id="shiftFormError" class="alert alert-danger d-none" role="alert"></div>
+            <input type="hidden" id="shiftId">
+            <div class="row g-3 mb-4">
+              <div class="col-md-5">
+                <label class="form-label" for="shiftDate" data-en="Date">日期 <span class="text-danger">*</span></label>
+                <input class="form-control form-control-lg" id="shiftDate" type="date" required>
+              </div>
+              <div class="col-md-7">
+                <label class="form-label" for="shiftStaff" data-en="Student worker">工讀生 <span class="text-danger">*</span></label>
+                <select class="form-select form-select-lg" id="shiftStaff" required>
+                  <option value="">請選擇工讀生</option>
+                  {% for profile in profiles %}
+                  <option value="{{ profile.id }}">{{ profile.name }}（{{ profile.student_number }}）</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <div class="border rounded-3 p-3 mb-4" id="recurrencePanel">
+              <div class="form-check"><input class="form-check-input" id="repeatWeekly" type="checkbox"><label class="form-check-label fw-semibold" for="repeatWeekly" data-en="Repeat weekly">每週重複排班</label></div>
+              <div class="row g-3 mt-1 d-none" id="recurrenceFields">
+                <div class="col-md-6"><label class="form-label" for="recurrenceEnd" data-en="Repeat until">重複截止日期</label><input class="form-control" id="recurrenceEnd" type="date"><div class="form-text" data-en="A shift is created every seven days from the selected start date, including the end date when applicable.">系統會從上方日期起每七天建立一筆，符合時會包含截止日。</div></div>
+                <div class="col-md-6 d-flex align-items-end"><div class="alert alert-info small mb-0 w-100" data-en="Saving creates one recurring series. If any occurrence conflicts, none are created.">儲存時會建立一個重複系列；其中任一日期衝突時，整個系列都不會建立。</div></div>
+              </div>
+            </div>
+
+            <fieldset>
+              <legend class="form-label mb-2" data-en="Shift type">班別 <span class="text-danger">*</span></legend>
+              <div class="btn-group btn-group-sm mb-3" id="shiftLocationShortcuts" role="group" aria-label="快速篩選班別地點">
+                <button class="btn btn-outline-secondary active" type="button" data-shift-location="ALL" data-en="All shift types">全部班別</button>
+                {% for location in active_locations %}
+                <button class="btn location-filter-button" type="button" data-shift-location="{{ location.code }}" style="--location-color: {{ location.color }}">{{ location.name }} <small>{{ location.name_en }}</small></button>
+                {% endfor %}
+              </div>
+              <div class="shift-type-groups">
+                {% for location in active_locations %}
+                <section class="shift-type-group" data-shift-type-group="{{ location.code }}">
+                  <h3 class="h6 fw-bold mb-2" style="color: {{ location.color }}">{{ location.name }} <small class="fw-normal">{{ location.name_en }}</small></h3>
+                  <div class="shift-type-grid">
+                    {% for item in shift_types if item.location_id == location.id %}
+                    <div>
+                      <input class="btn-check shift-type-radio" type="radio" name="shiftTypeOption" id="shiftType{{ item.id }}" value="{{ item.id }}" data-location="{{ location.code }}" required>
+                      <label class="shift-type-card" for="shiftType{{ item.id }}">
+                        <span class="shift-type-time">{{ item.start_time.strftime('%H:%M') }}–{{ item.end_time.strftime('%H:%M') }}</span>
+                        <strong>{{ item.name }}</strong><small>{{ item.name_en }}</small>
+                        <small>{{ '%g'|format(item.default_hours) }} 小時</small>
+                      </label>
+                    </div>
+                    {% endfor %}
+                  </div>
+                </section>
+                {% endfor %}
+              </div>
+            </fieldset>
+            <div class="form-text mt-3" data-en="Location occupancy and student time conflicts are checked again when saving.">系統會在儲存時再次檢查地點占用與工讀生時間重疊。</div>
+            <div class="form-check mt-3" id="continueAddWrapper">
+              <input class="form-check-input" type="checkbox" id="continueAdding">
+              <label class="form-check-label" for="continueAdding" data-en="Keep selections and add another shift after saving">儲存後保留人員與班別，繼續新增下一筆</label>
+            </div>
+          </div>
+          <div class="modal-footer justify-content-between">
+            <div class="dropup d-none" id="deleteShiftGroup"><button class="btn btn-outline-danger dropdown-toggle" id="deleteShiftButton" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-en="Delete"><i class="bi bi-trash3 me-1"></i>刪除</button><ul class="dropdown-menu"><li><button class="dropdown-item text-danger delete-scope-button" type="button" data-scope="single" data-en="Delete only this shift">只刪除這一筆</button></li><li class="series-delete-option"><button class="dropdown-item text-danger delete-scope-button" type="button" data-scope="future" data-en="Delete this and following occurrences">刪除本筆及後續重複時段</button></li><li class="series-delete-option"><button class="dropdown-item text-danger delete-scope-button" type="button" data-scope="series" data-en="Delete the entire recurring series">刪除本重複系列全部排班</button></li></ul></div>
+            <div class="d-flex gap-2 ms-auto">
+              <button class="btn btn-outline-secondary" type="button" data-bs-dismiss="modal" data-en="Cancel">取消</button>
+              <button class="btn btn-primary" id="saveShiftButton" type="submit" data-en="Save shift">儲存排班</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="locationSettingsModal" tabindex="-1" aria-labelledby="locationSettingsTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title h5" id="locationSettingsTitle" data-en="Location and shift type settings">地點與班別設定</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="關閉"></button>
+        </div>
+        <div class="modal-body">
+          <div id="settingsFormError" class="alert alert-danger d-none" role="alert"></div>
+          <div class="row g-4">
+            <div class="col-lg-6">
+              <h3 class="h6 fw-bold" id="locationFormTitle" data-en="Add work location"><i class="bi bi-geo-alt me-2"></i>新增工作地點</h3>
+              <form id="locationForm" class="border rounded-3 p-3">
+                <div class="mb-3"><label class="form-label" for="locationName" data-en="Chinese display name">中文顯示名稱</label><input class="form-control" id="locationName" maxlength="100" placeholder="例如：交誼廳" required></div>
+                <div class="mb-3"><label class="form-label" for="locationNameEn" data-en="English display name">英文顯示名稱</label><input class="form-control" id="locationNameEn" maxlength="100" placeholder="e.g. Lounge" required></div>
+                <div class="mb-3"><label class="form-label" for="locationCode" data-en="Location code">地點代碼</label><input class="form-control text-uppercase" id="locationCode" maxlength="40" pattern="[A-Za-z][A-Za-z0-9_]{1,39}" placeholder="例如：LOUNGE / e.g. LOUNGE" required><div class="form-text" data-en="Use uppercase letters, numbers or underscores for data identification.">建立後用於資料識別，請使用英文大寫、數字或底線。</div></div>
+                <div class="mb-3"><label class="form-label" for="locationColor" data-en="Calendar color">日曆顏色</label><input class="form-control form-control-color" id="locationColor" type="color" value="#7c3aed" title="選擇地點顏色 Select location color"></div>
+                <div class="d-flex gap-2"><button class="btn btn-outline-secondary d-none" id="cancelLocationEdit" type="button" data-en="Cancel edit">取消編輯</button><button class="btn btn-outline-primary flex-grow-1" id="saveLocationButton" type="submit" data-en="Add location">新增地點</button></div>
+              </form>
+              <div class="mt-3 d-grid gap-2">
+                {% for location in active_locations %}<div class="d-flex gap-2"><button class="btn btn-sm btn-outline-secondary text-start edit-location-button flex-grow-1" type="button" data-id="{{ location.id }}" data-name="{{ location.name }}" data-name-en="{{ location.name_en }}" data-code="{{ location.code }}" data-color="{{ location.color }}"><span class="legend-dot" style="background: {{ location.color }}"></span>{{ location.name }} · {{ location.name_en }} · {{ location.code }} <span class="float-end" data-en="Edit">編輯</span></button><button class="btn btn-sm btn-outline-danger delete-location-button" type="button" data-id="{{ location.id }}" data-name="{{ location.name }}" title="刪除地點 Delete location"><i class="bi bi-trash3"></i></button></div>{% endfor %}
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <h3 class="h6 fw-bold" id="shiftTypeFormTitle" data-en="Add shift type"><i class="bi bi-clock me-2"></i>新增班別</h3>
+              <form id="shiftTypeForm" class="border rounded-3 p-3">
+                <div class="mb-3"><label class="form-label" for="newShiftLocation" data-en="Work location">工作地點</label><select class="form-select" id="newShiftLocation" required>{% for location in active_locations %}<option value="{{ location.id }}">{{ location.name }} / {{ location.name_en }}</option>{% endfor %}</select></div>
+                <div class="row g-2 mb-3"><div class="col-sm-6"><label class="form-label" for="newShiftName" data-en="Chinese shift name">中文班別名稱</label><input class="form-control" id="newShiftName" maxlength="100" placeholder="例如：交誼廳晚班" required></div><div class="col-sm-6"><label class="form-label" for="newShiftNameEn" data-en="English shift name">英文班別名稱</label><input class="form-control" id="newShiftNameEn" maxlength="100" placeholder="e.g. Lounge Evening Shift" required></div><div class="col-sm-6"><label class="form-label" for="newShiftCode" data-en="Code">代碼</label><input class="form-control text-uppercase" id="newShiftCode" maxlength="40" placeholder="LOUNGE_PM" required></div></div>
+                <div class="row g-2 mb-3"><div class="col-sm-6"><label class="form-label" for="newShiftStart" data-en="Start time">開始時間</label><input class="form-control" id="newShiftStart" type="time" required></div><div class="col-sm-6"><label class="form-label" for="newShiftEnd" data-en="End time">結束時間</label><input class="form-control" id="newShiftEnd" type="time" required></div><div class="col-sm-6"><label class="form-label" for="newShiftHours" data-en="Hours">時數</label><input class="form-control" id="newShiftHours" type="number" min="0.5" max="24" step="0.5" required></div></div>
+                <div class="d-flex gap-2"><button class="btn btn-outline-secondary d-none" id="cancelShiftTypeEdit" type="button" data-en="Cancel edit">取消編輯</button><button class="btn btn-outline-primary flex-grow-1" id="saveShiftTypeButton" type="submit" data-en="Add shift type">新增班別</button></div>
+              </form>
+              <div class="mt-3 d-grid gap-2">
+                {% for item in shift_types %}<div class="d-flex gap-2"><button class="btn btn-sm btn-outline-secondary text-start edit-shift-type-button flex-grow-1" type="button" data-id="{{ item.id }}" data-location-id="{{ item.location_id }}" data-name="{{ item.name }}" data-name-en="{{ item.name_en }}" data-code="{{ item.code }}" data-start="{{ item.start_time.strftime('%H:%M') }}" data-end="{{ item.end_time.strftime('%H:%M') }}" data-hours="{{ '%g'|format(item.default_hours) }}"><strong>{{ item.name }}</strong><span class="small text-secondary d-block">{{ item.name_en }} · {{ item.work_location.name }} / {{ item.work_location.name_en }} · {{ item.start_time.strftime('%H:%M') }}–{{ item.end_time.strftime('%H:%M') }} · {{ '%g'|format(item.default_hours) }} 小時</span><span class="float-end" data-en="Edit">編輯</span></button><button class="btn btn-sm btn-outline-danger delete-shift-type-button" type="button" data-id="{{ item.id }}" data-name="{{ item.name }}" title="刪除班別 Delete shift type"><i class="bi bi-trash3"></i></button></div>{% endfor %}
+              </div>
+            </div>
+          </div>
+          <div class="alert alert-info small mt-4 mb-0"><i class="bi bi-info-circle me-2"></i>新增後頁面會重新載入，月曆左側分區、篩選器、圖例與排班表單都會自動加入新地點。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script id="locationsData" type="application/json">{{ locations_data|tojson }}</script>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='vendor/fullcalendar/index.global.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/requests.js') }}"></script>
+<script src="{{ url_for('static', filename='js/admin_schedule.js') }}"></script>
+{% endblock %}

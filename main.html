@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>工讀生排班與人員管理系統</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <!-- FullCalendar CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+  <style>
+    body { background-color: #f8f9fa; padding: 20px; font-family: "Microsoft JhengHei", sans-serif; }
+    .calendar-card { background: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .fc-event { cursor: pointer; border: none; font-size: 0.82rem; padding: 2px 4px; margin-bottom: 2px; }
+    .nav-tabs .nav-link { font-weight: bold; font-size: 1.05rem; }
+
+    /* ==================== 每日格子自適應高度 CSS ==================== */
+    .fc-daygrid-day-frame {
+      display: flex !important;
+      flex-direction: column !important;
+      min-height: 120px;
+      height: 100%;
+      position: relative;
+    }
+
+    .fc-daygrid-day-top {
+      position: absolute !important;
+      top: 2px;
+      right: 4px;
+      z-index: 5;
+      pointer-events: none;
+      flex-direction: row !important;
+    }
+
+    .fc-daygrid-day-events {
+      display: flex !important;
+      flex-direction: column !important;
+      flex: 1 1 auto;
+      position: relative;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    .fc-daygrid-day-events .office-zone,
+    .fc-daygrid-day-events .mc-zone {
+      display: flex;
+      flex-direction: column;
+      flex: 1 0 auto;
+      min-height: 60px;
+      width: 100%;
+      margin: 0;
+      box-sizing: border-box !important;
+      overflow: visible;
+    }
+
+    .fc-daygrid-day-events .office-zone {
+      padding: 24px 4px 4px 4px;
+      border-bottom: 1px dashed #dee2e6;
+      background-color: rgba(40, 167, 69, 0.02);
+    }
+
+    .fc-daygrid-day-events .mc-zone {
+      padding: 4px;
+      background-color: rgba(13, 110, 253, 0.02);
+    }
+
+    /* ==================== 切換至單一地點時的樣式修復 ==================== */
+    #calendar.single-location-view .office-zone,
+    #calendar.single-location-view .mc-zone {
+      display: none !important;
+    }
+
+    #calendar.single-location-view .fc-daygrid-day-events {
+      padding-top: 24px !important;
+    }
+
+    /* ==================== 獨立地點欄位 CSS ==================== */
+    .location-column-header {
+      width: 80px !important;
+      min-width: 80px !important;
+      max-width: 80px !important;
+      background-color: #f8f9fa !important;
+      vertical-align: middle !important;
+      text-align: center !important;
+      font-weight: bold;
+      color: #495057;
+      border-right: 1px solid #dee2e6 !important;
+    }
+
+    .location-column-cell {
+      width: 80px !important;
+      min-width: 80px !important;
+      max-width: 80px !important;
+      padding: 0 !important;
+      background-color: #f8f9fa !important;
+      border-right: 1px solid #dee2e6 !important;
+      vertical-align: top !important;
+    }
+
+    .location-column-wrapper {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      width: 100%;
+      box-sizing: border-box !important;
+    }
+
+    .location-column-wrapper .loc-office {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: #198754;
+      border-bottom: 1px dashed #dee2e6;
+      text-align: center;
+      padding: 2px;
+      box-sizing: border-box !important;
+    }
+
+    .location-column-wrapper .loc-mc {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: #0d6efd;
+      text-align: center;
+      padding: 2px;
+      box-sizing: border-box !important;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container-fluid">
+  <ul class="nav nav-tabs mb-4" id="mainTab" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="calendar-tab" data-bs-toggle="tab" data-bs-target="#calendar-pane" type="button" role="tab">📅 排班日曆與月報</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="staff-tab" data-bs-toggle="tab" data-bs-target="#staff-pane" type="button" role="tab">👥 工讀生名冊管理</button>
+    </li>
+  </ul>
+
+  <div class="tab-content" id="mainTabContent">
+    
+    <!-- 頁籤 1：排班日曆與月報 -->
+    <div class="tab-pane fade show active" id="calendar-pane" role="tabpanel">
+      <div class="row mb-3 align-items-center">
+        <div class="col-md-4">
+          <h3 class="mb-0">📅 當月排班總覽</h3>
+        </div>
+        <div class="col-md-5">
+          <div class="btn-group w-100" role="group" id="locationFilter">
+            <input type="radio" class="btn-check" name="locFilter" id="locAll" value="ALL" checked onchange="filterCalendar()">
+            <label class="btn btn-outline-dark" for="locAll">🏢 全部地點</label>
+
+            <input type="radio" class="btn-check" name="locFilter" id="locOffice" value="OFFICE" onchange="filterCalendar()">
+            <label class="btn btn-outline-success" for="locOffice">💼 辦公室</label>
+
+            <input type="radio" class="btn-check" name="locFilter" id="locMC" value="MC" onchange="filterCalendar()">
+            <label class="btn btn-outline-primary" for="locMC">🏫 管理中心</label>
+          </div>
+        </div>
+        <div class="col-md-3 text-end">
+          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#shiftModal">+ 新增排班</button>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-9 mb-4">
+          <div class="calendar-card">
+            <div id="calendar"></div>
+          </div>
+        </div>
+
+        <div class="col-lg-3">
+          <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white fw-bold d-flex justify-content-between align-items-center">
+              <span>📊 總時數與薪資統計</span>
+              <span id="currentLocBadge" class="badge bg-secondary">全部</span>
+            </div>
+            <div class="card-body">
+              <div class="mb-3">
+                <label for="hourlyRate" class="form-label">預設時薪 (元/小時)：</label>
+                <input type="number" id="hourlyRate" class="form-control" value="190" onchange="renderStats()">
+              </div>
+              <hr>
+              <ul class="list-group list-group-flush" id="statsList"></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 頁籤 2：工讀生名冊管理 -->
+    <div class="tab-pane fade" id="staff-pane" role="tabpanel">
+      <div class="row mb-3">
+        <div class="col-md-8">
+          <h3>👥 工讀生基本資料管理</h3>
+        </div>
+        <div class="col-md-4 text-end">
+          <button class="btn btn-success" onclick="openStaffModal('新增工讀生資料', '建立資料')">+ 新增工讀生</button>
+        </div>
+      </div>
+
+      <div class="card shadow-sm">
+        <div class="card-body p-0">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>姓名</th>
+                <th>學號</th>
+                <th>聯絡電話</th>
+                <th>國籍</th>
+                <th>工作證效期</th>
+                <th>居留證截止日</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="staffTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Modal 1：新增排班 -->
+<div class="modal fade" id="shiftModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">新增排班資料</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="shiftForm">
+          <div class="mb-3">
+            <label class="form-label">日期</label>
+            <input type="date" id="shiftDate" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">選擇工讀生</label>
+            <select id="staffSelect" class="form-select" required></select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">地點與班別</label>
+            <select id="shiftType" class="form-select" required>
+              <optgroup label="辦公室">
+                <option value="OFF-M" data-location="OFFICE" data-prefix="辦公室" data-start="09:00" data-end="13:00" data-time-label="09-13" data-hours="4" data-color="#28a745" data-order="1">辦公室 - 早班 (09:00-13:00, 4h)</option>
+                <option value="OFF-A" data-location="OFFICE" data-prefix="辦公室" data-start="13:00" data-end="17:00" data-time-label="13-17" data-hours="4" data-color="#20c997" data-order="2">辦公室 - 中班 (13:00-17:00, 4h)</option>
+              </optgroup>
+              <optgroup label="管理中心">
+                <option value="MC-M" data-location="MC" data-prefix="管理" data-start="09:00" data-end="13:00" data-time-label="09-13" data-hours="4" data-color="#0d6efd" data-order="1">管理中心 - 早班 (09:00-13:00, 4h)</option>
+                <option value="MC-A" data-location="MC" data-prefix="管理" data-start="13:00" data-end="17:00" data-time-label="13-17" data-hours="4" data-color="#0dcaf0" data-order="2">管理中心 - 中班 (13:00-17:00, 4h)</option>
+                <option value="MC-E" data-location="MC" data-prefix="管理" data-start="18:00" data-end="21:00" data-time-label="18-21" data-hours="3" data-color="#ffc107" data-order="3">管理中心 - 晚班 (18:00-21:00, 3h)</option>
+                <option value="MC-SDA" data-location="MC" data-prefix="管理SDA" data-start="17:30" data-end="21:30" data-time-label="1730-2130" data-hours="4" data-color="#6f42c1" data-order="4">管理中心 - 宿自會 SDA (17:30-21:30, 4h)</option>
+              </optgroup>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary w-100">儲存排班</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 2：新增/編輯工讀生 -->
+<div class="modal fade" id="staffModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staffModalTitle">新增工讀生資料</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="staffForm">
+          <input type="hidden" id="staffId">
+          <div class="mb-3">
+            <label class="form-label">姓名 *</label>
+            <input type="text" id="sName" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">學號</label>
+            <input type="text" id="sNumber" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">聯絡電話</label>
+            <input type="tel" id="sPhone" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">國籍 *</label>
+            <select id="sNationality" class="form-select" onchange="toggleForeignFields()">
+              <option value="台灣">台灣 (本國籍)</option>
+              <option value="外國籍">外國籍 / 外籍生</option>
+            </select>
+          </div>
+          <div id="foreignFields" class="p-3 mb-3 border rounded bg-light" style="display: none;">
+            <div class="fw-bold text-primary mb-2"><i class="bi bi-passport"></i> 外籍生證件資訊</div>
+            <div class="row mb-2">
+              <div class="col-md-6">
+                <label class="form-label small">工作證效期 (開始)</label>
+                <input type="date" id="sWorkPermitStart" class="form-control form-control-sm">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small">工作證效期 (結束)</label>
+                <input type="date" id="sWorkPermitEnd" class="form-control form-control-sm">
+              </div>
+            </div>
+            <div>
+              <label class="form-label small">居留證截止日</label>
+              <input type="date" id="sResidencyEnd" class="form-control form-control-sm">
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary w-100" id="staffSaveBtn">儲存資料</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+
+<script>
+  let staffList = [
+    { id: 'S01', name: '紅玉', number: '11130601', phone: '0911-111-111', nationality: '台灣', wpStart: '', wpEnd: '', resEnd: '' },
+    { id: 'S02', name: 'Yammy', number: '11130602', phone: '0922-222-222', nationality: '外國籍', wpStart: '2026-05-01', wpEnd: '2027-05-01', resEnd: '2028-08-15' },
+    { id: 'S03', name: '林峻逸', number: '11130603', phone: '0933-333-333', nationality: '外國籍', wpStart: '2026-01-01', wpEnd: '2027-01-01', resEnd: '2027-12-31' }
+  ];
+
+  let shiftEvents = [];
+  let calendar;
+
+  function insertSorted(parent, element, sortOrder) {
+    element.dataset.sortOrder = sortOrder;
+    const children = Array.from(parent.children);
+    const sibling = children.find(child => {
+      const childOrder = parseInt(child.dataset.sortOrder || '0', 10);
+      return childOrder > sortOrder;
+    });
+    if (sibling) {
+      parent.insertBefore(element, sibling);
+    } else {
+      parent.appendChild(element);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const calendarEl = document.getElementById('calendar');
+    calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'dayGridMonth',
+      locale: 'zh-tw',
+      dayMaxEvents: false,
+      eventOrder: 'sortOrder',
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,listMonth'
+      },
+      events: shiftEvents,
+
+      dayCellDidMount: function(arg) {
+        const eventsContainer = arg.el.querySelector('.fc-daygrid-day-events');
+        if (eventsContainer && !eventsContainer.querySelector('.office-zone')) {
+          const officeZone = document.createElement('div');
+          officeZone.className = 'office-zone';
+
+          const mcZone = document.createElement('div');
+          mcZone.className = 'mc-zone';
+
+          eventsContainer.appendChild(officeZone);
+          eventsContainer.appendChild(mcZone);
+        }
+      },
+
+      eventDidMount: function(arg) {
+        const selectedLoc = document.querySelector('input[name="locFilter"]:checked')?.value || 'ALL';
+        
+        if (selectedLoc === 'ALL') {
+          const eventLoc = arg.event.extendedProps.location;
+          const sortOrder = arg.event.extendedProps.sortOrder || 1;
+          const cell = arg.el.closest('.fc-daygrid-day-frame');
+          
+          if (cell) {
+            const officeZone = cell.querySelector('.office-zone');
+            const mcZone = cell.querySelector('.mc-zone');
+
+            if (eventLoc === 'OFFICE' && officeZone) {
+              insertSorted(officeZone, arg.el, sortOrder);
+            } else if (eventLoc === 'MC' && mcZone) {
+              insertSorted(mcZone, arg.el, sortOrder);
+            }
+          }
+          setTimeout(syncZoneHeights, 10);
+        }
+      },
+
+      datesSet: function() {
+        injectIndependentLocationColumn();
+      },
+
+      dateClick: function(info) {
+        document.getElementById('shiftDate').value = info.dateStr;
+        new bootstrap.Modal(document.getElementById('shiftModal')).show();
+      },
+
+      eventClick: function(info) {
+        if (confirm(`確定要刪除「${info.event.startStr}」的「${info.event.title}」排班嗎？`)) {
+          deleteShift(info.event.id);
+        }
+      }
+    });
+
+    calendar.render();
+    renderStaffUI();
+    renderStats();
+
+    window.addEventListener('resize', syncZoneHeights);
+    if (window.ResizeObserver) {
+      const resizeObserver = new ResizeObserver(() => syncZoneHeights());
+      resizeObserver.observe(calendarEl);
+    }
+  });
+
+  function isTimeOverlap(start1, end1, start2, end2) {
+    return (start1 < end2) && (start2 < end1);
+  }
+
+  function deleteShift(id) {
+    const targetId = String(id);
+    shiftEvents = shiftEvents.filter(evt => String(evt.id) !== targetId);
+
+    const calendarEvent = calendar.getEventById(targetId);
+    if (calendarEvent) {
+      calendarEvent.remove();
+    }
+
+    renderStats();
+    setTimeout(syncZoneHeights, 20);
+  }
+
+  function syncZoneHeights() {
+    const selectedLoc = document.querySelector('input[name="locFilter"]:checked')?.value || 'ALL';
+    if (selectedLoc !== 'ALL') return;
+
+    const rows = document.querySelectorAll('.fc-daygrid-body tr');
+    rows.forEach(tr => {
+      const days = tr.querySelectorAll('td.fc-daygrid-day');
+      
+      let maxOfficeHeight = 60;
+      days.forEach(day => {
+        const officeZone = day.querySelector('.office-zone');
+        if (officeZone) {
+          officeZone.style.height = 'auto';
+          const h = officeZone.getBoundingClientRect().height;
+          if (h > maxOfficeHeight) maxOfficeHeight = h;
+        }
+      });
+
+      days.forEach(day => {
+        const officeZone = day.querySelector('.office-zone');
+        if (officeZone) officeZone.style.height = maxOfficeHeight + 'px';
+      });
+
+      const locCell = tr.querySelector('.location-column-cell');
+      if (locCell) {
+        const locOffice = locCell.querySelector('.loc-office');
+        if (locOffice) locOffice.style.height = maxOfficeHeight + 'px';
+      }
+    });
+  }
+
+  function injectIndependentLocationColumn() {
+    const isAllLoc = document.getElementById('locAll').checked;
+    
+    document.querySelectorAll('.location-column-header').forEach(el => el.remove());
+    document.querySelectorAll('.location-column-cell').forEach(el => el.remove());
+
+    if (!isAllLoc) return;
+
+    const headerTr = document.querySelector('.fc-col-header tr');
+    if (headerTr) {
+      const th = document.createElement('th');
+      th.className = 'location-column-header';
+      th.textContent = '地點';
+      headerTr.insertBefore(th, headerTr.firstChild);
+    }
+
+    const bodyTrs = document.querySelectorAll('.fc-daygrid-body tr');
+    bodyTrs.forEach(tr => {
+      const td = document.createElement('td');
+      td.className = 'location-column-cell';
+      td.innerHTML = `
+        <div class="location-column-wrapper">
+          <div class="loc-office">辦公室</div>
+          <div class="loc-mc">管理中心</div>
+        </div>
+      `;
+      tr.insertBefore(td, tr.firstChild);
+    });
+
+    syncZoneHeights();
+  }
+
+  const formatDate = (dateStr) => dateStr ? dateStr.replace(/-/g, '/') : '-';
+
+  function filterCalendar() {
+    const selectedLoc = document.querySelector('input[name="locFilter"]:checked').value;
+    const badgeEl = document.getElementById('currentLocBadge');
+
+    if (selectedLoc === 'OFFICE') {
+      badgeEl.textContent = '辦公室';
+      badgeEl.className = 'badge bg-success';
+    } else if (selectedLoc === 'MC') {
+      badgeEl.textContent = '管理中心';
+      badgeEl.className = 'badge bg-primary';
+    } else {
+      badgeEl.textContent = '全部';
+      badgeEl.className = 'badge bg-secondary';
+    }
+
+    document.querySelectorAll('.office-zone, .mc-zone').forEach(zone => zone.innerHTML = '');
+
+    const filteredEvents = selectedLoc === 'ALL' 
+      ? shiftEvents 
+      : shiftEvents.filter(evt => evt.location === selectedLoc);
+
+    const calendarEl = document.getElementById('calendar');
+    if (selectedLoc === 'ALL') {
+      calendarEl.classList.remove('single-location-view');
+    } else {
+      calendarEl.classList.add('single-location-view');
+    }
+
+    calendar.removeAllEvents();
+    calendar.addEventSource(filteredEvents);
+
+    renderStats(selectedLoc);
+
+    setTimeout(() => {
+      injectIndependentLocationColumn();
+      if (selectedLoc === 'ALL') {
+        syncZoneHeights();
+      }
+    }, 50);
+  }
+
+  function toggleForeignFields() {
+    const nationality = document.getElementById('sNationality').value;
+    const foreignFields = document.getElementById('foreignFields');
+    foreignFields.style.display = (nationality === '外國籍') ? 'block' : 'none';
+  }
+
+  function renderStaffUI() {
+    const tableBody = document.getElementById('staffTableBody');
+    tableBody.innerHTML = '';
+
+    staffList.forEach(staff => {
+      let wpDisplay = '-';
+      let resDisplay = '-';
+
+      if (staff.nationality === '台灣') {
+        wpDisplay = '<span class="text-muted small">免填 (本國籍)</span>';
+        resDisplay = '<span class="text-muted small">免填 (本國籍)</span>';
+      } else {
+        wpDisplay = staff.wpStart && staff.wpEnd 
+          ? `${formatDate(staff.wpStart)} - ${formatDate(staff.wpEnd)}`
+          : (staff.wpEnd ? `迄 ${formatDate(staff.wpEnd)}` : '-');
+        resDisplay = formatDate(staff.resEnd) || '-';
+      }
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="fw-bold">${staff.name}</td>
+        <td>${staff.number || '-'}</td>
+        <td>${staff.phone || '-'}</td>
+        <td><span class="badge ${staff.nationality === '台灣' ? 'bg-secondary' : 'bg-info'}">${staff.nationality}</span></td>
+        <td>${wpDisplay}</td>
+        <td>${resDisplay}</td>
+        <td>
+          <button class="btn btn-sm btn-outline-primary me-1" onclick="editStaff('${staff.id}')"><i class="bi bi-pencil-square"></i> 編輯</button>
+          <button class="btn btn-sm btn-outline-danger" onclick="deleteStaffMember('${staff.id}')"><i class="bi bi-trash3"></i> 刪除</button>
+        </td>
+      `;
+      tableBody.appendChild(tr);
+    });
+
+    const selectEl = document.getElementById('staffSelect');
+    selectEl.innerHTML = '';
+    staffList.forEach(staff => {
+      const opt = document.createElement('option');
+      opt.value = staff.name;
+      opt.textContent = staff.name;
+      selectEl.appendChild(opt);
+    });
+  }
+
+  function renderStats(currentLoc = null) {
+    if (!currentLoc) {
+      currentLoc = document.querySelector('input[name="locFilter"]:checked')?.value || 'ALL';
+    }
+
+    const hourlyRate = parseFloat(document.getElementById('hourlyRate').value) || 0;
+    const statsListEl = document.getElementById('statsList');
+    statsListEl.innerHTML = '';
+
+    const targetShifts = currentLoc === 'ALL' 
+      ? shiftEvents 
+      : shiftEvents.filter(evt => evt.location === currentLoc);
+
+    staffList.forEach(staff => {
+      const totalHours = targetShifts
+        .filter(evt => evt.staffName === staff.name)
+        .reduce((sum, evt) => sum + evt.hours, 0);
+
+      const totalSalary = totalHours * hourlyRate;
+
+      const li = document.createElement('li');
+      li.className = 'list-group-item d-flex justify-content-between align-items-center px-0 py-2';
+      li.innerHTML = `
+        <div>
+          <strong>${staff.name}</strong><br>
+          <small class="text-muted">時數: ${totalHours} 小時</small>
+        </div>
+        <span class="badge bg-success fs-6">$${totalSalary.toLocaleString()}</span>
+      `;
+      statsListEl.appendChild(li);
+    });
+  }
+
+  function openStaffModal(title, btnText, id = null) {
+    document.getElementById('staffModalTitle').textContent = title;
+    document.getElementById('staffSaveBtn').textContent = btnText;
+    document.getElementById('staffForm').reset();
+    document.getElementById('staffId').value = '';
+
+    if (id) {
+      const staff = staffList.find(s => s.id === id);
+      if (staff) {
+        document.getElementById('staffId').value = staff.id;
+        document.getElementById('sName').value = staff.name;
+        document.getElementById('sNumber').value = staff.number || '';
+        document.getElementById('sPhone').value = staff.phone || '';
+        document.getElementById('sNationality').value = staff.nationality || '台灣';
+        document.getElementById('sWorkPermitStart').value = staff.wpStart || '';
+        document.getElementById('sWorkPermitEnd').value = staff.wpEnd || '';
+        document.getElementById('sResidencyEnd').value = staff.resEnd || '';
+      }
+    }
+    
+    toggleForeignFields();
+    new bootstrap.Modal(document.getElementById('staffModal')).show();
+  }
+
+  function editStaff(id) {
+    openStaffModal('編輯工讀生資料', '儲存變更', id);
+  }
+
+  document.getElementById('staffForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const id = document.getElementById('staffId').value;
+    const newStaff = {
+      name: document.getElementById('sName').value.trim(),
+      number: document.getElementById('sNumber').value.trim(),
+      phone: document.getElementById('sPhone').value.trim(),
+      nationality: document.getElementById('sNationality').value,
+      wpStart: document.getElementById('sWorkPermitStart').value,
+      wpEnd: document.getElementById('sWorkPermitEnd').value,
+      resEnd: document.getElementById('sResidencyEnd').value
+    };
+
+    if (id) {
+      const index = staffList.findIndex(s => s.id === id);
+      if (index !== -1) staffList[index] = { ...staffList[index], ...newStaff };
+    } else {
+      staffList.push({ id: 'S' + String(Date.now()).slice(-4), ...newStaff });
+    }
+
+    renderStaffUI();
+    renderStats();
+    bootstrap.Modal.getInstance(document.getElementById('staffModal')).hide();
+  });
+
+  function deleteStaffMember(id) {
+    const staff = staffList.find(s => s.id === id);
+    if (staff && confirm(`確定要刪除「${staff.name}」嗎？`)) {
+      staffList = staffList.filter(s => s.id !== id);
+      renderStaffUI();
+      renderStats();
+    }
+  }
+
+  document.getElementById('shiftForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const date = document.getElementById('shiftDate').value;
+    const staffName = document.getElementById('staffSelect').value;
+    const selectEl = document.getElementById('shiftType');
+    const selectedOption = selectEl.options[selectEl.selectedIndex];
+    
+    const location = selectedOption.getAttribute('data-location');
+    const prefix = selectedOption.getAttribute('data-prefix');
+    const startTime = selectedOption.getAttribute('data-start');
+    const endTime = selectedOption.getAttribute('data-end');
+    const timeLabel = selectedOption.getAttribute('data-time-label'); // 新增精簡時間顯示權重
+    const hours = parseInt(selectedOption.getAttribute('data-hours'));
+    const color = selectedOption.getAttribute('data-color');
+    const sortOrder = parseInt(selectedOption.getAttribute('data-order') || '1', 10);
+
+    // 1. 同地點班別重複檢查
+    const samePlaceDuplicate = shiftEvents.find(evt => 
+      evt.start === date && 
+      evt.location === location && 
+      (evt.shiftStartTime || evt.startTime) === startTime && 
+      (evt.shiftEndTime || evt.endTime) === endTime
+    );
+
+    if (samePlaceDuplicate) {
+      alert(`⚠️ 錯誤：${date} 的【${prefix}】在 ${startTime}-${endTime} 時段已有「${samePlaceDuplicate.staffName}」排班！同一地點數量不重複。`);
+      return;
+    }
+
+    // 2. 同一人時間重疊檢查
+    const personOverlap = shiftEvents.find(evt => 
+      evt.start === date && 
+      evt.staffName === staffName && 
+      isTimeOverlap(startTime, endTime, (evt.shiftStartTime || evt.startTime), (evt.shiftEndTime || evt.endTime))
+    );
+
+    if (personOverlap) {
+      const placeText = personOverlap.location === 'OFFICE' ? '辦公室' : '管理中心';
+      alert(`⚠️ 錯誤：${staffName} 在 ${date} 的 ${personOverlap.shiftStartTime || personOverlap.startTime}-${personOverlap.shiftEndTime || personOverlap.endTime} 已在【${placeText}】有班，同一人無法在重疊時間段排班！`);
+      return;
+    }
+
+    const newEvent = {
+      id: String(Date.now()),
+      title: `${staffName} (${prefix} ${timeLabel})`,
+      start: date,
+      staffName: staffName,
+      location: location,
+      shiftStartTime: startTime,
+      shiftEndTime: endTime,
+      hours: hours,
+      backgroundColor: color,
+      sortOrder: sortOrder
+    };
+
+    shiftEvents.push(newEvent);
+    calendar.addEvent(newEvent);
+    renderStats();
+
+    bootstrap.Modal.getInstance(document.getElementById('shiftModal')).hide();
+    document.getElementById('shiftForm').reset();
+  });
+</script>
+
+</body>
+</html>

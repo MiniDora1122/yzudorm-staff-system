@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}管理員帳號 Admin Accounts｜宿舍工讀生系統{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+  <div class="page-heading">
+    <span class="eyebrow">ADMIN ACCOUNTS</span>
+    <h1 class="h2 fw-bold mt-2 mb-1" data-en="Admin accounts">管理員帳號</h1>
+    <p class="text-secondary mb-0" data-en="Only administrators can view this page and create or reset administrator accounts.">本頁僅限管理員查看，可建立或重設其他管理員帳號。</p>
+  </div>
+  <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#createAdminModal" data-en="Add administrator"><i class="bi bi-person-badge me-2"></i>新增管理員</button>
+</div>
+
+<div class="card app-card border-0 shadow-sm">
+  <div class="table-responsive">
+    <table class="table align-middle mb-0">
+      <thead><tr><th class="ps-4" data-en="Administrator">管理員</th><th data-en="Account status">帳號狀態</th><th data-en="Last login">最後登入</th><th data-en="Created">建立時間</th><th data-en="Actions">操作</th></tr></thead>
+      <tbody>
+      {% for administrator in administrators %}
+        <tr>
+          <td class="ps-4"><strong>{{ administrator.display_name or administrator.username }}</strong><div class="small text-secondary">{{ administrator.username }}</div></td>
+          <td>
+            <span class="badge text-bg-{{ 'success' if administrator.is_active else 'secondary' }}" data-en="{{ 'Active' if administrator.is_active else 'Disabled' }}">{{ '啟用' if administrator.is_active else '停用' }}</span>
+            {% if administrator.must_change_password %}<span class="badge text-bg-warning" data-en="Password change required">等待修改臨時密碼</span>{% endif %}
+          </td>
+          <td>{{ administrator.last_login_at.strftime('%Y-%m-%d %H:%M') if administrator.last_login_at else '—' }}</td>
+          <td>{{ administrator.created_at.strftime('%Y-%m-%d') }}</td>
+          <td>
+            {% if administrator.id == current_user.id %}
+              <span class="small text-secondary" data-en="Current account">目前登入帳號</span>
+            {% else %}
+              <div class="d-flex flex-wrap gap-2">
+                <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="modal" data-bs-target="#resetAdminPassword{{ administrator.id }}" data-en="Reset password"><i class="bi bi-key me-1"></i>重設密碼</button>
+                <form method="post" action="{{ url_for('admin.delete_administrator', user_id=administrator.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn btn-sm btn-outline-danger" type="submit" data-confirm-action="確定刪除此管理員帳號？帳號將立即無法登入，但歷史稽核仍會保留。" data-en="Delete administrator"><i class="bi bi-trash3 me-1"></i>刪除</button></form>
+              </div>
+            {% endif %}
+          </td>
+        </tr>
+      {% else %}<tr><td colspan="5" class="text-center text-secondary py-5" data-en="No administrator accounts found.">尚無管理員帳號。</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="modal fade" id="createAdminModal" tabindex="-1" aria-labelledby="createAdminTitle" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+  <form method="post" action="{{ url_for('admin.create_administrator') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="modal-header"><div><h2 class="modal-title h5 mb-1" id="createAdminTitle" data-en="Add administrator account">新增管理員帳號</h2><div class="small text-secondary" data-en="The new administrator must change the temporary password after first sign-in.">新管理員首次登入後必須修改臨時密碼。</div></div><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="關閉 Close"></button></div>
+    <div class="modal-body">
+      <div class="mb-3"><label class="form-label" for="adminDisplayName" data-en="Display name">顯示名稱</label><input class="form-control" id="adminDisplayName" name="display_name" maxlength="100" required></div>
+      <div class="mb-3"><label class="form-label" for="adminUsername" data-en="Username">登入帳號</label><input class="form-control" id="adminUsername" name="username" maxlength="80" pattern="[A-Za-z0-9._-]{3,80}" autocomplete="off" required><div class="form-text" data-en="3–80 letters, numbers, dots, underscores or hyphens; stored in lowercase.">3–80 位英數字、句點、底線或連字號；系統會轉為小寫。</div></div>
+      <div class="mb-3"><label class="form-label" for="adminTemporaryPassword" data-en="Temporary password">臨時密碼</label><div class="input-group"><input class="form-control temporary-password" id="adminTemporaryPassword" name="temporary_password" type="password" minlength="8" maxlength="128" autocomplete="new-password" required><button class="btn btn-outline-secondary password-visibility" type="button" aria-label="顯示臨時密碼 Show temporary password"><i class="bi bi-eye"></i></button></div></div>
+      <div class="mb-3"><label class="form-label" for="adminTemporaryPasswordConfirm" data-en="Confirm temporary password">再次輸入臨時密碼</label><input class="form-control temporary-password-confirm" id="adminTemporaryPasswordConfirm" name="confirm_temporary_password" type="password" minlength="8" maxlength="128" autocomplete="new-password" required></div>
+      <button class="btn btn-sm btn-outline-primary generate-password" type="button" data-en="Generate secure password"><i class="bi bi-shuffle me-1"></i>產生安全臨時密碼</button>
+      <div class="alert alert-warning small mt-3 mb-0" data-en="Share the temporary password through a secure channel. It will not be shown again."><i class="bi bi-shield-exclamation me-2"></i>請透過安全管道交付臨時密碼，系統不會再次顯示。</div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline-secondary" type="button" data-bs-dismiss="modal" data-en="Cancel">取消</button><button class="btn btn-primary" type="submit" data-en="Create account">建立帳號</button></div>
+  </form>
+</div></div></div>
+
+{% for administrator in administrators if administrator.id != current_user.id %}
+<div class="modal fade" id="resetAdminPassword{{ administrator.id }}" tabindex="-1" aria-labelledby="resetAdminPasswordTitle{{ administrator.id }}" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+  <form method="post" action="{{ url_for('admin.reset_administrator_password', user_id=administrator.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="modal-header"><h2 class="modal-title h5" id="resetAdminPasswordTitle{{ administrator.id }}" data-en="Reset administrator password">重設 {{ administrator.display_name or administrator.username }} 的密碼</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="關閉 Close"></button></div>
+    <div class="modal-body">
+      <div class="alert alert-warning small" data-en="The old password becomes invalid immediately. A password change will be required after sign-in.">儲存後原密碼立即失效，下次登入後必須修改臨時密碼。</div>
+      <div class="mb-3"><label class="form-label" for="resetAdminPasswordValue{{ administrator.id }}" data-en="New temporary password">新臨時密碼</label><div class="input-group"><input class="form-control temporary-password" id="resetAdminPasswordValue{{ administrator.id }}" name="temporary_password" type="password" minlength="8" maxlength="128" autocomplete="new-password" required><button class="btn btn-outline-secondary password-visibility" type="button" aria-label="顯示臨時密碼 Show temporary password"><i class="bi bi-eye"></i></button></div></div>
+      <div class="mb-3"><label class="form-label" for="resetAdminPasswordConfirm{{ administrator.id }}" data-en="Confirm temporary password">再次輸入臨時密碼</label><input class="form-control temporary-password-confirm" id="resetAdminPasswordConfirm{{ administrator.id }}" name="confirm_temporary_password" type="password" minlength="8" maxlength="128" autocomplete="new-password" required></div>
+      <button class="btn btn-sm btn-outline-primary generate-password" type="button" data-en="Generate secure password"><i class="bi bi-shuffle me-1"></i>產生安全臨時密碼</button>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline-secondary" type="button" data-bs-dismiss="modal" data-en="Cancel">取消</button><button class="btn btn-danger" type="submit" data-confirm-action="確定重設此管理員的密碼？原密碼會立即失效。" data-en="Confirm reset">確認重設密碼</button></div>
+  </form>
+</div></div></div>
+{% endfor %}
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/requests.js') }}"></script><script src="{{ url_for('static', filename='js/staff_accounts.js') }}"></script>{% endblock %}

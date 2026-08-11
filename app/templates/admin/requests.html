@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% from "_status_badge.html" import status_badge, shift_text %}
+{% block title %}請假與換班審核 Leave and Swap Review｜宿舍工讀生系統{% endblock %}
+{% block content %}
+<div class="page-heading mb-4">
+  <span class="eyebrow">WORKFLOW</span>
+  <h1 class="h2 fw-bold mt-2 mb-1" data-en="Leave and swap review">請假與換班審核</h1>
+  <p class="text-secondary mb-0" data-en="All decisions retain status and audit history. Official schedules change only after final approval.">所有核准與拒絕都會保留狀態及操作紀錄；換班只在最終核准後更新正式班表。</p>
+</div>
+
+<div class="card app-card border-0 shadow-sm mb-4"><div class="card-body py-3 px-4">
+  <div class="d-flex flex-column flex-md-row align-items-md-end gap-3">
+    <div><div class="form-label fw-semibold mb-2" data-en="Schedule month filter">排班月份篩選</div><div class="btn-group" role="group" aria-label="申請月份篩選">
+      <a class="btn btn-{{ 'primary' if filter_scope == 'ALL' else 'outline-primary' }}" href="{{ url_for('admin.requests_page', scope='ALL') }}" data-en="All">全部</a>
+      <span class="btn btn-{{ 'primary' if filter_scope == 'MONTH' else 'outline-primary' }} disabled" aria-hidden="true" data-en="Selected month">指定月份</span>
+    </div></div>
+    <form class="d-flex align-items-end gap-2" method="get"><input type="hidden" name="scope" value="MONTH"><div><label class="form-label" for="adminRequestMonth" data-en="Month">月份</label><input class="form-control" id="adminRequestMonth" name="month" type="month" value="{{ filter_month }}" required></div><button class="btn btn-primary" type="submit" data-en="Apply">套用</button></form>
+    <div class="small text-secondary ms-md-auto">目前顯示：{{ '全部月份' if filter_scope == 'ALL' else filter_month }}</div>
+  </div>
+</div></div>
+
+<ul class="nav nav-pills mb-4" role="tablist">
+  <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#leaveReview" type="button" data-en="Leave">請假 <span class="badge text-bg-light ms-1">{{ leave_requests|selectattr('status.value', 'equalto', 'PENDING')|list|length }}</span></button></li>
+  <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#swapReview" type="button" data-en="Swap">換班 <span class="badge text-bg-light ms-1">{{ swap_requests|selectattr('display_status', 'equalto', 'PENDING_ADMIN')|list|length }}</span></button></li>
+</ul>
+
+<div class="tab-content">
+  <section class="tab-pane fade show active" id="leaveReview">
+    <div class="card app-card border-0 shadow-sm"><div class="table-responsive"><table class="table align-middle mb-0 request-table">
+      <thead><tr><th class="ps-4" data-en="Applicant / Shift">申請人／排班</th><th data-en="Reason / Note">原因與備註</th><th data-en="Submitted">申請時間</th><th data-en="Status">狀態</th><th data-en="Review">審核</th></tr></thead>
+      <tbody>{% for item in leave_requests %}<tr>
+        <td class="ps-4"><strong>{{ item.staff.name }}</strong><div class="small text-secondary mt-1">{{ shift_text(item.shift) }}</div>{% if item.status.value == 'APPROVED' %}<span class="badge text-bg-danger mt-2">目前缺員</span>{% endif %}</td>
+        <td><strong>{{ item.reason }}</strong>{% if item.note %}<div class="small text-secondary mt-1">{{ item.note }}</div>{% endif %}{% if item.review_note %}<div class="small mt-2">審核備註：{{ item.review_note }}</div>{% endif %}</td>
+        <td class="small text-secondary">{{ item.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+        <td>{{ status_badge(item.status.value) }}</td>
+        <td>{% if item.status.value == 'PENDING' %}<form method="post" action="{{ url_for('admin.review_leave', request_id=item.id) }}" class="review-form">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input class="form-control form-control-sm mb-2" name="review_note" maxlength="1000" placeholder="審核備註（選填）">
+          <div class="d-flex gap-2"><button class="btn btn-sm btn-success" name="decision" value="APPROVE" data-confirm-action="確定核准請假並將原班標示為缺員？" data-en="Approve">核准</button><button class="btn btn-sm btn-outline-danger" name="decision" value="REJECT" data-confirm-action="確定拒絕此請假申請？" data-en="Reject">拒絕</button></div>
+        </form>{% else %}<span class="text-secondary small">已完成審核</span>{% endif %}</td>
+      </tr>{% else %}<tr><td colspan="5" class="text-center text-secondary py-5">尚無請假申請。</td></tr>{% endfor %}</tbody>
+    </table></div></div>
+  </section>
+
+  <section class="tab-pane fade" id="swapReview">
+    <div class="card app-card border-0 shadow-sm"><div class="table-responsive"><table class="table align-middle mb-0 request-table">
+      <thead><tr><th class="ps-4" data-en="Applicant / Original shift">申請人與原班</th><th data-en="Target / Swap shift">對象與交換班表</th><th data-en="Status">狀態</th><th data-en="Review">審核</th></tr></thead>
+      <tbody>{% for item in swap_requests %}<tr>
+        <td class="ps-4"><strong>{{ item.requester.name }}</strong><div class="small text-secondary mt-1">{{ shift_text(item.requester_shift) }}</div>{% if item.note %}<div class="small mt-2">說明：{{ item.note }}</div>{% endif %}</td>
+        <td><strong>{{ item.target_staff.name }}</strong><div class="small text-secondary mt-1">{% if item.target_shift %}{{ shift_text(item.target_shift) }}{% else %}由對方直接承接申請人的班{% endif %}</div>{% if item.review_note %}<div class="small mt-2">審核備註：{{ item.review_note }}</div>{% endif %}</td>
+        <td>{{ status_badge(item.display_status) }}</td>
+        <td>{% if item.display_status == 'PENDING_ADMIN' %}<form method="post" action="{{ url_for('admin.review_swap', request_id=item.id) }}" class="review-form">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input class="form-control form-control-sm mb-2" name="review_note" maxlength="1000" placeholder="審核備註（選填）">
+          <div class="d-flex gap-2"><button class="btn btn-sm btn-success" name="decision" value="APPROVE" data-confirm-action="核准前將重新檢查衝突，確定繼續？">核准</button><button class="btn btn-sm btn-outline-danger" name="decision" value="REJECT" data-confirm-action="確定拒絕此換班申請？">拒絕</button></div>
+        </form>{% elif item.display_status == 'PENDING_PEER' %}<span class="text-secondary small">等待對方回覆</span>{% else %}<span class="text-secondary small">已完成處理</span>{% endif %}</td>
+      </tr>{% else %}<tr><td colspan="4" class="text-center text-secondary py-5">尚無換班申請。</td></tr>{% endfor %}</tbody>
+    </table></div></div>
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/requests.js') }}"></script>{% endblock %}

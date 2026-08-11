@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}我的資料與證件 My Profile and Documents｜宿舍工讀生系統{% endblock %}
+{% block content %}
+<div class="page-heading mb-4">
+  <span class="eyebrow">PROFILE & DOCUMENTS</span>
+  <h1 class="h2 fw-bold mt-2 mb-1" data-en="My profile and documents">我的資料與證件</h1>
+  <p class="text-secondary mb-0" data-en="Name, student ID and account are maintained by administrators. Verify document dates against all uploaded pages.">姓名、學號與帳號由管理單位維護；證件日期由你對照整份影像人工確認。</p>
+</div>
+{% if profile %}
+<div class="row g-4 mb-4">
+  <div class="col-lg-5"><div class="card app-card border-0 shadow-sm h-100"><div class="card-body p-4">
+    <h2 class="h5 fw-bold mb-3" data-en="Basic information">基本資料</h2>
+    <form method="post" action="{{ url_for('student.update_profile') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="row g-3">
+        <div class="col-sm-6"><label class="form-label">姓名</label><input class="form-control" value="{{ profile.name }}" disabled></div>
+        <div class="col-sm-6"><label class="form-label">學號</label><input class="form-control" value="{{ profile.student_number }}" disabled><div class="form-text">如需更正請聯絡管理員。</div></div>
+        <div class="col-12"><label class="form-label">帳號</label><input class="form-control" value="{{ profile.user.username }}" disabled></div>
+        <div class="col-12"><label class="form-label" for="profileEmail">Email</label><input class="form-control" id="profileEmail" name="email" type="email" maxlength="255" value="{{ profile.email or '' }}"></div>
+        <div class="col-12"><label class="form-label" for="profilePhone">聯絡電話</label><input class="form-control" id="profilePhone" name="phone" maxlength="30" value="{{ profile.phone or '' }}"></div>
+        <div class="col-12"><label class="form-label" for="profileNationality">國籍</label><input class="form-control" id="profileNationality" name="nationality" maxlength="80" value="{{ profile.nationality }}" required></div>
+      </div>
+      <button class="btn btn-primary w-100 mt-4" type="submit">儲存基本資料</button>
+    </form>
+  </div></div></div>
+  <div class="col-lg-7"><div class="card app-card border-0 shadow-sm h-100"><div class="card-body p-4">
+    <h2 class="h5 fw-bold mb-3" data-en="Current document information">目前證件資料</h2>
+    <div class="row g-3">
+      <div class="col-md-6"><div class="border rounded-3 p-3 h-100"><div class="d-flex justify-content-between"><strong>居留證</strong><span class="badge text-bg-{{ residence_state.class }}">{{ residence_state.label }}</span></div><dl class="small row mt-3 mb-0"><dt class="col-5">證號</dt><dd class="col-7">{{ mask_identifier(profile.residence_id) }}</dd><dt class="col-5">截止日</dt><dd class="col-7">{{ profile.residence_expiry or '—' }}</dd></dl></div></div>
+      <div class="col-md-6"><div class="border rounded-3 p-3 h-100"><div class="d-flex justify-content-between"><strong>工作證</strong><span class="badge text-bg-{{ permit_state.class }}">{{ permit_state.label }}</span></div><dl class="small row mt-3 mb-0"><dt class="col-5">開始日</dt><dd class="col-7">{{ profile.work_permit_start or '—' }}</dd><dt class="col-5">截止日</dt><dd class="col-7">{{ profile.work_permit_expiry or '—' }}</dd></dl></div></div>
+    </div>
+  </div></div></div>
+</div>
+
+<div class="card app-card border-0 shadow-sm mb-4"><div class="card-body p-4">
+  <h2 class="h5 fw-bold" data-en="Secure full-document upload"><i class="bi bi-shield-lock me-2 text-primary"></i>安全上傳整份證件</h2>
+  <div class="alert alert-info small mt-3"><strong>個資蒐集告知（{{ privacy_notice_version }}）</strong><br>照片僅供宿舍工讀生資格、居留與工作許可查核，由本人及具管理權限人員透過登入後頁面存取。影像會加密保存在非公開目錄並依校方保存政策保留；證件日期由本人逐頁人工核對。</div>
+  <form method="post" action="{{ url_for('student.upload_staff_document') }}" enctype="multipart/form-data" id="documentUploadForm">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="row g-3">
+      <div class="col-md-4"><label class="form-label" for="documentType">證件類型</label><select class="form-select" id="documentType" name="document_type" required><option value="RESIDENCE_PERMIT">居留證（正反面）</option><option value="WORK_PERMIT">工作證（1–2 頁）</option></select></div>
+      <div class="col-md-8">
+        <div id="residenceUploadFields" class="row g-3">
+          <div class="col-sm-6"><label class="form-label" for="residenceFront">居留證正面</label><input class="form-control" id="residenceFront" name="residence_front" type="file" accept="image/jpeg,image/png,image/webp" required></div>
+          <div class="col-sm-6"><label class="form-label" for="residenceBack">居留證反面</label><input class="form-control" id="residenceBack" name="residence_back" type="file" accept="image/jpeg,image/png,image/webp" required></div>
+        </div>
+        <div id="workPermitUploadFields" class="row g-3 d-none">
+          <div class="col-sm-6"><label class="form-label" for="workPermitPage1">工作證第 1 頁</label><input class="form-control" id="workPermitPage1" name="work_permit_page_1" type="file" accept="image/jpeg,image/png,image/webp"></div>
+          <div class="col-sm-6"><label class="form-label" for="workPermitPage2">工作證第 2 頁（選填）</label><input class="form-control" id="workPermitPage2" name="work_permit_page_2" type="file" accept="image/jpeg,image/png,image/webp"></div>
+        </div>
+      </div>
+    </div>
+    <div class="form-text mt-3">每頁接受 JPG、PNG、WEBP，最多 8MB；上傳後會移除 EXIF 並重新編碼。居留證兩面必須同時上傳，工作證第 1 頁必填。</div>
+    <div class="form-check mt-3"><input class="form-check-input" id="privacyConsent" name="privacy_consent" value="yes" type="checkbox" required><label class="form-check-label" for="privacyConsent">我已閱讀並同意上述蒐集、使用與保存說明。</label></div>
+    <button class="btn btn-primary mt-3" type="submit"><i class="bi bi-cloud-arrow-up me-2"></i>上傳整份文件</button>
+  </form>
+</div></div>
+
+<div class="row g-4">
+{% for group in document_groups %}
+  <div class="col-12"><div class="card app-card border-0 shadow-sm"><div class="card-body p-4">
+    <div class="d-flex flex-wrap justify-content-between gap-3 mb-3">
+      <div><span class="eyebrow">{{ '居留證' if group.document_type.value == 'RESIDENCE_PERMIT' else '工作證' }}</span><h2 class="h5 fw-bold mt-2 mb-0">{{ '等待學生核對' if group.status.value == 'NEEDS_REVIEW' else '等待管理員審核' if group.status.value == 'PENDING_ADMIN' else '管理員退回' if group.status.value == 'REJECTED' else '已確認文件' }} · {{ group.pages|length }} 頁</h2></div>
+      <div class="d-flex gap-2 align-items-start"><span class="badge text-bg-{{ 'danger' if group.status.value == 'REJECTED' else 'warning' if group.status.value in ['NEEDS_REVIEW', 'PENDING_ADMIN'] else 'success' }}">{{ group.status.value }}</span><a class="btn btn-sm btn-outline-primary" href="{{ url_for('student.download_staff_document_set', set_id=group.set_id) }}"><i class="bi bi-file-earmark-zip me-1"></i>下載整份</a></div>
+    </div>
+    <div class="row g-3 mb-3">
+      {% for document in group.pages %}<div class="col-md-6"><div class="border rounded-3 p-2 h-100"><div class="small fw-semibold mb-2">{{ page_labels[document.page_kind] }}</div><img class="document-preview rounded border mb-2" src="{{ url_for('student.view_staff_document', document_id=document.id) }}" alt="{{ page_labels[document.page_kind] }}預覽"><div class="d-flex justify-content-between align-items-center"><a class="small" href="{{ url_for('student.download_staff_document', document_id=document.id) }}">下載此頁</a><span class="small text-secondary">{{ document.image_width }}×{{ document.image_height }}｜{{ (document.file_size / 1024)|round|int }} KB</span></div></div></div>{% endfor %}
+    </div>
+    {% if group.primary.rejection_reason %}<div class="alert alert-danger"><strong data-en="Return reason">管理員退回原因</strong><div class="mt-1">{{ group.primary.rejection_reason }}</div></div>{% endif %}
+    {% if group.status.value in ['NEEDS_REVIEW', 'REJECTED'] %}
+    <form method="post" action="{{ url_for('student.confirm_staff_document', document_id=group.primary.id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      {% if group.document_type.value == 'RESIDENCE_PERMIT' %}<div class="row g-3"><div class="col-sm-7"><label class="form-label">居留證號</label><input class="form-control" name="residence_id" maxlength="100" value="{{ group.primary.draft.residence_id or profile.residence_id or '' }}" required></div><div class="col-sm-5"><label class="form-label">有效期限</label><input class="form-control" name="residence_expiry" type="date" value="{{ group.primary.draft.residence_expiry or profile.residence_expiry or '' }}" required></div></div>
+      {% else %}<div class="row g-3"><div class="col-sm-6"><label class="form-label">開始日</label><input class="form-control" name="work_permit_start" type="date" value="{{ group.primary.draft.work_permit_start or profile.work_permit_start or '' }}" required></div><div class="col-sm-6"><label class="form-label">截止日</label><input class="form-control" name="work_permit_expiry" type="date" value="{{ group.primary.draft.work_permit_expiry or profile.work_permit_expiry or '' }}" required></div></div>{% endif %}
+      <div class="alert alert-warning small mt-3" data-en="Submitting sends the document to an administrator. Official profile data changes only after approval.">請逐頁對照上方影像；送出後交由管理員審核，核准前不會更新正式資料。</div>
+      <button class="btn btn-success" type="submit" data-en="Submit for administrator review">送交管理員審核</button>
+    </form>
+    <form class="mt-2" method="post" action="{{ url_for('student.delete_staff_document', document_id=group.primary.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn btn-outline-danger" type="submit" data-confirm-action="確定刪除這一整份尚未確認的文件？">刪除整份待確認文件</button></form>
+    {% endif %}
+  </div></div></div>
+{% else %}<div class="col-12"><div class="alert alert-light border text-center text-secondary">尚未上傳證件影像。</div></div>{% endfor %}
+</div>
+{% else %}<div class="alert alert-warning">此帳號尚未建立工讀生資料，請聯絡管理員。</div>{% endif %}
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/requests.js') }}"></script><script src="{{ url_for('static', filename='js/documents.js') }}"></script>{% endblock %}
