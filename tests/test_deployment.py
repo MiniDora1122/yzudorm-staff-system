@@ -1,13 +1,41 @@
 from pathlib import Path
 
 from cryptography.fernet import Fernet
+from flask import Flask as BaseFlask
 from flask import jsonify, request
 
+import app as app_package
 from app import create_app
 from deployment.create_portable_backup import portable_env, sqlite_path
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
+
+
+def test_app_factory_creates_missing_instance_directory(tmp_path, monkeypatch):
+    instance_path = tmp_path / "missing-instance"
+
+    class TempInstanceFlask(BaseFlask):
+        def __init__(self, *args, **kwargs):
+            kwargs["instance_path"] = str(instance_path)
+            super().__init__(*args, **kwargs)
+
+    monkeypatch.setattr(app_package, "Flask", TempInstanceFlask)
+    assert not instance_path.exists()
+    app_package.create_app(
+        {
+            "TESTING": True,
+            "SECRET_KEY": "instance-directory-test-secret",
+            "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
+            "WTF_CSRF_ENABLED": False,
+            "DOCUMENT_STORAGE_DIR": str(tmp_path / "documents"),
+            "DOCUMENT_KEY_DIR": str(tmp_path / "keys"),
+            "DOCUMENT_KEY_BACKUP_DIR": str(tmp_path / "keys" / "backup"),
+            "DOCUMENT_ENCRYPTION_KEY": Fernet.generate_key().decode("ascii"),
+            "DOCUMENT_CLEANUP_SCHEDULER_ENABLED": False,
+        }
+    )
+    assert instance_path.is_dir()
 
 
 def make_proxy_app(tmp_path, trust_proxy):
@@ -110,6 +138,27 @@ def test_deployment_files_are_available():
     ]
     for relative in expected:
         assert (PROJECT_ROOT / relative).is_file(), relative
+
+
+def test_launcher_persists_secret_key_recovery_backup():
+    source = (PROJECT_ROOT / "portable-windows-launcher" / "DormStaffLauncher.cs").read_text(
+        encoding="utf-8"
+    )
+    assert '"application-env.backup"' in source
+    assert "BackupEnvironmentFile(created);" in source
+    assert "BackupEnvironmentFile(true);" in source
+    assert "HashesEqual(sourceHash, backupHash)" in source
+    assert "File.SetAttributes(backupPath, FileAttributes.Normal)" in source
+
+
+def test_launcher_includes_safe_data_migration_controls():
+    launcher_root = PROJECT_ROOT / "portable-windows-launcher"
+    source = (launcher_root / "DormStaffLauncher.cs").read_text(encoding="utf-8")
+    assert (launcher_root / "migrate_portable_data.py").is_file()
+    assert "InspectMigrationSource" in source
+    assert "RestorePortableData" in source
+    assert "ExportPortableBackup" in source
+    assert 'phraseBox.Text != "MIGRATE"' in source
 
 
 def test_gitignore_protects_production_data():

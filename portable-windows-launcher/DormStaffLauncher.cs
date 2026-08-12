@@ -66,7 +66,7 @@ namespace DormStaffPortable
         public string ListenAddress = "127.0.0.1";
         public string GitRemote = "origin";
         public string GitBranch = "main";
-        public string RepositoryUrl = "";
+        public string RepositoryUrl = "https://github.com/MiniDora1122/yzudorm-staff-system";
         public bool OpenBrowserAfterStart = true;
 
         public static LauncherConfig Load(string path)
@@ -193,6 +193,17 @@ namespace DormStaffPortable
         public bool DeleteOutputs;
     }
 
+    internal sealed class MigrationSourceInfo
+    {
+        public string SourceType;
+        public string Revision;
+        public int Users;
+        public int Staff;
+        public int Shifts;
+        public int Documents;
+        public string Summary;
+    }
+
     internal sealed class PortableManager
     {
         private const string PythonUrl = "https://www.python.org/ftp/python/3.12.10/python-3.12.10-embed-amd64.zip";
@@ -228,6 +239,9 @@ namespace DormStaffPortable
             RunChecked(environment.PythonExe, "-m pip install --disable-pip-version-check --no-warn-script-location --upgrade pip", environment.ProjectRoot);
             RunChecked(environment.PythonExe, "-m pip install --disable-pip-version-check --no-warn-script-location -r " + Quote(environment.RequirementsFile), environment.ProjectRoot);
             UpgradeDatabase();
+            int activeAdmins = CountActiveAdministrators();
+            if (activeAdmins == 0)
+                log("尚未建立管理員。請使用紅色「全新初始化」建立第一位管理員。 / No administrator exists; use Fresh database setup next.");
             RunChecked(environment.PythonExe, "-c \"from app import create_app; create_app(); print('Application import OK')\"", environment.ProjectRoot);
             log("安裝與檢查完成。 / Installation and verification completed.");
         }
@@ -333,26 +347,107 @@ namespace DormStaffPortable
 
         private void EnsureEnvironmentFile()
         {
-            if (File.Exists(environment.EnvFile)) return;
-            string template = Path.Combine(environment.ProjectRoot, ".env.example");
-            if (!File.Exists(template)) template = Path.Combine(environment.ProjectRoot, ".env.production.example");
-            if (!File.Exists(template)) throw new InvalidOperationException("找不到 .env 範本。 / No .env template was found.");
-            string content = File.ReadAllText(template, Encoding.UTF8);
-            string secret = Convert.ToBase64String(RandomBytes(48)).Replace("+", "-").Replace("/", "_").TrimEnd('=');
-            content = Regex.Replace(content, "(?m)^SECRET_KEY=.*$", "SECRET_KEY=" + secret);
-            content = Regex.Replace(content, "(?m)^SESSION_COOKIE_SECURE=.*$", "SESSION_COOKIE_SECURE=0");
-            content = Regex.Replace(content, "(?m)^TRUST_PROXY=.*$", "TRUST_PROXY=0");
-            content = Regex.Replace(content, "(?m)^DATABASE_URL=sqlite:///instance/dorm_staff\\.db$", "DATABASE_URL=sqlite:///dorm_staff.db");
-            File.WriteAllText(environment.EnvFile, content, new UTF8Encoding(false));
-            log("已建立 .env 並產生隨機密鑰。若使用 XAMPP HTTPS，請依教學調整。 / .env created with a random secret.");
+            bool created = !File.Exists(environment.EnvFile);
+            string content;
+            if (created)
+            {
+                string template = Path.Combine(environment.ProjectRoot, ".env.example");
+                if (!File.Exists(template)) template = Path.Combine(environment.ProjectRoot, ".env.production.example");
+                if (!File.Exists(template)) throw new InvalidOperationException("找不到 .env 範本。 / No .env template was found.");
+                content = File.ReadAllText(template, Encoding.UTF8);
+                string secret = Convert.ToBase64String(RandomBytes(48)).Replace("+", "-").Replace("/", "_").TrimEnd('=');
+                content = Regex.Replace(content, "(?m)^SECRET_KEY=.*$", "SECRET_KEY=" + secret);
+                content = Regex.Replace(content, "(?m)^SESSION_COOKIE_SECURE=.*$", "SESSION_COOKIE_SECURE=0");
+                content = Regex.Replace(content, "(?m)^TRUST_PROXY=.*$", "TRUST_PROXY=0");
+            }
+            else
+            {
+                content = File.ReadAllText(environment.EnvFile, Encoding.UTF8);
+            }
+
+            string normalized = Regex.Replace(
+                content,
+                "(?im)^\\s*DATABASE_URL\\s*=\\s*[\\\"']?sqlite:///instance/dorm_staff\\.db[\\\"']?\\s*$",
+                "DATABASE_URL=sqlite:///dorm_staff.db"
+            );
+            bool upgradedLegacyDatabasePath = !normalized.Equals(content, StringComparison.Ordinal);
+            if (created || upgradedLegacyDatabasePath)
+                File.WriteAllText(environment.EnvFile, normalized, new UTF8Encoding(false));
+
+            Directory.CreateDirectory(Path.Combine(environment.ProjectRoot, "instance"));
+            BackupEnvironmentFile(created);
+            if (created)
+                log("已建立 .env、產生隨機密鑰並保存復原備份。若使用 XAMPP HTTPS，請依教學調整。 / .env created and securely backed up.");
+            else if (upgradedLegacyDatabasePath)
+                log("已自動修正舊版 SQLite 路徑，資料庫將建立於 instance\\dorm_staff.db。 / Legacy SQLite path upgraded.");
+        }
+
+        private void BackupEnvironmentFile(bool overwrite)
+        {
+            if (!File.Exists(environment.EnvFile))
+                throw new InvalidOperationException("無法備份不存在的 .env。 / Cannot back up a missing .env file.");
+            string backupDirectory = Path.Combine(environment.ProjectRoot, "instance", "private_keys", "backup");
+            string backupPath = Path.Combine(backupDirectory, "application-env.backup");
+            if (!overwrite && File.Exists(backupPath)) return;
+
+            Directory.CreateDirectory(backupDirectory);
+            string temporaryPath = backupPath + ".tmp-" + Guid.NewGuid().ToString("N");
+            try
+            {
+                File.Copy(environment.EnvFile, temporaryPath, true);
+                byte[] sourceHash;
+                byte[] backupHash;
+                using (SHA256 sha = SHA256.Create()) sourceHash = sha.ComputeHash(File.ReadAllBytes(environment.EnvFile));
+                using (SHA256 sha = SHA256.Create()) backupHash = sha.ComputeHash(File.ReadAllBytes(temporaryPath));
+                if (!HashesEqual(sourceHash, backupHash))
+                    throw new IOException(".env 備份驗證失敗。 / Environment backup verification failed.");
+                if (File.Exists(backupPath)) File.SetAttributes(backupPath, FileAttributes.Normal);
+                File.Copy(temporaryPath, backupPath, true);
+                File.SetAttributes(backupPath, File.GetAttributes(backupPath) | FileAttributes.Hidden | FileAttributes.NotContentIndexed);
+            }
+            finally
+            {
+                if (File.Exists(temporaryPath)) File.Delete(temporaryPath);
+            }
+            log("SECRET_KEY 與環境設定備份已更新。 / SECRET_KEY and environment backup updated.");
+        }
+
+        private static bool HashesEqual(byte[] left, byte[] right)
+        {
+            if (left == null || right == null || left.Length != right.Length) return false;
+            int difference = 0;
+            for (int i = 0; i < left.Length; i++) difference |= left[i] ^ right[i];
+            return difference == 0;
         }
 
         public void UpgradeDatabase()
         {
             ValidateProject();
             if (!environment.PythonIsInstalled) throw new InvalidOperationException("請先安裝 portable runtime。 / Install the runtime first.");
+            EnsureEnvironmentFile();
             RunChecked(environment.PythonExe, "-m flask --app wsgi.py db upgrade", environment.ProjectRoot);
             log("資料庫 migration 完成。 / Database migrations completed.");
+        }
+
+        public int PrepareDatabaseForStart()
+        {
+            ValidateProject();
+            if (!environment.PythonIsInstalled)
+                throw new InvalidOperationException("請先安裝 portable runtime。 / Install the portable runtime first.");
+            ConfigureProjectImportPath();
+            EnsureEnvironmentFile();
+            UpgradeDatabase();
+            return CountActiveAdministrators();
+        }
+
+        private int CountActiveAdministrators()
+        {
+            string code = "from app import create_app; from app.extensions import db; from app.models import User,Role; a=create_app(); c=a.app_context(); c.push(); print('ACTIVE_ADMIN_COUNT='+str(db.session.scalar(db.select(db.func.count()).select_from(User).where(User.role==Role.ADMIN,User.is_active.is_(True))) or 0)); c.pop()";
+            CommandResult result = RunChecked(environment.PythonExe, "-c " + Quote(code), environment.ProjectRoot);
+            int count;
+            if (!Int32.TryParse(FindOutputValue(result.Output, "ACTIVE_ADMIN_COUNT="), out count))
+                throw new InvalidOperationException("無法確認管理員帳號狀態。 / Could not inspect administrator accounts.");
+            return count;
         }
 
         public void ResetDatabaseAndCreateFirstAdmin(FreshSetupOptions options)
@@ -484,7 +579,8 @@ namespace DormStaffPortable
             else content += "DOCUMENT_ENCRYPTION_KEY=" + Environment.NewLine;
             content = Regex.Replace(content, "(?m)^DATABASE_URL=sqlite:///instance/dorm_staff\\.db$", "DATABASE_URL=sqlite:///dorm_staff.db");
             File.WriteAllText(environment.EnvFile, content, new UTF8Encoding(false));
-            log("已輪替 session 與文件加密密鑰。 / Application secrets rotated.");
+            BackupEnvironmentFile(true);
+            log("已輪替 session 與文件加密密鑰，並更新復原備份。 / Application secrets rotated and backed up.");
         }
 
         private static string FindOutputValue(string output, string prefix)
@@ -539,6 +635,78 @@ namespace DormStaffPortable
             UpgradeDatabase();
             RunChecked(environment.PythonExe, "-c \"from app import create_app; create_app(); print('Application import OK')\"", environment.ProjectRoot);
             log("Git 安全更新完成。 / Git update completed.");
+        }
+
+        private string MigrationHelperPath()
+        {
+            string helper = Path.Combine(environment.BaseDirectory, "migrate_portable_data.py");
+            if (!File.Exists(helper))
+                throw new InvalidOperationException("找不到資料移轉 helper：" + helper);
+            return helper;
+        }
+
+        public MigrationSourceInfo InspectMigrationSource(string source)
+        {
+            ValidateProject();
+            if (!environment.PythonIsInstalled)
+                throw new InvalidOperationException("請先完成安裝／修復環境。 / Install the portable runtime first.");
+            ConfigureProjectImportPath();
+            CommandResult result = RunChecked(
+                environment.PythonExe,
+                Quote(MigrationHelperPath()) + " inspect --project-root " + Quote(environment.ProjectRoot) + " --source " + Quote(source),
+                environment.ProjectRoot
+            );
+            MigrationSourceInfo info = new MigrationSourceInfo();
+            info.SourceType = FindOutputValue(result.Output, "MIGRATION_SOURCE_TYPE=");
+            info.Revision = FindOutputValue(result.Output, "MIGRATION_REVISION=");
+            Int32.TryParse(FindOutputValue(result.Output, "MIGRATION_USERS="), out info.Users);
+            Int32.TryParse(FindOutputValue(result.Output, "MIGRATION_STAFF="), out info.Staff);
+            Int32.TryParse(FindOutputValue(result.Output, "MIGRATION_SHIFTS="), out info.Shifts);
+            Int32.TryParse(FindOutputValue(result.Output, "MIGRATION_DOCUMENTS="), out info.Documents);
+            string encodedSummary = FindOutputValue(result.Output, "MIGRATION_SUMMARY_B64=");
+            try { info.Summary = Encoding.UTF8.GetString(Convert.FromBase64String(encodedSummary)); }
+            catch (FormatException) { throw new InvalidOperationException("無法解析來源資料摘要。 / Invalid migration summary."); }
+            if (String.IsNullOrWhiteSpace(info.SourceType) || String.IsNullOrWhiteSpace(info.Revision) || String.IsNullOrWhiteSpace(info.Summary))
+                throw new InvalidOperationException("來源驗證未傳回完整資訊。 / Incomplete migration inspection result.");
+            return info;
+        }
+
+        public void RestorePortableData(string source)
+        {
+            ValidateProject();
+            if (!environment.PythonIsInstalled)
+                throw new InvalidOperationException("請先完成安裝／修復環境。 / Install the portable runtime first.");
+            EnsureConfiguredServiceIsStopped();
+            ConfigureProjectImportPath();
+            CommandResult result = RunChecked(
+                environment.PythonExe,
+                Quote(MigrationHelperPath()) + " restore --project-root " + Quote(environment.ProjectRoot) + " --source " + Quote(source),
+                environment.ProjectRoot
+            );
+            if (!FindOutputValue(result.Output, "MIGRATION_RESULT=").Equals("SUCCESS", StringComparison.Ordinal))
+                throw new InvalidOperationException("資料移轉未回報成功。 / Migration did not report success.");
+            try { BackupEnvironmentFile(true); }
+            catch (Exception backupError) { log("WARNING: 資料已移轉，但無法設定 .env 備份的 Windows 隱藏屬性：" + backupError.Message); }
+            string previousBackup = FindOutputValue(result.Output, "MIGRATION_PREVIOUS_BACKUP=");
+            if (!String.IsNullOrWhiteSpace(previousBackup) && !previousBackup.Equals("NONE", StringComparison.OrdinalIgnoreCase))
+                log("移轉前系統備份：" + previousBackup);
+            log("資料移轉與驗證完成；來源檔案仍保留。 / Data migration completed; source retained.");
+        }
+
+        public void ExportPortableBackup(string destination)
+        {
+            ValidateProject();
+            if (!environment.PythonIsInstalled)
+                throw new InvalidOperationException("請先完成安裝／修復環境。 / Install the portable runtime first.");
+            EnsureConfiguredServiceIsStopped();
+            string backupScript = Path.Combine(environment.ProjectRoot, "deployment", "create_portable_backup.py");
+            if (!File.Exists(backupScript)) throw new InvalidOperationException("找不到完整備份程式。 / Backup helper not found.");
+            string parent = Path.GetDirectoryName(Path.GetFullPath(destination));
+            if (String.IsNullOrWhiteSpace(parent)) throw new InvalidOperationException("備份目的路徑無效。 / Invalid backup destination.");
+            Directory.CreateDirectory(parent);
+            RunChecked(environment.PythonExe, Quote(backupScript) + " " + Quote(destination) + " --allow-running", environment.ProjectRoot);
+            if (!File.Exists(destination)) throw new InvalidOperationException("備份程式未產生檔案。 / Backup file was not created.");
+            log("完整系統備份已建立：" + destination);
         }
 
         public CommandResult RunChecked(string executable, string arguments, string workingDirectory)
@@ -757,6 +925,63 @@ namespace DormStaffPortable
         }
     }
 
+    internal sealed class MigrationConfirmationForm : Form
+    {
+        private readonly TextBox phraseBox = new TextBox();
+
+        public MigrationConfirmationForm(string source, MigrationSourceInfo info)
+        {
+            Text = "資料移轉確認 / Confirm data migration";
+            ClientSize = new Size(650, 460);
+            MinimumSize = new Size(650, 460);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+            MaximizeBox = false;
+            MinimizeBox = false;
+            StartPosition = FormStartPosition.CenterParent;
+            AutoScaleMode = AutoScaleMode.Dpi;
+            Font = new Font("Microsoft JhengHei UI", 9F);
+
+            TableLayoutPanel grid = new TableLayoutPanel { Dock = DockStyle.Fill, Padding = new Padding(20), ColumnCount = 1, RowCount = 7 };
+            grid.RowStyles.Add(new RowStyle(SizeType.Absolute, 50));
+            grid.RowStyles.Add(new RowStyle(SizeType.Absolute, 50));
+            grid.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+            grid.RowStyles.Add(new RowStyle(SizeType.Absolute, 58));
+            grid.RowStyles.Add(new RowStyle(SizeType.Absolute, 28));
+            grid.RowStyles.Add(new RowStyle(SizeType.Absolute, 38));
+            grid.RowStyles.Add(new RowStyle(SizeType.Absolute, 48));
+
+            grid.Controls.Add(new Label {
+                Text = "目前目的系統的資料會被整套取代。Launcher 會先建立完整備份，失敗時自動回復；來源檔案不會刪除。\r\nCurrent data will be replaced after a safety backup.",
+                ForeColor = Color.FromArgb(176, 35, 43), Font = new Font(Font.FontFamily, 9.5F, FontStyle.Bold), Dock = DockStyle.Fill
+            }, 0, 0);
+            grid.Controls.Add(new Label { Text = "來源 / Source：" + source, AutoEllipsis = true, Dock = DockStyle.Fill, Padding = new Padding(0, 8, 0, 0) }, 0, 1);
+            grid.Controls.Add(new TextBox { Text = info.Summary, Multiline = true, ReadOnly = true, ScrollBars = ScrollBars.Vertical, Dock = DockStyle.Fill, BackColor = Color.White }, 0, 2);
+            grid.Controls.Add(new Label {
+                Text = "完整 ZIP 會同時還原證件與金鑰；單一 DB 不會。此功能不合併兩套資料。\r\nFull ZIP restores documents and keys; database-only import does not merge data.",
+                Dock = DockStyle.Fill, Padding = new Padding(0, 8, 0, 0)
+            }, 0, 3);
+            grid.Controls.Add(new Label { Text = "請輸入大寫 MIGRATE 確認 / Type MIGRATE to confirm", Dock = DockStyle.Fill }, 0, 4);
+            phraseBox.Dock = DockStyle.Fill; phraseBox.MaxLength = 7;
+            grid.Controls.Add(phraseBox, 0, 5);
+
+            FlowLayoutPanel buttons = new FlowLayoutPanel { Dock = DockStyle.Fill, FlowDirection = FlowDirection.RightToLeft };
+            Button migrate = new Button { Text = "開始移轉 / Migrate", Width = 150, Height = 34, BackColor = Color.FromArgb(139, 31, 38), ForeColor = Color.White, FlatStyle = FlatStyle.Flat };
+            Button cancel = new Button { Text = "取消 / Cancel", Width = 110, Height = 34, DialogResult = DialogResult.Cancel };
+            migrate.Click += delegate
+            {
+                if (phraseBox.Text != "MIGRATE")
+                {
+                    MessageBox.Show(this, "請正確輸入大寫 MIGRATE。", "尚未確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+                DialogResult = DialogResult.OK;
+                Close();
+            };
+            buttons.Controls.Add(migrate); buttons.Controls.Add(cancel); grid.Controls.Add(buttons, 0, 6);
+            AcceptButton = migrate; CancelButton = cancel; Controls.Add(grid);
+        }
+    }
+
     internal sealed class LauncherForm : Form
     {
         private readonly PortableEnvironment environment;
@@ -779,7 +1004,7 @@ namespace DormStaffPortable
             manager = new PortableManager(environment, WriteLog);
             Text = "宿舍工讀生系統啟動器 / Dorm Staff Launcher";
             Width = 980;
-            Height = 770;
+            Height = 840;
             MinimumSize = new Size(850, 620);
             StartPosition = FormStartPosition.CenterScreen;
             AutoScaleMode = AutoScaleMode.Dpi;
@@ -804,7 +1029,7 @@ namespace DormStaffPortable
 
             TableLayoutPanel body = new TableLayoutPanel { Dock = DockStyle.Fill, Padding = new Padding(18), ColumnCount = 2, RowCount = 2 };
             body.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 48)); body.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 52));
-            body.RowStyles.Add(new RowStyle(SizeType.Absolute, 340)); body.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+            body.RowStyles.Add(new RowStyle(SizeType.Absolute, 405)); body.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
             Controls.Add(body); body.BringToFront();
 
             GroupBox settings = new GroupBox { Text = "設定 / Settings", Dock = DockStyle.Fill, Padding = new Padding(14) };
@@ -824,9 +1049,9 @@ namespace DormStaffPortable
             settings.Controls.Add(settingGrid); body.Controls.Add(settings, 0, 0);
 
             GroupBox actions = new GroupBox { Text = "操作 / Actions", Dock = DockStyle.Fill, Padding = new Padding(14) };
-            TableLayoutPanel actionGrid = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 2, RowCount = 5 };
+            TableLayoutPanel actionGrid = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 2, RowCount = 6 };
             actionGrid.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50)); actionGrid.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
-            for (int i = 0; i < 5; i++) actionGrid.RowStyles.Add(new RowStyle(SizeType.Percent, 20));
+            for (int i = 0; i < 6; i++) actionGrid.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666F));
             AddAction(actionGrid, 0, 0, "① 安裝／修復環境\r\nInstall / Repair", Color.FromArgb(21, 101, 192), delegate { RunBackground("安裝環境", manager.InstallOrRepair); });
             AddAction(actionGrid, 1, 0, "② 啟動系統\r\nStart", Color.FromArgb(24, 135, 84), StartServer);
             AddAction(actionGrid, 0, 1, "停止系統\r\nStop", Color.FromArgb(185, 46, 52), StopServer);
@@ -835,7 +1060,9 @@ namespace DormStaffPortable
             AddAction(actionGrid, 1, 2, "資料庫升級\r\nDatabase upgrade", Color.FromArgb(75, 101, 122), delegate { RunBackground("資料庫升級", manager.UpgradeDatabase); });
             AddAction(actionGrid, 0, 3, "編輯 .env\r\nEdit settings", Color.FromArgb(75, 101, 122), delegate { OpenTextFile(environment.EnvFile); });
             AddAction(actionGrid, 1, 3, "XAMPP 設定教學\r\nSetup guide", Color.FromArgb(210, 125, 35), delegate { OpenTextFile(Path.Combine(environment.BaseDirectory, "XAMPP_GUIDE.md")); });
-            AddAction(actionGrid, 0, 4, "全新初始化：清空資料並建立第一位管理員\r\nFresh database setup", Color.FromArgb(139, 31, 38), FreshDatabaseSetup);
+            AddAction(actionGrid, 0, 4, "匯出／備份系統\r\nExport / Backup", Color.FromArgb(0, 112, 123), ExportSystemBackup);
+            AddAction(actionGrid, 1, 4, "移轉／還原資料\r\nMigrate / Restore", Color.FromArgb(130, 88, 20), MigrateOrRestoreData);
+            AddAction(actionGrid, 0, 5, "全新初始化：清空資料並建立第一位管理員\r\nFresh database setup", Color.FromArgb(139, 31, 38), FreshDatabaseSetup);
             actionGrid.SetColumnSpan(actionButtons[actionButtons.Count - 1], 2);
             actions.Controls.Add(actionGrid); body.Controls.Add(actions, 1, 0);
 
@@ -913,6 +1140,69 @@ namespace DormStaffPortable
             }
         }
 
+        private void ExportSystemBackup(object sender, EventArgs args)
+        {
+            if (operationRunning) return;
+            if (!SaveSettings()) return;
+            if (!environment.ProjectIsValid || !environment.PythonIsInstalled)
+            {
+                MessageBox.Show("請先完成安裝／修復環境。", "尚未就緒", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            using (SaveFileDialog dialog = new SaveFileDialog())
+            {
+                dialog.Title = "匯出完整系統備份 / Export full system backup";
+                dialog.Filter = "Portable backup ZIP (*.zip)|*.zip";
+                dialog.DefaultExt = "zip";
+                dialog.AddExtension = true;
+                dialog.FileName = "dorm-staff-" + DateTime.Now.ToString("yyyyMMdd-HHmmss") + ".zip";
+                if (dialog.ShowDialog(this) != DialogResult.OK) return;
+                string destination = dialog.FileName;
+                StopServer();
+                RunBackground("完整系統備份", delegate { manager.ExportPortableBackup(destination); });
+            }
+        }
+
+        private void MigrateOrRestoreData(object sender, EventArgs args)
+        {
+            if (operationRunning) return;
+            if (!SaveSettings()) return;
+            if (!environment.ProjectIsValid || !environment.PythonIsInstalled)
+            {
+                MessageBox.Show("請先完成安裝／修復環境。", "尚未就緒", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.Title = "選擇完整備份或 SQLite / Select backup or database";
+                dialog.Filter = "支援的資料來源 (*.zip;*.db;*.sqlite;*.sqlite3)|*.zip;*.db;*.sqlite;*.sqlite3|Portable backup ZIP (*.zip)|*.zip|SQLite (*.db;*.sqlite;*.sqlite3)|*.db;*.sqlite;*.sqlite3";
+                dialog.CheckFileExists = true;
+                dialog.Multiselect = false;
+                if (dialog.ShowDialog(this) != DialogResult.OK) return;
+                string source = dialog.FileName;
+                MigrationSourceInfo info;
+                Cursor previousCursor = Cursor;
+                try
+                {
+                    Cursor = Cursors.WaitCursor;
+                    WriteLog("正在驗證移轉來源（不會修改資料）… / Inspecting source…");
+                    info = manager.InspectMigrationSource(source);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(this, ex.Message, "來源驗證失敗 / Invalid source", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                finally { Cursor = previousCursor; }
+                using (MigrationConfirmationForm confirmation = new MigrationConfirmationForm(source, info))
+                {
+                    if (confirmation.ShowDialog(this) != DialogResult.OK) return;
+                }
+                StopServer();
+                RunBackground("資料移轉／還原", delegate { manager.RestorePortableData(source); });
+            }
+        }
+
         private void RunBackground(string name, Action operation)
         {
             if (operationRunning) return;
@@ -960,8 +1250,21 @@ namespace DormStaffPortable
             {
                 MessageBox.Show("請先選擇專案並執行「安裝／修復環境」。", "尚未安裝", MessageBoxButtons.OK, MessageBoxIcon.Warning); return;
             }
-            try { manager.ConfigureProjectImportPath(); }
-            catch (Exception ex) { MessageBox.Show(ex.Message, "專案路徑設定失敗", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+            int administratorCount;
+            try { administratorCount = manager.PrepareDatabaseForStart(); }
+            catch (Exception ex) { MessageBox.Show(ex.Message + "\r\n\r\n請先執行「安裝／修復環境」。", "資料庫初始化失敗", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
+            if (administratorCount == 0)
+            {
+                DialogResult createAdministrator = MessageBox.Show(
+                    this,
+                    "資料庫已自動建立並完成 migration，但目前沒有可登入的管理員。\r\n\r\n是否現在建立第一位管理員？\r\nThe database is ready, but no administrator exists.",
+                    "需要建立管理員 / Administrator required",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Information
+                );
+                if (createAdministrator == DialogResult.Yes) FreshDatabaseSetup(sender, args);
+                return;
+            }
             if (serverProcess != null && !serverProcess.HasExited) { MessageBox.Show("系統已在執行。 "); return; }
             int port = Int32.Parse(environment.Config.Port);
             if (!PortIsAvailable(port, environment.Config.ListenAddress == "0.0.0.0")) { MessageBox.Show("Port " + port + " 已被其他程式使用。請更換 Port。 ", "無法啟動", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }

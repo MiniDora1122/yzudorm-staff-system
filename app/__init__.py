@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from flask import Flask, redirect, render_template, request, url_for
 from flask_login import current_user
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -10,6 +12,7 @@ from .models import Role, User
 
 def create_app(config_object=Config):
     app = Flask(__name__, instance_relative_config=True)
+    Path(app.instance_path).mkdir(parents=True, exist_ok=True)
     app.config.from_object(Config)
     if isinstance(config_object, dict):
         app.config.from_mapping(config_object)

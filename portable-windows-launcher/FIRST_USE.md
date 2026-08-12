@@ -6,7 +6,11 @@
 2. 開啟 `portable-windows-launcher\DormStaffLauncher.exe`。
 3. 確認「專案資料夾」指向含有 `wsgi.py` 與 `requirements.txt` 的資料夾。
 4. 按「安裝／修復環境」。第一次需要網路，會下載官方 Python、pip、PortableGit 及 Python 套件。
-5. 完成後按「啟動系統」，再按「開啟系統」。
+5. Launcher 會自動建立缺少的 `instance` 與 SQLite、執行 migration；GitHub 不需要也不應包含 `.db`。
+6. 若尚未有管理員，按「啟動系統」時會引導使用者建立第一位管理員。
+7. 完成後再次按「啟動系統」，再按「開啟系統」。
+
+新版 Launcher 也會在啟動 migration 前修復舊版 `.env` 的 `sqlite:///instance/dorm_staff.db` 設定，避免 SQLite 被解析成重複的 `instance\instance` 路徑。
 
 所有 runtime 都安裝在 Launcher 所在資料夾的 `.venv`，不會修改 Windows 系統 Python 或 Git；此資料夾可隨時由 Launcher 重建，也不會塞進系統資料備份。設定保存在 `launcher.ini`，預設專案路徑使用 `..`，所以整個資料夾搬到不同磁碟後仍可運作。
 
@@ -27,6 +31,10 @@
 5. 完成後即可使用新管理員帳號與自行設定的密碼登入，不會建立 demo 帳號。
 
 重置後不會帶入任何學生、排班或申請資料；請由新管理員登入後依實際單位需要建立／確認工作地點、班別、薪資設定及工讀生帳號。
+
+### 為什麼 GitHub 不放預設空白 DB
+
+SQLite 是每台電腦的執行資料，不是程式碼。若把空白 DB commit 到 Git，正式使用後它會永遠顯示為本機修改，可能阻擋 Git 更新；錯誤的 checkout／merge 也可能覆蓋正式資料。Repository 應保留 migration 與 `.env.example`，由 Launcher 在每台電腦建立自己的 DB。
 
 重置會永久刪除 `instance` 內的 SQLite、所有帳號、工讀生、排班、申請、薪資設定、證件、session、文件金鑰及 audit history，並輪替 `.env` 的 session／文件加密密鑰。畫面另有預設勾選項，可一併刪除 `outputs` 內可能含舊資料的匯出報表。
 
@@ -58,9 +66,22 @@ Private repository 可能要求 Windows Credential Manager 或 Personal Access T
 ## 資料與備份
 
 - `instance` 內含 SQLite、證件影像及文件金鑰；搬移時必須整份保留。
+- Launcher 首次產生或全新初始化輪替 `SECRET_KEY` 後，會將完整 `.env` 備份至隱藏檔 `instance/private_keys/backup/application-env.backup`；備份驗證失敗時會中止該流程。
+- 若 `.env` 遺失，可在停止系統後將上述備份複製回專案根目錄並命名為 `.env`。此檔含 `SECRET_KEY` 與完整環境設定，不得上傳 GitHub、傳送給無權限人員或放在公開網路磁碟。
 - `instance` 與備份 ZIP 都含敏感資料，應放在 BitLocker 磁碟並限制存取。
 - 更新前 Launcher 會建立 portable backup，但仍應另外保存一份異機加密備份。
 - 防毒軟體或 SmartScreen 可能對自行編譯且未簽章的 EXE 顯示警告。正式發給多人使用前，建議由學校使用自己的 Code Signing 憑證簽署。
+
+## 資料移轉與還原
+
+Launcher 的「匯出／備份系統」可建立完整 portable backup ZIP；「移轉／還原資料」接受下列來源：
+
+- 完整 ZIP（推薦）：還原 SQLite、證件檔案、文件金鑰及 `.env`，但不會用備份內的舊程式碼覆蓋目前新版程式。
+- 單一 `.db`／`.sqlite`／`.sqlite3`：只取代資料庫；若來源有證件紀錄，證件檔案及解密金鑰不會隨 DB 移入，Launcher 會在確認畫面警告。
+
+移轉前 Launcher 會停止目前服務、檢查 SQLite 完整性、確認 migration revision 並顯示帳號／工讀生／排班／證件筆數。使用者必須輸入大寫 `MIGRATE` 才會繼續。目的系統會先備份到 `outputs/portable-backups/before-data-migration-*.zip`；migration、管理員登入條件或文件金鑰驗證失敗時會自動回復原資料。
+
+移轉採整套取代，不會合併 A、B 兩套資料，也不會刪除來源檔。若來源 revision 比目前程式更新，請先執行 Git 安全更新，再重新移轉。
 
 ## 重新編譯
 
