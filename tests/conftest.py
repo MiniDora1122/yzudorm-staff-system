@@ -6,7 +6,7 @@ from cryptography.fernet import Fernet
 
 from app import create_app
 from app.extensions import db
-from app.models import PayrollSetting, Role, ShiftType, StaffProfile, User, WorkLocation
+from app.models import Country, PayrollSetting, Role, SchedulingPolicy, ShiftType, StaffProfile, User, WorkLocation
 
 
 @pytest.fixture()
@@ -35,6 +35,18 @@ def app(tmp_path):
         student_two.set_password("StudentTwo!2026")
         db.session.add_all([admin, student, student_two])
         db.session.flush()
+        db.session.add_all([
+            Country(code="TW", name="台灣", name_en="Taiwan", is_taiwan=True, display_order=10),
+            Country(code="FOREIGN", name="外國籍", name_en="Foreign nationality", display_order=100),
+        ])
+        db.session.add(
+            SchedulingPolicy(
+                id=1,
+                foreign_weekly_limit_enabled=True,
+                weekly_hour_limit=Decimal("20"),
+                week_starts_on=0,
+            )
+        )
         db.session.add_all(
             [
             StaffProfile(

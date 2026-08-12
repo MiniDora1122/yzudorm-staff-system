@@ -14,14 +14,16 @@ from . import bp
 from ..decorators import role_required
 from ..extensions import db
 from ..models import (
+    Country,
     PayrollSetting,
     AuditLog,
     DocumentStatus,
     LeaveRequest,
     LeaveStatus,
     Role,
+    SchedulingExceptionPeriod,
+    SchedulingPolicy,
     Shift,
-    ShiftSeries,
     ShiftStatus,
     ShiftType,
     StaffProfile,
@@ -33,6 +35,7 @@ from ..models import (
 )
 from ..services.payroll import calculate_staff_cost, get_payroll_setting, money
 from ..services.notifications import notifications_for_user
+from ..services.compliance import active_countries, canonical_country_name, get_scheduling_policy
 from ..services.accounts import (
     AccountError,
     create_admin_account,
@@ -57,8 +60,7 @@ from ..services.reports import (
     shift_detail_csv,
     workflow_history_csv,
 )
-from ..services.requests import add_audit
-from ..services.requests import WorkflowError, review_leave_request, review_swap_request
+from ..services.requests import WorkflowError, add_audit, review_leave_request, review_swap_request
 from ..services.retention import cleanup_expired_documents, get_retention_policy, save_retention_policy
 from ..services.scheduling import (
     SchedulingConflict,
@@ -190,6 +192,241 @@ def audit_logs_page():
             "date_to": date_to,
         },
     )
+
+
+@bp.get("/settings/nationalities")
+@role_required(Role.ADMIN)
+def nationalities_settings():
+    countries = db.session.scalars(
+        db.select(Country).order_by(Country.display_order, Country.name)
+    ).all()
+    usage = dict(
+        db.session.execute(
+            db.select(StaffProfile.nationality, db.func.count(StaffProfile.id))
+            .group_by(StaffProfile.nationality)
+        ).all()
+    )
+    return render_template("admin/nationalities.html", countries=countries, usage=usage)
+
+
+@bp.post("/settings/nationalities")
+@role_required(Role.ADMIN)
+def create_country():
+    code = request.form.get("code", "").strip().upper()
+    name = request.form.get("name", "").strip()
+    name_en = request.form.get("name_en", "").strip()
+    try:
+        display_order = int(request.form.get("display_order", "0"))
+    except ValueError:
+        display_order = 0
+    if not re.fullmatch(r"[A-Z0-9_-]{2,12}", code) or not name or len(name) > 80 or not name_en or len(name_en) > 100:
+        flash("國籍代碼或中英文名稱格式錯誤。 / Invalid country settings.", "danger")
+        return redirect(url_for("admin.nationalities_settings"))
+    country = Country(
+        code=code,
+        name=name,
+        name_en=name_en,
+        weekly_limit_exempt=request.form.get("weekly_limit_exempt") == "yes",
+        display_order=display_order,
+    )
+    db.session.add(country)
+    try:
+        db.session.flush()
+        add_audit(current_user.id, "COUNTRY_CREATED", "Country", country.id, f"新增國籍 {country.code} {country.name}")
+        db.session.commit()
+    except IntegrityError:
+        db.session.rollback()
+        flash("國籍代碼或名稱已存在。 / Country code or name already exists.", "danger")
+        return redirect(url_for("admin.nationalities_settings"))
+    flash("國籍已新增。 / Nationality added.", "success")
+    return redirect(url_for("admin.nationalities_settings"))
+
+
+@bp.post("/settings/nationalities/<int:country_id>")
+@role_required(Role.ADMIN)
+def update_country(country_id: int):
+    country = db.session.get(Country, country_id)
+    if country is None:
+        flash("找不到國籍設定。", "danger")
+        return redirect(url_for("admin.nationalities_settings"))
+    old_name = country.name
+    name = request.form.get("name", "").strip()
+    name_en = request.form.get("name_en", "").strip()
+    try:
+        display_order = int(request.form.get("display_order", "0"))
+    except ValueError:
+        display_order = 0
+    if not name or len(name) > 80 or not name_en or len(name_en) > 100:
+        flash("中英文名稱格式錯誤。 / Invalid country names.", "danger")
+        return redirect(url_for("admin.nationalities_settings"))
+    country.name = name
+    country.name_en = name_en
+    country.display_order = display_order
+    country.is_active = True if country.is_taiwan else request.form.get("is_active") == "yes"
+    country.weekly_limit_exempt = request.form.get("weekly_limit_exempt") == "yes"
+    if old_name != name:
+        db.session.execute(
+            db.update(StaffProfile).where(StaffProfile.nationality == old_name).values(nationality=name)
+        )
+    try:
+        add_audit(current_user.id, "COUNTRY_UPDATED", "Country", country.id, f"更新國籍 {country.code} {country.name}")
+        db.session.commit()
+    except IntegrityError:
+        db.session.rollback()
+        flash("國籍名稱已存在。 / Country name already exists.", "danger")
+        return redirect(url_for("admin.nationalities_settings"))
+    flash("國籍設定已更新。 / Nationality updated.", "success")
+    return redirect(url_for("admin.nationalities_settings"))
+
+
+@bp.post("/settings/nationalities/<int:country_id>/delete")
+@role_required(Role.ADMIN)
+def delete_country(country_id: int):
+    country = db.session.get(Country, country_id)
+    if country is None or country.is_taiwan:
+        flash("台灣國籍設定不可刪除。 / Taiwan cannot be deleted.", "danger")
+        return redirect(url_for("admin.nationalities_settings"))
+    used = db.session.scalar(
+        db.select(db.func.count()).select_from(StaffProfile).where(StaffProfile.nationality == country.name)
+    )
+    if used:
+        flash("此國籍仍有工讀生使用，請先修改人員資料。 / Nationality is still in use.", "danger")
+        return redirect(url_for("admin.nationalities_settings"))
+    country.is_active = False
+    add_audit(current_user.id, "COUNTRY_ARCHIVED", "Country", country.id, f"停用國籍 {country.code} {country.name}")
+    db.session.commit()
+    flash("國籍已停用。 / Nationality disabled.", "success")
+    return redirect(url_for("admin.nationalities_settings"))
+
+
+@bp.get("/settings/scheduling")
+@role_required(Role.ADMIN)
+def scheduling_settings():
+    policy = get_scheduling_policy()
+    periods = db.session.scalars(
+        db.select(SchedulingExceptionPeriod).order_by(
+            SchedulingExceptionPeriod.starts_on.desc(), SchedulingExceptionPeriod.id.desc()
+        )
+    ).all()
+    countries = db.session.scalars(
+        db.select(Country).where(Country.is_active.is_(True)).order_by(Country.display_order, Country.name)
+    ).all()
+    weekdays = [
+        (0, "星期一", "Monday"),
+        (1, "星期二", "Tuesday"),
+        (2, "星期三", "Wednesday"),
+        (3, "星期四", "Thursday"),
+        (4, "星期五", "Friday"),
+        (5, "星期六", "Saturday"),
+        (6, "星期日", "Sunday"),
+    ]
+    return render_template(
+        "admin/scheduling_settings.html",
+        policy=policy,
+        periods=periods,
+        countries=countries,
+        weekdays=weekdays,
+    )
+
+
+@bp.post("/settings/scheduling")
+@role_required(Role.ADMIN)
+def update_scheduling_policy():
+    try:
+        limit = Decimal(request.form.get("weekly_hour_limit", "20"))
+    except InvalidOperation:
+        limit = Decimal("0")
+    if limit < Decimal("0.5") or limit > Decimal("168"):
+        flash("每週時數上限必須介於 0.5–168 小時。 / Invalid weekly limit.", "danger")
+        return redirect(url_for("admin.scheduling_settings"))
+    try:
+        week_starts_on = int(request.form.get("week_starts_on", "0"))
+    except ValueError:
+        week_starts_on = -1
+    if week_starts_on not in range(7):
+        flash("每週起始日設定無效。 / Invalid week start day.", "danger")
+        return redirect(url_for("admin.scheduling_settings"))
+    policy = get_scheduling_policy()
+    if policy is None:
+        policy = SchedulingPolicy(id=1)
+        db.session.add(policy)
+    policy.foreign_weekly_limit_enabled = request.form.get("foreign_weekly_limit_enabled") == "yes"
+    policy.weekly_hour_limit = limit
+    policy.week_starts_on = week_starts_on
+    policy.updated_by = current_user.id
+    add_audit(
+        current_user.id,
+        "SCHEDULING_POLICY_UPDATED",
+        "SchedulingPolicy",
+        1,
+        f"每週限制={'啟用' if policy.foreign_weekly_limit_enabled else '停用'}；上限 {limit} 小時；起始星期={week_starts_on}",
+    )
+    db.session.commit()
+    flash("排班限制已更新。 / Scheduling policy updated.", "success")
+    return redirect(url_for("admin.scheduling_settings"))
+
+
+def _period_form_values():
+    name = request.form.get("name", "").strip()
+    name_en = request.form.get("name_en", "").strip()
+    try:
+        starts_on = date.fromisoformat(request.form.get("starts_on", ""))
+        ends_on = date.fromisoformat(request.form.get("ends_on", ""))
+    except ValueError as exc:
+        raise ValueError("例外期間日期格式錯誤。 / Invalid exception dates.") from exc
+    if not name or len(name) > 100 or not name_en or len(name_en) > 120 or ends_on < starts_on:
+        raise ValueError("例外期間名稱錯誤，且截止日不可早於開始日。 / Invalid exception period.")
+    return name, name_en, starts_on, ends_on
+
+
+@bp.post("/settings/scheduling/exception-periods")
+@role_required(Role.ADMIN)
+def create_scheduling_exception():
+    try:
+        name, name_en, starts_on, ends_on = _period_form_values()
+    except ValueError as exc:
+        flash(str(exc), "danger")
+        return redirect(url_for("admin.scheduling_settings"))
+    period = SchedulingExceptionPeriod(name=name, name_en=name_en, starts_on=starts_on, ends_on=ends_on)
+    db.session.add(period)
+    db.session.flush()
+    add_audit(current_user.id, "SCHEDULING_EXCEPTION_CREATED", "SchedulingExceptionPeriod", period.id, f"新增排班限制例外期間 {name} {starts_on}–{ends_on}")
+    db.session.commit()
+    flash("例外期間已新增。 / Exception period added.", "success")
+    return redirect(url_for("admin.scheduling_settings"))
+
+
+@bp.post("/settings/scheduling/exception-periods/<int:period_id>")
+@role_required(Role.ADMIN)
+def update_scheduling_exception(period_id: int):
+    period = db.session.get(SchedulingExceptionPeriod, period_id)
+    if period is None:
+        flash("找不到例外期間。", "danger")
+        return redirect(url_for("admin.scheduling_settings"))
+    try:
+        period.name, period.name_en, period.starts_on, period.ends_on = _period_form_values()
+    except ValueError as exc:
+        flash(str(exc), "danger")
+        return redirect(url_for("admin.scheduling_settings"))
+    period.is_active = request.form.get("is_active") == "yes"
+    add_audit(current_user.id, "SCHEDULING_EXCEPTION_UPDATED", "SchedulingExceptionPeriod", period.id, f"更新排班限制例外期間 {period.name}")
+    db.session.commit()
+    flash("例外期間已更新。 / Exception period updated.", "success")
+    return redirect(url_for("admin.scheduling_settings"))
+
+
+@bp.post("/settings/scheduling/exception-periods/<int:period_id>/delete")
+@role_required(Role.ADMIN)
+def delete_scheduling_exception(period_id: int):
+    period = db.session.get(SchedulingExceptionPeriod, period_id)
+    if period is None:
+        flash("找不到例外期間。", "danger")
+        return redirect(url_for("admin.scheduling_settings"))
+    add_audit(current_user.id, "SCHEDULING_EXCEPTION_DELETED", "SchedulingExceptionPeriod", period.id, f"刪除排班限制例外期間 {period.name}")
+    db.session.delete(period)
+    db.session.commit()
+    flash("例外期間已刪除。 / Exception period deleted.", "success")
+    return redirect(url_for("admin.scheduling_settings"))
 
 
 @bp.get("/schedule")
@@ -332,11 +569,25 @@ def import_shifts():
 @bp.get("/staff")
 @role_required(Role.ADMIN)
 def staff():
+    sort_key = request.args.get("sort", "name")
+    direction = request.args.get("direction", "asc")
+    sort_columns = {
+        "name": db.func.lower(StaffProfile.name),
+        "student_number": db.func.lower(StaffProfile.student_number),
+        "contact": db.func.lower(db.func.coalesce(StaffProfile.email, StaffProfile.phone, "")),
+        "nationality": db.func.lower(StaffProfile.nationality),
+    }
+    if sort_key not in sort_columns:
+        sort_key = "name"
+    if direction not in {"asc", "desc"}:
+        direction = "asc"
+    order_expression = sort_columns[sort_key]
+    order_expression = order_expression.desc() if direction == "desc" else order_expression.asc()
     profiles = db.session.scalars(
         db.select(StaffProfile)
         .join(StaffProfile.user)
         .where(User.is_active.is_(True))
-        .order_by(StaffProfile.name)
+        .order_by(order_expression, StaffProfile.id)
     ).all()
     current_documents = db.session.scalars(
         db.select(StaffDocument)
@@ -359,6 +610,9 @@ def staff():
         expiry_state=expiry_state,
         today=local_today(),
         page_labels=PAGE_LABELS,
+        countries=active_countries(),
+        sort_key=sort_key,
+        sort_direction=direction,
     )
 
 
@@ -445,6 +699,7 @@ def delete_administrator(user_id: int):
 @role_required(Role.ADMIN)
 def create_staff():
     try:
+        nationality = canonical_country_name(request.form.get("nationality", ""))
         profile = create_student_account(
             username=request.form.get("username", ""),
             temporary_password=request.form.get("temporary_password", ""),
@@ -453,16 +708,16 @@ def create_staff():
             student_number=request.form.get("student_number", ""),
             email=request.form.get("email", ""),
             phone=request.form.get("phone", ""),
-            nationality=request.form.get("nationality", ""),
+            nationality=nationality,
             actor_user_id=current_user.id,
         )
         flash(
             f"已建立 {profile.name} 的工讀生帳號；請安全交付臨時密碼，首次登入後會強制修改。",
             "success",
         )
-    except AccountError as exc:
+    except (AccountError, ValueError) as exc:
         db.session.rollback()
-        flash(exc.message, "danger")
+        flash(exc.message if isinstance(exc, AccountError) else str(exc), "danger")
     return redirect(url_for("admin.staff"))
 
 
@@ -716,7 +971,11 @@ def update_staff(staff_id: int):
     student_number = request.form.get("student_number", "").strip().upper()
     email = request.form.get("email", "").strip()
     phone = request.form.get("phone", "").strip()
-    nationality = request.form.get("nationality", "").strip()
+    try:
+        nationality = canonical_country_name(request.form.get("nationality", ""))
+    except ValueError as exc:
+        flash(str(exc), "danger")
+        return redirect(url_for("admin.staff"))
     if not name or len(name) > 100:
         flash("姓名需為 1–100 字。", "danger")
         return redirect(url_for("admin.staff"))
@@ -735,7 +994,7 @@ def update_staff(staff_id: int):
     if len(email) > 255 or (email and ("@" not in email or "." not in email.rsplit("@", 1)[-1])):
         flash("Email 格式錯誤。", "danger")
         return redirect(url_for("admin.staff"))
-    if len(phone) > 30 or not nationality or len(nationality) > 80:
+    if len(phone) > 30:
         flash("聯絡電話或國籍格式錯誤。", "danger")
         return redirect(url_for("admin.staff"))
     profile.name = name
@@ -861,8 +1120,22 @@ def requests_page():
     filter_month = request.args.get("month", local_today().strftime("%Y-%m"))
     if filter_scope not in {"ALL", "MONTH"}:
         filter_scope = "ALL"
-    leave_statement = db.select(LeaveRequest).order_by(LeaveRequest.created_at.desc())
-    swap_statement = db.select(SwapRequest).order_by(SwapRequest.created_at.desc())
+    shift_details = joinedload(Shift.shift_type).joinedload(ShiftType.work_location)
+    leave_statement = (
+        db.select(LeaveRequest)
+        .options(joinedload(LeaveRequest.staff), joinedload(LeaveRequest.shift).options(shift_details))
+        .order_by(LeaveRequest.created_at.desc())
+    )
+    swap_statement = (
+        db.select(SwapRequest)
+        .options(
+            joinedload(SwapRequest.requester),
+            joinedload(SwapRequest.target_staff),
+            joinedload(SwapRequest.requester_shift).options(shift_details),
+            joinedload(SwapRequest.target_shift).options(shift_details),
+        )
+        .order_by(SwapRequest.created_at.desc())
+    )
     if filter_scope == "MONTH":
         try:
             month_start, month_end = month_bounds(filter_month)

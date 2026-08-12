@@ -30,8 +30,6 @@
           <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.reports_page') }}" data-en="Reports">報表</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.staff') }}" data-en="Students">工讀生</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.documents_page') }}" data-en="Documents">證件</a></li>
-          <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.admin_accounts') }}" data-en="Administrators">管理員</a></li>
-          <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.audit_logs_page') }}" data-en="Audit logs">稽核紀錄</a></li>
           {% else %}
           <li class="nav-item"><a class="nav-link" href="{{ url_for('student.dashboard') }}" data-en="Home">我的首頁</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ url_for('student.requests_page') }}" data-en="Leave / Swap">請假／換班</a></li>
@@ -47,7 +45,19 @@
               {% endif %}
             </a>
           </li>
-          <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.change_password') }}" data-en="Password">修改密碼</a></li>
+          <li class="nav-item dropdown">
+            <button class="nav-link dropdown-toggle bg-transparent border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-gear me-1"></i>設定 <span class="bilingual-english">Settings</span></button>
+            <ul class="dropdown-menu dropdown-menu-end shadow">
+              {% if current_user.role.value == 'ADMIN' %}
+              <li><a class="dropdown-item" href="{{ url_for('admin.scheduling_settings') }}"><i class="bi bi-calendar2-week me-2"></i>排班設定 <small class="d-block ms-4 text-secondary">Scheduling settings</small></a></li>
+              <li><a class="dropdown-item" href="{{ url_for('admin.nationalities_settings') }}"><i class="bi bi-globe-asia-australia me-2"></i>國籍設定 <small class="d-block ms-4 text-secondary">Nationalities</small></a></li>
+              <li><a class="dropdown-item" href="{{ url_for('admin.admin_accounts') }}"><i class="bi bi-person-badge me-2"></i>管理員 <small class="d-block ms-4 text-secondary">Administrators</small></a></li>
+              <li><a class="dropdown-item" href="{{ url_for('admin.audit_logs_page') }}"><i class="bi bi-shield-check me-2"></i>稽核紀錄 <small class="d-block ms-4 text-secondary">Audit logs</small></a></li>
+              <li><hr class="dropdown-divider"></li>
+              {% endif %}
+              <li><a class="dropdown-item" href="{{ url_for('auth.change_password') }}"><i class="bi bi-key me-2"></i>修改密碼 <small class="d-block ms-4 text-secondary">Change password</small></a></li>
+            </ul>
+          </li>
           <li class="nav-item">
             <form method="post" action="{{ url_for('auth.logout') }}">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">

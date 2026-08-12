@@ -89,5 +89,5 @@ C:\xampp\apache\bin\httpd.exe -t
 - 不建議正式使用自簽憑證。
 - 不要公開 Waitress 的 `8000` port。
 - 稽核紀錄包含 IP 與瀏覽器資訊，應視為管理資料，只授權管理員查閱並納入校方保存政策。
-- Launcher 關閉時會停止由它啟動的服務。若需要開機後無人登入也能運作，請改用專案既有的 `deployment\register-startup-task.ps1`，並由系統管理員設定。
+- 若需要開機後無人登入也能運作，可直接在 Launcher 設定巡檢分鐘並按「啟用自啟動巡檢」；Windows 工作排程會以 SYSTEM 身分定期檢查並在必要時啟動服務。
 - 完整正式部署與備份說明仍可參考專案的 `deployment\DEPLOYMENT_WINDOWS_XAMPP.md`。

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% macro sort_heading(label, label_en, key, extra_class='') %}{% set active = sort_key == key %}{% set next_direction = 'desc' if active and sort_direction == 'asc' else 'asc' %}<th class="{{ extra_class }}"><a class="table-sort-link" href="{{ url_for('admin.staff', sort=key, direction=next_direction) }}" aria-label="依{{ label }}{{ '降冪' if next_direction == 'desc' else '升冪' }}排序"><span>{{ label }}</span><small>{{ label_en }}</small><i class="bi {{ 'bi-sort-down' if active and sort_direction == 'desc' else 'bi-sort-up' if active else 'bi-arrow-down-up' }}"></i></a></th>{% endmacro %}
 {% block title %}工讀生名冊 Student Roster｜宿舍工讀生系統{% endblock %}
 {% block content %}
 <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
@@ -15,11 +16,12 @@
 </div>
 
 <div class="card app-card border-0 shadow-sm"><div class="table-responsive"><table class="table align-middle mb-0 staff-table">
-  <thead><tr><th class="ps-4" data-en="Student / ID">工讀生／學號</th><th data-en="Contact">聯絡方式</th><th data-en="Nationality">國籍</th><th data-en="Residence permit">居留證</th><th data-en="Work permit">工作證</th><th data-en="Documents">文件</th><th data-en="Account actions">帳號操作</th></tr></thead>
+  <thead><tr>{{ sort_heading('姓名', 'Name', 'name', 'ps-4') }}{{ sort_heading('學號／帳號', 'Student ID / Account', 'student_number') }}{{ sort_heading('聯絡方式', 'Contact', 'contact') }}{{ sort_heading('國籍', 'Nationality', 'nationality') }}<th data-en="Residence permit">居留證</th><th data-en="Work permit">工作證</th><th data-en="Documents">文件</th><th data-en="Account actions">帳號操作</th></tr></thead>
   <tbody>
   {% for profile in profiles %}
     <tr>
-      <td class="ps-4"><strong>{{ profile.name }}</strong><div class="small text-secondary">{{ profile.student_number }}｜{{ profile.user.username }}</div>{% if profile.user.must_change_password %}<span class="badge text-bg-warning mt-1">等待修改臨時密碼</span>{% endif %}</td>
+      <td class="ps-4"><strong>{{ profile.name }}</strong>{% if profile.user.must_change_password %}<div><span class="badge text-bg-warning mt-1">等待修改臨時密碼</span></div>{% endif %}</td>
+      <td><strong>{{ profile.student_number }}</strong><div class="small text-secondary">{{ profile.user.username }}</div></td>
       <td>{{ profile.email or '—' }}<div class="small text-secondary">{{ profile.phone or '' }}</div></td>
       <td>{{ profile.nationality }}</td>
       <td>{{ mask_identifier(profile.residence_id) }}<div class="small">{{ profile.residence_expiry or '—' }} <span class="badge text-bg-{{ expiry_state(profile.residence_expiry).class }}">{{ expiry_state(profile.residence_expiry).label }}</span></div></td>
@@ -27,7 +29,7 @@
       <td>{% for group in documents_by_staff.get(profile.id, []) %}<div class="mb-2"><span class="badge text-bg-{{ 'success' if group.status.value == 'CONFIRMED' else 'danger' if group.status.value == 'REJECTED' else 'warning' }}">{{ '居留證' if group.document_type.value == 'RESIDENCE_PERMIT' else '工作證' }} · {{ group.pages|length }} 頁 · {{ group.status.value }}</span><div class="mt-1"><a class="small" href="{{ url_for('admin.download_staff_document_set', set_id=group.set_id) }}">下載整份</a></div></div>{% else %}<span class="text-secondary">—</span>{% endfor %}</td>
       <td><div class="d-flex flex-wrap gap-2"><button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="modal" data-bs-target="#editStaff{{ profile.id }}"><i class="bi bi-pencil me-1"></i>編輯資料</button><button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="modal" data-bs-target="#resetPassword{{ profile.id }}"><i class="bi bi-key me-1"></i>重設密碼</button><form method="post" action="{{ url_for('admin.delete_staff', staff_id=profile.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn btn-sm btn-outline-danger" type="submit" data-confirm-action="確定刪除 {{ profile.name }} 的帳號？若仍有未來排班或進行中申請，系統會拒絕刪除。" data-en="Delete student"><i class="bi bi-trash3 me-1"></i>刪除</button></form></div></td>
     </tr>
-  {% else %}<tr><td colspan="7" class="text-center text-secondary py-5">尚無工讀生資料，請使用右上角「新增工讀生」。</td></tr>{% endfor %}
+  {% else %}<tr><td colspan="8" class="text-center text-secondary py-5">尚無工讀生資料，請使用右上角「新增工讀生」。</td></tr>{% endfor %}
   </tbody>
 </table></div></div>
 
@@ -46,7 +48,7 @@
       <h3 class="h6 fw-bold mb-3" data-en="Basic information">基本資料</h3>
       <div class="row g-3">
         <div class="col-md-6"><label class="form-label" for="createName">姓名</label><input class="form-control" id="createName" name="name" maxlength="100" required></div>
-        <div class="col-md-6"><label class="form-label" for="createNationality">國籍</label><input class="form-control" id="createNationality" name="nationality" maxlength="80" value="台灣" required></div>
+        <div class="col-md-6"><label class="form-label" for="createNationality">國籍</label><select class="form-select" id="createNationality" name="nationality" required>{% for country in countries %}<option value="{{ country.name }}" {% if country.is_taiwan %}selected{% endif %}>{{ country.name }} · {{ country.name_en }}</option>{% endfor %}</select><div class="form-text"><a href="{{ url_for('admin.nationalities_settings') }}">管理國籍選項 Manage nationalities</a></div></div>
         <div class="col-md-6"><label class="form-label" for="createEmail">Email</label><input class="form-control" id="createEmail" name="email" type="email" maxlength="255"></div>
         <div class="col-md-6"><label class="form-label" for="createPhone">聯絡電話</label><input class="form-control" id="createPhone" name="phone" maxlength="30"></div>
       </div>
@@ -60,7 +62,7 @@
 <div class="modal fade" id="editStaff{{ profile.id }}" tabindex="-1" aria-labelledby="editStaffTitle{{ profile.id }}" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
   <form method="post" action="{{ url_for('admin.update_staff', staff_id=profile.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <div class="modal-header"><h2 class="modal-title h5" id="editStaffTitle{{ profile.id }}">編輯 {{ profile.name }} 的基本資料</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="關閉"></button></div>
-    <div class="modal-body"><div class="row g-3"><div class="col-sm-6"><label class="form-label" for="staffName{{ profile.id }}">姓名</label><input class="form-control" id="staffName{{ profile.id }}" name="name" maxlength="100" value="{{ profile.name }}" required></div><div class="col-sm-6"><label class="form-label" for="studentNumber{{ profile.id }}">學號</label><input class="form-control" id="studentNumber{{ profile.id }}" name="student_number" maxlength="30" pattern="[A-Za-z0-9_-]{3,30}" value="{{ profile.student_number }}" required><div class="form-text">會出現在月報與所有匯出檔。</div></div><div class="col-12"><label class="form-label" for="staffEmail{{ profile.id }}">Email</label><input class="form-control" id="staffEmail{{ profile.id }}" name="email" type="email" maxlength="255" value="{{ profile.email or '' }}"></div><div class="col-12"><label class="form-label" for="staffPhone{{ profile.id }}">聯絡電話</label><input class="form-control" id="staffPhone{{ profile.id }}" name="phone" maxlength="30" value="{{ profile.phone or '' }}"></div><div class="col-12"><label class="form-label" for="staffNationality{{ profile.id }}">國籍</label><input class="form-control" id="staffNationality{{ profile.id }}" name="nationality" maxlength="80" value="{{ profile.nationality }}" required></div></div></div>
+    <div class="modal-body"><div class="row g-3"><div class="col-sm-6"><label class="form-label" for="staffName{{ profile.id }}">姓名</label><input class="form-control" id="staffName{{ profile.id }}" name="name" maxlength="100" value="{{ profile.name }}" required></div><div class="col-sm-6"><label class="form-label" for="studentNumber{{ profile.id }}">學號</label><input class="form-control" id="studentNumber{{ profile.id }}" name="student_number" maxlength="30" pattern="[A-Za-z0-9_-]{3,30}" value="{{ profile.student_number }}" required><div class="form-text">會出現在月報與所有匯出檔。</div></div><div class="col-12"><label class="form-label" for="staffEmail{{ profile.id }}">Email</label><input class="form-control" id="staffEmail{{ profile.id }}" name="email" type="email" maxlength="255" value="{{ profile.email or '' }}"></div><div class="col-12"><label class="form-label" for="staffPhone{{ profile.id }}">聯絡電話</label><input class="form-control" id="staffPhone{{ profile.id }}" name="phone" maxlength="30" value="{{ profile.phone or '' }}"></div><div class="col-12"><label class="form-label" for="staffNationality{{ profile.id }}">國籍</label><select class="form-select" id="staffNationality{{ profile.id }}" name="nationality" required>{% for country in countries %}<option value="{{ country.name }}" {% if profile.nationality == country.name %}selected{% endif %}>{{ country.name }} · {{ country.name_en }}</option>{% endfor %}</select></div></div></div>
     <div class="modal-footer"><button class="btn btn-outline-secondary" type="button" data-bs-dismiss="modal">取消</button><button class="btn btn-primary" type="submit">儲存資料</button></div>
   </form>
 </div></div></div>

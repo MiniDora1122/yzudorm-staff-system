@@ -7,6 +7,7 @@
   <p class="text-secondary mb-0" data-en="Name, student ID and account are maintained by administrators. Verify document dates against all uploaded pages.">姓名、學號與帳號由管理單位維護；證件日期由你對照整份影像人工確認。</p>
 </div>
 {% if profile %}
+{% if requires_documents and missing_document_types %}<div class="alert alert-danger shadow-sm" role="alert"><h2 class="h5 fw-bold"><i class="bi bi-exclamation-octagon-fill me-2"></i>必須完成外籍生證件 Required documents</h2><p class="mb-0">非台灣國籍工讀生必須完成居留證與工作證上傳、資料核對及管理員核准。尚未完成：{% if enum_document_type.RESIDENCE_PERMIT in missing_document_types %}居留證{% endif %}{% if missing_document_types|length == 2 %}、{% endif %}{% if enum_document_type.WORK_PERMIT in missing_document_types %}工作證{% endif %}。完成前其他功能暫停使用。</p></div>{% endif %}
 <div class="row g-4 mb-4">
   <div class="col-lg-5"><div class="card app-card border-0 shadow-sm h-100"><div class="card-body p-4">
     <h2 class="h5 fw-bold mb-3" data-en="Basic information">基本資料</h2>
@@ -18,21 +19,24 @@
         <div class="col-12"><label class="form-label">帳號</label><input class="form-control" value="{{ profile.user.username }}" disabled></div>
         <div class="col-12"><label class="form-label" for="profileEmail">Email</label><input class="form-control" id="profileEmail" name="email" type="email" maxlength="255" value="{{ profile.email or '' }}"></div>
         <div class="col-12"><label class="form-label" for="profilePhone">聯絡電話</label><input class="form-control" id="profilePhone" name="phone" maxlength="30" value="{{ profile.phone or '' }}"></div>
-        <div class="col-12"><label class="form-label" for="profileNationality">國籍</label><input class="form-control" id="profileNationality" name="nationality" maxlength="80" value="{{ profile.nationality }}" required></div>
+        <div class="col-12"><label class="form-label" for="profileNationality">國籍</label><select class="form-select" id="profileNationality" name="nationality" required>{% for country in countries %}<option value="{{ country.name }}" {% if profile.nationality == country.name %}selected{% endif %}>{{ country.name }} · {{ country.name_en }}</option>{% endfor %}</select></div>
       </div>
       <button class="btn btn-primary w-100 mt-4" type="submit">儲存基本資料</button>
     </form>
   </div></div></div>
   <div class="col-lg-7"><div class="card app-card border-0 shadow-sm h-100"><div class="card-body p-4">
+    {% if requires_documents %}
     <h2 class="h5 fw-bold mb-3" data-en="Current document information">目前證件資料</h2>
     <div class="row g-3">
       <div class="col-md-6"><div class="border rounded-3 p-3 h-100"><div class="d-flex justify-content-between"><strong>居留證</strong><span class="badge text-bg-{{ residence_state.class }}">{{ residence_state.label }}</span></div><dl class="small row mt-3 mb-0"><dt class="col-5">證號</dt><dd class="col-7">{{ mask_identifier(profile.residence_id) }}</dd><dt class="col-5">截止日</dt><dd class="col-7">{{ profile.residence_expiry or '—' }}</dd></dl></div></div>
       <div class="col-md-6"><div class="border rounded-3 p-3 h-100"><div class="d-flex justify-content-between"><strong>工作證</strong><span class="badge text-bg-{{ permit_state.class }}">{{ permit_state.label }}</span></div><dl class="small row mt-3 mb-0"><dt class="col-5">開始日</dt><dd class="col-7">{{ profile.work_permit_start or '—' }}</dd><dt class="col-5">截止日</dt><dd class="col-7">{{ profile.work_permit_expiry or '—' }}</dd></dl></div></div>
     </div>
+    {% else %}<div class="d-flex align-items-center h-100"><div class="alert alert-success mb-0 w-100"><h2 class="h5 fw-bold"><i class="bi bi-check-circle-fill me-2"></i>無需上傳證件 <small class="d-block mt-1">No work documents required</small></h2><p class="mb-0">台灣籍工讀生不需要提供居留證或工作證。</p></div></div>{% endif %}
   </div></div></div>
 </div>
 
-<div class="card app-card border-0 shadow-sm mb-4"><div class="card-body p-4">
+{% if requires_documents %}
+<div class="card app-card border-0 shadow-sm mb-4" id="documentUploadSection"><div class="card-body p-4">
   <h2 class="h5 fw-bold" data-en="Secure full-document upload"><i class="bi bi-shield-lock me-2 text-primary"></i>安全上傳整份證件</h2>
   <div class="alert alert-info small mt-3"><strong>個資蒐集告知（{{ privacy_notice_version }}）</strong><br>照片僅供宿舍工讀生資格、居留與工作許可查核，由本人及具管理權限人員透過登入後頁面存取。影像會加密保存在非公開目錄並依校方保存政策保留；證件日期由本人逐頁人工核對。</div>
   <form method="post" action="{{ url_for('student.upload_staff_document') }}" enctype="multipart/form-data" id="documentUploadForm">
@@ -80,6 +84,7 @@
   </div></div></div>
 {% else %}<div class="col-12"><div class="alert alert-light border text-center text-secondary">尚未上傳證件影像。</div></div>{% endfor %}
 </div>
+{% endif %}
 {% else %}<div class="alert alert-warning">此帳號尚未建立工讀生資料，請聯絡管理員。</div>{% endif %}
 {% endblock %}
 {% block scripts %}<script src="{{ url_for('static', filename='js/requests.js') }}"></script><script src="{{ url_for('static', filename='js/documents.js') }}"></script>{% endblock %}

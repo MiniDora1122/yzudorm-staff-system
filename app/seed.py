@@ -5,8 +5,10 @@ import click
 
 from .extensions import db
 from .models import (
+    Country,
     PayrollSetting,
     Role,
+    SchedulingPolicy,
     Shift,
     ShiftStatus,
     ShiftType,
@@ -86,6 +88,50 @@ DEMO_SHIFTS = (
 
 
 def seed_database() -> None:
+    for code, name, name_en, is_taiwan, order in (
+        ("TW", "台灣", "Taiwan", True, 10),
+        ("FOREIGN", "外國籍", "Foreign nationality", False, 100),
+    ):
+        country = db.session.scalar(
+            db.select(Country).where(db.or_(Country.code == code, Country.name == name))
+        )
+        if country is None:
+            db.session.add(
+                Country(code=code, name=name, name_en=name_en, is_taiwan=is_taiwan, display_order=order)
+            )
+    db.session.flush()
+    used_codes = set(db.session.scalars(db.select(Country.code)).all())
+    existing_nationalities = db.session.scalars(
+        db.select(StaffProfile.nationality).distinct().order_by(StaffProfile.nationality)
+    ).all()
+    legacy_index = 1
+    for nationality in existing_nationalities:
+        if not nationality or db.session.scalar(db.select(Country.id).where(Country.name == nationality)):
+            continue
+        while f"NAT{legacy_index:03d}" in used_codes:
+            legacy_index += 1
+        code = f"NAT{legacy_index:03d}"
+        used_codes.add(code)
+        db.session.add(
+            Country(
+                code=code,
+                name=nationality,
+                name_en=nationality,
+                display_order=100 + legacy_index,
+            )
+        )
+        legacy_index += 1
+    if db.session.get(SchedulingPolicy, 1) is None:
+        db.session.add(
+            SchedulingPolicy(
+                id=1,
+                foreign_weekly_limit_enabled=True,
+                weekly_hour_limit=Decimal("20"),
+                week_starts_on=0,
+            )
+        )
+    db.session.flush()
+
     users: dict[str, User] = {}
     for data in DEMO_USERS:
         user = db.session.scalar(db.select(User).where(User.username == data["username"]))

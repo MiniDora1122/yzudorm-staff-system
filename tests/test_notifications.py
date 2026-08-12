@@ -86,8 +86,10 @@ def test_student_rejected_document_stays_open_until_resubmitted(client, app):
     login(client, "student-test", "StudentTest!2026")
 
     for _ in range(2):
-        page = client.get("/student/")
-        assert "居留證已被退回，請修正".encode("utf-8") in page.data
+        page = client.get("/student/", follow_redirects=True)
+        assert "必須完成外籍生證件".encode("utf-8") in page.data
+        notifications = client.get("/student/notifications")
+        assert "居留證已被退回，請修正".encode("utf-8") in notifications.data
 
     with app.app_context():
         notification = db.session.scalar(

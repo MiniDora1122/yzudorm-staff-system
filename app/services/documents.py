@@ -56,15 +56,7 @@ PAGE_LABELS = {
 
 
 class DocumentError(WorkflowError):
-    def __init__(self, code: str, message: str):
-        super().__init__(code, message)
-
-
-def document_type_from_value(value: str) -> DocumentType:
-    try:
-        return DocumentType(value)
-    except ValueError as exc:
-        raise DocumentError("INVALID_DOCUMENT_TYPE", "證件類型錯誤。") from exc
+    pass
 
 
 def _fernet() -> Fernet:
@@ -137,14 +129,6 @@ def _normalize_image(upload: FileStorage) -> tuple[bytes, int, int, str]:
     return output.getvalue(), width, height, original_name
 
 
-def _provided_uploads(uploads: dict[DocumentPageKind, FileStorage | None]):
-    return {
-        kind: upload
-        for kind, upload in uploads.items()
-        if upload is not None and bool(Path(upload.filename or "").name)
-    }
-
-
 def upload_document_set(
     *,
     profile: StaffProfile,
@@ -152,7 +136,11 @@ def upload_document_set(
     uploads: dict[DocumentPageKind, FileStorage | None],
     actor_user_id: int,
 ) -> list[StaffDocument]:
-    provided = _provided_uploads(uploads)
+    provided = {
+        kind: upload
+        for kind, upload in uploads.items()
+        if upload is not None and bool(Path(upload.filename or "").name)
+    }
     allowed = set(PAGE_KINDS[document_type])
     required = REQUIRED_PAGE_KINDS[document_type]
     if not required.issubset(provided) or not set(provided).issubset(allowed):

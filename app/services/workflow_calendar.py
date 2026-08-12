@@ -2,12 +2,14 @@ from __future__ import annotations
 
 from collections import defaultdict
 from collections.abc import Iterable
+from sqlalchemy.orm import joinedload
 
 from ..extensions import db
 from ..models import (
     LeaveRequest,
     LeaveStatus,
     Shift,
+    ShiftType,
     SwapAdminStatus,
     SwapPeerStatus,
     SwapRequest,
@@ -76,6 +78,13 @@ def direct_swap_invitations(*, profile_id: int, start, end) -> list[SwapRequest]
     """Find direct-takeover invitations that do not yet belong to the target's calendar."""
     return db.session.scalars(
         db.select(SwapRequest)
+        .options(
+            joinedload(SwapRequest.requester_shift).joinedload(Shift.staff),
+            joinedload(SwapRequest.requester_shift).joinedload(Shift.series),
+            joinedload(SwapRequest.requester_shift)
+            .joinedload(Shift.shift_type)
+            .joinedload(ShiftType.work_location),
+        )
         .join(Shift, SwapRequest.requester_shift_id == Shift.id)
         .where(
             SwapRequest.target_staff_id == profile_id,

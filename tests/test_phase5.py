@@ -6,7 +6,7 @@ from app.services.document_keys import ensure_document_encryption_key
 from app.services.retention import _scheduled_tick
 
 from .conftest import login
-from .test_documents import admin_review, image_upload, upload_residence
+from .test_documents import admin_review, ensure_foreign_student, image_upload, upload_residence
 
 
 def logout(client):
@@ -28,6 +28,7 @@ def test_key_primary_and_backup_are_created_and_primary_can_be_restored(app):
 
 def test_work_permit_confirmation_only_requires_start_and_end(client, app):
     login(client, "student-test", "StudentTest!2026")
+    ensure_foreign_student(client)
     client.post(
         "/student/documents",
         data={

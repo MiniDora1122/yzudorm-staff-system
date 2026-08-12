@@ -21,6 +21,8 @@ document.addEventListener("DOMContentLoaded", () => {
   let editingSeriesId = null;
   let visibleMonth = "";
   let laneSyncFrame = 0;
+  let calendarResizeTimer = 0;
+  let observedCalendarWidth = 0;
   let editingLocationId = null;
   let editingShiftTypeId = null;
 
@@ -152,7 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const label = row.querySelector(`.location-row-label[data-location-id="${location.id}"]`);
         lanes.forEach((lane) => { lane.style.height = "auto"; });
         if (label) label.style.height = "auto";
-        const height = Math.max(54, ...lanes.map((lane) => lane.scrollHeight));
+        const height = Math.max(54, label?.scrollHeight || 0, ...lanes.map((lane) => lane.scrollHeight));
         lanes.forEach((lane) => { lane.style.height = `${height}px`; });
         if (label && !label.classList.contains("d-none")) label.style.height = `${height}px`;
       });
@@ -377,7 +379,26 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   calendar.render();
-  window.addEventListener("resize", scheduleLaneSync);
+  const refreshResponsiveCalendarLayout = () => {
+    scheduleLaneSync();
+    window.clearTimeout(calendarResizeTimer);
+    calendarResizeTimer = window.setTimeout(() => {
+      calendar.updateSize();
+      injectLocationColumn();
+      scheduleEventPlacement();
+      window.setTimeout(scheduleLaneSync, 120);
+    }, 160);
+  };
+  window.addEventListener("resize", refreshResponsiveCalendarLayout);
+  if (typeof ResizeObserver !== "undefined") {
+    const calendarResizeObserver = new ResizeObserver((entries) => {
+      const width = entries[0]?.contentRect.width || 0;
+      if (Math.abs(width - observedCalendarWidth) < 1) return;
+      observedCalendarWidth = width;
+      refreshResponsiveCalendarLayout();
+    });
+    calendarResizeObserver.observe(calendarElement.parentElement);
+  }
   if (document.fonts?.ready) document.fonts.ready.then(scheduleLaneSync);
   document.getElementById("addShiftButton").addEventListener("click", () => openCreateModal());
   document.getElementById("locationSettingsButton").addEventListener("click", () => settingsModal.show());

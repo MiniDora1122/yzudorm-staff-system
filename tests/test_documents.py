@@ -19,7 +19,15 @@ def image_upload(color="white", filename="permit.png"):
     return stream, filename
 
 
+def ensure_foreign_student(client):
+    client.post(
+        "/student/profile",
+        data={"email": "student@example.test", "phone": "0912000000", "nationality": "外國籍"},
+    )
+
+
 def upload_residence(client, color="white", filename="permit.png"):
+    ensure_foreign_student(client)
     back_color = "lightgreen" if color == "lightblue" else "lightgray"
     return client.post(
         "/student/documents",
@@ -122,6 +130,7 @@ def test_student_cannot_read_another_students_document_but_admin_can_download(cl
 
 def test_invalid_file_is_rejected(client, app):
     login(client, "student-test", "StudentTest!2026")
+    ensure_foreign_student(client)
     response = client.post(
         "/student/documents",
         data={
@@ -140,6 +149,7 @@ def test_invalid_file_is_rejected(client, app):
 
 def test_image_signature_must_match_extension_and_mime(client, app):
     login(client, "student-test", "StudentTest!2026")
+    ensure_foreign_student(client)
     response = client.post(
         "/student/documents",
         data={
@@ -218,10 +228,12 @@ def test_admin_rejection_requires_reason_and_student_can_correct(client, app):
 
     logout(client)
     login(client, "student-test", "StudentTest!2026")
-    dashboard = client.get("/student/")
-    assert "居留證已被退回，請修正".encode("utf-8") in dashboard.data
+    dashboard = client.get("/student/", follow_redirects=True)
+    assert "必須完成外籍生證件".encode("utf-8") in dashboard.data
     assert "影像反光".encode("utf-8") in dashboard.data
-    assert b"#documentReviewSection" in dashboard.data
+    notifications = client.get("/student/notifications")
+    assert "居留證已被退回，請修正".encode("utf-8") in notifications.data
+    assert b"#documentReviewSection" in notifications.data
     page = client.get("/student/profile")
     assert "影像反光".encode("utf-8") in page.data
     client.post(
@@ -271,6 +283,7 @@ def test_admin_must_verify_residence_fields_before_approval(client, app):
 
 def test_residence_requires_both_sides(client, app):
     login(client, "student-test", "StudentTest!2026")
+    ensure_foreign_student(client)
     response = client.post(
         "/student/documents",
         data={

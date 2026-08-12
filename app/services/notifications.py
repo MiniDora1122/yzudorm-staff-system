@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from flask import url_for
+from sqlalchemy.orm import joinedload
 
 from ..extensions import db
 from ..models import (
@@ -22,11 +23,13 @@ from ..models import (
     utc_now,
 )
 from .documents import expiry_state, group_document_sets
+from .compliance import missing_required_document_types
 
 
 MANAGED_CATEGORIES = {
     "DOCUMENT_REVIEW",
     "DOCUMENT_REJECTED",
+    "DOCUMENT_REQUIRED",
     "DOCUMENT_EXPIRY",
     "LEAVE_REVIEW",
     "SWAP_REVIEW",
@@ -106,13 +109,17 @@ def _sync_specs(
         if key not in active_keys and notification.status == NotificationStatus.OPEN:
             notification.status = NotificationStatus.COMPLETED
             notification.completed_at = now
-    db.session.commit()
+    if db.session.new or any(
+        db.session.is_modified(item, include_collections=False) for item in existing.values()
+    ):
+        db.session.commit()
 
 
 def sync_admin_notifications() -> None:
     specs: list[NotificationSpec] = []
     pending_documents = db.session.scalars(
         db.select(StaffDocument)
+        .options(joinedload(StaffDocument.staff))
         .where(StaffDocument.status == DocumentStatus.PENDING_ADMIN)
         .order_by(StaffDocument.uploaded_at.desc())
     ).all()
@@ -162,6 +169,7 @@ def sync_admin_notifications() -> None:
 
     pending_leaves = db.session.scalars(
         db.select(LeaveRequest)
+        .options(joinedload(LeaveRequest.staff), joinedload(LeaveRequest.shift))
         .where(LeaveRequest.status == LeaveStatus.PENDING)
         .order_by(LeaveRequest.created_at)
     ).all()
@@ -181,6 +189,7 @@ def sync_admin_notifications() -> None:
 
     pending_swaps = db.session.scalars(
         db.select(SwapRequest)
+        .options(joinedload(SwapRequest.requester), joinedload(SwapRequest.requester_shift))
         .where(SwapRequest.admin_status == SwapAdminStatus.PENDING)
         .order_by(SwapRequest.created_at)
     ).all()
@@ -204,6 +213,20 @@ def sync_student_notifications(user: User) -> None:
     profile = user.staff_profile
     specs: list[NotificationSpec] = []
     if profile is not None:
+        for document_type in sorted(missing_required_document_types(profile), key=lambda item: item.value):
+            label_zh, label_en = _document_label(document_type)
+            specs.append(
+                NotificationSpec(
+                    key=f"STUDENT:{user.id}:DOCUMENT_REQUIRED:{document_type.value}",
+                    category="DOCUMENT_REQUIRED",
+                    severity="DANGER",
+                    title_zh=f"必須完成{label_zh}",
+                    title_en=f"Your {label_en} is required",
+                    message_zh="請上傳完整文件、核對資料並等待管理員核准；完成前其他功能將暫停使用。",
+                    message_en="Upload the complete document and obtain administrator approval before using other features.",
+                    target_url=f"{url_for('student.profile')}#documentUploadSection",
+                )
+            )
         rejected = db.session.scalars(
             db.select(StaffDocument)
             .where(
@@ -250,6 +273,7 @@ def sync_student_notifications(user: User) -> None:
 
         invitations = db.session.scalars(
             db.select(SwapRequest)
+            .options(joinedload(SwapRequest.requester), joinedload(SwapRequest.requester_shift))
             .where(
                 SwapRequest.target_staff_id == profile.id,
                 SwapRequest.peer_status == SwapPeerStatus.PENDING,
@@ -286,14 +310,6 @@ def notifications_for_user(user: User) -> tuple[list[Notification], list[Notific
     )
     completed_items = [item for item in items if item.status == NotificationStatus.COMPLETED]
     return open_items, completed_items
-
-
-def sync_and_get_notifications(user: User) -> tuple[list[Notification], list[Notification]]:
-    if user.role == Role.ADMIN:
-        sync_admin_notifications()
-    else:
-        sync_student_notifications(user)
-    return notifications_for_user(user)
 
 
 def open_notification_count(user: User) -> int:

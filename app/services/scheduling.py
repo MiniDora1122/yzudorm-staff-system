@@ -6,6 +6,7 @@ from sqlalchemy.orm import joinedload
 
 from ..extensions import db
 from ..models import Shift, ShiftSeries, ShiftStatus, ShiftType, StaffProfile
+from .compliance import get_scheduling_policy, is_weekly_limit_exception_day, weekly_limit_applies
 
 
 class SchedulingConflict(ValueError):
@@ -90,6 +91,36 @@ def validate_shift_assignment(
                 f"{staff.name} 不得連續工作超過 5 天。 / More than 5 consecutive workdays is not allowed.",
             )
         previous_day = workday
+
+    if weekly_limit_applies(staff, shift_date):
+        policy = get_scheduling_policy()
+        days_since_week_start = (shift_date.weekday() - policy.week_starts_on) % 7
+        week_start = shift_date - timedelta(days=days_since_week_start)
+        week_end = week_start + timedelta(days=6)
+        week_statement = (
+            db.select(Shift)
+            .options(joinedload(Shift.shift_type))
+            .where(
+                Shift.staff_id == staff.id,
+                Shift.status == ShiftStatus.SCHEDULED,
+                Shift.shift_date.between(week_start, week_end),
+            )
+        )
+        if excluded:
+            week_statement = week_statement.where(Shift.id.not_in(excluded))
+        counted_shifts = [
+            existing
+            for existing in db.session.scalars(week_statement)
+            if not is_weekly_limit_exception_day(existing.shift_date)
+        ]
+        weekly_hours = proposed_hours + sum(shift_hours(existing.shift_type) for existing in counted_shifts)
+        limit = float(policy.weekly_hour_limit)
+        if weekly_hours > limit:
+            raise SchedulingConflict(
+                "FOREIGN_WEEKLY_HOURS_LIMIT",
+                f"{staff.name} 在 {week_start}–{week_end} 的受限制排班將達 {weekly_hours:g} 小時，"
+                f"超過每週 {limit:g} 小時上限。 / The weekly limit would be exceeded.",
+            )
 
     for existing in existing_shifts:
         existing_type = existing.shift_type

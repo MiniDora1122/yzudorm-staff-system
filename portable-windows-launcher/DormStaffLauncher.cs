@@ -67,6 +67,8 @@ namespace DormStaffPortable
         public string GitRemote = "origin";
         public string GitBranch = "main";
         public string RepositoryUrl = "https://github.com/MiniDora1122/yzudorm-staff-system";
+        public int WatchdogIntervalMinutes = 5;
+        public bool AutoStartEnabled;
         public bool OpenBrowserAfterStart = true;
 
         public static LauncherConfig Load(string path)
@@ -87,6 +89,14 @@ namespace DormStaffPortable
                 else if (key.Equals("GitRemote", StringComparison.OrdinalIgnoreCase)) config.GitRemote = value;
                 else if (key.Equals("GitBranch", StringComparison.OrdinalIgnoreCase)) config.GitBranch = value;
                 else if (key.Equals("RepositoryUrl", StringComparison.OrdinalIgnoreCase)) config.RepositoryUrl = value;
+                else if (key.Equals("WatchdogIntervalMinutes", StringComparison.OrdinalIgnoreCase))
+                {
+                    int minutes;
+                    if (Int32.TryParse(value, out minutes) && minutes >= 1 && minutes <= 1440)
+                        config.WatchdogIntervalMinutes = minutes;
+                }
+                else if (key.Equals("AutoStartEnabled", StringComparison.OrdinalIgnoreCase))
+                    config.AutoStartEnabled = value == "1" || value.Equals("true", StringComparison.OrdinalIgnoreCase);
                 else if (key.Equals("OpenBrowserAfterStart", StringComparison.OrdinalIgnoreCase))
                     config.OpenBrowserAfterStart = value == "1" || value.Equals("true", StringComparison.OrdinalIgnoreCase);
             }
@@ -103,6 +113,8 @@ namespace DormStaffPortable
                 "GitRemote=" + GitRemote,
                 "GitBranch=" + GitBranch,
                 "RepositoryUrl=" + RepositoryUrl,
+                "WatchdogIntervalMinutes=" + WatchdogIntervalMinutes,
+                "AutoStartEnabled=" + (AutoStartEnabled ? "1" : "0"),
                 "OpenBrowserAfterStart=" + (OpenBrowserAfterStart ? "1" : "0")
             };
             File.WriteAllLines(path, lines, new UTF8Encoding(false));
@@ -435,7 +447,6 @@ namespace DormStaffPortable
             if (!environment.PythonIsInstalled)
                 throw new InvalidOperationException("請先安裝 portable runtime。 / Install the portable runtime first.");
             ConfigureProjectImportPath();
-            EnsureEnvironmentFile();
             UpgradeDatabase();
             return CountActiveAdministrators();
         }
@@ -707,6 +718,54 @@ namespace DormStaffPortable
             RunChecked(environment.PythonExe, Quote(backupScript) + " " + Quote(destination) + " --allow-running", environment.ProjectRoot);
             if (!File.Exists(destination)) throw new InvalidOperationException("備份程式未產生檔案。 / Backup file was not created.");
             log("完整系統備份已建立：" + destination);
+        }
+
+        public void ConfigureWatchdog(bool enable, int intervalMinutes)
+        {
+            if (enable)
+            {
+                ValidateProject();
+                if (!environment.PythonIsInstalled)
+                    throw new InvalidOperationException("請先完成安裝／修復環境。 / Install the portable runtime first.");
+            }
+            string script = Path.Combine(environment.BaseDirectory, "configure-watchdog-task.ps1");
+            if (!File.Exists(script)) throw new InvalidOperationException("找不到自啟動設定程式：" + script);
+            string mode = enable ? "Enable" : "Disable";
+            ProcessStartInfo info = new ProcessStartInfo(
+                "powershell.exe",
+                "-NoProfile -ExecutionPolicy Bypass -File " + Quote(script) + " -Mode " + mode + " -IntervalMinutes " + intervalMinutes
+            );
+            info.UseShellExecute = true;
+            info.Verb = "runas";
+            info.WindowStyle = ProcessWindowStyle.Hidden;
+            using (Process process = Process.Start(info))
+            {
+                process.WaitForExit();
+                if (process.ExitCode != 0)
+                    throw new InvalidOperationException("Windows 工作排程設定失敗（exit " + process.ExitCode + "）。");
+            }
+            log(enable
+                ? "自啟動巡檢已啟用，每 " + intervalMinutes + " 分鐘檢查一次。 / Auto-start watchdog enabled."
+                : "自啟動巡檢已停用；目前執行中的系統不會被停止。 / Auto-start watchdog disabled.");
+        }
+
+        public void StopConfiguredServer()
+        {
+            string script = Path.Combine(environment.BaseDirectory, "stop-server.ps1");
+            if (!File.Exists(script)) throw new InvalidOperationException("找不到停止系統程式：" + script);
+            ProcessStartInfo info = new ProcessStartInfo(
+                "powershell.exe",
+                "-NoProfile -ExecutionPolicy Bypass -File " + Quote(script) + " -ConfigPath " + Quote(environment.ConfigPath)
+            );
+            info.UseShellExecute = true;
+            info.Verb = "runas";
+            info.WindowStyle = ProcessWindowStyle.Hidden;
+            using (Process process = Process.Start(info))
+            {
+                process.WaitForExit();
+                if (process.ExitCode != 0)
+                    throw new InvalidOperationException("系統停止失敗（exit " + process.ExitCode + "）。可能是 Port 被其他程式占用。");
+            }
         }
 
         public CommandResult RunChecked(string executable, string arguments, string workingDirectory)
@@ -991,12 +1050,16 @@ namespace DormStaffPortable
         private readonly TextBox portBox = new TextBox();
         private readonly TextBox repositoryBox = new TextBox();
         private readonly TextBox branchBox = new TextBox();
+        private readonly NumericUpDown watchdogMinutesBox = new NumericUpDown();
         private readonly CheckBox lanCheck = new CheckBox();
         private readonly CheckBox browserCheck = new CheckBox();
         private readonly RichTextBox logBox = new RichTextBox();
         private readonly List<Button> actionButtons = new List<Button>();
+        private readonly System.Windows.Forms.Timer statusTimer = new System.Windows.Forms.Timer();
         private Process serverProcess;
         private bool operationRunning;
+        private bool? lastRunningState;
+        private long watchdogLogPosition;
 
         public LauncherForm(PortableEnvironment environment)
         {
@@ -1004,7 +1067,7 @@ namespace DormStaffPortable
             manager = new PortableManager(environment, WriteLog);
             Text = "宿舍工讀生系統啟動器 / Dorm Staff Launcher";
             Width = 980;
-            Height = 840;
+            Height = 900;
             MinimumSize = new Size(850, 620);
             StartPosition = FormStartPosition.CenterScreen;
             AutoScaleMode = AutoScaleMode.Dpi;
@@ -1014,6 +1077,10 @@ namespace DormStaffPortable
             BuildUi();
             LoadSettingsIntoUi();
             UpdateStatus();
+            ImportWatchdogLog();
+            statusTimer.Interval = 2000;
+            statusTimer.Tick += delegate { UpdateStatus(); ImportWatchdogLog(); };
+            statusTimer.Start();
             WriteLog("Launcher 路徑：" + environment.BaseDirectory);
             WriteLog("專案路徑：" + environment.ProjectRoot);
         }
@@ -1029,7 +1096,7 @@ namespace DormStaffPortable
 
             TableLayoutPanel body = new TableLayoutPanel { Dock = DockStyle.Fill, Padding = new Padding(18), ColumnCount = 2, RowCount = 2 };
             body.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 48)); body.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 52));
-            body.RowStyles.Add(new RowStyle(SizeType.Absolute, 405)); body.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+            body.RowStyles.Add(new RowStyle(SizeType.Absolute, 470)); body.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
             Controls.Add(body); body.BringToFront();
 
             GroupBox settings = new GroupBox { Text = "設定 / Settings", Dock = DockStyle.Fill, Padding = new Padding(14) };
@@ -1046,12 +1113,14 @@ namespace DormStaffPortable
             browserCheck.Text = "啟動後自動開啟瀏覽器"; browserCheck.AutoSize = true;
             settingGrid.Controls.Add(browserCheck, 1, 5);
             Button save = MakeButton("儲存", delegate { SaveSettings(); }); settingGrid.Controls.Add(save, 2, 5);
+            watchdogMinutesBox.Minimum = 1; watchdogMinutesBox.Maximum = 1440; watchdogMinutesBox.DecimalPlaces = 0;
+            AddSettingRow(settingGrid, 6, "巡檢分鐘", watchdogMinutesBox, null);
             settings.Controls.Add(settingGrid); body.Controls.Add(settings, 0, 0);
 
             GroupBox actions = new GroupBox { Text = "操作 / Actions", Dock = DockStyle.Fill, Padding = new Padding(14) };
-            TableLayoutPanel actionGrid = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 2, RowCount = 6 };
+            TableLayoutPanel actionGrid = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 2, RowCount = 7 };
             actionGrid.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50)); actionGrid.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
-            for (int i = 0; i < 6; i++) actionGrid.RowStyles.Add(new RowStyle(SizeType.Percent, 16.666F));
+            for (int i = 0; i < 7; i++) actionGrid.RowStyles.Add(new RowStyle(SizeType.Percent, 14.285F));
             AddAction(actionGrid, 0, 0, "① 安裝／修復環境\r\nInstall / Repair", Color.FromArgb(21, 101, 192), delegate { RunBackground("安裝環境", manager.InstallOrRepair); });
             AddAction(actionGrid, 1, 0, "② 啟動系統\r\nStart", Color.FromArgb(24, 135, 84), StartServer);
             AddAction(actionGrid, 0, 1, "停止系統\r\nStop", Color.FromArgb(185, 46, 52), StopServer);
@@ -1062,7 +1131,9 @@ namespace DormStaffPortable
             AddAction(actionGrid, 1, 3, "XAMPP 設定教學\r\nSetup guide", Color.FromArgb(210, 125, 35), delegate { OpenTextFile(Path.Combine(environment.BaseDirectory, "XAMPP_GUIDE.md")); });
             AddAction(actionGrid, 0, 4, "匯出／備份系統\r\nExport / Backup", Color.FromArgb(0, 112, 123), ExportSystemBackup);
             AddAction(actionGrid, 1, 4, "移轉／還原資料\r\nMigrate / Restore", Color.FromArgb(130, 88, 20), MigrateOrRestoreData);
-            AddAction(actionGrid, 0, 5, "全新初始化：清空資料並建立第一位管理員\r\nFresh database setup", Color.FromArgb(139, 31, 38), FreshDatabaseSetup);
+            AddAction(actionGrid, 0, 5, "啟用自啟動巡檢\r\nEnable auto-start", Color.FromArgb(24, 135, 84), delegate { ConfigureWatchdog(true); });
+            AddAction(actionGrid, 1, 5, "停用自啟動巡檢\r\nDisable auto-start", Color.FromArgb(100, 107, 117), delegate { ConfigureWatchdog(false); });
+            AddAction(actionGrid, 0, 6, "全新初始化：清空資料並建立第一位管理員\r\nFresh database setup", Color.FromArgb(139, 31, 38), FreshDatabaseSetup);
             actionGrid.SetColumnSpan(actionButtons[actionButtons.Count - 1], 2);
             actions.Controls.Add(actionGrid); body.Controls.Add(actions, 1, 0);
 
@@ -1097,6 +1168,7 @@ namespace DormStaffPortable
             repositoryBox.Text = environment.Config.RepositoryUrl;
             lanCheck.Checked = environment.Config.ListenAddress == "0.0.0.0";
             browserCheck.Checked = environment.Config.OpenBrowserAfterStart;
+            watchdogMinutesBox.Value = environment.Config.WatchdogIntervalMinutes;
         }
 
         private bool SaveSettings()
@@ -1109,6 +1181,7 @@ namespace DormStaffPortable
             environment.Config.ListenAddress = lanCheck.Checked ? "0.0.0.0" : "127.0.0.1";
             environment.Config.GitBranch = branchBox.Text.Trim();
             environment.Config.RepositoryUrl = repositoryBox.Text.Trim();
+            environment.Config.WatchdogIntervalMinutes = Decimal.ToInt32(watchdogMinutesBox.Value);
             environment.Config.OpenBrowserAfterStart = browserCheck.Checked;
             environment.Config.Save(environment.ConfigPath);
             WriteLog("設定已儲存。 / Settings saved.");
@@ -1203,6 +1276,31 @@ namespace DormStaffPortable
             }
         }
 
+        private void ConfigureWatchdog(bool enable)
+        {
+            if (operationRunning || !SaveSettings()) return;
+            try
+            {
+                manager.ConfigureWatchdog(enable, environment.Config.WatchdogIntervalMinutes);
+                environment.Config.AutoStartEnabled = enable;
+                environment.Config.Save(environment.ConfigPath);
+                MessageBox.Show(
+                    this,
+                    enable
+                        ? "自啟動巡檢已啟用。Windows 登入後會顯示 Launcher，並在背景定期檢查系統。\r\nAuto-start watchdog and Launcher enabled."
+                        : "自啟動巡檢已停用。目前已執行的系統不會被停止。\r\nAuto-start watchdog disabled.",
+                    "完成 / Completed",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                );
+            }
+            catch (Exception ex)
+            {
+                WriteLog("ERROR: " + ex.Message);
+                MessageBox.Show(this, ex.Message, "自啟動設定失敗 / Auto-start setup failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         private void RunBackground(string name, Action operation)
         {
             if (operationRunning) return;
@@ -1265,7 +1363,7 @@ namespace DormStaffPortable
                 if (createAdministrator == DialogResult.Yes) FreshDatabaseSetup(sender, args);
                 return;
             }
-            if (serverProcess != null && !serverProcess.HasExited) { MessageBox.Show("系統已在執行。 "); return; }
+            if (GetRunningServerProcess() != null) { MessageBox.Show("系統已在執行。 "); return; }
             int port = Int32.Parse(environment.Config.Port);
             if (!PortIsAvailable(port, environment.Config.ListenAddress == "0.0.0.0")) { MessageBox.Show("Port " + port + " 已被其他程式使用。請更換 Port。 ", "無法啟動", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
             string logFile = Path.Combine(environment.LogsDirectory, "server-" + DateTime.Now.ToString("yyyy-MM-dd") + ".log");
@@ -1287,12 +1385,62 @@ namespace DormStaffPortable
         private void StopServer(object sender, EventArgs args) { StopServer(); }
         private void StopServer()
         {
+            Process process = GetRunningServerProcess();
             try
             {
-                if (serverProcess != null && !serverProcess.HasExited) { serverProcess.Kill(); serverProcess.WaitForExit(5000); WriteLog("系統已停止。 / Server stopped."); }
+                if (process != null && !process.HasExited)
+                {
+                    try { process.Kill(); process.WaitForExit(5000); }
+                    catch { manager.StopConfiguredServer(); }
+                    WriteLog("系統已停止。 / Server stopped.");
+                }
+                else if (AppIsHealthy() || ConfiguredPortIsOccupied())
+                {
+                    manager.StopConfiguredServer();
+                    WriteLog("已停止由背景巡檢啟動的系統。 / Background server stopped.");
+                }
+                else WriteLog("系統目前未執行。 / Server is not running.");
             }
             catch (Exception ex) { WriteLog("停止失敗：" + ex.Message); }
             finally { serverProcess = null; string pid = Path.Combine(environment.RuntimeDirectory, "server.pid"); if (File.Exists(pid)) File.Delete(pid); if (IsHandleCreated) BeginInvoke((MethodInvoker)UpdateStatus); }
+        }
+
+        private Process GetRunningServerProcess()
+        {
+            if (serverProcess != null && !serverProcess.HasExited) return serverProcess;
+            string pidFile = Path.Combine(environment.RuntimeDirectory, "server.pid");
+            int pid;
+            if (!File.Exists(pidFile) || !Int32.TryParse(File.ReadAllText(pidFile).Trim(), out pid)) return null;
+            try
+            {
+                Process process = Process.GetProcessById(pid);
+                if (process.HasExited) return null;
+                string actual = process.MainModule.FileName;
+                return String.Equals(Path.GetFullPath(actual), Path.GetFullPath(environment.PythonExe), StringComparison.OrdinalIgnoreCase) ? process : null;
+            }
+            catch { return null; }
+        }
+
+        private bool AppIsHealthy()
+        {
+            try
+            {
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://127.0.0.1:" + environment.Config.Port + "/auth/login");
+                request.Timeout = 700; request.ReadWriteTimeout = 700;
+                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+                {
+                    string content = reader.ReadToEnd();
+                    return response.StatusCode == HttpStatusCode.OK && (content.Contains("宿舍工讀生") || content.Contains("Dormitory Student Worker System"));
+                }
+            }
+            catch { return false; }
+        }
+
+        private bool ConfiguredPortIsOccupied()
+        {
+            int port;
+            return Int32.TryParse(environment.Config.Port, out port) && !PortIsAvailable(port, environment.Config.ListenAddress == "0.0.0.0");
         }
 
         private void OpenBrowser(object sender, EventArgs args) { OpenBrowser(); }
@@ -1323,13 +1471,43 @@ namespace DormStaffPortable
             try { Directory.CreateDirectory(environment.LogsDirectory); File.AppendAllText(Path.Combine(environment.LogsDirectory, "launcher-" + DateTime.Now.ToString("yyyy-MM-dd") + ".log"), line, Encoding.UTF8); } catch { }
         }
 
+        private void ImportWatchdogLog()
+        {
+            string path = Path.Combine(environment.LogsDirectory, "watchdog.log");
+            try
+            {
+                if (!File.Exists(path)) return;
+                using (FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                {
+                    if (watchdogLogPosition > stream.Length) watchdogLogPosition = 0;
+                    stream.Position = watchdogLogPosition;
+                    using (StreamReader reader = new StreamReader(stream, Encoding.UTF8, true, 1024, true))
+                    {
+                        string text = reader.ReadToEnd();
+                        watchdogLogPosition = stream.Position;
+                        if (!String.IsNullOrWhiteSpace(text))
+                            foreach (string line in text.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries))
+                                logBox.AppendText("[Watchdog] " + line + Environment.NewLine);
+                    }
+                }
+                logBox.SelectionStart = logBox.TextLength; logBox.ScrollToCaret();
+            }
+            catch { }
+        }
+
         private void SetActionsEnabled(bool enabled) { foreach (Button button in actionButtons) button.Enabled = enabled; }
         private void UpdateStatus()
         {
-            bool running = serverProcess != null && !serverProcess.HasExited;
+            bool healthy = AppIsHealthy();
+            bool running = healthy || GetRunningServerProcess() != null;
+            bool portOccupied = !running && ConfiguredPortIsOccupied();
             bool runtimeReady = environment.PythonIsInstalled && environment.GitIsInstalled;
-            statusLabel.Text = running ? "● 執行中 Running" : (runtimeReady && environment.ProjectIsValid ? "● 已就緒 Ready" : runtimeReady ? "● 請選擇專案 Select project" : "○ 尚未安裝 Not installed");
-            statusLabel.ForeColor = running ? Color.FromArgb(91, 224, 151) : Color.White;
+            string serviceStatus = healthy ? "● 執行中 Running" : running ? "● 啟動中／無回應 Check server" : portOccupied ? "● Port 已占用／系統無回應" : (runtimeReady && environment.ProjectIsValid ? "● 已就緒 Ready" : runtimeReady ? "● 請選擇專案 Select project" : "○ 尚未安裝 Not installed");
+            statusLabel.Text = serviceStatus + (environment.Config.AutoStartEnabled ? "\r\n自啟動：開 Auto-start: On" : "\r\n自啟動：關 Auto-start: Off");
+            statusLabel.ForeColor = healthy ? Color.FromArgb(91, 224, 151) : running ? Color.FromArgb(255, 200, 87) : Color.White;
+            if (lastRunningState.HasValue && lastRunningState.Value != running)
+                WriteLog(running ? "偵測到系統已啟動。 / Server detected running." : "偵測到系統已停止。 / Server detected stopped.");
+            lastRunningState = running;
         }
 
         private static bool PortIsAvailable(int port, bool allInterfaces)
@@ -1342,10 +1520,11 @@ namespace DormStaffPortable
 
         private void OnFormClosing(object sender, FormClosingEventArgs args)
         {
-            if (serverProcess != null && !serverProcess.HasExited)
+            statusTimer.Stop();
+            if (GetRunningServerProcess() != null)
             {
                 DialogResult result = MessageBox.Show("關閉啟動器也會停止系統，是否繼續？\r\nClosing the launcher will stop the server.", "確認關閉", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                if (result != DialogResult.Yes) { args.Cancel = true; return; }
+                if (result != DialogResult.Yes) { args.Cancel = true; statusTimer.Start(); return; }
                 StopServer();
             }
         }

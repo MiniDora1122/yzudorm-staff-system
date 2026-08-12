@@ -28,6 +28,13 @@ from ..models import (
 )
 from ..services.payroll import calculate_staff_cost, get_payroll_setting
 from ..services.notifications import notifications_for_user
+from ..services.compliance import (
+    active_countries,
+    canonical_country_name,
+    is_taiwan_nationality,
+    missing_required_document_types,
+    requires_work_documents,
+)
 from ..services.documents import (
     PRIVACY_NOTICE_VERSION,
     PAGE_LABELS,
@@ -57,6 +64,37 @@ from ..services.workflow_calendar import (
 from ..time_utils import local_today
 
 
+@bp.before_app_request
+def require_foreign_student_documents():
+    if not current_user.is_authenticated or current_user.role != Role.STUDENT:
+        return None
+    profile = current_user.staff_profile
+    if profile is None or not missing_required_document_types(profile):
+        return None
+    allowed = {
+        "static",
+        "auth.change_password",
+        "auth.logout",
+        "student.profile",
+        "student.update_profile",
+        "student.notifications_page",
+        "student.upload_staff_document",
+        "student.confirm_staff_document",
+        "student.view_staff_document",
+        "student.download_staff_document",
+        "student.download_staff_document_set",
+        "student.delete_staff_document",
+    }
+    if request.endpoint not in allowed:
+        flash(
+            "非台灣國籍工讀生必須完成居留證與工作證上傳及管理員核准後，才能使用其他功能。 "
+            "/ Required documents must be approved before continuing.",
+            "warning",
+        )
+        return redirect(f"{url_for('student.profile')}#documentUploadSection")
+    return None
+
+
 @bp.get("/")
 @role_required(Role.STUDENT)
 def dashboard():
@@ -73,6 +111,7 @@ def dashboard():
     if profile:
         shifts = db.session.scalars(
             db.select(Shift)
+            .options(joinedload(Shift.shift_type).joinedload(ShiftType.work_location))
             .where(
                 Shift.staff_id == profile.id,
                 Shift.status == ShiftStatus.SCHEDULED,
@@ -179,6 +218,10 @@ def profile():
         residence_state=expiry_state(profile.residence_expiry) if profile else None,
         permit_state=expiry_state(profile.work_permit_expiry) if profile else None,
         page_labels=PAGE_LABELS,
+        countries=active_countries(),
+        requires_documents=requires_work_documents(profile) if profile else False,
+        missing_document_types=missing_required_document_types(profile) if profile else set(),
+        enum_document_type=DocumentType,
     )
 
 
@@ -191,11 +234,21 @@ def update_profile():
         return redirect(url_for("student.profile"))
     email = request.form.get("email", "").strip()
     phone = request.form.get("phone", "").strip()
-    nationality = request.form.get("nationality", "").strip()
+    try:
+        nationality = canonical_country_name(request.form.get("nationality", ""))
+    except ValueError as exc:
+        flash(str(exc), "danger")
+        return redirect(url_for("student.profile"))
+    if requires_work_documents(profile) and is_taiwan_nationality(nationality):
+        flash(
+            "外籍生國籍改為台灣必須由管理員核對後修改。 / An administrator must verify this nationality change.",
+            "danger",
+        )
+        return redirect(url_for("student.profile"))
     if len(email) > 255 or (email and ("@" not in email or "." not in email.rsplit("@", 1)[-1])):
         flash("Email 格式錯誤。", "danger")
         return redirect(url_for("student.profile"))
-    if len(phone) > 30 or not nationality or len(nationality) > 80:
+    if len(phone) > 30:
         flash("聯絡電話或國籍格式錯誤。", "danger")
         return redirect(url_for("student.profile"))
     profile.email = email or None
@@ -222,6 +275,12 @@ def upload_staff_document():
     profile = current_user.staff_profile
     if profile is None:
         flash("請選擇要上傳的文件。", "danger")
+        return redirect(url_for("student.profile"))
+    if not requires_work_documents(profile):
+        flash(
+            "台灣籍工讀生不需要上傳居留證或工作證。 / These documents are not required for Taiwanese students.",
+            "info",
+        )
         return redirect(url_for("student.profile"))
     if request.form.get("privacy_consent") != "yes":
         flash("請先閱讀並同意個資蒐集告知。", "danger")
@@ -385,6 +444,7 @@ def requests_page():
     today = local_today()
     own_shifts = db.session.scalars(
         db.select(Shift)
+        .options(joinedload(Shift.shift_type).joinedload(ShiftType.work_location))
         .where(
             Shift.staff_id == profile.id,
             Shift.status == ShiftStatus.SCHEDULED,
@@ -395,6 +455,10 @@ def requests_page():
     ).all()
     target_shifts = db.session.scalars(
         db.select(Shift)
+        .options(
+            joinedload(Shift.staff),
+            joinedload(Shift.shift_type).joinedload(ShiftType.work_location),
+        )
         .join(ShiftType)
         .where(
             Shift.staff_id != profile.id,
@@ -415,11 +479,18 @@ def requests_page():
         filter_scope = "ALL"
     leave_statement = (
         db.select(LeaveRequest)
+        .options(joinedload(LeaveRequest.shift).joinedload(Shift.shift_type).joinedload(ShiftType.work_location))
         .where(LeaveRequest.staff_id == profile.id)
         .order_by(LeaveRequest.created_at.desc())
     )
     swap_statement = (
         db.select(SwapRequest)
+        .options(
+            joinedload(SwapRequest.requester),
+            joinedload(SwapRequest.target_staff),
+            joinedload(SwapRequest.requester_shift).joinedload(Shift.shift_type).joinedload(ShiftType.work_location),
+            joinedload(SwapRequest.target_shift).joinedload(Shift.shift_type).joinedload(ShiftType.work_location),
+        )
         .where(db.or_(SwapRequest.requester_id == profile.id, SwapRequest.target_staff_id == profile.id))
         .order_by(SwapRequest.created_at.desc())
     )

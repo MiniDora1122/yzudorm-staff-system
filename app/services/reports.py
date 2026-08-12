@@ -10,6 +10,7 @@ from io import BytesIO, StringIO
 from openpyxl import Workbook
 from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter
+from sqlalchemy.orm import joinedload
 
 from ..extensions import db
 from ..models import (
@@ -22,7 +23,6 @@ from ..models import (
     StaffDocument,
     StaffProfile,
     SwapRequest,
-    WorkLocation,
 )
 from .documents import expiry_state
 from .payroll import calculate_staff_cost, get_payroll_setting
@@ -75,8 +75,11 @@ def _profiles_for_month(start: date, end: date) -> list[StaffProfile]:
 def _month_shifts(start: date, end: date) -> list[Shift]:
     return db.session.scalars(
         db.select(Shift)
+        .options(
+            joinedload(Shift.staff),
+            joinedload(Shift.shift_type).joinedload(ShiftType.work_location),
+        )
         .join(ShiftType)
-        .join(WorkLocation)
         .join(StaffProfile, Shift.staff_id == StaffProfile.id)
         .where(
             Shift.shift_date >= start,
@@ -414,6 +417,10 @@ def workflow_history_csv(start: date, end: date) -> bytes:
     rows: list[list[object]] = []
     leaves = db.session.scalars(
         db.select(LeaveRequest)
+        .options(
+            joinedload(LeaveRequest.staff),
+            joinedload(LeaveRequest.shift).joinedload(Shift.shift_type),
+        )
         .where(LeaveRequest.shift.has(Shift.shift_date >= start), LeaveRequest.shift.has(Shift.shift_date < end))
         .order_by(LeaveRequest.created_at)
     ).all()
@@ -434,6 +441,11 @@ def workflow_history_csv(start: date, end: date) -> bytes:
         )
     swaps = db.session.scalars(
         db.select(SwapRequest)
+        .options(
+            joinedload(SwapRequest.requester),
+            joinedload(SwapRequest.target_staff),
+            joinedload(SwapRequest.requester_shift).joinedload(Shift.shift_type),
+        )
         .where(
             db.or_(
                 SwapRequest.requester_shift.has(

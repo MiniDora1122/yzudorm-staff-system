@@ -153,6 +153,55 @@ class StaffProfile(db.Model):
     )
 
 
+class Country(db.Model):
+    __tablename__ = "countries"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    code: Mapped[str] = mapped_column(String(12), unique=True, nullable=False, index=True)
+    name: Mapped[str] = mapped_column(String(80), unique=True, nullable=False)
+    name_en: Mapped[str] = mapped_column(String(100), nullable=False)
+    is_taiwan: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    weekly_limit_exempt: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    display_order: Mapped[int] = mapped_column(default=0, nullable=False)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utc_now, onupdate=utc_now, nullable=False
+    )
+
+
+class SchedulingPolicy(db.Model):
+    __tablename__ = "scheduling_policies"
+    __table_args__ = (
+        CheckConstraint("week_starts_on BETWEEN 0 AND 6", name="ck_scheduling_policy_week_starts_on"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True, default=1)
+    foreign_weekly_limit_enabled: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    weekly_hour_limit: Mapped[Decimal] = mapped_column(Numeric(5, 2), default=Decimal("20"), nullable=False)
+    # Python weekday convention: Monday=0, Sunday=6.
+    week_starts_on: Mapped[int] = mapped_column(default=0, nullable=False)
+    updated_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utc_now, onupdate=utc_now, nullable=False
+    )
+
+
+class SchedulingExceptionPeriod(db.Model):
+    __tablename__ = "scheduling_exception_periods"
+    __table_args__ = (
+        CheckConstraint("ends_on >= starts_on", name="ck_scheduling_exception_date_order"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(100), nullable=False)
+    name_en: Mapped[str] = mapped_column(String(120), nullable=False)
+    starts_on: Mapped[date] = mapped_column(Date, nullable=False, index=True)
+    ends_on: Mapped[date] = mapped_column(Date, nullable=False, index=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
+
+
 class WorkLocation(db.Model):
     __tablename__ = "work_locations"
 

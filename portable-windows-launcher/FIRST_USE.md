@@ -83,6 +83,16 @@ Launcher 的「匯出／備份系統」可建立完整 portable backup ZIP；「
 
 移轉採整套取代，不會合併 A、B 兩套資料，也不會刪除來源檔。若來源 revision 比目前程式更新，請先執行 Git 安全更新，再重新移轉。
 
+## 自啟動巡檢
+
+在 Launcher 設定「巡檢分鐘」（1–1440）後，按「啟用自啟動巡檢」並同意 Windows UAC。系統會建立兩個 Windows 工作排程：`DormStaffSystem-PortableWatchdog` 在開機時及指定間隔檢查網站，只有系統未回應且 Port 未被占用時才啟動 Waitress；`DormStaffSystem-PortableLauncher` 則在目前使用者登入 Windows 時自動顯示 Launcher。
+
+Launcher 每兩秒讀取 `.venv/server.pid`，所以無論系統由 Launcher 或背景巡檢啟動，右上角都會顯示實際狀態；背景巡檢紀錄也會同步到畫面下方。按「停止系統」可停止背景巡檢啟動的系統，但只要自啟動巡檢仍啟用，下一個巡檢週期就會再次啟動。若要持續停止，請先按「停用自啟動巡檢」，再按「停止系統」。
+
+實際運行狀態以設定 Port 的登入頁健康檢查為準，不依賴 PID 檔是否存在。若背景系統由 Windows SYSTEM 身分啟動，「停止系統」會要求 UAC 權限；Launcher 只會停止由本 portable Python 占用該 Port 的程序，不會停止其他軟體。
+
+「停用自啟動巡檢」會一鍵移除上述兩個排程，但不會停止目前已執行的系統。若搬動整個 portable 資料夾，請在新位置重新啟用一次，讓工作排程更新路徑。巡檢紀錄位於 `portable-windows-launcher/.venv/logs/watchdog.log`。
+
 ## 重新編譯
 
 Windows 10/11 內建的 .NET Framework 可編譯本啟動器：

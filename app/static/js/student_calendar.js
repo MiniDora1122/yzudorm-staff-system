@@ -7,6 +7,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const modal = new bootstrap.Modal(document.getElementById("studentShiftModal"));
   let visibleMonth = "";
   let laneSyncFrame = 0;
+  let calendarResizeTimer = 0;
+  let observedCalendarWidth = 0;
 
   const monthKey = (date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
   const englishMonth = (date) => new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric" }).format(date);
@@ -46,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const label = row.querySelector(`.location-row-label[data-location-id="${location.id}"]`);
         lanes.forEach((lane) => { lane.style.height = "auto"; });
         if (label) label.style.height = "auto";
-        const height = Math.max(54, ...lanes.map((lane) => lane.scrollHeight));
+        const height = Math.max(54, label?.scrollHeight || 0, ...lanes.map((lane) => lane.scrollHeight));
         lanes.forEach((lane) => { lane.style.height = `${height}px`; });
         if (label) label.style.height = `${height}px`;
       });
@@ -218,6 +220,25 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   calendar.render();
-  window.addEventListener("resize", scheduleLaneSync);
+  const refreshResponsiveCalendarLayout = () => {
+    scheduleLaneSync();
+    window.clearTimeout(calendarResizeTimer);
+    calendarResizeTimer = window.setTimeout(() => {
+      calendar.updateSize();
+      injectLocationColumn();
+      scheduleEventPlacement();
+      window.setTimeout(scheduleLaneSync, 120);
+    }, 160);
+  };
+  window.addEventListener("resize", refreshResponsiveCalendarLayout);
+  if (typeof ResizeObserver !== "undefined") {
+    const calendarResizeObserver = new ResizeObserver((entries) => {
+      const width = entries[0]?.contentRect.width || 0;
+      if (Math.abs(width - observedCalendarWidth) < 1) return;
+      observedCalendarWidth = width;
+      refreshResponsiveCalendarLayout();
+    });
+    calendarResizeObserver.observe(calendarElement.parentElement);
+  }
   if (document.fonts?.ready) document.fonts.ready.then(scheduleLaneSync);
 });
