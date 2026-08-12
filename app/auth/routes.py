@@ -8,6 +8,7 @@ from . import bp
 from .forms import ChangePasswordForm, LoginForm, LogoutForm
 from ..extensions import db
 from ..models import Role, User
+from ..services.requests import add_audit
 
 
 def is_safe_redirect(target: str) -> bool:
@@ -19,6 +20,15 @@ def is_safe_redirect(target: str) -> bool:
 def home_for(user: User):
     endpoint = "admin.dashboard" if user.role == Role.ADMIN else "student.dashboard"
     return url_for(endpoint)
+
+
+def masked_username(value: str) -> str:
+    value = value.strip()
+    if not value:
+        return "(空白)"
+    if len(value) <= 2:
+        return value[0] + "*"
+    return f"{value[0]}{'*' * min(len(value) - 2, 6)}{value[-1]}"
 
 
 @bp.before_app_request
@@ -43,10 +53,19 @@ def login():
             db.select(User).where(User.username == form.username.data.strip())
         )
         if user is None or not user.is_active or not user.check_password(form.password.data):
+            add_audit(
+                user.id if user is not None else None,
+                "LOGIN_FAILED",
+                "User",
+                user.id if user is not None else 0,
+                f"登入失敗，帳號：{masked_username(form.username.data)}",
+            )
+            db.session.commit()
             flash("帳號或密碼錯誤。", "danger")
             return render_template("auth/login.html", form=form), 401
 
         user.last_login_at = datetime.now(timezone.utc)
+        add_audit(user.id, "LOGIN_SUCCEEDED", "User", user.id, "帳號登入成功")
         db.session.commit()
         login_user(user)
         session.permanent = True
@@ -66,6 +85,8 @@ def logout():
     form = LogoutForm()
     if not form.validate_on_submit():
         return "CSRF validation failed", 400
+    add_audit(current_user.id, "LOGOUT", "User", current_user.id, "帳號安全登出")
+    db.session.commit()
     logout_user()
     session.clear()
     flash("您已安全登出。", "success")
@@ -84,8 +105,14 @@ def change_password():
         else:
             current_user.set_password(form.new_password.data)
             current_user.must_change_password = False
+            add_audit(
+                current_user.id,
+                "PASSWORD_CHANGED",
+                "User",
+                current_user.id,
+                "使用者修改自己的密碼",
+            )
             db.session.commit()
             flash("密碼已更新。", "success")
             return redirect(home_for(current_user))
     return render_template("auth/change_password.html", form=form)
-

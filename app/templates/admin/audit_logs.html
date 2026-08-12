@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}安全事件與操作稽核 Security & Audit Logs｜宿舍工讀生系統{% endblock %}
+{% block content %}
+<div class="page-heading mb-4">
+  <span class="eyebrow">SECURITY & AUDIT</span>
+  <h1 class="h2 fw-bold mt-2 mb-1" data-en="Security events and audit logs">安全事件與操作稽核</h1>
+  <p class="text-secondary mb-0" data-en="Review authentication events and important operations. Passwords and complete document identifiers are never recorded.">查詢登入安全事件與重要操作；不記錄密碼及完整證件號碼。</p>
+</div>
+
+<section class="card app-card border-0 shadow-sm mb-4">
+  <div class="card-body p-3 p-lg-4">
+    <form class="row g-3 align-items-end" method="get">
+      <div class="col-md-4 col-xl-2"><label class="form-label" for="auditAction" data-en="Action">動作</label><select class="form-select" id="auditAction" name="action"><option value="">全部 All</option>{% for item in actions %}<option value="{{ item }}" {% if filters.action == item %}selected{% endif %}>{{ item }}</option>{% endfor %}</select></div>
+      <div class="col-md-4 col-xl-2"><label class="form-label" for="auditUsername" data-en="Username">帳號</label><input class="form-control" id="auditUsername" name="username" value="{{ filters.username }}" maxlength="80"></div>
+      <div class="col-md-4 col-xl-2"><label class="form-label" for="auditIp" data-en="IP address">IP 位址</label><input class="form-control" id="auditIp" name="ip_address" value="{{ filters.ip_address }}" maxlength="45"></div>
+      <div class="col-md-4 col-xl-2"><label class="form-label" for="auditFrom" data-en="From date">開始日期</label><input class="form-control" id="auditFrom" name="date_from" type="date" value="{{ filters.date_from }}"></div>
+      <div class="col-md-4 col-xl-2"><label class="form-label" for="auditTo" data-en="To date">結束日期</label><input class="form-control" id="auditTo" name="date_to" type="date" value="{{ filters.date_to }}"></div>
+      <div class="col-md-4 col-xl-2 d-flex gap-2"><button class="btn btn-primary flex-grow-1" type="submit" data-en="Filter">篩選</button><a class="btn btn-outline-secondary" href="{{ url_for('admin.audit_logs_page') }}" aria-label="清除篩選 Clear filters"><i class="bi bi-x-lg"></i></a></div>
+    </form>
+  </div>
+</section>
+
+<section class="card app-card border-0 shadow-sm overflow-hidden">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead><tr><th class="ps-4" data-en="Time">時間</th><th data-en="Account">帳號</th><th data-en="Action">動作</th><th data-en="Summary">摘要</th><th data-en="Source">來源</th><th class="pe-4" data-en="Request">請求</th></tr></thead>
+      <tbody>
+      {% for item in audit_logs %}
+        <tr>
+          <td class="ps-4 text-nowrap">{{ item.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+          <td>{% if item.actor %}<strong>{{ item.actor.username }}</strong><div class="small text-secondary">#{{ item.actor_user_id }}</div>{% else %}<span class="text-secondary">未知／未登入<br><small>Unknown</small></span>{% endif %}</td>
+          <td><span class="badge text-bg-light border">{{ item.action }}</span></td>
+          <td>{{ item.safe_summary }}</td>
+          <td><code>{{ item.ip_address or '—' }}</code><div class="small text-secondary text-break" title="{{ item.user_agent or '' }}">{{ (item.user_agent or '—')|truncate(70) }}</div></td>
+          <td class="pe-4"><span class="badge text-bg-secondary">{{ item.http_method or '—' }}</span><div class="small text-secondary text-break mt-1">{{ item.route or '—' }}</div></td>
+        </tr>
+      {% else %}<tr><td class="text-center text-secondary py-5" colspan="6" data-en="No matching audit records.">找不到符合條件的稽核紀錄。</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% if pagination.pages > 1 %}<div class="card-footer bg-white border-0 p-3 d-flex justify-content-between align-items-center"><span class="small text-secondary">第 {{ pagination.page }}／{{ pagination.pages }} 頁</span><div class="btn-group"><a class="btn btn-sm btn-outline-primary {% if not pagination.has_prev %}disabled{% endif %}" href="{{ url_for('admin.audit_logs_page', page=pagination.prev_num, **filters) }}">上一頁 Previous</a><a class="btn btn-sm btn-outline-primary {% if not pagination.has_next %}disabled{% endif %}" href="{{ url_for('admin.audit_logs_page', page=pagination.next_num, **filters) }}">下一頁 Next</a></div></div>{% endif %}
+</section>
+{% endblock %}

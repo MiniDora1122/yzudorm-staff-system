@@ -31,6 +31,7 @@
           <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.staff') }}" data-en="Students">工讀生</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.documents_page') }}" data-en="Documents">證件</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.admin_accounts') }}" data-en="Administrators">管理員</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.audit_logs_page') }}" data-en="Audit logs">稽核紀錄</a></li>
           {% else %}
           <li class="nav-item"><a class="nav-link" href="{{ url_for('student.dashboard') }}" data-en="Home">我的首頁</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ url_for('student.requests_page') }}" data-en="Leave / Swap">請假／換班</a></li>

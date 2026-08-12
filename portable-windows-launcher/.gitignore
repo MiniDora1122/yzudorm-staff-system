@@ -1,0 +1,5 @@
+.venv/
+launcher.ini
+launcher-diagnostic.txt
+headless-install.log
+*.pdb

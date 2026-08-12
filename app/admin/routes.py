@@ -149,6 +149,49 @@ def notifications_page():
     )
 
 
+@bp.get("/audit-logs")
+@role_required(Role.ADMIN)
+def audit_logs_page():
+    statement = db.select(AuditLog).outerjoin(AuditLog.actor)
+    action = request.args.get("action", "").strip()
+    username = request.args.get("username", "").strip()
+    ip_address = request.args.get("ip_address", "").strip()
+    date_from = request.args.get("date_from", "").strip()
+    date_to = request.args.get("date_to", "").strip()
+    if action:
+        statement = statement.where(AuditLog.action == action)
+    if username:
+        statement = statement.where(User.username.ilike(f"%{username}%"))
+    if ip_address:
+        statement = statement.where(AuditLog.ip_address == ip_address)
+    try:
+        if date_from:
+            statement = statement.where(AuditLog.created_at >= datetime.combine(date.fromisoformat(date_from), time.min))
+        if date_to:
+            statement = statement.where(
+                AuditLog.created_at < datetime.combine(date.fromisoformat(date_to) + timedelta(days=1), time.min)
+            )
+    except ValueError:
+        flash("日期格式錯誤，已忽略日期篩選。 / Invalid date filter ignored.", "warning")
+
+    page = request.args.get("page", 1, type=int)
+    pagination = db.paginate(statement.order_by(AuditLog.created_at.desc()), page=max(page, 1), per_page=50)
+    actions = db.session.scalars(db.select(AuditLog.action).distinct().order_by(AuditLog.action)).all()
+    return render_template(
+        "admin/audit_logs.html",
+        pagination=pagination,
+        audit_logs=pagination.items,
+        actions=actions,
+        filters={
+            "action": action,
+            "username": username,
+            "ip_address": ip_address,
+            "date_from": date_from,
+            "date_to": date_to,
+        },
+    )
+
+
 @bp.get("/schedule")
 @role_required(Role.ADMIN)
 def schedule():

@@ -330,11 +330,15 @@ class AuditLog(db.Model):
     __tablename__ = "audit_logs"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    actor_user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False, index=True)
+    actor_user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), index=True)
     action: Mapped[str] = mapped_column(String(80), nullable=False, index=True)
     entity_type: Mapped[str] = mapped_column(String(80), nullable=False)
     entity_id: Mapped[int] = mapped_column(nullable=False, index=True)
     safe_summary: Mapped[str] = mapped_column(String(500), nullable=False)
+    ip_address: Mapped[str | None] = mapped_column(String(45), index=True)
+    user_agent: Mapped[str | None] = mapped_column(String(500))
+    http_method: Mapped[str | None] = mapped_column(String(10))
+    route: Mapped[str | None] = mapped_column(String(255), index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
 
     actor: Mapped[User] = relationship(foreign_keys=[actor_user_id])
