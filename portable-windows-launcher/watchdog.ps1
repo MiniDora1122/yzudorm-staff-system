@@ -2,6 +2,8 @@ param([string]$ConfigPath = (Join-Path $PSScriptRoot "launcher.ini"))
 
 $ErrorActionPreference = "Stop"
 
+if (Test-Path -LiteralPath (Join-Path $PSScriptRoot ".venv\update-in-progress")) { exit 0 }
+
 function Write-WatchdogLog([string]$Message) {
     $logDirectory = Join-Path $PSScriptRoot ".venv\logs"
     New-Item -ItemType Directory -Force -Path $logDirectory | Out-Null

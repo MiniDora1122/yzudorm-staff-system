@@ -51,7 +51,9 @@ SQLite 是每台電腦的執行資料，不是程式碼。若把空白 DB commit
 - 目前分支與畫面設定一致。
 - 更新前備份成功。
 
-更新採 `fetch` 加 `merge --ff-only`，之後安裝套件、執行 migration 及應用程式匯入檢查。若收到的資料夾沒有 `.git`，請輸入 HTTPS repository URL，先將專案 Clone 到新的空白資料夾。
+更新先在目前 Launcher 內執行備份、`fetch` 與安全檢查，接著暫停背景巡檢並關閉 Launcher；由複製到 Windows 暫存資料夾的外部更新器執行 `merge --ff-only`、套件安裝、migration 及應用程式匯入檢查。如此可一併更新 Windows 正在鎖定的 `DormStaffLauncher.exe` 及所有相關腳本。完成或失敗後都會自動重新開啟 Launcher；詳細紀錄位於 `.venv/logs/self-update.log`。
+
+更新期間不要手動重新開啟 Launcher、移動 portable 資料夾或關閉電腦。若收到的資料夾沒有 `.git`，請輸入 HTTPS repository URL，先將專案 Clone 到新的空白資料夾。
 
 Private repository 可能要求 Windows Credential Manager 或 Personal Access Token。不要把 token 寫進 URL、`launcher.ini` 或交給其他人。
 

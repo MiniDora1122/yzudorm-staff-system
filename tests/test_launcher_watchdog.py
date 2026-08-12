@@ -39,3 +39,21 @@ def test_launcher_watchdog_uses_native_task_scheduler_and_health_check():
     assert "Get-NetTCPConnection" in stop_server
     assert "portable Python; refusing to stop it" in stop_server
     assert "Stop-Process" in stop_server
+
+
+def test_git_update_closes_launcher_before_replacing_it():
+    updater = (LAUNCHER_ROOT / "self-update.ps1").read_text(encoding="utf-8")
+    watchdog = (LAUNCHER_ROOT / "watchdog.ps1").read_text(encoding="utf-8")
+    launcher = (LAUNCHER_ROOT / "DormStaffLauncher.cs").read_text(encoding="utf-8")
+
+    assert "PrepareGitUpdate()" in launcher
+    assert "StartExternalUpdaterAndClose" in launcher
+    assert "DormStaffSelfUpdate-" in launcher
+    assert "--update-result=" in launcher
+    assert "Wait-Process -Id $ParentProcessId" in updater
+    assert 'Invoke-Checked $git @("merge", "--ff-only"' in updater
+    assert 'Invoke-Checked $python @("-m", "pip", "install"' in updater
+    assert '"flask", "--app", "wsgi.py", "db", "upgrade"' in updater
+    assert "Start-Process -FilePath $launcher" in updater
+    assert "launcher-before-update.exe" in updater
+    assert "update-in-progress" in watchdog

@@ -55,7 +55,10 @@ namespace DormStaffPortable
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new LauncherForm(environment));
+            string updateResult = "";
+            foreach (string argument in args)
+                if (argument.StartsWith("--update-result=", StringComparison.OrdinalIgnoreCase)) updateResult = argument.Substring(16);
+            Application.Run(new LauncherForm(environment, updateResult));
         }
     }
 
@@ -620,7 +623,7 @@ namespace DormStaffPortable
             log("專案 Clone 完成。請選擇該專案資料夾後安裝環境。 ");
         }
 
-        public void UpdateFromGit()
+        public void PrepareGitUpdate()
         {
             ValidateProject();
             if (!environment.GitIsInstalled || !environment.PythonIsInstalled)
@@ -640,12 +643,7 @@ namespace DormStaffPortable
             RunChecked(environment.PythonExe, Quote(backupScript) + " " + Quote(backup), environment.ProjectRoot);
             log("更新前備份：" + backup);
             RunChecked(environment.GitExe, "fetch " + Quote(environment.Config.GitRemote) + " " + Quote(environment.Config.GitBranch), environment.ProjectRoot);
-            RunChecked(environment.GitExe, "merge --ff-only " + Quote(environment.Config.GitRemote + "/" + environment.Config.GitBranch), environment.ProjectRoot);
-            ConfigureProjectImportPath();
-            RunChecked(environment.PythonExe, "-m pip install --disable-pip-version-check --no-warn-script-location -r " + Quote(environment.RequirementsFile), environment.ProjectRoot);
-            UpgradeDatabase();
-            RunChecked(environment.PythonExe, "-c \"from app import create_app; create_app(); print('Application import OK')\"", environment.ProjectRoot);
-            log("Git 安全更新完成。 / Git update completed.");
+            log("Git 更新已下載並驗證；即將關閉 Launcher 後套用。 / Update fetched and validated.");
         }
 
         private string MigrationHelperPath()
@@ -1058,10 +1056,11 @@ namespace DormStaffPortable
         private readonly System.Windows.Forms.Timer statusTimer = new System.Windows.Forms.Timer();
         private Process serverProcess;
         private bool operationRunning;
+        private bool updateInProgress;
         private bool? lastRunningState;
         private long watchdogLogPosition;
 
-        public LauncherForm(PortableEnvironment environment)
+        public LauncherForm(PortableEnvironment environment, string updateResult)
         {
             this.environment = environment;
             manager = new PortableManager(environment, WriteLog);
@@ -1083,6 +1082,19 @@ namespace DormStaffPortable
             statusTimer.Start();
             WriteLog("Launcher 路徑：" + environment.BaseDirectory);
             WriteLog("專案路徑：" + environment.ProjectRoot);
+            if (!String.IsNullOrWhiteSpace(updateResult))
+            {
+                string updateLog = Path.Combine(environment.LogsDirectory, "self-update.log");
+                WriteLog(updateResult.Equals("success", StringComparison.OrdinalIgnoreCase)
+                    ? "Git 安全更新完成，已開啟新版 Launcher。 / Safe update completed."
+                    : "Git 安全更新失敗；詳細資訊請查看：" + updateLog);
+                Shown += delegate { MessageBox.Show(this,
+                    updateResult.Equals("success", StringComparison.OrdinalIgnoreCase)
+                        ? "Git 安全更新完成，Launcher 與相關檔案均已更新。\r\nSafe update completed."
+                        : "Git 安全更新失敗，已重新開啟 Launcher。請查看 self-update.log。\r\nSafe update failed.",
+                    "Git 安全更新 / Safe update", MessageBoxButtons.OK,
+                    updateResult.Equals("success", StringComparison.OrdinalIgnoreCase) ? MessageBoxIcon.Information : MessageBoxIcon.Error); };
+            }
         }
 
         private void BuildUi()
@@ -1125,7 +1137,7 @@ namespace DormStaffPortable
             AddAction(actionGrid, 1, 0, "② 啟動系統\r\nStart", Color.FromArgb(24, 135, 84), StartServer);
             AddAction(actionGrid, 0, 1, "停止系統\r\nStop", Color.FromArgb(185, 46, 52), StopServer);
             AddAction(actionGrid, 1, 1, "開啟系統\r\nOpen", Color.FromArgb(60, 89, 140), OpenBrowser);
-            AddAction(actionGrid, 0, 2, "Git 安全更新\r\nSafe update", Color.FromArgb(94, 67, 160), delegate { RunBackground("Git 更新", delegate { StopServer(); manager.UpdateFromGit(); }); });
+            AddAction(actionGrid, 0, 2, "Git 安全更新\r\nSafe update", Color.FromArgb(94, 67, 160), BeginGitUpdate);
             AddAction(actionGrid, 1, 2, "資料庫升級\r\nDatabase upgrade", Color.FromArgb(75, 101, 122), delegate { RunBackground("資料庫升級", manager.UpgradeDatabase); });
             AddAction(actionGrid, 0, 3, "編輯 .env\r\nEdit settings", Color.FromArgb(75, 101, 122), delegate { OpenTextFile(environment.EnvFile); });
             AddAction(actionGrid, 1, 3, "XAMPP 設定教學\r\nSetup guide", Color.FromArgb(210, 125, 35), delegate { OpenTextFile(Path.Combine(environment.BaseDirectory, "XAMPP_GUIDE.md")); });
@@ -1312,6 +1324,60 @@ namespace DormStaffPortable
                 catch (Exception ex) { WriteLog("ERROR: " + ex.Message); BeginInvoke((MethodInvoker)delegate { MessageBox.Show(this, ex.Message, name + "失敗", MessageBoxButtons.OK, MessageBoxIcon.Error); }); }
                 finally { BeginInvoke((MethodInvoker)delegate { operationRunning = false; SetActionsEnabled(true); UpdateStatus(); }); }
             });
+        }
+
+        private void BeginGitUpdate(object sender, EventArgs args)
+        {
+            if (operationRunning || !SaveSettings()) return;
+            string updater = Path.Combine(environment.BaseDirectory, "self-update.ps1");
+            if (!File.Exists(updater))
+            {
+                MessageBox.Show(this, "找不到 Launcher 外部更新程式：" + updater, "無法更新", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            DialogResult confirmation = MessageBox.Show(this,
+                "更新時會暫停系統、關閉 Launcher，完成後自動開啟新版 Launcher。是否繼續？\r\nThe server and Launcher will restart during update.",
+                "Git 安全更新 / Safe update", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
+            if (confirmation != DialogResult.Yes) return;
+            string marker = Path.Combine(environment.RuntimeDirectory, "update-in-progress");
+            Directory.CreateDirectory(environment.RuntimeDirectory);
+            File.WriteAllText(marker, DateTime.UtcNow.ToString("O"), Encoding.ASCII);
+            StopServer();
+            operationRunning = true; SetActionsEnabled(false); WriteLog("--- Git 安全更新 ---");
+            ThreadPool.QueueUserWorkItem(delegate
+            {
+                try
+                {
+                    manager.PrepareGitUpdate();
+                    BeginInvoke((MethodInvoker)StartExternalUpdaterAndClose);
+                }
+                catch (Exception ex)
+                {
+                    try { File.Delete(marker); } catch { }
+                    WriteLog("ERROR: " + ex.Message);
+                    BeginInvoke((MethodInvoker)delegate
+                    {
+                        operationRunning = false; SetActionsEnabled(true); UpdateStatus();
+                        MessageBox.Show(this, ex.Message, "Git 更新失敗", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    });
+                }
+            });
+        }
+
+        private void StartExternalUpdaterAndClose()
+        {
+            string source = Path.Combine(environment.BaseDirectory, "self-update.ps1");
+            if (!File.Exists(source)) throw new InvalidOperationException("找不到 Launcher 外部更新程式：" + source);
+            string temporary = Path.Combine(Path.GetTempPath(), "DormStaffSelfUpdate-" + Guid.NewGuid().ToString("N") + ".ps1");
+            File.Copy(source, temporary, true);
+            ProcessStartInfo info = new ProcessStartInfo("powershell.exe",
+                "-NoProfile -ExecutionPolicy Bypass -File " + PortableManager.Quote(temporary) +
+                " -LauncherDirectory " + PortableManager.Quote(environment.BaseDirectory) +
+                " -ParentProcessId " + Process.GetCurrentProcess().Id);
+            info.UseShellExecute = false; info.CreateNoWindow = true;
+            Process.Start(info);
+            updateInProgress = true;
+            Close();
         }
 
         private void FreshDatabaseSetup(object sender, EventArgs args)
@@ -1521,6 +1587,7 @@ namespace DormStaffPortable
         private void OnFormClosing(object sender, FormClosingEventArgs args)
         {
             statusTimer.Stop();
+            if (updateInProgress) return;
             if (GetRunningServerProcess() != null)
             {
                 DialogResult result = MessageBox.Show("關閉啟動器也會停止系統，是否繼續？\r\nClosing the launcher will stop the server.", "確認關閉", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
