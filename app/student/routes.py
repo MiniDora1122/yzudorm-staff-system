@@ -164,6 +164,7 @@ def dashboard():
         )
     locations = db.session.scalars(
         db.select(WorkLocation)
+        .where(WorkLocation.is_active.is_(True))
         .order_by(WorkLocation.display_order)
     ).all()
     return render_template(

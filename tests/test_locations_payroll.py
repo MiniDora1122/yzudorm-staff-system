@@ -66,6 +66,71 @@ def test_duplicate_location_is_rejected(client):
     assert response.json["error"]["code"] == "DUPLICATE_LOCATION"
 
 
+def test_archived_location_disappears_and_same_location_can_be_restored(client, app):
+    login(client)
+    created = client.post(
+        "/admin/api/locations",
+        json={"code": "KITCHEN", "name": "廚房", "name_en": "Kitchen", "color": "#f59e0b"},
+    )
+    location_id = created.json["id"]
+    assert client.delete(f"/admin/api/locations/{location_id}").status_code == 200
+
+    schedule = client.get("/admin/schedule")
+    assert "廚房".encode("utf-8") not in schedule.data
+    restored = client.post(
+        "/admin/api/locations",
+        json={"code": "KITCHEN", "name": "廚房", "name_en": "Kitchen", "color": "#22c55e"},
+    )
+    assert restored.status_code == 200
+    assert restored.json["id"] == location_id
+    assert restored.json["restored"] is True
+    with app.app_context():
+        location = db.session.get(WorkLocation, location_id)
+        assert location.is_active is True
+        assert location.color == "#22c55e"
+
+
+def test_archived_shift_type_with_same_code_is_restored(client, app):
+    login(client)
+    with app.app_context():
+        location_id = db.session.scalar(
+            db.select(WorkLocation.id).where(WorkLocation.code == "OFFICE")
+        )
+    created = client.post(
+        "/admin/api/shift-types",
+        json={
+            "code": "OFFICE_NIGHT",
+            "name": "辦公室晚班",
+            "name_en": "Office Night",
+            "location_id": location_id,
+            "start_time": "18:00",
+            "end_time": "21:00",
+            "default_hours": "3",
+        },
+    )
+    shift_type_id = created.json["id"]
+    assert client.delete(f"/admin/api/shift-types/{shift_type_id}").status_code == 200
+    restored = client.post(
+        "/admin/api/shift-types",
+        json={
+            "code": "OFFICE_NIGHT",
+            "name": "辦公室夜班",
+            "name_en": "Office Night Shift",
+            "location_id": location_id,
+            "start_time": "18:30",
+            "end_time": "21:30",
+            "default_hours": "3",
+        },
+    )
+    assert restored.status_code == 200
+    assert restored.json["id"] == shift_type_id
+    assert restored.json["restored"] is True
+    with app.app_context():
+        shift_type = db.session.get(ShiftType, shift_type_id)
+        assert shift_type.is_active is True
+        assert shift_type.name == "辦公室夜班"
+
+
 def test_payroll_report_calculates_employer_costs(client, app):
     values = ids(app)
     login(client)

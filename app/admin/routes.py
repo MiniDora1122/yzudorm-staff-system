@@ -460,9 +460,7 @@ def schedule():
         .where(WorkLocation.is_active.is_(True))
         .order_by(WorkLocation.display_order, WorkLocation.name)
     ).all()
-    locations = db.session.scalars(
-        db.select(WorkLocation).order_by(WorkLocation.display_order, WorkLocation.name)
-    ).all()
+    locations = active_locations
     return render_template(
         "admin/schedule.html",
         profiles=profiles,
@@ -1377,8 +1375,27 @@ def create_location_api():
             db.or_(WorkLocation.code == code, WorkLocation.name == name)
         )
     )
-    if duplicate:
+    if duplicate and duplicate.is_active:
         return api_error("地點代碼或名稱已存在。", 409, "DUPLICATE_LOCATION")
+    if duplicate:
+        duplicate.code = code
+        duplicate.name = name
+        duplicate.name_en = name_en
+        duplicate.color = color.lower()
+        duplicate.is_active = True
+        add_audit(current_user.id, "LOCATION_RESTORED", "WorkLocation", duplicate.id, f"重新啟用地點 {code}")
+        db.session.commit()
+        return jsonify(
+            {
+                "id": duplicate.id,
+                "code": duplicate.code,
+                "name": duplicate.name,
+                "nameEn": duplicate.name_en,
+                "color": duplicate.color,
+                "displayOrder": duplicate.display_order,
+                "restored": True,
+            }
+        ), 200
     max_order = db.session.scalar(db.select(db.func.max(WorkLocation.display_order))) or 0
     location = WorkLocation(
         code=code,
@@ -1485,8 +1502,28 @@ def create_shift_type_api():
     location = db.session.get(WorkLocation, location_id)
     if location is None or not location.is_active:
         return api_error("指定地點不存在或已停用。")
-    if db.session.scalar(db.select(ShiftType).where(ShiftType.code == code)):
+    duplicate = db.session.scalar(db.select(ShiftType).where(ShiftType.code == code))
+    if duplicate and duplicate.is_active:
         return api_error("班別代碼已存在。", 409, "DUPLICATE_SHIFT_TYPE")
+    if duplicate:
+        duplicate.name = name
+        duplicate.name_en = name_en
+        duplicate.location_id = location.id
+        duplicate.start_time = start_time
+        duplicate.end_time = end_time
+        duplicate.default_hours = default_hours
+        duplicate.is_active = True
+        add_audit(current_user.id, "SHIFT_TYPE_RESTORED", "ShiftType", duplicate.id, f"重新啟用班別 {code}")
+        db.session.commit()
+        return jsonify(
+            {
+                "id": duplicate.id,
+                "code": duplicate.code,
+                "name": duplicate.name,
+                "nameEn": duplicate.name_en,
+                "restored": True,
+            }
+        ), 200
     max_order = db.session.scalar(
         db.select(db.func.max(ShiftType.display_order)).where(
             ShiftType.location_id == location.id
