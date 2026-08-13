@@ -91,4 +91,4 @@ C:\xampp\apache\bin\httpd.exe -t
 - 稽核紀錄包含 IP 與瀏覽器資訊，應視為管理資料，只授權管理員查閱並納入校方保存政策。
 - 若需要開機後無人登入也能運作，可直接在 Launcher 設定巡檢分鐘並按「啟用自啟動巡檢」；Windows 工作排程會以 SYSTEM 身分定期檢查並在必要時啟動服務。
 - 完整正式部署與備份說明仍可參考專案的 `deployment\DEPLOYMENT_WINDOWS_XAMPP.md`。
-- 系統內建每日完整備份與自動驗證；請在 `.env` 將 `AUTOMATIC_BACKUP_DIR` 指向另一顆受 BitLocker 保護的磁碟。管理員可在「設定 → 月份結算與備份」查看最近成功／失敗結果並手動重跑。多個 Waitress 程序只會有一個取得維護排程鎖，不會重複建立備份或清理文件。
+- 系統內建每日完整備份與自動驗證；請在 `.env` 將 `AUTOMATIC_BACKUP_DIR` 指向另一顆受 BitLocker 保護的磁碟。管理員可在「設定 → 排班鎖定與備份」查看最近成功／失敗結果並手動重跑。多個 Waitress 程序只會有一個取得維護排程鎖，不會重複建立備份或清理文件。

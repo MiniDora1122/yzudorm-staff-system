@@ -1,31 +1,31 @@
 {% extends "base.html" %}
-{% block title %}月份結算與備份 Period Close and Backups｜宿舍工讀生系統{% endblock %}
+{% block title %}排班鎖定與備份 Schedule Locks and Backups｜宿舍工讀生系統{% endblock %}
 {% block content %}
 <div class="page-heading mb-4">
   <span class="eyebrow">OPERATIONS</span>
-  <h1 class="h2 fw-bold mt-2 mb-1" data-en="Period close and verified backups">月份結算與驗證備份</h1>
-  <p class="text-secondary mb-0" data-en="Publish draft schedules, lock settled months, and verify recoverable system backups.">發布草稿班表、鎖定已結算月份，並確認系統備份可完整還原。</p>
+  <h1 class="h2 fw-bold mt-2 mb-1" data-en="Schedule locks and verified backups">排班鎖定與驗證備份</h1>
+  <p class="text-secondary mb-0" data-en="Publish drafts, lock schedule changes, and verify recoverable backups.">發布草稿班表、鎖定排班異動，並確認系統備份可完整還原。薪資試算不受鎖定影響。</p>
 </div>
 
 <section class="card app-card border-0 shadow-sm mb-4"><div class="card-body p-4">
   <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-4">
-    <div><h2 class="h5 fw-bold mb-1" data-en="Schedule publication and month close">排班發布與月份結算</h2><p class="small text-secondary mb-0">結算前必須先發布或移除所有草稿，並完成該月請假與換班處理。</p></div>
+    <div><h2 class="h5 fw-bold mb-1" data-en="Schedule publication and month lock">排班發布與月份鎖定</h2><p class="small text-secondary mb-0">鎖定前須先發布或移除所有草稿。薪資與雇主成本會依正式排班即時計算，不必先鎖定月份。</p></div>
     <form class="d-flex gap-2 align-items-end" method="get"><div><label class="form-label" for="operationMonth" data-en="Month">月份</label><input class="form-control" id="operationMonth" name="month" type="month" value="{{ selected_month }}" required></div><button class="btn btn-outline-primary" type="submit" data-en="View">查看</button></form>
   </div>
   <div class="row g-3 mb-4">
     <div class="col-md-4"><div class="border rounded-3 p-3 h-100"><div class="small text-secondary">草稿 Draft</div><div class="display-6 fw-bold text-warning">{{ period.draft_count }}</div></div></div>
     <div class="col-md-4"><div class="border rounded-3 p-3 h-100"><div class="small text-secondary">已發布 Published</div><div class="display-6 fw-bold text-success">{{ period.published_count }}</div></div></div>
-    <div class="col-md-4"><div class="border rounded-3 p-3 h-100"><div class="small text-secondary">月份狀態 Period status</div><div class="h4 fw-bold mt-2"><span class="badge text-bg-{{ 'danger' if period.settlement and period.settlement.is_locked else 'success' }}">{{ '已結算鎖定 Locked' if period.settlement and period.settlement.is_locked else '開放修改 Open' }}</span></div></div></div>
+    <div class="col-md-4"><div class="border rounded-3 p-3 h-100"><div class="small text-secondary">排班狀態 Schedule status</div><div class="h4 fw-bold mt-2"><span class="badge text-bg-{{ 'danger' if period.settlement and period.settlement.is_locked else 'success' }}">{{ '排班已鎖定 Locked' if period.settlement and period.settlement.is_locked else '排班可修改 Open' }}</span></div></div></div>
   </div>
   <div class="d-flex flex-wrap gap-2">
     {% if not period.settlement or not period.settlement.is_locked %}
     <form method="post" action="{{ url_for('admin.publish_period') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="month" value="{{ selected_month }}"><button class="btn btn-primary" type="submit" data-confirm-action="確定發布此月份的全部草稿排班？發布後學生即可看見。"><i class="bi bi-send-check me-2"></i>發布全部草稿 <small>Publish drafts</small></button></form>
-    <form method="post" action="{{ url_for('admin.close_period') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="month" value="{{ selected_month }}"><button class="btn btn-outline-danger" type="submit" data-confirm-action="確定結算並鎖定此月份？鎖定後排班、請假與換班不得再變更。"><i class="bi bi-lock me-2"></i>結算並鎖定 <small>Close month</small></button></form>
+    <form method="post" action="{{ url_for('admin.close_period') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="month" value="{{ selected_month }}"><button class="btn btn-outline-danger" type="submit" data-confirm-action="確定鎖定此月份的排班？鎖定後不可新增、編輯、刪除、發布或核准會改變班表的申請。薪資試算不受影響。"><i class="bi bi-lock me-2"></i>鎖定排班 <small>Lock schedule</small></button></form>
     {% else %}
     <form class="d-flex flex-column flex-sm-row gap-2 w-100" method="post" action="{{ url_for('admin.unlock_period') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="month" value="{{ selected_month }}"><input class="form-control" name="reason" minlength="5" maxlength="500" placeholder="解鎖原因 Unlock reason" required><button class="btn btn-warning flex-shrink-0" type="submit" data-confirm-action="確定解鎖此月份？原因會永久保留在稽核紀錄。"><i class="bi bi-unlock me-2"></i>解鎖月份</button></form>
     {% endif %}
   </div>
-  {% if snapshot %}<div class="mt-4"><h3 class="h6 fw-bold">結算快照 Settlement snapshot</h3><div class="table-responsive"><table class="table table-sm align-middle"><thead><tr><th>學號</th><th>姓名</th><th>時數</th><th>時薪</th><th>預估總額</th></tr></thead><tbody>{% for line in snapshot.lines %}<tr><td>{{ line.student_number }}</td><td>{{ line.name }}</td><td>{{ line.hours }}</td><td>${{ line.hourly_wage }}</td><td>${{ line.estimated_gross }}</td></tr>{% else %}<tr><td colspan="5" class="text-secondary">本月無計薪排班。</td></tr>{% endfor %}</tbody></table></div></div>{% endif %}
+  <div class="alert alert-info d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mt-4 mb-0"><div><strong>薪資試算獨立更新</strong> <small class="d-block text-secondary">Payroll estimates update from published shifts whenever this page is opened.</small><span class="small">正式排班新增、修改或刪除後，薪資頁會直接依最新資料重新計算。</span></div><a class="btn btn-sm btn-primary flex-shrink-0" href="{{ url_for('admin.payroll') }}"><i class="bi bi-calculator me-1"></i>查看薪資試算</a></div>
 </div></section>
 
 <section class="card app-card border-0 shadow-sm"><div class="card-body p-4">

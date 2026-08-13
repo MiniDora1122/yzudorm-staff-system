@@ -7,7 +7,7 @@
   <p class="text-secondary mb-0" data-en="Name, student ID and account are maintained by administrators. Verify document dates against all uploaded pages.">姓名、學號與帳號由管理單位維護；證件日期由你對照整份影像人工確認。</p>
 </div>
 {% if profile %}
-{% if requires_documents and missing_document_types %}<div class="alert alert-danger shadow-sm" role="alert"><h2 class="h5 fw-bold"><i class="bi bi-exclamation-octagon-fill me-2"></i>必須完成外籍生證件 Required documents</h2><p class="mb-0">非台灣國籍工讀生必須完成居留證與工作證上傳、資料核對及管理員核准。尚未完成：{% if enum_document_type.RESIDENCE_PERMIT in missing_document_types %}居留證{% endif %}{% if missing_document_types|length == 2 %}、{% endif %}{% if enum_document_type.WORK_PERMIT in missing_document_types %}工作證{% endif %}。完成前其他功能暫停使用。</p></div>{% endif %}
+{% if requires_documents and missing_document_types %}<div class="alert alert-danger shadow-sm" role="alert"><h2 class="h5 fw-bold"><i class="bi bi-exclamation-octagon-fill me-2"></i>必須上傳外籍生證件 Required documents</h2><p class="mb-0">非台灣國籍工讀生必須先上傳完整的居留證與工作證。尚未上傳：{% if enum_document_type.RESIDENCE_PERMIT in missing_document_types %}居留證{% endif %}{% if missing_document_types|length == 2 %}、{% endif %}{% if enum_document_type.WORK_PERMIT in missing_document_types %}工作證{% endif %}。上傳完成即可使用系統，不必等待管理員審核。</p></div>{% endif %}
 <div class="row g-4 mb-4">
   <div class="col-lg-5"><div class="card app-card border-0 shadow-sm h-100"><div class="card-body p-4">
     <h2 class="h5 fw-bold mb-3" data-en="Basic information">基本資料</h2>

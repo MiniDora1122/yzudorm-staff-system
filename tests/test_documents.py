@@ -229,7 +229,7 @@ def test_admin_rejection_requires_reason_and_student_can_correct(client, app):
     logout(client)
     login(client, "student-test", "StudentTest!2026")
     dashboard = client.get("/student/", follow_redirects=True)
-    assert "必須完成外籍生證件".encode("utf-8") in dashboard.data
+    assert "必須上傳外籍生證件".encode("utf-8") in dashboard.data
     assert "影像反光".encode("utf-8") in dashboard.data
     notifications = client.get("/student/notifications")
     assert "居留證已被退回，請修正".encode("utf-8") in notifications.data

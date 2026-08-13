@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 from datetime import date
 
 from flask import current_app, flash, redirect, render_template, request, url_for
@@ -26,9 +25,6 @@ def _selected_month() -> date:
 def operations_page():
     month = _selected_month()
     summary = period_summary(month)
-    snapshot = None
-    if summary["settlement"] and summary["settlement"].snapshot_json:
-        snapshot = json.loads(summary["settlement"].snapshot_json)
     runs = db.session.scalars(
         db.select(BackupRun).order_by(BackupRun.started_at.desc()).limit(30)
     ).all()
@@ -36,7 +32,6 @@ def operations_page():
         "admin/operations.html",
         selected_month=month.strftime("%Y-%m"),
         period=summary,
-        snapshot=snapshot,
         backup_runs=runs,
         latest_backup=latest_backup_run(),
         backup_dir=backup_directory(),
@@ -68,7 +63,7 @@ def close_period():
     month = _selected_month()
     try:
         close_month(month, actor_user_id=current_user.id)
-        flash(f"{month:%Y-%m} 已完成結算並鎖定。 / Month closed and locked.", "success")
+        flash(f"{month:%Y-%m} 的排班已鎖定；薪資試算仍會獨立顯示。 / Scheduling locked.", "success")
     except PeriodError as exc:
         db.session.rollback()
         flash(str(exc), "danger")

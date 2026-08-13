@@ -48,13 +48,13 @@ def requires_work_documents(profile: StaffProfile) -> bool:
     return not is_taiwan_nationality(profile)
 
 
-def confirmed_document_types(profile: StaffProfile) -> set[DocumentType]:
+def uploaded_document_types(profile: StaffProfile) -> set[DocumentType]:
     return set(
         db.session.scalars(
             db.select(StaffDocument.document_type)
             .where(
                 StaffDocument.staff_id == profile.id,
-                StaffDocument.status == DocumentStatus.CONFIRMED,
+                StaffDocument.status != DocumentStatus.DELETED,
             )
             .distinct()
         ).all()
@@ -64,7 +64,7 @@ def confirmed_document_types(profile: StaffProfile) -> set[DocumentType]:
 def missing_required_document_types(profile: StaffProfile) -> set[DocumentType]:
     if not requires_work_documents(profile):
         return set()
-    return {DocumentType.RESIDENCE_PERMIT, DocumentType.WORK_PERMIT} - confirmed_document_types(profile)
+    return {DocumentType.RESIDENCE_PERMIT, DocumentType.WORK_PERMIT} - uploaded_document_types(profile)
 
 
 def get_scheduling_policy() -> SchedulingPolicy | None:

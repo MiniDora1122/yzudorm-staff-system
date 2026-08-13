@@ -1,27 +1,15 @@
 from __future__ import annotations
 
-import json
-from collections import defaultdict
 from datetime import date
-from decimal import Decimal
-
-from sqlalchemy.orm import joinedload
 
 from ..extensions import db
 from ..models import (
-    LeaveRequest,
-    LeaveStatus,
     MonthlySettlement,
     Shift,
     ShiftPublicationStatus,
     ShiftStatus,
-    ShiftType,
-    StaffProfile,
-    SwapAdminStatus,
-    SwapRequest,
     utc_now,
 )
-from .payroll import get_payroll_setting
 from .audit import add_audit
 from .scheduling import month_bounds
 
@@ -44,7 +32,7 @@ def ensure_month_open(value: date) -> None:
     settlement = settlement_for(value)
     if settlement and settlement.is_locked:
         raise PeriodError(
-            f"{settlement.month_start:%Y-%m} 已完成月份結算並鎖定；請先由管理員解鎖。 / This month is closed and locked."
+            f"{settlement.month_start:%Y-%m} 的排班已鎖定；請先由管理員解鎖。 / Scheduling is locked for this month."
         )
 
 
@@ -99,86 +87,16 @@ def publish_month(value: date, *, actor_user_id: int) -> int:
     return len(shifts)
 
 
-def _pending_workflow_count(start: date, end: date) -> int:
-    leave_count = db.session.scalar(
-        db.select(db.func.count())
-        .select_from(LeaveRequest)
-        .join(LeaveRequest.shift)
-        .where(
-            LeaveRequest.status == LeaveStatus.PENDING,
-            Shift.shift_date >= start,
-            Shift.shift_date < end,
-        )
-    ) or 0
-    swap_count = db.session.scalar(
-        db.select(db.func.count())
-        .select_from(SwapRequest)
-        .join(SwapRequest.requester_shift)
-        .where(
-            SwapRequest.admin_status.in_([SwapAdminStatus.NOT_READY, SwapAdminStatus.PENDING]),
-            Shift.shift_date >= start,
-            Shift.shift_date < end,
-        )
-    ) or 0
-    return leave_count + swap_count
-
-
-def _snapshot(start: date, end: date) -> str:
-    shifts = db.session.scalars(
-        db.select(Shift)
-        .join(Shift.shift_type)
-        .options(joinedload(Shift.staff), joinedload(Shift.shift_type).joinedload(ShiftType.work_location))
-        .where(
-            Shift.shift_date >= start,
-            Shift.shift_date < end,
-            Shift.status == ShiftStatus.SCHEDULED,
-            Shift.publication_status == ShiftPublicationStatus.PUBLISHED,
-        )
-        .order_by(Shift.staff_id, Shift.shift_date, ShiftType.start_time)
-    ).all()
-    by_staff: dict[int, dict] = defaultdict(lambda: {"hours": Decimal("0"), "locations": defaultdict(Decimal)})
-    profiles: dict[int, StaffProfile] = {}
-    for shift in shifts:
-        profiles[shift.staff_id] = shift.staff
-        hours = Decimal(str(shift.shift_type.default_hours))
-        by_staff[shift.staff_id]["hours"] += hours
-        by_staff[shift.staff_id]["locations"][shift.shift_type.work_location.code] += hours
-    setting = get_payroll_setting(start)
-    if setting is None:
-        raise PeriodError(
-            "此月份尚未設定薪資與保險費率，無法建立結算快照。 / Payroll settings are required before closing the month."
-        )
-    lines = []
-    for staff_id, totals in sorted(by_staff.items(), key=lambda item: profiles[item[0]].student_number):
-        profile = profiles[staff_id]
-        wage = Decimal(str(profile.hourly_wage or setting.default_hourly_wage))
-        lines.append(
-            {
-                "staff_id": staff_id,
-                "student_number": profile.student_number,
-                "name": profile.name,
-                "hours": str(totals["hours"]),
-                "hourly_wage": str(wage),
-                "estimated_gross": str((totals["hours"] * wage).quantize(Decimal("1"))),
-                "locations": {key: str(value) for key, value in sorted(totals["locations"].items())},
-            }
-        )
-    return json.dumps({"month": start.strftime("%Y-%m"), "lines": lines}, ensure_ascii=False)
-
-
 def close_month(value: date, *, actor_user_id: int) -> MonthlySettlement:
     start = month_start_for(value)
     summary = period_summary(start)
     if summary["settlement"] and summary["settlement"].is_locked:
-        raise PeriodError("此月份已經結算。 / This month is already closed.")
+        raise PeriodError("此月份排班已經鎖定。 / Scheduling is already locked for this month.")
     if summary["draft_count"]:
-        raise PeriodError("仍有草稿排班；請先發布或刪除草稿後再結算。 / Draft shifts must be resolved first.")
-    _, end = month_bounds(start.strftime("%Y-%m"))
-    if _pending_workflow_count(start, end):
-        raise PeriodError("仍有進行中的請假或換班，請處理完成後再結算。 / Pending workflows must be resolved first.")
+        raise PeriodError("仍有草稿排班；請先發布或刪除草稿後再鎖定。 / Draft shifts must be resolved before locking.")
     settlement = summary["settlement"] or MonthlySettlement(month_start=start)
     settlement.is_locked = True
-    settlement.snapshot_json = _snapshot(start, end)
+    settlement.snapshot_json = None
     settlement.closed_by = actor_user_id
     settlement.closed_at = utc_now()
     settlement.unlocked_by = None
@@ -186,7 +104,7 @@ def close_month(value: date, *, actor_user_id: int) -> MonthlySettlement:
     settlement.unlock_reason = None
     db.session.add(settlement)
     db.session.flush()
-    add_audit(actor_user_id, "MONTH_CLOSED", "MonthlySettlement", settlement.id, f"結算並鎖定 {start:%Y-%m}")
+    add_audit(actor_user_id, "SCHEDULE_MONTH_LOCKED", "MonthlySettlement", settlement.id, f"鎖定 {start:%Y-%m} 排班")
     db.session.commit()
     return settlement
 

@@ -88,8 +88,8 @@ def require_foreign_student_documents():
     }
     if request.endpoint not in allowed:
         flash(
-            "非台灣國籍工讀生必須完成居留證與工作證上傳及管理員核准後，才能使用其他功能。 "
-            "/ Required documents must be approved before continuing.",
+            "非台灣國籍工讀生必須先上傳完整的居留證與工作證，才能使用其他功能；不必等待管理員審核。 "
+            "/ Upload both required documents before continuing; administrator approval is not required for access.",
             "warning",
         )
         return redirect(f"{url_for('student.profile')}#documentUploadSection")

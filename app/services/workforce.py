@@ -100,7 +100,6 @@ def submit_application(
     actor_user_id: int,
     today: date,
 ) -> VacancyApplication:
-    ensure_month_open(requirement.shift_date)
     if requirement.status != RequirementStatus.OPEN or requirement.shift_date < today:
         raise WorkforceError("此缺員班次已關閉或已過期。 / This vacancy is closed or expired.")
     if profile.id not in eligible_staff_ids(requirement):
@@ -188,8 +187,8 @@ def review_application(
     if application.status != VacancyApplicationStatus.PENDING:
         raise WorkforceError("此申請已處理。 / This application has already been reviewed.")
     requirement = application.requirement
-    ensure_month_open(requirement.shift_date)
     if decision == "APPROVE":
+        ensure_month_open(requirement.shift_date)
         if requirement.status != RequirementStatus.OPEN or vacancies(requirement) <= 0:
             raise WorkforceError("缺員已補足或需求已關閉。 / The requirement is already filled or closed.")
         create_shift(

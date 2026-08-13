@@ -222,8 +222,8 @@ def sync_student_notifications(user: User) -> None:
                     severity="DANGER",
                     title_zh=f"必須完成{label_zh}",
                     title_en=f"Your {label_en} is required",
-                    message_zh="請上傳完整文件、核對資料並等待管理員核准；完成前其他功能將暫停使用。",
-                    message_en="Upload the complete document and obtain administrator approval before using other features.",
+                    message_zh="請先上傳完整文件；上傳完成後即可使用系統，不必等待管理員審核。",
+                    message_en="Upload the complete document to continue; administrator approval is not required for access.",
                     target_url=f"{url_for('student.profile')}#documentUploadSection",
                 )
             )

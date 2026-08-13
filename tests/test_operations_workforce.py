@@ -60,6 +60,9 @@ def test_draft_publish_close_unlock_workflow(client, app):
     login(client)
     published = client.post("/admin/operations/publish", data={"month": "2026-11"})
     assert published.status_code == 302
+    payroll_before_lock = client.get("/admin/api/payroll?month=2026-11")
+    assert payroll_before_lock.status_code == 200
+    assert payroll_before_lock.json["totals"]["hours"] > 0
     closed = client.post("/admin/operations/close", data={"month": "2026-11"})
     assert closed.status_code == 302
     blocked = client.post(

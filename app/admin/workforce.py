@@ -25,7 +25,7 @@ from ..models import (
     VacancyApplicationStatus,
 )
 from ..services.audit import add_audit
-from ..services.periods import PeriodError, ensure_month_open
+from ..services.periods import PeriodError
 from ..services.workforce import (
     WorkforceError,
     assigned_count,
@@ -171,8 +171,7 @@ def create_staffing_requirement():
         shift_date = date.fromisoformat(request.form.get("shift_date", ""))
         shift_type_id = int(request.form.get("shift_type_id", ""))
         required_count = int(request.form.get("required_count", ""))
-        ensure_month_open(shift_date)
-    except (TypeError, ValueError, PeriodError) as exc:
+    except (TypeError, ValueError) as exc:
         flash(str(exc) if str(exc) else "缺員需求資料格式錯誤。", "danger")
         return redirect(url_for("admin.workforce_page"))
     shift_type = db.session.get(ShiftType, shift_type_id)

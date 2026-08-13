@@ -151,10 +151,10 @@ flask --app wsgi.py run --debug
 flask --app wsgi.py documents-cleanup --actor-user-id 1
 ```
 
-## 自動驗證備份、月份結算與缺員
+## 自動驗證備份、排班鎖定與缺員
 
 - 系統預設每天 `02:00` 建立一次完整 portable ZIP；備份會先驗證 manifest 內每個檔案的 SHA-256，再對 SQLite 快照執行 `PRAGMA integrity_check`，全部成功才保留。
-- 管理員可由「設定 → 月份結算與備份」查看最近結果、手動執行、發布整月草稿、結算鎖定及填寫原因解鎖。
+- 管理員可由「設定 → 排班鎖定與備份」查看最近結果、手動執行、發布整月草稿、鎖定排班及填寫原因解鎖。薪資試算依正式排班即時計算，不與月份鎖定綁定。
 - 正式環境請把 `AUTOMATIC_BACKUP_DIR` 改到另一顆受 BitLocker 保護的磁碟。預設同機資料夾只提供誤刪復原能力，不能防止整顆硬碟故障。
 - CLI 可手動執行：
 

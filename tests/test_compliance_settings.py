@@ -15,6 +15,7 @@ from app.models import (
 )
 
 from .conftest import login
+from .test_documents import image_upload, upload_residence
 from .test_scheduling import create_api_shift, ids
 
 
@@ -70,7 +71,7 @@ def test_admin_manages_nationalities_and_student_forms_use_select(client, app):
     assert "Vietnam".encode("utf-8") in roster.data
 
 
-def test_foreign_student_is_redirected_until_both_documents_are_approved(client, app):
+def test_foreign_student_is_redirected_only_until_both_documents_are_uploaded(client, app):
     _make_foreign_student(app)
     login(client, "student-test", "StudentTest!2026")
     blocked = client.get("/student/", follow_redirects=False)
@@ -78,8 +79,8 @@ def test_foreign_student_is_redirected_until_both_documents_are_approved(client,
     assert "/student/profile#documentUploadSection" in blocked.headers["Location"]
 
     profile_page = client.get("/student/profile")
-    assert "必須完成外籍生證件".encode("utf-8") in profile_page.data
-    assert "完成前其他功能暫停使用".encode("utf-8") in profile_page.data
+    assert "必須上傳外籍生證件".encode("utf-8") in profile_page.data
+    assert "上傳完成即可使用系統".encode("utf-8") in profile_page.data
     notification_page = client.get("/student/notifications")
     assert "必須完成居留證".encode("utf-8") in notification_page.data
     assert "必須完成工作證".encode("utf-8") in notification_page.data
@@ -87,6 +88,23 @@ def test_foreign_student_is_redirected_until_both_documents_are_approved(client,
         assert db.session.scalar(
             db.select(db.func.count()).select_from(Notification).where(Notification.category == "DOCUMENT_REQUIRED")
         ) == 2
+
+    upload_residence(client)
+    still_blocked = client.get("/student/", follow_redirects=False)
+    assert still_blocked.status_code == 302
+
+    uploaded = client.post(
+        "/student/documents",
+        data={
+            "document_type": "WORK_PERMIT",
+            "privacy_consent": "yes",
+            "work_permit_page_1": image_upload("white", "work-permit.png"),
+        },
+        content_type="multipart/form-data",
+    )
+    assert uploaded.status_code == 302
+    allowed = client.get("/student/", follow_redirects=False)
+    assert allowed.status_code == 200
 
 
 def test_foreign_student_cannot_self_declare_taiwanese_nationality(client, app):
