@@ -75,3 +75,8 @@ def test_git_update_closes_launcher_before_replacing_it():
     assert "RecoveryOnly" in updater
     assert "PromptInterruptedUpdateRecovery" in launcher
     assert "update-state.ini" in watchdog
+    assert "LauncherDirectoryBase64" in launcher
+    assert "LauncherDirectoryBase64" in updater
+    assert "Already up to date." in launcher
+    assert "oldCommit.Equals(targetCommit" in launcher
+    assert 'maintenanceOperation != "UPDATE_RECOVERY_REQUIRED"' in launcher

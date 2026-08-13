@@ -329,11 +329,6 @@ namespace DormStaffPortable
 
         public bool MaintenanceIsActive(out string operation)
         {
-            if (File.Exists(environment.UpdateStatePath))
-            {
-                operation = "UPDATE_RECOVERY_REQUIRED";
-                return true;
-            }
             foreach (string marker in new[] { environment.UpdateMarkerPath, environment.MaintenanceLockPath })
             {
                 if (!File.Exists(marker)) continue;
@@ -367,6 +362,11 @@ namespace DormStaffPortable
                 else if (DateTime.UtcNow - File.GetLastWriteTimeUtc(marker) < TimeSpan.FromHours(2)) return true;
                 try { File.Delete(marker); log("已清除失效的維護標記：" + Path.GetFileName(marker)); }
                 catch (IOException) { return true; }
+            }
+            if (File.Exists(environment.UpdateStatePath))
+            {
+                operation = "UPDATE_RECOVERY_REQUIRED";
+                return true;
             }
             operation = "";
             return false;
@@ -781,7 +781,7 @@ namespace DormStaffPortable
             log("專案 Clone 完成。請選擇該專案資料夾後安裝環境。 ");
         }
 
-        public void PrepareGitUpdate()
+        public bool PrepareGitUpdate()
         {
             ValidateProject();
             if (!environment.GitIsInstalled || !environment.PythonIsInstalled)
@@ -793,16 +793,21 @@ namespace DormStaffPortable
             string branch = RunChecked(environment.GitExe, "branch --show-current", environment.ProjectRoot).Output.Trim();
             if (!branch.Equals(environment.Config.GitBranch, StringComparison.Ordinal))
                 throw new InvalidOperationException("目前分支是 " + branch + "，不是設定的 " + environment.Config.GitBranch + "。 ");
+            string oldCommit = RunChecked(environment.GitExe, "rev-parse HEAD", environment.ProjectRoot).Output.Trim();
+            RunChecked(environment.GitExe, "fetch " + Quote(environment.Config.GitRemote) + " " + Quote(environment.Config.GitBranch), environment.ProjectRoot);
+            string targetCommit = RunChecked(environment.GitExe, "rev-parse " + Quote(environment.Config.GitRemote + "/" + environment.Config.GitBranch), environment.ProjectRoot).Output.Trim();
+            if (oldCommit.Equals(targetCommit, StringComparison.OrdinalIgnoreCase))
+            {
+                log("目前已是最新版本，無需重啟 Launcher。 / Already up to date.");
+                return false;
+            }
             string backupScript = Path.Combine(environment.ProjectRoot, "deployment", "create_portable_backup.py");
             if (!File.Exists(backupScript)) throw new InvalidOperationException("更新前備份腳本不存在，已停止更新。 ");
             string backupDir = Path.Combine(environment.ProjectRoot, "outputs", "portable-backups");
             Directory.CreateDirectory(backupDir);
             string backup = Path.Combine(backupDir, "before-launcher-update-" + DateTime.Now.ToString("yyyyMMdd-HHmmss") + ".zip");
-            string oldCommit = RunChecked(environment.GitExe, "rev-parse HEAD", environment.ProjectRoot).Output.Trim();
             RunChecked(environment.PythonExe, Quote(backupScript) + " " + Quote(backup) + " --port " + environment.Config.Port, environment.ProjectRoot);
             log("更新前備份：" + backup);
-            RunChecked(environment.GitExe, "fetch " + Quote(environment.Config.GitRemote) + " " + Quote(environment.Config.GitBranch), environment.ProjectRoot);
-            string targetCommit = RunChecked(environment.GitExe, "rev-parse " + Quote(environment.Config.GitRemote + "/" + environment.Config.GitBranch), environment.ProjectRoot).Output.Trim();
             string[] updateState = {
                 "OldCommit=" + oldCommit,
                 "TargetCommit=" + targetCommit,
@@ -810,6 +815,7 @@ namespace DormStaffPortable
             };
             File.WriteAllLines(environment.UpdateStatePath, updateState, new UTF8Encoding(false));
             log("Git 更新已下載並驗證；即將關閉 Launcher 後套用。 / Update fetched and validated.");
+            return true;
         }
 
         private string MigrationHelperPath()
@@ -1367,7 +1373,8 @@ namespace DormStaffPortable
                     "Git 安全更新 / Safe update", MessageBoxButtons.OK,
                     updateResult.Equals("success", StringComparison.OrdinalIgnoreCase) || updateResult.Equals("rolledback", StringComparison.OrdinalIgnoreCase) ? MessageBoxIcon.Information : MessageBoxIcon.Error); };
             }
-            if (File.Exists(environment.UpdateStatePath)) Shown += PromptInterruptedUpdateRecovery;
+            if (File.Exists(environment.UpdateStatePath) && !"success".Equals(updateResult, StringComparison.OrdinalIgnoreCase))
+                Shown += PromptInterruptedUpdateRecovery;
         }
 
         private void BuildUi()
@@ -1631,6 +1638,12 @@ namespace DormStaffPortable
         private void BeginGitUpdate(object sender, EventArgs args)
         {
             if (operationRunning || !SaveSettings()) return;
+            string activeOperation;
+            if (manager.MaintenanceIsActive(out activeOperation))
+            {
+                MessageBox.Show(this, "系統正在維護（" + activeOperation + "），請先完成或復原前一次更新。", "無法更新", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
             string updater = Path.Combine(environment.BaseDirectory, "self-update.ps1");
             if (!File.Exists(updater))
             {
@@ -1654,8 +1667,16 @@ namespace DormStaffPortable
             {
                 try
                 {
-                    manager.PrepareGitUpdate();
-                    BeginInvoke((MethodInvoker)StartExternalUpdaterAndClose);
+                    if (manager.PrepareGitUpdate())
+                        BeginInvoke((MethodInvoker)StartExternalUpdaterAndClose);
+                    else BeginInvoke((MethodInvoker)delegate
+                    {
+                        try { File.Delete(marker); } catch { }
+                        operationRunning = false;
+                        SetActionsEnabled(true);
+                        UpdateStatus();
+                        MessageBox.Show(this, "目前已是最新版本，無需重啟 Launcher。\r\nAlready up to date.", "Git 安全更新", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    });
                 }
                 catch (Exception ex)
                 {
@@ -1684,9 +1705,10 @@ namespace DormStaffPortable
                 if (!File.Exists(source)) throw new InvalidOperationException("找不到 Launcher 外部更新程式：" + source);
                 string temporary = Path.Combine(Path.GetTempPath(), "DormStaffSelfUpdate-" + Guid.NewGuid().ToString("N") + ".ps1");
                 File.Copy(source, temporary, true);
+                string launcherDirectoryBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(environment.BaseDirectory));
                 ProcessStartInfo info = new ProcessStartInfo("powershell.exe",
                     "-NoProfile -ExecutionPolicy Bypass -File " + PortableManager.Quote(temporary) +
-                    " -LauncherDirectory " + PortableManager.Quote(environment.BaseDirectory) +
+                    " -LauncherDirectoryBase64 " + PortableManager.Quote(launcherDirectoryBase64) +
                     " -ParentProcessId " + Process.GetCurrentProcess().Id +
                     (recoveryOnly ? " -RecoveryOnly" : ""));
                 info.UseShellExecute = false; info.CreateNoWindow = true;
@@ -1708,6 +1730,8 @@ namespace DormStaffPortable
         private void PromptInterruptedUpdateRecovery(object sender, EventArgs args)
         {
             if (!File.Exists(environment.UpdateStatePath) || operationRunning || updateInProgress) return;
+            string maintenanceOperation;
+            if (!manager.MaintenanceIsActive(out maintenanceOperation) || maintenanceOperation != "UPDATE_RECOVERY_REQUIRED") return;
             DialogResult recover = MessageBox.Show(
                 this,
                 "偵測到未完成的系統更新。為避免啟動只更新一半的程式，建議立即回復更新前版本與資料。\r\n\r\nRecover the previous version and data now?",

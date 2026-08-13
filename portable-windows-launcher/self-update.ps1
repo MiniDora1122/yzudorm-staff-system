@@ -1,10 +1,16 @@
 param(
-    [Parameter(Mandatory = $true)][string]$LauncherDirectory,
+    [string]$LauncherDirectory,
+    [string]$LauncherDirectoryBase64,
     [Parameter(Mandatory = $true)][int]$ParentProcessId,
     [switch]$RecoveryOnly
 )
 
 $ErrorActionPreference = "Stop"
+$LauncherDirectory = if (-not [string]::IsNullOrWhiteSpace($LauncherDirectoryBase64)) {
+    [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($LauncherDirectoryBase64))
+} elseif (-not [string]::IsNullOrWhiteSpace($LauncherDirectory)) { $LauncherDirectory } else {
+    throw "Launcher directory was not provided."
+}
 $launcherRoot = [IO.Path]::GetFullPath($LauncherDirectory)
 $configPath = Join-Path $launcherRoot "launcher.ini"
 $runtime = Join-Path $launcherRoot ".venv"
