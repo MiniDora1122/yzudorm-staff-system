@@ -8,7 +8,7 @@ from . import bp
 from .forms import ChangePasswordForm, LoginForm, LogoutForm
 from ..extensions import db
 from ..models import Role, User
-from ..services.requests import add_audit
+from ..services.audit import add_audit
 
 
 def is_safe_redirect(target: str) -> bool:
@@ -68,6 +68,7 @@ def login():
         add_audit(user.id, "LOGIN_SUCCEEDED", "User", user.id, "帳號登入成功")
         db.session.commit()
         login_user(user)
+        session.pop("notification_sync_at", None)
         session.permanent = True
         flash("登入成功。", "success")
 

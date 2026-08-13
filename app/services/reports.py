@@ -18,6 +18,7 @@ from ..models import (
     DocumentStatus,
     LeaveRequest,
     Shift,
+    ShiftPublicationStatus,
     ShiftStatus,
     ShiftType,
     StaffDocument,
@@ -59,6 +60,7 @@ def _profiles_for_month(start: date, end: date) -> list[StaffProfile]:
         Shift.shift_date >= start,
         Shift.shift_date < end,
         Shift.status == ShiftStatus.SCHEDULED,
+        Shift.publication_status == ShiftPublicationStatus.PUBLISHED,
     )
     return db.session.scalars(
         db.select(StaffProfile)
@@ -85,6 +87,7 @@ def _month_shifts(start: date, end: date) -> list[Shift]:
             Shift.shift_date >= start,
             Shift.shift_date < end,
             Shift.status == ShiftStatus.SCHEDULED,
+            Shift.publication_status == ShiftPublicationStatus.PUBLISHED,
         )
         .order_by(Shift.shift_date, ShiftType.start_time, StaffProfile.name)
     ).all()
@@ -380,6 +383,7 @@ def payroll_cost_csv(start: date, end: date) -> bytes:
         .join(ShiftType)
         .where(
             Shift.status == ShiftStatus.SCHEDULED,
+            Shift.publication_status == ShiftPublicationStatus.PUBLISHED,
             Shift.shift_date >= start,
             Shift.shift_date < end,
         )

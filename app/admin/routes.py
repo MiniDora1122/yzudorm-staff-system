@@ -24,6 +24,7 @@ from ..models import (
     SchedulingExceptionPeriod,
     SchedulingPolicy,
     Shift,
+    ShiftPublicationStatus,
     ShiftStatus,
     ShiftType,
     StaffProfile,
@@ -32,9 +33,10 @@ from ..models import (
     SwapRequest,
     User,
     WorkLocation,
+    utc_now,
 )
 from ..services.payroll import calculate_staff_cost, get_payroll_setting, money
-from ..services.notifications import notifications_for_user
+from ..services.notifications import notification_page_for_user, notifications_for_user
 from ..services.compliance import active_countries, canonical_country_name, get_scheduling_policy
 from ..services.accounts import (
     AccountError,
@@ -60,7 +62,8 @@ from ..services.reports import (
     shift_detail_csv,
     workflow_history_csv,
 )
-from ..services.requests import WorkflowError, add_audit, review_leave_request, review_swap_request
+from ..services.audit import add_audit
+from ..services.requests import WorkflowError, review_leave_request, review_swap_request
 from ..services.retention import cleanup_expired_documents, get_retention_policy, save_retention_policy
 from ..services.scheduling import (
     SchedulingConflict,
@@ -90,6 +93,7 @@ def dashboard():
             .select_from(Shift)
             .where(
                 Shift.status == ShiftStatus.SCHEDULED,
+                Shift.publication_status == ShiftPublicationStatus.PUBLISHED,
                 Shift.shift_date >= month_start,
                 Shift.shift_date < next_month,
             )
@@ -97,7 +101,11 @@ def dashboard():
         "today": db.session.scalar(
             db.select(db.func.count())
             .select_from(Shift)
-            .where(Shift.shift_date == today, Shift.status == ShiftStatus.SCHEDULED)
+            .where(
+                Shift.shift_date == today,
+                Shift.status == ShiftStatus.SCHEDULED,
+                Shift.publication_status == ShiftPublicationStatus.PUBLISHED,
+            )
         ),
         "pending_leave": db.session.scalar(
             db.select(db.func.count()).select_from(LeaveRequest).where(LeaveRequest.status == LeaveStatus.PENDING)
@@ -121,6 +129,7 @@ def dashboard():
         .where(
             Shift.shift_date.in_([today, tomorrow]),
             Shift.status.in_([ShiftStatus.SCHEDULED, ShiftStatus.ON_LEAVE]),
+            Shift.publication_status == ShiftPublicationStatus.PUBLISHED,
         )
         .order_by(Shift.shift_date, ShiftType.start_time, ShiftType.display_order, StaffProfile.name)
     ).all()
@@ -142,11 +151,14 @@ def dashboard():
 @bp.get("/notifications")
 @role_required(Role.ADMIN)
 def notifications_page():
-    open_notifications, completed_notifications = notifications_for_user(current_user)
+    open_notifications, completed_notifications, pagination = notification_page_for_user(
+        current_user, page=request.args.get("page", 1, type=int)
+    )
     return render_template(
         "notifications.html",
         open_notifications=open_notifications,
         completed_notifications=completed_notifications,
+        pagination=pagination,
         dashboard_url=url_for("admin.dashboard"),
     )
 
@@ -488,6 +500,12 @@ def shift_import_template():
 def import_shifts():
     uploaded = request.files.get("shift_file")
     allow_location_overlap = request.form.get("allow_location_overlap") == "yes"
+    try:
+        publication_status = ShiftPublicationStatus(
+            request.form.get("publication_status", ShiftPublicationStatus.DRAFT.value)
+        )
+    except ValueError:
+        publication_status = ShiftPublicationStatus.DRAFT
     if uploaded is None or not uploaded.filename:
         flash("請選擇 CSV 排班檔案。 / Please select a CSV schedule file.", "danger")
         return redirect(url_for("admin.schedule"))
@@ -504,7 +522,9 @@ def import_shifts():
     reader = csv.DictReader(StringIO(text))
     profiles = {
         profile.student_number.upper(): profile
-        for profile in db.session.scalars(db.select(StaffProfile)).all()
+        for profile in db.session.scalars(
+            db.select(StaffProfile).join(StaffProfile.user).where(User.is_active.is_(True))
+        ).all()
     }
     shift_types = {
         item.code.upper(): item
@@ -544,6 +564,7 @@ def import_shifts():
                     staff=staff,
                     actor_id=current_user.id,
                     allow_location_overlap=allow_location_overlap,
+                    publication_status=publication_status,
                     commit=False,
                 )
             )
@@ -583,12 +604,35 @@ def staff():
         direction = "asc"
     order_expression = sort_columns[sort_key]
     order_expression = order_expression.desc() if direction == "desc" else order_expression.asc()
-    profiles = db.session.scalars(
+    account_status = request.args.get("status", "active")
+    if account_status not in {"active", "archived"}:
+        account_status = "active"
+    search = request.args.get("q", "").strip()[:100]
+    statement = (
         db.select(StaffProfile)
         .join(StaffProfile.user)
-        .where(User.is_active.is_(True))
         .order_by(order_expression, StaffProfile.id)
-    ).all()
+    )
+    statement = statement.where(User.is_active.is_(account_status == "active"))
+    if search:
+        pattern = f"%{search}%"
+        statement = statement.where(
+            db.or_(
+                StaffProfile.name.ilike(pattern),
+                StaffProfile.student_number.ilike(pattern),
+                User.username.ilike(pattern),
+                StaffProfile.email.ilike(pattern),
+                StaffProfile.nationality.ilike(pattern),
+            )
+        )
+    pagination = db.paginate(
+        statement,
+        page=max(1, request.args.get("page", 1, type=int)),
+        per_page=25,
+        error_out=False,
+    )
+    profiles = pagination.items
+    profile_ids = [profile.id for profile in profiles]
     current_documents = db.session.scalars(
         db.select(StaffDocument)
         .where(StaffDocument.status.in_([
@@ -596,7 +640,7 @@ def staff():
             DocumentStatus.PENDING_ADMIN,
             DocumentStatus.REJECTED,
             DocumentStatus.CONFIRMED,
-        ]))
+        ]), StaffDocument.staff_id.in_(profile_ids or [-1]))
         .order_by(StaffDocument.uploaded_at.desc())
     ).all()
     documents_by_staff = {}
@@ -613,18 +657,26 @@ def staff():
         countries=active_countries(),
         sort_key=sort_key,
         sort_direction=direction,
+        pagination=pagination,
+        account_status=account_status,
+        search=search,
     )
 
 
 @bp.get("/admin-accounts")
 @role_required(Role.ADMIN)
 def admin_accounts():
+    account_status = request.args.get("status", "active")
+    if account_status not in {"active", "archived"}:
+        account_status = "active"
     administrators = db.session.scalars(
         db.select(User)
-        .where(User.role == Role.ADMIN, User.is_active.is_(True))
+        .where(User.role == Role.ADMIN, User.is_active.is_(account_status == "active"))
         .order_by(User.created_at, User.username)
     ).all()
-    return render_template("admin/admin_accounts.html", administrators=administrators)
+    return render_template(
+        "admin/admin_accounts.html", administrators=administrators, account_status=account_status
+    )
 
 
 @bp.post("/admin-accounts")
@@ -689,10 +741,28 @@ def delete_administrator(user_id: int):
         flash("系統至少必須保留一個有效管理員帳號。 / At least one active administrator is required.", "danger")
         return redirect(url_for("admin.admin_accounts"))
     administrator.is_active = False
+    administrator.archived_at = utc_now()
+    administrator.archived_by = current_user.id
     add_audit(current_user.id, "ADMIN_ARCHIVED", "User", administrator.id, f"停用管理員 {administrator.username}")
     db.session.commit()
     flash("管理員帳號已刪除；歷史稽核紀錄仍保留。 / Administrator account removed; audit history was retained.", "success")
     return redirect(url_for("admin.admin_accounts"))
+
+
+@bp.post("/admin-accounts/<int:user_id>/restore")
+@role_required(Role.ADMIN)
+def restore_administrator(user_id: int):
+    administrator = db.session.get(User, user_id)
+    if administrator is None or administrator.role != Role.ADMIN or administrator.is_active:
+        flash("找不到已封存管理員。 / Archived administrator not found.", "danger")
+    else:
+        administrator.is_active = True
+        administrator.archived_at = None
+        administrator.archived_by = None
+        add_audit(current_user.id, "ADMIN_RESTORED", "User", administrator.id, f"復原管理員 {administrator.username}")
+        db.session.commit()
+        flash("管理員帳號已復原。 / Administrator restored.", "success")
+    return redirect(url_for("admin.admin_accounts", status="archived"))
 
 
 @bp.post("/staff")
@@ -781,18 +851,53 @@ def delete_staff(staff_id: int):
         )
         return redirect(url_for("admin.staff"))
     profile.user.is_active = False
+    profile.user.archived_at = utc_now()
+    profile.user.archived_by = current_user.id
     add_audit(current_user.id, "STAFF_ARCHIVED", "StaffProfile", profile.id, f"停用工讀生 {profile.student_number}")
     db.session.commit()
     flash("工讀生帳號已刪除；歷史排班、報表及文件稽核仍保留。 / Student account removed; history was retained.", "success")
     return redirect(url_for("admin.staff"))
 
 
+@bp.post("/staff/<int:staff_id>/restore")
+@role_required(Role.ADMIN)
+def restore_staff(staff_id: int):
+    profile = db.session.get(StaffProfile, staff_id)
+    if profile is None or profile.user.is_active:
+        flash("找不到已封存工讀生。 / Archived student not found.", "danger")
+    else:
+        profile.user.is_active = True
+        profile.user.archived_at = None
+        profile.user.archived_by = None
+        add_audit(current_user.id, "STAFF_RESTORED", "StaffProfile", profile.id, f"復原工讀生 {profile.student_number}")
+        db.session.commit()
+        flash("工讀生帳號已復原，原排班與歷史資料仍完整保留。 / Student restored with history.", "success")
+    return redirect(url_for("admin.staff", status="archived"))
+
+
 @bp.get("/documents")
 @role_required(Role.ADMIN)
 def documents_page():
+    group_statement = (
+        db.select(
+            StaffDocument.document_set_id,
+            db.func.max(StaffDocument.uploaded_at).label("latest_upload"),
+        )
+        .where(StaffDocument.status != DocumentStatus.DELETED)
+        .group_by(StaffDocument.document_set_id)
+        .order_by(db.desc("latest_upload"))
+    )
+    pagination = db.paginate(
+        group_statement,
+        page=max(1, request.args.get("page", 1, type=int)),
+        per_page=25,
+        error_out=False,
+    )
+    set_ids = list(pagination.items)
     documents = db.session.scalars(
         db.select(StaffDocument)
-        .where(StaffDocument.status != DocumentStatus.DELETED)
+        .options(joinedload(StaffDocument.staff), joinedload(StaffDocument.draft))
+        .where(StaffDocument.document_set_id.in_(set_ids or ["-"]))
         .order_by(StaffDocument.uploaded_at.desc())
     ).all()
     policy = get_retention_policy()
@@ -811,6 +916,7 @@ def documents_page():
         key_primary_path=current_app.config["DOCUMENT_KEY_PRIMARY_PATH"],
         key_backup_path=current_app.config["DOCUMENT_KEY_BACKUP_PATH"],
         page_labels=PAGE_LABELS,
+        pagination=pagination,
     )
 
 
@@ -1152,14 +1258,19 @@ def requests_page():
                 SwapRequest.target_shift.has(db.and_(Shift.shift_date >= month_start, Shift.shift_date < month_end)),
             )
         )
-    leave_requests = db.session.scalars(leave_statement).all()
-    swap_requests = db.session.scalars(swap_statement).all()
+    page = max(1, request.args.get("page", 1, type=int))
+    leave_pagination = db.paginate(leave_statement, page=page, per_page=50, error_out=False)
+    swap_pagination = db.paginate(swap_statement, page=page, per_page=50, error_out=False)
+    leave_requests = leave_pagination.items
+    swap_requests = swap_pagination.items
     return render_template(
         "admin/requests.html",
         leave_requests=leave_requests,
         swap_requests=swap_requests,
         filter_scope=filter_scope,
         filter_month=filter_month,
+        history_page=page,
+        history_pages=max(leave_pagination.pages, swap_pagination.pages),
     )
 
 
@@ -1592,6 +1703,7 @@ def payroll_report_api():
         .join(ShiftType)
         .where(
             Shift.status == ShiftStatus.SCHEDULED,
+            Shift.publication_status == ShiftPublicationStatus.PUBLISHED,
             Shift.shift_date >= start,
             Shift.shift_date < end,
         )
@@ -1681,6 +1793,9 @@ def create_shift_api():
     payload = request.get_json(silent=True) or {}
     try:
         shift_date, shift_type, staff = get_assignment(payload)
+        publication_status = ShiftPublicationStatus(
+            str(payload.get("publication_status", ShiftPublicationStatus.PUBLISHED.value)).upper()
+        )
         if payload.get("repeat_weekly") is True:
             recurrence_end = date.fromisoformat(str(payload.get("recurrence_end", "")))
             shifts = create_weekly_shift_series(
@@ -1690,6 +1805,7 @@ def create_shift_api():
                 staff=staff,
                 actor_id=current_user.id,
                 allow_location_overlap=payload.get("allow_location_overlap") is True,
+                publication_status=publication_status,
             )
             add_audit(
                 current_user.id,
@@ -1706,6 +1822,7 @@ def create_shift_api():
             staff=staff,
             actor_id=current_user.id,
             allow_location_overlap=payload.get("allow_location_overlap") is True,
+            publication_status=publication_status,
         )
     except SchedulingConflict as exc:
         db.session.rollback()
@@ -1728,12 +1845,17 @@ def update_shift_api(shift_id: int):
     payload = request.get_json(silent=True) or {}
     try:
         shift_date, shift_type, staff = get_assignment(payload)
+        publication_status = ShiftPublicationStatus(
+            str(payload.get("publication_status", shift.publication_status.value)).upper()
+        )
         shift = update_shift(
             shift,
             shift_date=shift_date,
             shift_type=shift_type,
             staff=staff,
             allow_location_overlap=payload.get("allow_location_overlap") is True,
+            publication_status=publication_status,
+            actor_id=current_user.id,
         )
     except SchedulingConflict as exc:
         db.session.rollback()
@@ -1789,6 +1911,13 @@ def cancel_shift_records(shifts: list[Shift], *, actor_user_id: int, action: str
     ids = [item.id for item in shifts]
     if any(item.status != ShiftStatus.SCHEDULED for item in shifts):
         return "請假缺員或已取消的排班不可直接刪除，請先完成相關流程。 / Resolve leave or cancelled shifts first."
+    from ..services.periods import PeriodError, ensure_month_open
+
+    try:
+        for item in shifts:
+            ensure_month_open(item.shift_date)
+    except PeriodError as exc:
+        return str(exc)
     pending_leave = db.session.scalar(
         db.select(LeaveRequest.id)
         .where(LeaveRequest.shift_id.in_(ids), LeaveRequest.status == LeaveStatus.PENDING)
@@ -1874,6 +2003,7 @@ def monthly_hours_api():
         .join(WorkLocation)
         .where(
             Shift.status == ShiftStatus.SCHEDULED,
+            Shift.publication_status == ShiftPublicationStatus.PUBLISHED,
             Shift.shift_date >= start,
             Shift.shift_date < end,
         )

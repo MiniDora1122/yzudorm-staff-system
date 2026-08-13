@@ -17,18 +17,6 @@ from dotenv import dotenv_values
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-EXCLUDED_PARTS = {
-    ".git",
-    ".pytest_cache",
-    ".venv",
-    "__pycache__",
-    "instance",
-    "outputs",
-    "tmp",
-}
-EXCLUDED_SUFFIXES = {".pyc", ".pyo"}
-
-
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Create a portable encrypted-data backup")
     parser.add_argument("destination", type=Path, help="Output ZIP path")
@@ -37,12 +25,13 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Run while 127.0.0.1:8000 is listening (documents may change)",
     )
+    parser.add_argument("--port", type=int, default=8000, help="Waitress port to check")
     return parser.parse_args()
 
 
-def service_is_running() -> bool:
+def service_is_running(port: int = 8000) -> bool:
     try:
-        with socket.create_connection(("127.0.0.1", 8000), timeout=0.25):
+        with socket.create_connection(("127.0.0.1", port), timeout=0.25):
             return True
     except OSError:
         return False
@@ -105,18 +94,6 @@ def add_file(
     manifest_files[archive_name] = {"size": len(data), "sha256": sha256_bytes(data)}
 
 
-def iter_project_files(destination: Path):
-    for path in PROJECT_ROOT.rglob("*"):
-        if not path.is_file() or path.resolve() == destination:
-            continue
-        relative = path.relative_to(PROJECT_ROOT)
-        if any(part in EXCLUDED_PARTS or part.startswith(".venv-broken-") for part in relative.parts):
-            continue
-        if path.suffix.lower() in EXCLUDED_SUFFIXES or relative.as_posix() == ".env":
-            continue
-        yield path, relative.as_posix()
-
-
 def add_tree(
     archive: zipfile.ZipFile,
     source_root: Path,
@@ -131,12 +108,38 @@ def add_tree(
             add_file(archive, path, f"{archive_root}/{relative}", manifest_files)
 
 
-def main() -> int:
-    args = parse_args()
-    destination = args.destination.expanduser().resolve()
-    if service_is_running() and not args.allow_running:
+def verify_backup(archive_path: Path) -> dict[str, object]:
+    """Verify every manifest checksum and run SQLite integrity_check on the snapshot."""
+    with zipfile.ZipFile(archive_path) as archive:
+        manifest = json.loads(archive.read("PORTABLE_BACKUP_MANIFEST.json"))
+        if manifest.get("format") != "dorm-staff-portable-backup-v1":
+            raise RuntimeError("Backup manifest format is not supported.")
+        for name, expected in manifest.get("files", {}).items():
+            data = archive.read(name)
+            if len(data) != expected["size"] or sha256_bytes(data) != expected["sha256"]:
+                raise RuntimeError(f"Backup verification failed for {name}.")
+        with tempfile.TemporaryDirectory(prefix="dorm-staff-backup-check-") as temp_dir:
+            database = Path(temp_dir) / "dorm_staff.db"
+            database.write_bytes(archive.read("instance/dorm_staff.db"))
+            connection = sqlite3.connect(database)
+            try:
+                result = connection.execute("PRAGMA integrity_check").fetchone()[0]
+            finally:
+                connection.close()
+            if result != "ok":
+                raise RuntimeError(f"SQLite integrity_check failed: {result}")
+    return manifest
+
+
+def create_backup(
+    destination: Path, *, allow_running: bool = False, port: int = 8000
+) -> dict[str, object]:
+    destination = destination.expanduser().resolve()
+    if not 1 <= port <= 65535:
+        raise RuntimeError("Port must be between 1 and 65535.")
+    if service_is_running(port) and not allow_running:
         raise RuntimeError(
-            "Waitress is running on 127.0.0.1:8000. Stop the scheduled service, "
+            f"A service is running on 127.0.0.1:{port}. Stop the scheduled service, "
             "or use --allow-running only when no document upload is in progress."
         )
 
@@ -157,39 +160,50 @@ def main() -> int:
         raise RuntimeError(f"Document key directory not found: {key_dir}")
 
     destination.parent.mkdir(parents=True, exist_ok=True)
+    temporary_destination = destination.with_name(f".{destination.name}.tmp")
+    temporary_destination.unlink(missing_ok=True)
     manifest_files: dict[str, dict[str, object]] = {}
     created_at = datetime.now(timezone.utc).isoformat()
 
-    with tempfile.TemporaryDirectory(prefix="dorm-staff-backup-") as temp_dir:
-        db_snapshot = Path(temp_dir) / "dorm_staff.db"
-        source_db = sqlite3.connect(db_path)
-        target_db = sqlite3.connect(db_snapshot)
-        try:
-            source_db.backup(target_db)
-        finally:
-            target_db.close()
-            source_db.close()
+    try:
+        with tempfile.TemporaryDirectory(prefix="dorm-staff-backup-") as temp_dir:
+            db_snapshot = Path(temp_dir) / "dorm_staff.db"
+            source_db = sqlite3.connect(db_path)
+            target_db = sqlite3.connect(db_snapshot)
+            try:
+                source_db.backup(target_db)
+            finally:
+                target_db.close()
+                source_db.close()
 
-        with zipfile.ZipFile(destination, "w", compression=zipfile.ZIP_DEFLATED) as archive:
-            for source, name in iter_project_files(destination):
-                add_file(archive, source, name, manifest_files)
-            add_file(archive, db_snapshot, "instance/dorm_staff.db", manifest_files)
-            add_tree(archive, document_dir, "instance/private_documents", manifest_files)
-            add_tree(archive, key_dir, "instance/private_keys", manifest_files)
+            with zipfile.ZipFile(temporary_destination, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+                add_file(archive, db_snapshot, "instance/dorm_staff.db", manifest_files)
+                add_tree(archive, document_dir, "instance/private_documents", manifest_files)
+                add_tree(archive, key_dir, "instance/private_keys", manifest_files)
 
-            env_data = portable_env(env).encode("utf-8")
-            archive.writestr(".env", env_data)
-            manifest_files[".env"] = {"size": len(env_data), "sha256": sha256_bytes(env_data)}
-            manifest = {
-                "format": "dorm-staff-portable-backup-v1",
-                "created_at_utc": created_at,
-                "file_count": len(manifest_files),
-                "files": manifest_files,
-            }
-            archive.writestr(
-                "PORTABLE_BACKUP_MANIFEST.json",
-                json.dumps(manifest, ensure_ascii=False, indent=2).encode("utf-8"),
-            )
+                env_data = portable_env(env).encode("utf-8")
+                archive.writestr(".env", env_data)
+                manifest_files[".env"] = {"size": len(env_data), "sha256": sha256_bytes(env_data)}
+                manifest = {
+                    "format": "dorm-staff-portable-backup-v1",
+                    "created_at_utc": created_at,
+                    "file_count": len(manifest_files),
+                    "files": manifest_files,
+                }
+                archive.writestr(
+                    "PORTABLE_BACKUP_MANIFEST.json",
+                    json.dumps(manifest, ensure_ascii=False, indent=2).encode("utf-8"),
+                )
+        verified = verify_backup(temporary_destination)
+        os.replace(temporary_destination, destination)
+        return verified
+    finally:
+        temporary_destination.unlink(missing_ok=True)
+
+
+def main() -> int:
+    args = parse_args()
+    create_backup(args.destination, allow_running=args.allow_running, port=args.port)
 
     print("Backup created successfully.")
     print(

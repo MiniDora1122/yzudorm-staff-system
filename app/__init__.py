@@ -1,6 +1,7 @@
 from pathlib import Path
+import time
 
-from flask import Flask, redirect, render_template, request, url_for
+from flask import Flask, redirect, render_template, request, session, url_for
 from flask_login import current_user
 from werkzeug.middleware.proxy_fix import ProxyFix
 
@@ -50,22 +51,35 @@ def create_app(config_object=Config):
     app.register_blueprint(student_bp)
 
     from .seed import register_commands
+    from .services.backups import register_backup_commands
 
     register_commands(app)
+    register_backup_commands(app)
 
-    from .services.retention import init_document_cleanup_scheduler
+    from .services.maintenance import init_maintenance_scheduler
 
-    init_document_cleanup_scheduler(app)
+    init_maintenance_scheduler(app)
 
     @app.before_request
     def refresh_action_notifications():
         if current_user.is_authenticated and request.endpoint != "static":
+            now = int(time.time())
+            last_sync = int(session.get("notification_sync_at", 0))
+            if now - last_sync < int(app.config["NOTIFICATION_SYNC_INTERVAL_SECONDS"]):
+                return
             from .services.notifications import sync_admin_notifications, sync_student_notifications
 
             if current_user.role == Role.ADMIN:
                 sync_admin_notifications()
             else:
                 sync_student_notifications(current_user)
+            session["notification_sync_at"] = now
+
+    @app.after_request
+    def invalidate_notifications_after_mutation(response):
+        if current_user.is_authenticated and request.method not in {"GET", "HEAD", "OPTIONS"}:
+            session.pop("notification_sync_at", None)
+        return response
 
     @app.context_processor
     def notification_navigation_context():
@@ -82,6 +96,16 @@ def create_app(config_object=Config):
         if current_user.role == Role.ADMIN:
             return redirect(url_for("admin.dashboard"))
         return redirect(url_for("student.dashboard"))
+
+    @app.get("/healthz")
+    def healthz():
+        """Stable, lightweight endpoint for Launcher and watchdog checks."""
+        try:
+            db.session.execute(db.select(1)).scalar_one()
+        except Exception:
+            db.session.rollback()
+            return {"status": "unhealthy", "service": "dorm-staff-system"}, 503
+        return {"status": "ok", "service": "dorm-staff-system"}
 
     @app.errorhandler(403)
     def forbidden(_error):

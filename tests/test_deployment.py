@@ -6,7 +6,7 @@ from flask import jsonify, request
 
 import app as app_package
 from app import create_app
-from deployment.create_portable_backup import portable_env, sqlite_path
+from deployment.create_portable_backup import portable_env, service_is_running, sqlite_path
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -161,6 +161,13 @@ def test_launcher_includes_safe_data_migration_controls():
     assert 'phraseBox.Text != "MIGRATE"' in source
 
 
+def test_health_endpoint_is_public_and_checks_database(client):
+    response = client.get("/healthz")
+
+    assert response.status_code == 200
+    assert response.get_json() == {"service": "dorm-staff-system", "status": "ok"}
+
+
 def test_gitignore_protects_production_data():
     gitignore = (PROJECT_ROOT / ".gitignore").read_text(encoding="utf-8")
     required_rules = [".env", "instance/", "outputs/", "tmp/", "*.db", "*.zip"]
@@ -177,3 +184,33 @@ def test_portable_backup_uses_flask_instance_database_location():
     rendered = portable_env({"SECRET_KEY": "keep-this-secret"})
     assert "DATABASE_URL=sqlite:///dorm_staff.db" in rendered
     assert "SECRET_KEY=keep-this-secret" in rendered
+
+
+def test_portable_backup_service_check_accepts_configured_port(monkeypatch):
+    attempted = {}
+
+    class FakeConnection:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_args):
+            return False
+
+    def fake_connection(address, timeout):
+        attempted["address"] = address
+        attempted["timeout"] = timeout
+        return FakeConnection()
+
+    monkeypatch.setattr("deployment.create_portable_backup.socket.create_connection", fake_connection)
+
+    assert service_is_running(9123) is True
+    assert attempted == {"address": ("127.0.0.1", 9123), "timeout": 0.25}
+
+
+def test_production_requirements_exclude_test_runner():
+    production = (PROJECT_ROOT / "requirements.txt").read_text(encoding="utf-8")
+    development = (PROJECT_ROOT / "requirements-dev.txt").read_text(encoding="utf-8")
+
+    assert "pytest" not in production.lower()
+    assert "-r requirements.txt" in development
+    assert "pytest" in development.lower()

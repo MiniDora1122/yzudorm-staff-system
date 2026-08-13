@@ -230,6 +230,7 @@ document.addEventListener("DOMContentLoaded", () => {
     editingSeriesId = null;
     document.getElementById("shiftId").value = "";
     document.getElementById("shiftDate").value = dateValue;
+    document.getElementById("shiftPublication").value = "DRAFT";
     document.getElementById("recurrenceEnd").min = dateValue;
     document.getElementById("shiftModalTitle").textContent = "新增排班";
     document.getElementById("shiftModalTitle").dataset.en = "Add shift";
@@ -250,6 +251,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("shiftId").value = event.id;
     document.getElementById("shiftDate").value = props.shiftDate;
     document.getElementById("shiftStaff").value = String(props.staffId);
+    document.getElementById("shiftPublication").value = props.publicationStatus || "PUBLISHED";
     const radio = document.querySelector(`input[name="shiftTypeOption"][value="${props.shiftTypeId}"]`);
     if (radio) radio.checked = true;
     filterShiftTypeCards(props.location);
@@ -323,6 +325,12 @@ document.addEventListener("DOMContentLoaded", () => {
         badge.textContent = annotation.label;
         wrapper.append(badge);
       });
+      if (props.isDraft) {
+        const badge = document.createElement("span");
+        badge.className = "calendar-workflow-badge workflow-warning";
+        badge.textContent = "草稿 Draft";
+        wrapper.append(badge);
+      }
       return { domNodes: [wrapper] };
     },
     eventDidMount: (info) => {
@@ -546,6 +554,7 @@ document.addEventListener("DOMContentLoaded", () => {
       allow_location_overlap: false,
       repeat_weekly: repeatWeekly,
       recurrence_end: repeatWeekly ? document.getElementById("recurrenceEnd").value : null,
+      publication_status: document.getElementById("shiftPublication").value,
     };
     setBusy(true);
     showError(formError);

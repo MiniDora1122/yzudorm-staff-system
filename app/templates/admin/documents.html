@@ -44,6 +44,7 @@
 </tr>
 {% else %}<tr><td colspan="7" class="text-center text-secondary py-5">目前沒有已保存的證件文件。</td></tr>{% endfor %}
 </tbody></table></div></div>
+{% if pagination.pages > 1 %}<nav class="mt-3" aria-label="證件分頁"><ul class="pagination justify-content-center"><li class="page-item {{ 'disabled' if not pagination.has_prev }}"><a class="page-link" href="{{ url_for('admin.documents_page', page=pagination.prev_num) }}">上一頁</a></li><li class="page-item disabled"><span class="page-link">{{ pagination.page }} / {{ pagination.pages }}</span></li><li class="page-item {{ 'disabled' if not pagination.has_next }}"><a class="page-link" href="{{ url_for('admin.documents_page', page=pagination.next_num) }}">下一頁</a></li></ul></nav>{% endif %}
 
 <div class="card app-card border-0 shadow-sm mt-4"><div class="card-body p-4"><h2 class="h5 fw-bold mb-3">最近清理稽核</h2><div class="table-responsive"><table class="table table-sm align-middle mb-0"><thead><tr><th>時間</th><th>文件 ID</th><th>執行依據</th><th>紀錄人</th></tr></thead><tbody>{% for log in cleanup_logs %}<tr><td>{{ log.created_at.strftime('%Y-%m-%d %H:%M') }}</td><td>#{{ log.entity_id }}</td><td>{{ log.safe_summary }}</td><td>{{ log.actor.username }}</td></tr>{% else %}<tr><td colspan="4" class="text-center text-secondary py-3">尚無到期清理紀錄。</td></tr>{% endfor %}</tbody></table></div></div></div>
 {% endblock %}

@@ -1,17 +1,10 @@
 from __future__ import annotations
 
-import atexit
 from datetime import timedelta
-
-from apscheduler.schedulers.background import BackgroundScheduler
-from sqlalchemy.exc import OperationalError
 
 from ..extensions import db
 from ..models import AuditLog, DocumentRetentionPolicy, DocumentStatus, StaffDocument, utc_now
 from ..time_utils import local_now
-
-
-_scheduler: BackgroundScheduler | None = None
 
 
 def get_retention_policy() -> DocumentRetentionPolicy | None:
@@ -107,45 +100,26 @@ def cleanup_expired_documents(*, actor_user_id: int) -> list[int]:
     return deleted_ids
 
 
+def run_cleanup_if_due() -> int:
+    policy = get_retention_policy()
+    if policy is None:
+        return 0
+    now = local_now()
+    if (now.hour, now.minute) < (policy.cleanup_hour, policy.cleanup_minute):
+        return 0
+    if policy.last_cleanup_at is not None:
+        last = policy.last_cleanup_at
+        if last.tzinfo is None:
+            last = last.replace(tzinfo=now.tzinfo)
+        if last.astimezone(now.tzinfo).date() == now.date():
+            return 0
+    return len(cleanup_expired_documents(actor_user_id=policy.updated_by))
+
+
 def _scheduled_tick(app) -> None:
+    """Backward-compatible entry point; the unified maintenance scheduler owns execution."""
     with app.app_context():
-        try:
-            policy = get_retention_policy()
-            if policy is None:
-                return
-            now = local_now()
-            if (now.hour, now.minute) < (policy.cleanup_hour, policy.cleanup_minute):
-                return
-            if policy.last_cleanup_at is not None:
-                last = policy.last_cleanup_at
-                if last.tzinfo is None:
-                    last = last.replace(tzinfo=now.tzinfo)
-                if last.astimezone(now.tzinfo).date() == now.date():
-                    return
-            cleanup_expired_documents(actor_user_id=policy.updated_by)
-        except OperationalError:
-            db.session.rollback()
-
-
-def init_document_cleanup_scheduler(app) -> None:
-    global _scheduler
-    if app.config.get("TESTING") or not app.config.get("DOCUMENT_CLEANUP_SCHEDULER_ENABLED"):
-        return
-    if _scheduler is not None and _scheduler.running:
-        return
-    _scheduler = BackgroundScheduler(timezone=app.config["APP_TIMEZONE"], daemon=True)
-    _scheduler.add_job(
-        _scheduled_tick,
-        "interval",
-        seconds=max(60, int(app.config["DOCUMENT_CLEANUP_CHECK_SECONDS"])),
-        args=[app],
-        id="document-retention-cleanup",
-        replace_existing=True,
-        max_instances=1,
-        coalesce=True,
-    )
-    _scheduler.start()
-    atexit.register(lambda: _scheduler.shutdown(wait=False) if _scheduler and _scheduler.running else None)
+        run_cleanup_if_due()
 
 
 def register_retention_commands(app) -> None:

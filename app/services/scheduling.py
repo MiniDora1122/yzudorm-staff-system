@@ -5,7 +5,7 @@ from datetime import date, datetime, time, timedelta
 from sqlalchemy.orm import joinedload
 
 from ..extensions import db
-from ..models import Shift, ShiftSeries, ShiftStatus, ShiftType, StaffProfile
+from ..models import Shift, ShiftPublicationStatus, ShiftSeries, ShiftStatus, ShiftType, StaffProfile, utc_now
 from .compliance import get_scheduling_policy, is_weekly_limit_exception_day, weekly_limit_applies
 
 
@@ -36,6 +36,9 @@ def validate_shift_assignment(
     exclude_shift_ids: set[int] | None = None,
     allow_location_overlap: bool = False,
 ) -> None:
+    from .periods import ensure_month_open
+
+    ensure_month_open(shift_date)
     proposed_hours = shift_hours(shift_type)
     if proposed_hours <= 0 or proposed_hours > 8:
         raise SchedulingConflict(
@@ -160,6 +163,7 @@ def create_shift(
     actor_id: int,
     allow_location_overlap: bool = False,
     series_id: int | None = None,
+    publication_status: ShiftPublicationStatus = ShiftPublicationStatus.PUBLISHED,
     commit: bool = True,
 ) -> Shift:
     validate_shift_assignment(
@@ -175,6 +179,9 @@ def create_shift(
         status=ShiftStatus.SCHEDULED,
         created_by=actor_id,
         series_id=series_id,
+        publication_status=publication_status,
+        published_at=utc_now() if publication_status == ShiftPublicationStatus.PUBLISHED else None,
+        published_by=actor_id if publication_status == ShiftPublicationStatus.PUBLISHED else None,
     )
     db.session.add(shift)
     if commit:
@@ -192,6 +199,7 @@ def create_weekly_shift_series(
     staff: StaffProfile,
     actor_id: int,
     allow_location_overlap: bool = False,
+    publication_status: ShiftPublicationStatus = ShiftPublicationStatus.PUBLISHED,
 ) -> list[Shift]:
     if ends_on < starts_on:
         raise ValueError("截止日期不可早於開始日期。 / The end date cannot be before the start date.")
@@ -223,6 +231,7 @@ def create_weekly_shift_series(
             actor_id=actor_id,
             allow_location_overlap=allow_location_overlap,
             series_id=series.id,
+            publication_status=publication_status,
             commit=False,
         )
         for shift_date in dates
@@ -238,6 +247,8 @@ def update_shift(
     shift_type: ShiftType,
     staff: StaffProfile,
     allow_location_overlap: bool = False,
+    publication_status: ShiftPublicationStatus | None = None,
+    actor_id: int | None = None,
 ) -> Shift:
     validate_shift_assignment(
         shift_date=shift_date,
@@ -250,6 +261,10 @@ def update_shift(
     shift.shift_type = shift_type
     shift.staff = staff
     shift.status = ShiftStatus.SCHEDULED
+    if publication_status is not None:
+        shift.publication_status = publication_status
+        shift.published_at = utc_now() if publication_status == ShiftPublicationStatus.PUBLISHED else None
+        shift.published_by = (actor_id or shift.created_by) if publication_status == ShiftPublicationStatus.PUBLISHED else None
     db.session.commit()
     return shift
 
@@ -290,6 +305,8 @@ def shift_to_event(shift: Shift, *, student_view: bool = False) -> dict:
             "timeLabel": time_label,
             "hours": float(shift_type.default_hours),
             "status": shift.status.value,
+            "publicationStatus": shift.publication_status.value,
+            "isDraft": shift.publication_status == ShiftPublicationStatus.DRAFT,
             "isVacancy": is_vacancy,
             "seriesId": shift.series_id,
             "seriesStartsOn": shift.series.starts_on.isoformat() if shift.series else None,

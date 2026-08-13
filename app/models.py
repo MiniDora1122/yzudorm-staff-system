@@ -7,7 +7,7 @@ from enum import Enum
 from argon2 import PasswordHasher
 from argon2.exceptions import InvalidHashError, VerificationError
 from flask_login import UserMixin
-from sqlalchemy import Boolean, CheckConstraint, Date, DateTime, Enum as SqlEnum, ForeignKey, Integer, Numeric, String, Text, Time, UniqueConstraint
+from sqlalchemy import Boolean, CheckConstraint, Date, DateTime, Enum as SqlEnum, ForeignKey, Index, Integer, Numeric, String, Text, Time, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .extensions import db
@@ -29,6 +29,11 @@ class ShiftStatus(str, Enum):
     SCHEDULED = "SCHEDULED"
     ON_LEAVE = "ON_LEAVE"
     CANCELLED = "CANCELLED"
+
+
+class ShiftPublicationStatus(str, Enum):
+    DRAFT = "DRAFT"
+    PUBLISHED = "PUBLISHED"
 
 
 class LeaveStatus(str, Enum):
@@ -80,6 +85,19 @@ class NotificationStatus(str, Enum):
     COMPLETED = "COMPLETED"
 
 
+class RequirementStatus(str, Enum):
+    OPEN = "OPEN"
+    CLOSED = "CLOSED"
+    CANCELLED = "CANCELLED"
+
+
+class VacancyApplicationStatus(str, Enum):
+    PENDING = "PENDING"
+    APPROVED = "APPROVED"
+    REJECTED = "REJECTED"
+    CANCELLED = "CANCELLED"
+
+
 class User(UserMixin, db.Model):
     __tablename__ = "users"
 
@@ -95,6 +113,8 @@ class User(UserMixin, db.Model):
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=utc_now, onupdate=utc_now, nullable=False
     )
+    archived_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    archived_by: Mapped[int | None] = mapped_column(Integer)
 
     staff_profile: Mapped[StaffProfile | None] = relationship(
         back_populates="user", uselist=False, cascade="all, delete-orphan"
@@ -267,6 +287,10 @@ class PayrollSetting(db.Model):
 
 class Shift(db.Model):
     __tablename__ = "shifts"
+    __table_args__ = (
+        Index("ix_shifts_staff_status_date", "staff_id", "status", "shift_date"),
+        Index("ix_shifts_status_publication_date", "status", "publication_status", "shift_date"),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True)
     shift_date: Mapped[date] = mapped_column(Date, nullable=False, index=True)
@@ -276,6 +300,13 @@ class Shift(db.Model):
     status: Mapped[ShiftStatus] = mapped_column(
         SqlEnum(ShiftStatus, native_enum=False), default=ShiftStatus.SCHEDULED, nullable=False
     )
+    publication_status: Mapped[ShiftPublicationStatus] = mapped_column(
+        SqlEnum(ShiftPublicationStatus, native_enum=False),
+        default=ShiftPublicationStatus.PUBLISHED,
+        nullable=False,
+    )
+    published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    published_by: Mapped[int | None] = mapped_column(Integer)
     created_by: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
     updated_at: Mapped[datetime] = mapped_column(
@@ -308,6 +339,7 @@ class ShiftSeries(db.Model):
 
 class LeaveRequest(db.Model):
     __tablename__ = "leave_requests"
+    __table_args__ = (Index("ix_leave_requests_status_created", "status", "created_at"),)
 
     id: Mapped[int] = mapped_column(primary_key=True)
     staff_id: Mapped[int] = mapped_column(ForeignKey("staff_profiles.id"), nullable=False, index=True)
@@ -332,6 +364,7 @@ class LeaveRequest(db.Model):
 
 class SwapRequest(db.Model):
     __tablename__ = "swap_requests"
+    __table_args__ = (Index("ix_swap_requests_admin_status_created", "admin_status", "created_at"),)
 
     id: Mapped[int] = mapped_column(primary_key=True)
     requester_id: Mapped[int] = mapped_column(ForeignKey("staff_profiles.id"), nullable=False, index=True)
@@ -388,7 +421,7 @@ class AuditLog(db.Model):
     user_agent: Mapped[str | None] = mapped_column(String(500))
     http_method: Mapped[str | None] = mapped_column(String(10))
     route: Mapped[str | None] = mapped_column(String(255), index=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False, index=True)
 
     actor: Mapped[User] = relationship(foreign_keys=[actor_user_id])
 
@@ -401,6 +434,8 @@ class Notification(db.Model):
             "(recipient_role IS NULL AND recipient_user_id IS NOT NULL)",
             name="ck_notification_single_recipient",
         ),
+        Index("ix_notifications_role_status", "recipient_role", "status"),
+        Index("ix_notifications_user_status", "recipient_user_id", "status"),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -507,3 +542,145 @@ class DocumentDraft(db.Model):
     confirmed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
     document: Mapped[StaffDocument] = relationship(back_populates="draft")
+
+
+class MonthlySettlement(db.Model):
+    __tablename__ = "monthly_settlements"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    month_start: Mapped[date] = mapped_column(Date, unique=True, nullable=False, index=True)
+    is_locked: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    snapshot_json: Mapped[str | None] = mapped_column(Text)
+    closed_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
+    closed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    unlocked_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
+    unlocked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    unlock_reason: Mapped[str | None] = mapped_column(String(500))
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utc_now, onupdate=utc_now, nullable=False
+    )
+
+    closer: Mapped[User | None] = relationship(foreign_keys=[closed_by])
+    unlocker: Mapped[User | None] = relationship(foreign_keys=[unlocked_by])
+
+
+class BackupRun(db.Model):
+    __tablename__ = "backup_runs"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    status: Mapped[str] = mapped_column(String(20), nullable=False, index=True)
+    filename: Mapped[str | None] = mapped_column(String(255))
+    size_bytes: Mapped[int | None] = mapped_column()
+    sha256: Mapped[str | None] = mapped_column(String(64))
+    validation_message: Mapped[str | None] = mapped_column(String(500))
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class StaffGroup(db.Model):
+    __tablename__ = "staff_groups"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
+    name_en: Mapped[str] = mapped_column(String(120), nullable=False)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False, index=True)
+    created_by: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utc_now, onupdate=utc_now, nullable=False
+    )
+
+    memberships: Mapped[list[StaffGroupMember]] = relationship(
+        back_populates="group", cascade="all, delete-orphan"
+    )
+
+
+class StaffGroupMember(db.Model):
+    __tablename__ = "staff_group_members"
+
+    group_id: Mapped[int] = mapped_column(ForeignKey("staff_groups.id"), primary_key=True)
+    staff_id: Mapped[int] = mapped_column(ForeignKey("staff_profiles.id"), primary_key=True)
+    added_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
+
+    group: Mapped[StaffGroup] = relationship(back_populates="memberships")
+    staff: Mapped[StaffProfile] = relationship()
+
+
+class StaffingRequirement(db.Model):
+    __tablename__ = "staffing_requirements"
+    __table_args__ = (
+        UniqueConstraint("shift_date", "shift_type_id", name="uq_staffing_requirement_slot"),
+        CheckConstraint("required_count > 0", name="ck_staffing_requirement_positive_count"),
+        Index("ix_staffing_requirements_status_date", "status", "shift_date"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    shift_date: Mapped[date] = mapped_column(Date, nullable=False)
+    shift_type_id: Mapped[int] = mapped_column(ForeignKey("shift_types.id"), nullable=False)
+    required_count: Mapped[int] = mapped_column(Integer, nullable=False)
+    note: Mapped[str | None] = mapped_column(String(500))
+    status: Mapped[RequirementStatus] = mapped_column(
+        SqlEnum(RequirementStatus, native_enum=False), default=RequirementStatus.OPEN, nullable=False
+    )
+    created_by: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utc_now, onupdate=utc_now, nullable=False
+    )
+
+    shift_type: Mapped[ShiftType] = relationship()
+    audience_groups: Mapped[list[RequirementAudienceGroup]] = relationship(
+        back_populates="requirement", cascade="all, delete-orphan"
+    )
+    audience_staff: Mapped[list[RequirementAudienceStaff]] = relationship(
+        back_populates="requirement", cascade="all, delete-orphan"
+    )
+    applications: Mapped[list[VacancyApplication]] = relationship(
+        back_populates="requirement", cascade="all, delete-orphan"
+    )
+
+
+class RequirementAudienceGroup(db.Model):
+    __tablename__ = "requirement_audience_groups"
+
+    requirement_id: Mapped[int] = mapped_column(ForeignKey("staffing_requirements.id"), primary_key=True)
+    group_id: Mapped[int] = mapped_column(ForeignKey("staff_groups.id"), primary_key=True)
+
+    requirement: Mapped[StaffingRequirement] = relationship(back_populates="audience_groups")
+    group: Mapped[StaffGroup] = relationship()
+
+
+class RequirementAudienceStaff(db.Model):
+    __tablename__ = "requirement_audience_staff"
+
+    requirement_id: Mapped[int] = mapped_column(ForeignKey("staffing_requirements.id"), primary_key=True)
+    staff_id: Mapped[int] = mapped_column(ForeignKey("staff_profiles.id"), primary_key=True)
+
+    requirement: Mapped[StaffingRequirement] = relationship(back_populates="audience_staff")
+    staff: Mapped[StaffProfile] = relationship()
+
+
+class VacancyApplication(db.Model):
+    __tablename__ = "vacancy_applications"
+    __table_args__ = (
+        UniqueConstraint("requirement_id", "staff_id", name="uq_vacancy_application_staff"),
+        Index("ix_vacancy_applications_status_created", "status", "created_at"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    requirement_id: Mapped[int] = mapped_column(ForeignKey("staffing_requirements.id"), nullable=False)
+    staff_id: Mapped[int] = mapped_column(ForeignKey("staff_profiles.id"), nullable=False)
+    status: Mapped[VacancyApplicationStatus] = mapped_column(
+        SqlEnum(VacancyApplicationStatus, native_enum=False),
+        default=VacancyApplicationStatus.PENDING,
+        nullable=False,
+    )
+    note: Mapped[str | None] = mapped_column(String(500))
+    reviewed_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
+    reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    review_note: Mapped[str | None] = mapped_column(String(500))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
+
+    requirement: Mapped[StaffingRequirement] = relationship(back_populates="applications")
+    staff: Mapped[StaffProfile] = relationship()
+    reviewer: Mapped[User | None] = relationship(foreign_keys=[reviewed_by])

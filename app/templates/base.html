@@ -26,6 +26,7 @@
           <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.dashboard') }}" data-en="Dashboard">儀表板</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.schedule') }}" data-en="Schedule">排班管理</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.requests_page') }}" data-en="Leave / Swap">請假／換班</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.workforce_page') }}" data-en="Groups / Vacancies">群組／缺員</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.payroll') }}" data-en="Payroll">薪資試算</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.reports_page') }}" data-en="Reports">報表</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.staff') }}" data-en="Students">工讀生</a></li>
@@ -33,6 +34,7 @@
           {% else %}
           <li class="nav-item"><a class="nav-link" href="{{ url_for('student.dashboard') }}" data-en="Home">我的首頁</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ url_for('student.requests_page') }}" data-en="Leave / Swap">請假／換班</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('student.vacancies_page') }}" data-en="Open vacancies">開放缺員</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ url_for('student.profile') }}" data-en="My profile">我的資料</a></li>
           {% endif %}
           {% set notification_url = url_for('admin.notifications_page') if current_user.role.value == 'ADMIN' else url_for('student.notifications_page') %}
@@ -53,6 +55,7 @@
               <li><a class="dropdown-item" href="{{ url_for('admin.nationalities_settings') }}"><i class="bi bi-globe-asia-australia me-2"></i>國籍設定 <small class="d-block ms-4 text-secondary">Nationalities</small></a></li>
               <li><a class="dropdown-item" href="{{ url_for('admin.admin_accounts') }}"><i class="bi bi-person-badge me-2"></i>管理員 <small class="d-block ms-4 text-secondary">Administrators</small></a></li>
               <li><a class="dropdown-item" href="{{ url_for('admin.audit_logs_page') }}"><i class="bi bi-shield-check me-2"></i>稽核紀錄 <small class="d-block ms-4 text-secondary">Audit logs</small></a></li>
+              <li><a class="dropdown-item" href="{{ url_for('admin.operations_page') }}"><i class="bi bi-database-check me-2"></i>月份結算與備份 <small class="d-block ms-4 text-secondary">Period close and backups</small></a></li>
               <li><hr class="dropdown-divider"></li>
               {% endif %}
               <li><a class="dropdown-item" href="{{ url_for('auth.change_password') }}"><i class="bi bi-key me-2"></i>修改密碼 <small class="d-block ms-4 text-secondary">Change password</small></a></li>

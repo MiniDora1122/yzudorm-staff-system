@@ -7,7 +7,7 @@
     <h1 class="h2 fw-bold mt-2 mb-1" data-en="Admin accounts">管理員帳號</h1>
     <p class="text-secondary mb-0" data-en="Only administrators can view this page and create or reset administrator accounts.">本頁僅限管理員查看，可建立或重設其他管理員帳號。</p>
   </div>
-  <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#createAdminModal" data-en="Add administrator"><i class="bi bi-person-badge me-2"></i>新增管理員</button>
+  <div class="d-flex flex-wrap gap-2"><div class="btn-group"><a class="btn btn-{{ 'primary' if account_status == 'active' else 'outline-primary' }}" href="{{ url_for('admin.admin_accounts', status='active') }}">有效 Active</a><a class="btn btn-{{ 'primary' if account_status == 'archived' else 'outline-primary' }}" href="{{ url_for('admin.admin_accounts', status='archived') }}">已封存 Archived</a></div>{% if account_status == 'active' %}<button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#createAdminModal" data-en="Add administrator"><i class="bi bi-person-badge me-2"></i>新增管理員</button>{% endif %}</div>
 </div>
 
 <div class="card app-card border-0 shadow-sm">
@@ -25,7 +25,8 @@
           <td>{{ administrator.last_login_at.strftime('%Y-%m-%d %H:%M') if administrator.last_login_at else '—' }}</td>
           <td>{{ administrator.created_at.strftime('%Y-%m-%d') }}</td>
           <td>
-            {% if administrator.id == current_user.id %}
+            {% if not administrator.is_active %}<form method="post" action="{{ url_for('admin.restore_administrator', user_id=administrator.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn btn-sm btn-success" type="submit" data-confirm-action="確定復原此管理員帳號？"><i class="bi bi-arrow-counterclockwise me-1"></i>復原 Restore</button></form><div class="small text-secondary mt-1">封存於 {{ administrator.archived_at.strftime('%Y-%m-%d') if administrator.archived_at else '—' }}</div>
+            {% elif administrator.id == current_user.id %}
               <span class="small text-secondary" data-en="Current account">目前登入帳號</span>
             {% else %}
               <div class="d-flex flex-wrap gap-2">
@@ -56,7 +57,7 @@
   </form>
 </div></div></div>
 
-{% for administrator in administrators if administrator.id != current_user.id %}
+{% for administrator in administrators if administrator.id != current_user.id and administrator.is_active %}
 <div class="modal fade" id="resetAdminPassword{{ administrator.id }}" tabindex="-1" aria-labelledby="resetAdminPasswordTitle{{ administrator.id }}" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
   <form method="post" action="{{ url_for('admin.reset_administrator_password', user_id=administrator.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <div class="modal-header"><h2 class="modal-title h5" id="resetAdminPasswordTitle{{ administrator.id }}" data-en="Reset administrator password">重設 {{ administrator.display_name or administrator.username }} 的密碼</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="關閉 Close"></button></div>

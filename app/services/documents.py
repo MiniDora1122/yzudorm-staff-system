@@ -22,7 +22,7 @@ from ..models import (
     utc_now,
 )
 from ..time_utils import local_today
-from .requests import add_audit
+from .audit import add_audit
 from .requests import WorkflowError
 from .retention import retention_deadline
 

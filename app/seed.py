@@ -10,11 +10,13 @@ from .models import (
     Role,
     SchedulingPolicy,
     Shift,
+    ShiftPublicationStatus,
     ShiftStatus,
     ShiftType,
     StaffProfile,
     User,
     WorkLocation,
+    utc_now,
 )
 
 
@@ -227,6 +229,9 @@ def seed_database() -> None:
                     shift_type_id=shift_type.id,
                     staff_id=staff.id,
                     status=ShiftStatus.SCHEDULED,
+                    publication_status=ShiftPublicationStatus.PUBLISHED,
+                    published_at=utc_now(),
+                    published_by=users["admin"].id,
                     created_by=users["admin"].id,
                 )
             )

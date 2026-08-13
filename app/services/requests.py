@@ -2,14 +2,12 @@ from __future__ import annotations
 
 from datetime import date
 
-from flask import has_request_context, request
-
 from ..extensions import db
 from ..models import (
-    AuditLog,
     LeaveRequest,
     LeaveStatus,
     Shift,
+    ShiftPublicationStatus,
     ShiftStatus,
     StaffProfile,
     SwapAdminStatus,
@@ -17,6 +15,7 @@ from ..models import (
     SwapRequest,
     utc_now,
 )
+from .audit import add_audit
 from .scheduling import SchedulingConflict, validate_shift_assignment
 
 
@@ -60,33 +59,6 @@ def validate_swap_assignments(
         ) from exc
 
 
-def add_audit(
-    actor_user_id: int | None,
-    action: str,
-    entity_type: str,
-    entity_id: int,
-    summary: str,
-) -> None:
-    request_data = {}
-    if has_request_context():
-        request_data = {
-            "ip_address": (request.remote_addr or "")[:45] or None,
-            "user_agent": request.user_agent.string[:500] or None,
-            "http_method": request.method[:10],
-            "route": (request.endpoint or request.path)[:255],
-        }
-    db.session.add(
-        AuditLog(
-            actor_user_id=actor_user_id,
-            action=action,
-            entity_type=entity_type,
-            entity_id=entity_id,
-            safe_summary=summary[:500],
-            **request_data,
-        )
-    )
-
-
 def create_leave_request(
     *, profile: StaffProfile, shift: Shift, reason: str, note: str | None, actor_user_id: int, today: date
 ) -> LeaveRequest:
@@ -94,6 +66,11 @@ def create_leave_request(
         raise WorkflowError("NOT_OWNER", "只能替自己的排班提出請假。")
     if shift.status != ShiftStatus.SCHEDULED:
         raise WorkflowError("SHIFT_UNAVAILABLE", "此排班目前不可提出請假。")
+    if shift.publication_status != ShiftPublicationStatus.PUBLISHED:
+        raise WorkflowError(
+            "SHIFT_NOT_PUBLISHED",
+            "草稿排班尚未正式發布，不能提出請假。 / Draft shifts cannot be used for leave requests.",
+        )
     if shift.shift_date < today:
         raise WorkflowError("PAST_SHIFT", "已過期排班不可提出新請假。")
     duplicate = db.session.scalar(
@@ -140,6 +117,9 @@ def review_leave_request(
     request_item.reviewed_at = now
     request_item.review_note = review_note or None
     if decision == "APPROVE":
+        from .periods import ensure_month_open
+
+        ensure_month_open(request_item.shift.shift_date)
         if request_item.shift.status != ShiftStatus.SCHEDULED:
             raise WorkflowError("SHIFT_CHANGED", "原排班狀態已變更，無法核准。")
         request_item.status = LeaveStatus.APPROVED
@@ -168,6 +148,11 @@ def create_swap_request(
         raise WorkflowError("NOT_OWNER", "不能交換不屬於自己的排班。")
     if requester_shift.status != ShiftStatus.SCHEDULED or requester_shift.shift_date < today:
         raise WorkflowError("SHIFT_UNAVAILABLE", "自己的原排班已過期或目前不可交換。")
+    if requester_shift.publication_status != ShiftPublicationStatus.PUBLISHED:
+        raise WorkflowError(
+            "SHIFT_NOT_PUBLISHED",
+            "草稿排班尚未正式發布，不能提出換班。 / Draft shifts cannot be swapped.",
+        )
     if target_staff.id == requester.id:
         raise WorkflowError("SAME_STAFF", "換班對象不可選擇自己。")
     if not target_staff.user.is_active:
@@ -177,6 +162,11 @@ def create_swap_request(
             raise WorkflowError("TARGET_SHIFT_NOT_OWNER", "指定班表不屬於換班對象。")
         if target_shift.status != ShiftStatus.SCHEDULED or target_shift.shift_date < today:
             raise WorkflowError("TARGET_SHIFT_UNAVAILABLE", "對方班表已過期或目前不可交換。")
+        if target_shift.publication_status != ShiftPublicationStatus.PUBLISHED:
+            raise WorkflowError(
+                "TARGET_SHIFT_NOT_PUBLISHED",
+                "對方的草稿排班尚未正式發布。 / The target shift is still a draft.",
+            )
         if target_shift.id == requester_shift.id:
             raise WorkflowError("SAME_SHIFT", "不能用同一筆班表交換。")
     validate_swap_assignments(
@@ -263,6 +253,11 @@ def review_swap_request(
 
     requester_shift = request_item.requester_shift
     target_shift = request_item.target_shift
+    from .periods import ensure_month_open
+
+    ensure_month_open(requester_shift.shift_date)
+    if target_shift is not None:
+        ensure_month_open(target_shift.shift_date)
     if requester_shift.status != ShiftStatus.SCHEDULED or requester_shift.staff_id != request_item.requester_id:
         raise WorkflowError("REQUESTER_SHIFT_CHANGED", "申請人的原排班已變更，無法核准。")
     if target_shift is not None and (

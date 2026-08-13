@@ -57,5 +57,6 @@
 {% elif item.requester_id == profile.id and item.admin_status.value in ['NOT_READY', 'PENDING'] %}<form method="post" action="{{ url_for('student.cancel_swap', request_id=item.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn btn-sm btn-outline-secondary" data-confirm-action="確定取消換班申請？">取消</button></form>{% endif %}
 </td></tr>{% else %}<tr><td colspan="5" class="text-center text-secondary py-4">尚無換班紀錄。</td></tr>{% endfor %}
 </tbody></table></div></div></div>
+{% if history_pages > 1 %}<nav class="mt-4" aria-label="申請歷史分頁"><ul class="pagination justify-content-center"><li class="page-item {{ 'disabled' if history_page <= 1 }}"><a class="page-link" href="{{ url_for('student.requests_page', scope=filter_scope, month=filter_month, page=history_page-1) }}">上一頁</a></li><li class="page-item disabled"><span class="page-link">{{ history_page }} / {{ history_pages }}</span></li><li class="page-item {{ 'disabled' if history_page >= history_pages }}"><a class="page-link" href="{{ url_for('student.requests_page', scope=filter_scope, month=filter_month, page=history_page+1) }}">下一頁</a></li></ul></nav>{% endif %}
 {% endblock %}
 {% block scripts %}<script src="{{ url_for('static', filename='js/requests.js') }}"></script>{% endblock %}

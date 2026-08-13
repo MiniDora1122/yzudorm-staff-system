@@ -2,7 +2,8 @@ param(
     [ValidateSet("Enable", "Disable")][string]$Mode,
     [ValidateRange(1, 1440)][int]$IntervalMinutes = 5,
     [string]$TaskName = "DormStaffSystem-PortableWatchdog",
-    [string]$LauncherTaskName = "DormStaffSystem-PortableLauncher"
+    [string]$LauncherTaskName = "DormStaffSystem-PortableLauncher",
+    [string]$InteractiveUser
 )
 
 $ErrorActionPreference = "Stop"
@@ -38,13 +39,19 @@ $taskPrincipal = New-ScheduledTaskPrincipal -UserId "SYSTEM" -LogonType ServiceA
 Register-ScheduledTask -TaskName $TaskName -Action $action `
     -Trigger @($startupTrigger, $repeatTrigger) -Settings $settings -Principal $taskPrincipal -Force | Out-Null
 
-$launcher = Join-Path $PSScriptRoot "DormStaffLauncher.exe"
-if (-not (Test-Path -LiteralPath $launcher)) { throw "DormStaffLauncher.exe not found." }
-$interactiveUser = [Security.Principal.WindowsIdentity]::GetCurrent().Name
-$launcherAction = New-ScheduledTaskAction -Execute $launcher -WorkingDirectory $PSScriptRoot
-$logonTrigger = New-ScheduledTaskTrigger -AtLogOn -User $interactiveUser
-$launcherPrincipal = New-ScheduledTaskPrincipal -UserId $interactiveUser -LogonType Interactive -RunLevel Limited
-Register-ScheduledTask -TaskName $LauncherTaskName -Action $launcherAction -Trigger $logonTrigger `
-    -Settings (New-ScheduledTaskSettingsSet -StartWhenAvailable -MultipleInstances IgnoreNew) `
-    -Principal $launcherPrincipal -Force | Out-Null
-Start-ScheduledTask -TaskName $TaskName
+try {
+    $launcher = Join-Path $PSScriptRoot "DormStaffLauncher.exe"
+    if (-not (Test-Path -LiteralPath $launcher)) { throw "DormStaffLauncher.exe not found." }
+    if ([string]::IsNullOrWhiteSpace($InteractiveUser)) { throw "Original interactive user SID is required." }
+    $launcherAction = New-ScheduledTaskAction -Execute $launcher -WorkingDirectory $PSScriptRoot
+    $logonTrigger = New-ScheduledTaskTrigger -AtLogOn -User $InteractiveUser
+    $launcherPrincipal = New-ScheduledTaskPrincipal -UserId $InteractiveUser -LogonType Interactive -RunLevel Limited
+    Register-ScheduledTask -TaskName $LauncherTaskName -Action $launcherAction -Trigger $logonTrigger `
+        -Settings (New-ScheduledTaskSettingsSet -StartWhenAvailable -MultipleInstances IgnoreNew) `
+        -Principal $launcherPrincipal -Force | Out-Null
+    Start-ScheduledTask -TaskName $TaskName
+} catch {
+    Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false -ErrorAction SilentlyContinue
+    Unregister-ScheduledTask -TaskName $LauncherTaskName -Confirm:$false -ErrorAction SilentlyContinue
+    throw
+}

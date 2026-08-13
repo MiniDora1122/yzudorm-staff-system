@@ -18,8 +18,8 @@ def test_launcher_watchdog_uses_native_task_scheduler_and_health_check():
     assert '"DormStaffSystem-PortableLauncher"' in configure
     assert "DormStaffLauncher.exe" in configure
     assert "RepetitionInterval" in configure
-    assert "/auth/login" in watchdog
-    assert "Dormitory Student Worker System" in watchdog
+    assert "/healthz" in watchdog
+    assert '"service"\\s*:\\s*"dorm-staff-system"' in watchdog
     assert "Port $port is occupied" in watchdog
     assert '".venv\\server.pid"' in watchdog
     assert "WatchdogIntervalMinutes" in launcher
@@ -39,6 +39,17 @@ def test_launcher_watchdog_uses_native_task_scheduler_and_health_check():
     assert "Get-NetTCPConnection" in stop_server
     assert "portable Python; refusing to stop it" in stop_server
     assert "Stop-Process" in stop_server
+    assert "maintenance.lock" in watchdog
+    assert "Test-ActiveMarker" in watchdog
+    assert "InteractiveUser" in configure
+    assert "WindowsIdentity.GetCurrent().User.Value" in launcher
+    assert "watchdog-status.ps1" in launcher
+    assert '${Prefix}_PATH_OK=' in (LAUNCHER_ROOT / "watchdog-status.ps1").read_text(encoding="utf-8")
+    assert "InstanceMutexName" in launcher
+    assert "AcquireMaintenance" in launcher
+    assert "RunMaintenanceBackground" in launcher
+    assert "ExportSupportBundle" in launcher
+    assert '"/healthz"' in launcher
 
 
 def test_git_update_closes_launcher_before_replacing_it():
@@ -57,3 +68,10 @@ def test_git_update_closes_launcher_before_replacing_it():
     assert "Start-Process -FilePath $launcher" in updater
     assert "launcher-before-update.exe" in updater
     assert "update-in-progress" in watchdog
+    assert "Restore-PreviousVersion" in updater
+    assert "OldCommit" in updater
+    assert "rolledback" in updater
+    assert "update-state.ini" in updater
+    assert "RecoveryOnly" in updater
+    assert "PromptInterruptedUpdateRecovery" in launcher
+    assert "update-state.ini" in watchdog

@@ -6,7 +6,7 @@ from sqlalchemy.exc import IntegrityError
 
 from ..extensions import db
 from ..models import Role, StaffProfile, User
-from .requests import add_audit
+from .audit import add_audit
 
 
 USERNAME_PATTERN = re.compile(r"[A-Za-z0-9._-]{3,80}")

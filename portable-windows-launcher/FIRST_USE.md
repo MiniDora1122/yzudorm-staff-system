@@ -51,7 +51,9 @@ SQLite 是每台電腦的執行資料，不是程式碼。若把空白 DB commit
 - 目前分支與畫面設定一致。
 - 更新前備份成功。
 
-更新先在目前 Launcher 內執行備份、`fetch` 與安全檢查，接著暫停背景巡檢並關閉 Launcher；由複製到 Windows 暫存資料夾的外部更新器執行 `merge --ff-only`、套件安裝、migration 及應用程式匯入檢查。如此可一併更新 Windows 正在鎖定的 `DormStaffLauncher.exe` 及所有相關腳本。完成或失敗後都會自動重新開啟 Launcher；詳細紀錄位於 `.venv/logs/self-update.log`。
+更新先在目前 Launcher 內執行備份、`fetch` 與安全檢查，接著暫停背景巡檢並關閉 Launcher；由複製到 Windows 暫存資料夾的外部更新器執行 `merge --ff-only`、套件安裝、migration 及應用程式匯入檢查。如此可一併更新 Windows 正在鎖定的 `DormStaffLauncher.exe` 及所有相關腳本。新版 Launcher 成功開啟並持續運作後才會清除復原檔；套用失敗時會回復舊 commit、舊套件、更新前資料備份與舊 Launcher。完成、已回復或無法回復時都會重新開啟 Launcher並顯示結果；詳細紀錄位於 `.venv/logs/self-update.log`。
+
+若電腦在更新期間斷電，`.venv/update-in-progress` 與 `.venv/update-state.ini` 會保留更新狀態。watchdog 會暫停網站自動啟動，Launcher 下次開啟時會主動詢問是否回復舊 commit、套件、資料與 EXE；完成復原前不要直接刪除 `update-state.ini`、`launcher-before-update.exe` 或更新前 ZIP。
 
 更新期間不要手動重新開啟 Launcher、移動 portable 資料夾或關閉電腦。若收到的資料夾沒有 `.git`，請輸入 HTTPS repository URL，先將專案 Clone 到新的空白資料夾。
 
@@ -67,7 +69,7 @@ Private repository 可能要求 Windows Credential Manager 或 Personal Access T
 
 ## 資料與備份
 
-- `instance` 內含 SQLite、證件影像及文件金鑰；搬移時必須整份保留。
+- `instance` 內含 SQLite、證件影像及文件金鑰；搬移時必須整份保留。Launcher 的完整備份 ZIP 只保存可還原的資料、`.env`、證件與金鑰，不重複打包可由 Git 取得的程式碼。
 - Launcher 首次產生或全新初始化輪替 `SECRET_KEY` 後，會將完整 `.env` 備份至隱藏檔 `instance/private_keys/backup/application-env.backup`；備份驗證失敗時會中止該流程。
 - 若 `.env` 遺失，可在停止系統後將上述備份複製回專案根目錄並命名為 `.env`。此檔含 `SECRET_KEY` 與完整環境設定，不得上傳 GitHub、傳送給無權限人員或放在公開網路磁碟。
 - `instance` 與備份 ZIP 都含敏感資料，應放在 BitLocker 磁碟並限制存取。
@@ -89,11 +91,18 @@ Launcher 的「匯出／備份系統」可建立完整 portable backup ZIP；「
 
 在 Launcher 設定「巡檢分鐘」（1–1440）後，按「啟用自啟動巡檢」並同意 Windows UAC。系統會建立兩個 Windows 工作排程：`DormStaffSystem-PortableWatchdog` 在開機時及指定間隔檢查網站，只有系統未回應且 Port 未被占用時才啟動 Waitress；`DormStaffSystem-PortableLauncher` 則在目前使用者登入 Windows 時自動顯示 Launcher。
 
-Launcher 每兩秒讀取 `.venv/server.pid`，所以無論系統由 Launcher 或背景巡檢啟動，右上角都會顯示實際狀態；背景巡檢紀錄也會同步到畫面下方。按「停止系統」可停止背景巡檢啟動的系統，但只要自啟動巡檢仍啟用，下一個巡檢週期就會再次啟動。若要持續停止，請先按「停用自啟動巡檢」，再按「停止系統」。
+Launcher 每兩秒透過輕量 `/healthz` 檢查應用程式與資料庫，並定期查詢 Windows 工作排程的實際狀態，所以無論系統由 Launcher 或背景巡檢啟動，右上角都會顯示真實運行及自啟動狀態；若兩個排程只剩一個，會顯示「自啟動：不完整」。背景巡檢紀錄也會同步到畫面下方。按「停止系統」可停止背景巡檢啟動的系統，但只要自啟動巡檢仍啟用，下一個巡檢週期就會再次啟動。若要持續停止，請先按「停用自啟動巡檢」，再按「停止系統」。
 
 實際運行狀態以設定 Port 的登入頁健康檢查為準，不依賴 PID 檔是否存在。若背景系統由 Windows SYSTEM 身分啟動，「停止系統」會要求 UAC 權限；Launcher 只會停止由本 portable Python 占用該 Port 的程序，不會停止其他軟體。
 
 「停用自啟動巡檢」會一鍵移除上述兩個排程，但不會停止目前已執行的系統。若搬動整個 portable 資料夾，請在新位置重新啟用一次，讓工作排程更新路徑。巡檢紀錄位於 `portable-windows-launcher/.venv/logs/watchdog.log`。
+
+## 維護狀態、診斷與紀錄
+
+- 安裝／修復、資料庫升級、備份、資料移轉、全新初始化、啟動前 migration 及 watchdog 啟動共用同一個 `.venv/maintenance.lock`，避免維護資料時被背景排程重新開站。
+- 同一個 portable 資料夾一次只允許一個 Launcher 視窗，避免兩個視窗同時操作同一套 DB 或服務。
+- 「匯出診斷支援包」會收集版本、Git commit、Port、工作排程狀態與最近紀錄，但不包含 DB、`.env`、證件或金鑰；提供給協助排錯的人員前仍應先確認內容。
+- Launcher、server、watchdog 與更新紀錄預設保留最近 30 天；watchdog／更新主紀錄超過約 2 MB 時會輪替。
 
 ## 重新編譯
 

@@ -101,6 +101,7 @@
           <p class="text-secondary small" data-en="Upload a UTF-8 CSV with date, student ID and shift type code. The import is atomic: any invalid row cancels the entire import.">上傳包含日期、學號與班別代碼的 UTF-8 CSV。匯入採完整交易，任何一列錯誤都不會寫入資料。</p>
           <a class="btn btn-sm btn-outline-primary mb-3" href="{{ url_for('admin.shift_import_template') }}" data-en="Download CSV template"><i class="bi bi-download me-1"></i>下載 CSV 範本</a>
           <div class="mb-3"><label class="form-label" for="shiftImportFile" data-en="CSV file">CSV 檔案</label><input class="form-control" id="shiftImportFile" name="shift_file" type="file" accept=".csv,text/csv" required><div class="form-text" data-en="Up to 500 rows and 1MB per import.">每次最多 500 筆，檔案上限 1MB。</div></div>
+          <div class="mb-3"><label class="form-label" for="importPublication" data-en="Import as">匯入狀態</label><select class="form-select" id="importPublication" name="publication_status"><option value="DRAFT">草稿 Draft（建議先檢查）</option><option value="PUBLISHED">立即發布 Publish immediately</option></select></div>
           <div class="form-check"><input class="form-check-input" id="importAllowOverlap" name="allow_location_overlap" value="yes" type="checkbox"><label class="form-check-label" for="importAllowOverlap" data-en="I confirm that multiple staff may work at the same location during overlapping times.">我已確認這批資料可讓多人於同一地點的重疊時段上班。</label></div>
         </div>
         <div class="modal-footer"><button class="btn btn-outline-secondary" type="button" data-bs-dismiss="modal" data-en="Cancel">取消</button><button class="btn btn-primary" type="submit" data-confirm-action="確定匯入這份排班 CSV？若有任何錯誤，整批都不會寫入。" data-en="Import shifts">開始匯入</button></div>
@@ -141,6 +142,8 @@
                 <div class="col-md-6 d-flex align-items-end"><div class="alert alert-info small mb-0 w-100" data-en="Saving creates one recurring series. If any occurrence conflicts, none are created.">儲存時會建立一個重複系列；其中任一日期衝突時，整個系列都不會建立。</div></div>
               </div>
             </div>
+
+            <div class="mb-4"><label class="form-label" for="shiftPublication" data-en="Publication status">發布狀態</label><select class="form-select" id="shiftPublication"><option value="DRAFT">草稿（學生看不到） Draft</option><option value="PUBLISHED">正式發布（學生立即看得到） Published</option></select><div class="form-text">可在「設定 → 月份結算與備份」一次發布整個月份的草稿。</div></div>
 
             <fieldset>
               <legend class="form-label mb-2" data-en="Shift type">班別 <span class="text-danger">*</span></legend>

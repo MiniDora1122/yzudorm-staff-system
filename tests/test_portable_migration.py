@@ -273,6 +273,9 @@ def test_full_zip_restore_uses_data_only_and_preserves_current_code(tmp_path):
         str(archive),
         "--allow-running",
     )
+    with zipfile.ZipFile(archive) as portable_backup:
+        assert "wsgi.py" not in portable_backup.namelist()
+        assert "instance/dorm_staff.db" in portable_backup.namelist()
 
     info, backup = helper.restore_source(archive, target_project)
 

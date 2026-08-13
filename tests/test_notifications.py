@@ -108,3 +108,22 @@ def test_student_rejected_document_stays_open_until_resubmitted(client, app):
             db.select(Notification).where(Notification.category == "DOCUMENT_REJECTED")
         )
         assert notification.status == NotificationStatus.COMPLETED
+
+
+def test_notification_reconciliation_is_throttled_between_read_only_pages(client, monkeypatch):
+    import app.services.notifications as notifications
+
+    calls = 0
+    original = notifications.sync_admin_notifications
+
+    def counted_sync():
+        nonlocal calls
+        calls += 1
+        return original()
+
+    monkeypatch.setattr(notifications, "sync_admin_notifications", counted_sync)
+    login(client)
+    client.get("/admin/")
+    client.get("/admin/schedule")
+    client.get("/admin/notifications")
+    assert calls == 1

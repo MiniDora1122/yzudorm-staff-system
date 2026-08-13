@@ -87,6 +87,16 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\deployment\create-port
 
 ZIP 會包含程式、本機前端套件、SQLite、加密證件、文件金鑰／金鑰備份，以及可攜式 `.env`；不包含 `.venv`、session、cache、log 與舊輸出。SQLite 會透過線上備份 API 建立一致快照，不是直接複製使用中的 DB。
 
+系統亦會依 `.env` 的 `AUTOMATIC_BACKUP_HOUR`／`AUTOMATIC_BACKUP_MINUTE` 自動建立並驗證完整備份。正式環境請設定：
+
+```dotenv
+AUTOMATIC_BACKUP_ENABLED=1
+AUTOMATIC_BACKUP_DIR=E:\DormStaffBackups
+AUTOMATIC_BACKUP_RETENTION_DAYS=30
+```
+
+建議 `E:` 是受 BitLocker 保護、且與系統資料庫不同的實體磁碟。維護排程器使用跨程序檔案鎖，即使 Waitress 未來啟動多個程序，也只會由其中一個程序執行清理與備份。
+
 此 ZIP 同時包含個資與解密金鑰，等同完整正式系統，必須放在 BitLocker 或其他加密磁碟並限制承辦人存取，不可透過未加密郵件或公開雲端連結傳送。
 
 在新電腦還原：

@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Security.Cryptography;
+using System.Security.Principal;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -58,7 +59,25 @@ namespace DormStaffPortable
             string updateResult = "";
             foreach (string argument in args)
                 if (argument.StartsWith("--update-result=", StringComparison.OrdinalIgnoreCase)) updateResult = argument.Substring(16);
-            Application.Run(new LauncherForm(environment, updateResult));
+            bool firstInstance;
+            using (Mutex instanceMutex = new Mutex(true, InstanceMutexName(environment.BaseDirectory), out firstInstance))
+            {
+                if (!firstInstance)
+                {
+                    MessageBox.Show("此資料夾的 Launcher 已經開啟。\r\nThe Launcher for this folder is already running.", "Launcher 已在執行", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+                Application.Run(new LauncherForm(environment, updateResult));
+            }
+        }
+
+        private static string InstanceMutexName(string baseDirectory)
+        {
+            using (SHA256 sha = SHA256.Create())
+            {
+                byte[] hash = sha.ComputeHash(Encoding.UTF8.GetBytes(Path.GetFullPath(baseDirectory).ToUpperInvariant()));
+                return "Local\\DormStaffLauncher-" + BitConverter.ToString(hash, 0, 12).Replace("-", "");
+            }
         }
     }
 
@@ -162,6 +181,9 @@ namespace DormStaffPortable
         public string RequirementsFile { get { return Path.Combine(ProjectRoot, "requirements.txt"); } }
         public string WsgiFile { get { return Path.Combine(ProjectRoot, "wsgi.py"); } }
         public string EnvFile { get { return Path.Combine(ProjectRoot, ".env"); } }
+        public string MaintenanceLockPath { get { return Path.Combine(RuntimeDirectory, "maintenance.lock"); } }
+        public string UpdateMarkerPath { get { return Path.Combine(RuntimeDirectory, "update-in-progress"); } }
+        public string UpdateStatePath { get { return Path.Combine(RuntimeDirectory, "update-state.ini"); } }
         public bool ProjectIsValid { get { return File.Exists(RequirementsFile) && File.Exists(WsgiFile); } }
         public bool PythonIsInstalled { get { return File.Exists(PythonExe); } }
         public bool GitIsInstalled { get { return File.Exists(GitExe); } }
@@ -177,6 +199,9 @@ namespace DormStaffPortable
             text.AppendLine("GitExe=" + GitExe);
             text.AppendLine("GitInstalled=" + GitIsInstalled);
             text.AppendLine("Listen=" + Config.ListenAddress + ":" + Config.Port);
+            text.AppendLine("Windows=" + Environment.OSVersion.VersionString);
+            text.AppendLine("Process64Bit=" + Environment.Is64BitProcess);
+            text.AppendLine("AutoStartConfigured=" + Config.AutoStartEnabled);
             return text.ToString();
         }
 
@@ -200,6 +225,15 @@ namespace DormStaffPortable
         public string Output;
     }
 
+    internal sealed class WatchdogTaskStatus
+    {
+        public bool Known;
+        public bool WatchdogEnabled;
+        public bool LauncherEnabled;
+        public string LastResult = "";
+        public bool FullyEnabled { get { return Known && WatchdogEnabled && LauncherEnabled; } }
+    }
+
     internal sealed class FreshSetupOptions
     {
         public string Username;
@@ -221,6 +255,7 @@ namespace DormStaffPortable
 
     internal sealed class PortableManager
     {
+        private const int CommandTimeoutMilliseconds = 30 * 60 * 1000;
         private const string PythonUrl = "https://www.python.org/ftp/python/3.12.10/python-3.12.10-embed-amd64.zip";
         private const string PythonSha256 = "4ACBED6DD1C744B0376E3B1CF57CE906F9DC9E95E68824584C8099A63025A3C3";
         private const string GetPipUrl = "https://github.com/pypa/get-pip/raw/dbf0c85f76fb6e1ab42aa672ffca6f0a675d9ee4/public/get-pip.py";
@@ -228,6 +263,8 @@ namespace DormStaffPortable
         private const string GitReleaseApi = "https://api.github.com/repos/git-for-windows/git/releases/latest";
         private readonly PortableEnvironment environment;
         private readonly Action<string> log;
+        private readonly object maintenanceSync = new object();
+        private int maintenanceDepth;
 
         public PortableManager(PortableEnvironment environment, Action<string> log)
         {
@@ -235,12 +272,118 @@ namespace DormStaffPortable
             this.log = log;
         }
 
+        private sealed class MaintenanceLease : IDisposable
+        {
+            private PortableManager owner;
+            public MaintenanceLease(PortableManager owner) { this.owner = owner; }
+            public void Dispose()
+            {
+                if (owner == null) return;
+                owner.ReleaseMaintenance();
+                owner = null;
+            }
+        }
+
+        public IDisposable AcquireMaintenance(string operation)
+        {
+            lock (maintenanceSync)
+            {
+                if (maintenanceDepth > 0)
+                {
+                    maintenanceDepth++;
+                    return new MaintenanceLease(this);
+                }
+                Directory.CreateDirectory(environment.RuntimeDirectory);
+                string activeOperation;
+                if (MaintenanceIsActive(out activeOperation))
+                    throw new InvalidOperationException("系統正在維護（" + activeOperation + "），請稍後再試。 / Maintenance is already in progress.");
+                try
+                {
+                    using (FileStream stream = new FileStream(environment.MaintenanceLockPath, FileMode.CreateNew, FileAccess.Write, FileShare.None))
+                    using (StreamWriter writer = new StreamWriter(stream, new UTF8Encoding(false)))
+                    {
+                        writer.WriteLine("Operation=" + operation);
+                        writer.WriteLine("Pid=" + Process.GetCurrentProcess().Id);
+                        writer.WriteLine("StartedUtc=" + DateTime.UtcNow.ToString("O"));
+                    }
+                }
+                catch (IOException)
+                {
+                    throw new InvalidOperationException("無法取得系統維護鎖，另一個程序可能正在操作資料。 / Could not acquire the maintenance lock.");
+                }
+                maintenanceDepth = 1;
+                return new MaintenanceLease(this);
+            }
+        }
+
+        private void ReleaseMaintenance()
+        {
+            lock (maintenanceSync)
+            {
+                if (maintenanceDepth <= 0) return;
+                maintenanceDepth--;
+                if (maintenanceDepth == 0)
+                    try { File.Delete(environment.MaintenanceLockPath); } catch (IOException) { }
+            }
+        }
+
+        public bool MaintenanceIsActive(out string operation)
+        {
+            if (File.Exists(environment.UpdateStatePath))
+            {
+                operation = "UPDATE_RECOVERY_REQUIRED";
+                return true;
+            }
+            foreach (string marker in new[] { environment.UpdateMarkerPath, environment.MaintenanceLockPath })
+            {
+                if (!File.Exists(marker)) continue;
+                Dictionary<string, string> values = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                try
+                {
+                    foreach (string line in File.ReadAllLines(marker, Encoding.UTF8))
+                    {
+                        int separator = line.IndexOf('=');
+                        if (separator > 0) values[line.Substring(0, separator).Trim()] = line.Substring(separator + 1).Trim();
+                    }
+                }
+                catch (IOException) { operation = "LOCKED"; return true; }
+                operation = values.ContainsKey("Operation") ? values["Operation"] : Path.GetFileName(marker);
+                int pid;
+                if (values.ContainsKey("Pid") && Int32.TryParse(values["Pid"], out pid))
+                {
+                    try
+                    {
+                        Process process = Process.GetProcessById(pid);
+                        if (!process.HasExited)
+                        {
+                            DateTime started;
+                            if (!values.ContainsKey("StartedUtc") || !DateTime.TryParse(values["StartedUtc"], out started)) return true;
+                            try { if (process.StartTime.ToUniversalTime() <= started.ToUniversalTime().AddMinutes(1)) return true; }
+                            catch { return true; }
+                        }
+                    }
+                    catch (ArgumentException) { }
+                }
+                else if (DateTime.UtcNow - File.GetLastWriteTimeUtc(marker) < TimeSpan.FromHours(2)) return true;
+                try { File.Delete(marker); log("已清除失效的維護標記：" + Path.GetFileName(marker)); }
+                catch (IOException) { return true; }
+            }
+            operation = "";
+            return false;
+        }
+
         public void InstallOrRepair()
+        {
+            using (AcquireMaintenance("INSTALL_REPAIR")) InstallOrRepairCore();
+        }
+
+        private void InstallOrRepairCore()
         {
             EnsureSupportedWindows();
             Directory.CreateDirectory(environment.RuntimeDirectory);
             Directory.CreateDirectory(environment.DownloadsDirectory);
             Directory.CreateDirectory(environment.LogsDirectory);
+            EnsureConfiguredServiceIsStopped();
             EnsurePython();
             EnsurePip();
             EnsureGit();
@@ -437,8 +580,14 @@ namespace DormStaffPortable
 
         public void UpgradeDatabase()
         {
+            using (AcquireMaintenance("DATABASE_UPGRADE")) UpgradeDatabaseCore();
+        }
+
+        private void UpgradeDatabaseCore()
+        {
             ValidateProject();
             if (!environment.PythonIsInstalled) throw new InvalidOperationException("請先安裝 portable runtime。 / Install the runtime first.");
+            EnsureConfiguredServiceIsStopped();
             EnsureEnvironmentFile();
             RunChecked(environment.PythonExe, "-m flask --app wsgi.py db upgrade", environment.ProjectRoot);
             log("資料庫 migration 完成。 / Database migrations completed.");
@@ -446,12 +595,16 @@ namespace DormStaffPortable
 
         public int PrepareDatabaseForStart()
         {
-            ValidateProject();
-            if (!environment.PythonIsInstalled)
-                throw new InvalidOperationException("請先安裝 portable runtime。 / Install the portable runtime first.");
-            ConfigureProjectImportPath();
-            UpgradeDatabase();
-            return CountActiveAdministrators();
+            using (AcquireMaintenance("STARTUP_DATABASE_CHECK"))
+            {
+                ValidateProject();
+                if (!environment.PythonIsInstalled)
+                    throw new InvalidOperationException("請先安裝 portable runtime。 / Install the portable runtime first.");
+                EnsureConfiguredServiceIsStopped();
+                ConfigureProjectImportPath();
+                UpgradeDatabase();
+                return CountActiveAdministrators();
+            }
         }
 
         private int CountActiveAdministrators()
@@ -465,6 +618,11 @@ namespace DormStaffPortable
         }
 
         public void ResetDatabaseAndCreateFirstAdmin(FreshSetupOptions options)
+        {
+            using (AcquireMaintenance("FRESH_DATABASE_SETUP")) ResetDatabaseAndCreateFirstAdminCore(options);
+        }
+
+        private void ResetDatabaseAndCreateFirstAdminCore(FreshSetupOptions options)
         {
             ValidateProject();
             if (!environment.PythonIsInstalled)
@@ -640,9 +798,17 @@ namespace DormStaffPortable
             string backupDir = Path.Combine(environment.ProjectRoot, "outputs", "portable-backups");
             Directory.CreateDirectory(backupDir);
             string backup = Path.Combine(backupDir, "before-launcher-update-" + DateTime.Now.ToString("yyyyMMdd-HHmmss") + ".zip");
-            RunChecked(environment.PythonExe, Quote(backupScript) + " " + Quote(backup), environment.ProjectRoot);
+            string oldCommit = RunChecked(environment.GitExe, "rev-parse HEAD", environment.ProjectRoot).Output.Trim();
+            RunChecked(environment.PythonExe, Quote(backupScript) + " " + Quote(backup) + " --port " + environment.Config.Port, environment.ProjectRoot);
             log("更新前備份：" + backup);
             RunChecked(environment.GitExe, "fetch " + Quote(environment.Config.GitRemote) + " " + Quote(environment.Config.GitBranch), environment.ProjectRoot);
+            string targetCommit = RunChecked(environment.GitExe, "rev-parse " + Quote(environment.Config.GitRemote + "/" + environment.Config.GitBranch), environment.ProjectRoot).Output.Trim();
+            string[] updateState = {
+                "OldCommit=" + oldCommit,
+                "TargetCommit=" + targetCommit,
+                "BackupPathBase64=" + Convert.ToBase64String(Encoding.UTF8.GetBytes(backup))
+            };
+            File.WriteAllLines(environment.UpdateStatePath, updateState, new UTF8Encoding(false));
             log("Git 更新已下載並驗證；即將關閉 Launcher 後套用。 / Update fetched and validated.");
         }
 
@@ -682,6 +848,11 @@ namespace DormStaffPortable
 
         public void RestorePortableData(string source)
         {
+            using (AcquireMaintenance("DATA_RESTORE")) RestorePortableDataCore(source);
+        }
+
+        private void RestorePortableDataCore(string source)
+        {
             ValidateProject();
             if (!environment.PythonIsInstalled)
                 throw new InvalidOperationException("請先完成安裝／修復環境。 / Install the portable runtime first.");
@@ -704,6 +875,11 @@ namespace DormStaffPortable
 
         public void ExportPortableBackup(string destination)
         {
+            using (AcquireMaintenance("DATA_BACKUP")) ExportPortableBackupCore(destination);
+        }
+
+        private void ExportPortableBackupCore(string destination)
+        {
             ValidateProject();
             if (!environment.PythonIsInstalled)
                 throw new InvalidOperationException("請先完成安裝／修復環境。 / Install the portable runtime first.");
@@ -713,7 +889,7 @@ namespace DormStaffPortable
             string parent = Path.GetDirectoryName(Path.GetFullPath(destination));
             if (String.IsNullOrWhiteSpace(parent)) throw new InvalidOperationException("備份目的路徑無效。 / Invalid backup destination.");
             Directory.CreateDirectory(parent);
-            RunChecked(environment.PythonExe, Quote(backupScript) + " " + Quote(destination) + " --allow-running", environment.ProjectRoot);
+            RunChecked(environment.PythonExe, Quote(backupScript) + " " + Quote(destination) + " --port " + environment.Config.Port, environment.ProjectRoot);
             if (!File.Exists(destination)) throw new InvalidOperationException("備份程式未產生檔案。 / Backup file was not created.");
             log("完整系統備份已建立：" + destination);
         }
@@ -731,7 +907,8 @@ namespace DormStaffPortable
             string mode = enable ? "Enable" : "Disable";
             ProcessStartInfo info = new ProcessStartInfo(
                 "powershell.exe",
-                "-NoProfile -ExecutionPolicy Bypass -File " + Quote(script) + " -Mode " + mode + " -IntervalMinutes " + intervalMinutes
+                "-NoProfile -ExecutionPolicy Bypass -File " + Quote(script) + " -Mode " + mode + " -IntervalMinutes " + intervalMinutes +
+                " -InteractiveUser " + Quote(WindowsIdentity.GetCurrent().User.Value)
             );
             info.UseShellExecute = true;
             info.Verb = "runas";
@@ -745,6 +922,82 @@ namespace DormStaffPortable
             log(enable
                 ? "自啟動巡檢已啟用，每 " + intervalMinutes + " 分鐘檢查一次。 / Auto-start watchdog enabled."
                 : "自啟動巡檢已停用；目前執行中的系統不會被停止。 / Auto-start watchdog disabled.");
+        }
+
+        public WatchdogTaskStatus GetWatchdogTaskStatus()
+        {
+            WatchdogTaskStatus status = new WatchdogTaskStatus();
+            string script = Path.Combine(environment.BaseDirectory, "watchdog-status.ps1");
+            if (!File.Exists(script)) return status;
+            CommandResult result;
+            try { result = Run("powershell.exe", "-NoProfile -ExecutionPolicy Bypass -File " + Quote(script), environment.BaseDirectory, false, null, 15000); }
+            catch { return status; }
+            if (result.ExitCode != 0) return status;
+            status.Known = true;
+            status.WatchdogEnabled = FindOutputValue(result.Output, "WATCHDOG_EXISTS=") == "1" && FindOutputValue(result.Output, "WATCHDOG_ENABLED=") == "1" && FindOutputValue(result.Output, "WATCHDOG_PATH_OK=") == "1";
+            status.LauncherEnabled = FindOutputValue(result.Output, "LAUNCHER_EXISTS=") == "1" && FindOutputValue(result.Output, "LAUNCHER_ENABLED=") == "1" && FindOutputValue(result.Output, "LAUNCHER_PATH_OK=") == "1";
+            status.LastResult = FindOutputValue(result.Output, "WATCHDOG_LAST_RESULT=");
+            return status;
+        }
+
+        public void ExportSupportBundle(string destination)
+        {
+            string temporary = destination + ".tmp-" + Guid.NewGuid().ToString("N");
+            try
+            {
+                using (ZipArchive archive = ZipFile.Open(temporary, ZipArchiveMode.Create))
+                {
+                    StringBuilder diagnostic = new StringBuilder(environment.DiagnosticText());
+                    diagnostic.AppendLine("CreatedUtc=" + DateTime.UtcNow.ToString("O"));
+                    diagnostic.AppendLine("MaintenanceMarker=" + File.Exists(environment.MaintenanceLockPath));
+                    diagnostic.AppendLine("UpdateMarker=" + File.Exists(environment.UpdateMarkerPath));
+                    if (environment.PythonIsInstalled)
+                        diagnostic.AppendLine("Python=" + Run(environment.PythonExe, "--version", environment.BaseDirectory, false, null, 15000).Output.Trim());
+                    if (environment.GitIsInstalled)
+                    {
+                        diagnostic.AppendLine("Git=" + Run(environment.GitExe, "--version", environment.BaseDirectory, false, null, 15000).Output.Trim());
+                        if (environment.ProjectIsValid)
+                        {
+                            diagnostic.AppendLine("Commit=" + Run(environment.GitExe, "rev-parse HEAD", environment.ProjectRoot, false, null, 15000).Output.Trim());
+                            diagnostic.AppendLine("GitStatus=" + Run(environment.GitExe, "status --porcelain", environment.ProjectRoot, false, null, 15000).Output.Replace("\r", " ").Replace("\n", " | ").Trim());
+                        }
+                    }
+                    WatchdogTaskStatus tasks = GetWatchdogTaskStatus();
+                    diagnostic.AppendLine("TaskStatusKnown=" + tasks.Known);
+                    diagnostic.AppendLine("WatchdogTaskEnabled=" + tasks.WatchdogEnabled);
+                    diagnostic.AppendLine("LauncherTaskEnabled=" + tasks.LauncherEnabled);
+                    diagnostic.AppendLine("WatchdogLastResult=" + tasks.LastResult);
+                    AddTextEntry(archive, "diagnostic.txt", diagnostic.ToString());
+
+                    if (Directory.Exists(environment.LogsDirectory))
+                    {
+                        List<FileInfo> logs = new List<FileInfo>(new DirectoryInfo(environment.LogsDirectory).GetFiles("*.log"));
+                        logs.Sort(delegate(FileInfo left, FileInfo right) { return right.LastWriteTimeUtc.CompareTo(left.LastWriteTimeUtc); });
+                        for (int i = 0; i < Math.Min(logs.Count, 8); i++) AddLogEntry(archive, logs[i]);
+                    }
+                }
+                if (File.Exists(destination)) File.Delete(destination);
+                File.Move(temporary, destination);
+                log("診斷支援包已建立（不含 DB、.env、證件或金鑰）：" + destination);
+            }
+            finally { if (File.Exists(temporary)) File.Delete(temporary); }
+        }
+
+        private static void AddTextEntry(ZipArchive archive, string name, string value)
+        {
+            ZipArchiveEntry entry = archive.CreateEntry(name, CompressionLevel.Optimal);
+            using (StreamWriter writer = new StreamWriter(entry.Open(), new UTF8Encoding(false))) writer.Write(value);
+        }
+
+        private static void AddLogEntry(ZipArchive archive, FileInfo file)
+        {
+            ZipArchiveEntry entry = archive.CreateEntry("logs/" + file.Name, CompressionLevel.Optimal);
+            using (FileStream input = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            using (Stream output = entry.Open())
+            {
+                if (input.Length > 1024 * 1024) input.Position = input.Length - 1024 * 1024;
+                input.CopyTo(output);
+            }
         }
 
         public void StopConfiguredServer()
@@ -783,10 +1036,15 @@ namespace DormStaffPortable
 
         private CommandResult Run(string executable, string arguments, string workingDirectory, bool writeLog)
         {
-            return Run(executable, arguments, workingDirectory, writeLog, null);
+            return Run(executable, arguments, workingDirectory, writeLog, null, CommandTimeoutMilliseconds);
         }
 
         private CommandResult Run(string executable, string arguments, string workingDirectory, bool writeLog, string standardInput)
+        {
+            return Run(executable, arguments, workingDirectory, writeLog, standardInput, CommandTimeoutMilliseconds);
+        }
+
+        private CommandResult Run(string executable, string arguments, string workingDirectory, bool writeLog, string standardInput, int timeoutMilliseconds)
         {
             if (PathsEqual(executable, environment.PythonExe)) arguments = "-X utf8 " + arguments;
             if (writeLog) log("> " + Path.GetFileName(executable) + " " + arguments);
@@ -810,6 +1068,11 @@ namespace DormStaffPortable
                 {
                     process.StandardInput.Write(standardInput);
                     process.StandardInput.Close();
+                }
+                if (!process.WaitForExit(timeoutMilliseconds))
+                {
+                    try { process.Kill(); } catch { }
+                    throw new TimeoutException("指令執行超過時間限制，已停止：" + Path.GetFileName(executable));
                 }
                 process.WaitForExit();
                 return new CommandResult { ExitCode = process.ExitCode, Output = output.ToString() };
@@ -1059,15 +1322,19 @@ namespace DormStaffPortable
         private bool updateInProgress;
         private bool? lastRunningState;
         private long watchdogLogPosition;
+        private bool statusRefreshRunning;
+        private WatchdogTaskStatus watchdogTaskStatus = new WatchdogTaskStatus();
+        private DateTime watchdogStatusCheckedUtc = DateTime.MinValue;
 
         public LauncherForm(PortableEnvironment environment, string updateResult)
         {
             this.environment = environment;
             manager = new PortableManager(environment, WriteLog);
             Text = "宿舍工讀生系統啟動器 / Dorm Staff Launcher";
-            Width = 980;
-            Height = 900;
-            MinimumSize = new Size(850, 620);
+            Rectangle workingArea = Screen.PrimaryScreen.WorkingArea;
+            Width = Math.Min(980, Math.Max(760, workingArea.Width - 40));
+            Height = Math.Min(900, Math.Max(560, workingArea.Height - 40));
+            MinimumSize = new Size(760, 560);
             StartPosition = FormStartPosition.CenterScreen;
             AutoScaleMode = AutoScaleMode.Dpi;
             Font = new Font("Microsoft JhengHei UI", 9F);
@@ -1075,6 +1342,7 @@ namespace DormStaffPortable
             FormClosing += OnFormClosing;
             BuildUi();
             LoadSettingsIntoUi();
+            CleanupOldLogs();
             UpdateStatus();
             ImportWatchdogLog();
             statusTimer.Interval = 2000;
@@ -1087,14 +1355,19 @@ namespace DormStaffPortable
                 string updateLog = Path.Combine(environment.LogsDirectory, "self-update.log");
                 WriteLog(updateResult.Equals("success", StringComparison.OrdinalIgnoreCase)
                     ? "Git 安全更新完成，已開啟新版 Launcher。 / Safe update completed."
+                    : updateResult.Equals("rolledback", StringComparison.OrdinalIgnoreCase)
+                    ? "Git 更新失敗，已自動回復更新前版本與資料。 / Update failed and was rolled back safely."
                     : "Git 安全更新失敗；詳細資訊請查看：" + updateLog);
                 Shown += delegate { MessageBox.Show(this,
                     updateResult.Equals("success", StringComparison.OrdinalIgnoreCase)
                         ? "Git 安全更新完成，Launcher 與相關檔案均已更新。\r\nSafe update completed."
+                        : updateResult.Equals("rolledback", StringComparison.OrdinalIgnoreCase)
+                        ? "Git 更新未能完成，但程式與資料已自動回復更新前狀態。\r\nUpdate failed and was rolled back safely."
                         : "Git 安全更新失敗，已重新開啟 Launcher。請查看 self-update.log。\r\nSafe update failed.",
                     "Git 安全更新 / Safe update", MessageBoxButtons.OK,
-                    updateResult.Equals("success", StringComparison.OrdinalIgnoreCase) ? MessageBoxIcon.Information : MessageBoxIcon.Error); };
+                    updateResult.Equals("success", StringComparison.OrdinalIgnoreCase) || updateResult.Equals("rolledback", StringComparison.OrdinalIgnoreCase) ? MessageBoxIcon.Information : MessageBoxIcon.Error); };
             }
+            if (File.Exists(environment.UpdateStatePath)) Shown += PromptInterruptedUpdateRecovery;
         }
 
         private void BuildUi()
@@ -1106,7 +1379,7 @@ namespace DormStaffPortable
             header.Controls.Add(title); header.Controls.Add(subtitle); header.Controls.Add(statusLabel);
             Controls.Add(header);
 
-            TableLayoutPanel body = new TableLayoutPanel { Dock = DockStyle.Fill, Padding = new Padding(18), ColumnCount = 2, RowCount = 2 };
+            TableLayoutPanel body = new TableLayoutPanel { Dock = DockStyle.Fill, Padding = new Padding(18), ColumnCount = 2, RowCount = 2, AutoScroll = true, AutoScrollMinSize = new Size(0, 650) };
             body.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 48)); body.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 52));
             body.RowStyles.Add(new RowStyle(SizeType.Absolute, 470)); body.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
             Controls.Add(body); body.BringToFront();
@@ -1130,9 +1403,9 @@ namespace DormStaffPortable
             settings.Controls.Add(settingGrid); body.Controls.Add(settings, 0, 0);
 
             GroupBox actions = new GroupBox { Text = "操作 / Actions", Dock = DockStyle.Fill, Padding = new Padding(14) };
-            TableLayoutPanel actionGrid = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 2, RowCount = 7 };
+            TableLayoutPanel actionGrid = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 2, RowCount = 8 };
             actionGrid.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50)); actionGrid.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
-            for (int i = 0; i < 7; i++) actionGrid.RowStyles.Add(new RowStyle(SizeType.Percent, 14.285F));
+            for (int i = 0; i < 8; i++) actionGrid.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
             AddAction(actionGrid, 0, 0, "① 安裝／修復環境\r\nInstall / Repair", Color.FromArgb(21, 101, 192), delegate { RunBackground("安裝環境", manager.InstallOrRepair); });
             AddAction(actionGrid, 1, 0, "② 啟動系統\r\nStart", Color.FromArgb(24, 135, 84), StartServer);
             AddAction(actionGrid, 0, 1, "停止系統\r\nStop", Color.FromArgb(185, 46, 52), StopServer);
@@ -1145,7 +1418,9 @@ namespace DormStaffPortable
             AddAction(actionGrid, 1, 4, "移轉／還原資料\r\nMigrate / Restore", Color.FromArgb(130, 88, 20), MigrateOrRestoreData);
             AddAction(actionGrid, 0, 5, "啟用自啟動巡檢\r\nEnable auto-start", Color.FromArgb(24, 135, 84), delegate { ConfigureWatchdog(true); });
             AddAction(actionGrid, 1, 5, "停用自啟動巡檢\r\nDisable auto-start", Color.FromArgb(100, 107, 117), delegate { ConfigureWatchdog(false); });
-            AddAction(actionGrid, 0, 6, "全新初始化：清空資料並建立第一位管理員\r\nFresh database setup", Color.FromArgb(139, 31, 38), FreshDatabaseSetup);
+            AddAction(actionGrid, 0, 6, "匯出診斷支援包\r\nDiagnostic bundle", Color.FromArgb(53, 88, 115), ExportDiagnosticBundle);
+            actionGrid.SetColumnSpan(actionButtons[actionButtons.Count - 1], 2);
+            AddAction(actionGrid, 0, 7, "全新初始化：清空資料並建立第一位管理員\r\nFresh database setup", Color.FromArgb(139, 31, 38), FreshDatabaseSetup);
             actionGrid.SetColumnSpan(actionButtons[actionButtons.Count - 1], 2);
             actions.Controls.Add(actionGrid); body.Controls.Add(actions, 1, 0);
 
@@ -1243,8 +1518,23 @@ namespace DormStaffPortable
                 dialog.FileName = "dorm-staff-" + DateTime.Now.ToString("yyyyMMdd-HHmmss") + ".zip";
                 if (dialog.ShowDialog(this) != DialogResult.OK) return;
                 string destination = dialog.FileName;
-                StopServer();
-                RunBackground("完整系統備份", delegate { manager.ExportPortableBackup(destination); });
+                RunMaintenanceBackground("完整系統備份", delegate { manager.ExportPortableBackup(destination); });
+            }
+        }
+
+        private void ExportDiagnosticBundle(object sender, EventArgs args)
+        {
+            if (operationRunning || !SaveSettings()) return;
+            using (SaveFileDialog dialog = new SaveFileDialog())
+            {
+                dialog.Title = "匯出診斷支援包 / Export diagnostic bundle";
+                dialog.Filter = "Diagnostic ZIP (*.zip)|*.zip";
+                dialog.DefaultExt = "zip";
+                dialog.AddExtension = true;
+                dialog.FileName = "dorm-staff-diagnostic-" + DateTime.Now.ToString("yyyyMMdd-HHmmss") + ".zip";
+                if (dialog.ShowDialog(this) != DialogResult.OK) return;
+                string destination = dialog.FileName;
+                RunBackground("診斷支援包", delegate { manager.ExportSupportBundle(destination); });
             }
         }
 
@@ -1283,8 +1573,7 @@ namespace DormStaffPortable
                 {
                     if (confirmation.ShowDialog(this) != DialogResult.OK) return;
                 }
-                StopServer();
-                RunBackground("資料移轉／還原", delegate { manager.RestorePortableData(source); });
+                RunMaintenanceBackground("資料移轉／還原", delegate { manager.RestorePortableData(source); });
             }
         }
 
@@ -1296,6 +1585,7 @@ namespace DormStaffPortable
                 manager.ConfigureWatchdog(enable, environment.Config.WatchdogIntervalMinutes);
                 environment.Config.AutoStartEnabled = enable;
                 environment.Config.Save(environment.ConfigPath);
+                watchdogStatusCheckedUtc = DateTime.MinValue;
                 MessageBox.Show(
                     this,
                     enable
@@ -1326,6 +1616,18 @@ namespace DormStaffPortable
             });
         }
 
+        private void RunMaintenanceBackground(string name, Action operation)
+        {
+            RunBackground(name, delegate
+            {
+                using (manager.AcquireMaintenance(name))
+                {
+                    StopServer();
+                    operation();
+                }
+            });
+        }
+
         private void BeginGitUpdate(object sender, EventArgs args)
         {
             if (operationRunning || !SaveSettings()) return;
@@ -1341,7 +1643,11 @@ namespace DormStaffPortable
             if (confirmation != DialogResult.Yes) return;
             string marker = Path.Combine(environment.RuntimeDirectory, "update-in-progress");
             Directory.CreateDirectory(environment.RuntimeDirectory);
-            File.WriteAllText(marker, DateTime.UtcNow.ToString("O"), Encoding.ASCII);
+            File.WriteAllLines(marker, new[] {
+                "Operation=GIT_UPDATE_PREFLIGHT",
+                "Pid=" + Process.GetCurrentProcess().Id,
+                "StartedUtc=" + DateTime.UtcNow.ToString("O")
+            }, new UTF8Encoding(false));
             StopServer();
             operationRunning = true; SetActionsEnabled(false); WriteLog("--- Git 安全更新 ---");
             ThreadPool.QueueUserWorkItem(delegate
@@ -1354,6 +1660,7 @@ namespace DormStaffPortable
                 catch (Exception ex)
                 {
                     try { File.Delete(marker); } catch { }
+                    try { File.Delete(environment.UpdateStatePath); } catch { }
                     WriteLog("ERROR: " + ex.Message);
                     BeginInvoke((MethodInvoker)delegate
                     {
@@ -1366,18 +1673,51 @@ namespace DormStaffPortable
 
         private void StartExternalUpdaterAndClose()
         {
-            string source = Path.Combine(environment.BaseDirectory, "self-update.ps1");
-            if (!File.Exists(source)) throw new InvalidOperationException("找不到 Launcher 外部更新程式：" + source);
-            string temporary = Path.Combine(Path.GetTempPath(), "DormStaffSelfUpdate-" + Guid.NewGuid().ToString("N") + ".ps1");
-            File.Copy(source, temporary, true);
-            ProcessStartInfo info = new ProcessStartInfo("powershell.exe",
-                "-NoProfile -ExecutionPolicy Bypass -File " + PortableManager.Quote(temporary) +
-                " -LauncherDirectory " + PortableManager.Quote(environment.BaseDirectory) +
-                " -ParentProcessId " + Process.GetCurrentProcess().Id);
-            info.UseShellExecute = false; info.CreateNoWindow = true;
-            Process.Start(info);
-            updateInProgress = true;
-            Close();
+            StartExternalUpdaterAndClose(false);
+        }
+
+        private void StartExternalUpdaterAndClose(bool recoveryOnly)
+        {
+            try
+            {
+                string source = Path.Combine(environment.BaseDirectory, "self-update.ps1");
+                if (!File.Exists(source)) throw new InvalidOperationException("找不到 Launcher 外部更新程式：" + source);
+                string temporary = Path.Combine(Path.GetTempPath(), "DormStaffSelfUpdate-" + Guid.NewGuid().ToString("N") + ".ps1");
+                File.Copy(source, temporary, true);
+                ProcessStartInfo info = new ProcessStartInfo("powershell.exe",
+                    "-NoProfile -ExecutionPolicy Bypass -File " + PortableManager.Quote(temporary) +
+                    " -LauncherDirectory " + PortableManager.Quote(environment.BaseDirectory) +
+                    " -ParentProcessId " + Process.GetCurrentProcess().Id +
+                    (recoveryOnly ? " -RecoveryOnly" : ""));
+                info.UseShellExecute = false; info.CreateNoWindow = true;
+                Process.Start(info);
+                updateInProgress = true;
+                Close();
+            }
+            catch (Exception ex)
+            {
+                try { File.Delete(environment.UpdateMarkerPath); } catch { }
+                try { File.Delete(environment.UpdateStatePath); } catch { }
+                operationRunning = false;
+                SetActionsEnabled(true);
+                WriteLog("ERROR: " + ex.Message);
+                MessageBox.Show(this, ex.Message, "無法啟動外部更新器", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void PromptInterruptedUpdateRecovery(object sender, EventArgs args)
+        {
+            if (!File.Exists(environment.UpdateStatePath) || operationRunning || updateInProgress) return;
+            DialogResult recover = MessageBox.Show(
+                this,
+                "偵測到未完成的系統更新。為避免啟動只更新一半的程式，建議立即回復更新前版本與資料。\r\n\r\nRecover the previous version and data now?",
+                "更新中斷／需要復原 / Interrupted update",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning,
+                MessageBoxDefaultButton.Button1
+            );
+            if (recover == DialogResult.Yes) StartExternalUpdaterAndClose(true);
+            else MessageBox.Show("系統會維持維護狀態；完成復原前請勿啟動網站。", "尚未復原", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
         private void FreshDatabaseSetup(object sender, EventArgs args)
@@ -1404,7 +1744,7 @@ namespace DormStaffPortable
                 MessageBoxDefaultButton.Button2
             );
             if (finalConfirmation != DialogResult.Yes) return;
-            RunBackground("全新初始化", delegate { StopServer(); manager.ResetDatabaseAndCreateFirstAdmin(options); });
+            RunMaintenanceBackground("全新初始化", delegate { manager.ResetDatabaseAndCreateFirstAdmin(options); });
         }
 
         private void StartServer(object sender, EventArgs args)
@@ -1414,35 +1754,49 @@ namespace DormStaffPortable
             {
                 MessageBox.Show("請先選擇專案並執行「安裝／修復環境」。", "尚未安裝", MessageBoxButtons.OK, MessageBoxIcon.Warning); return;
             }
-            int administratorCount;
-            try { administratorCount = manager.PrepareDatabaseForStart(); }
-            catch (Exception ex) { MessageBox.Show(ex.Message + "\r\n\r\n請先執行「安裝／修復環境」。", "資料庫初始化失敗", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
-            if (administratorCount == 0)
+            string maintenanceOperation;
+            if (manager.MaintenanceIsActive(out maintenanceOperation))
             {
-                DialogResult createAdministrator = MessageBox.Show(
-                    this,
-                    "資料庫已自動建立並完成 migration，但目前沒有可登入的管理員。\r\n\r\n是否現在建立第一位管理員？\r\nThe database is ready, but no administrator exists.",
-                    "需要建立管理員 / Administrator required",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Information
-                );
-                if (createAdministrator == DialogResult.Yes) FreshDatabaseSetup(sender, args);
+                MessageBox.Show("系統正在維護（" + maintenanceOperation + "），請稍後再啟動。", "維護中", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+            if (AppIsHealthy()) { MessageBox.Show("系統已在執行。 / The system is already running."); return; }
             if (GetRunningServerProcess() != null) { MessageBox.Show("系統已在執行。 "); return; }
             int port = Int32.Parse(environment.Config.Port);
             if (!PortIsAvailable(port, environment.Config.ListenAddress == "0.0.0.0")) { MessageBox.Show("Port " + port + " 已被其他程式使用。請更換 Port。 ", "無法啟動", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
-            string logFile = Path.Combine(environment.LogsDirectory, "server-" + DateTime.Now.ToString("yyyy-MM-dd") + ".log");
-            Directory.CreateDirectory(environment.LogsDirectory);
-            ProcessStartInfo info = new ProcessStartInfo(environment.PythonExe, "-m waitress --listen=" + environment.Config.ListenAddress + ":" + port + " --threads=8 --ident=dorm-staff-system wsgi:app");
-            info.WorkingDirectory = environment.ProjectRoot; info.UseShellExecute = false; info.CreateNoWindow = true; info.RedirectStandardOutput = true; info.RedirectStandardError = true;
-            info.StandardOutputEncoding = Encoding.UTF8; info.StandardErrorEncoding = Encoding.UTF8; info.EnvironmentVariables["PYTHONUTF8"] = "1";
-            serverProcess = new Process(); serverProcess.StartInfo = info; serverProcess.EnableRaisingEvents = true;
-            serverProcess.OutputDataReceived += delegate(object s, DataReceivedEventArgs e) { if (e.Data != null) AppendServerLog(logFile, e.Data); };
-            serverProcess.ErrorDataReceived += delegate(object s, DataReceivedEventArgs e) { if (e.Data != null) AppendServerLog(logFile, e.Data); };
-            serverProcess.Exited += delegate { WriteLog("系統程序已停止。 / Server stopped."); BeginInvoke((MethodInvoker)UpdateStatus); };
-            serverProcess.Start(); serverProcess.BeginOutputReadLine(); serverProcess.BeginErrorReadLine();
-            File.WriteAllText(Path.Combine(environment.RuntimeDirectory, "server.pid"), serverProcess.Id.ToString(), Encoding.ASCII);
+            try
+            {
+                using (manager.AcquireMaintenance("START_SERVER"))
+                {
+                    int administratorCount = manager.PrepareDatabaseForStart();
+                    if (administratorCount == 0)
+                    {
+                        DialogResult createAdministrator = MessageBox.Show(
+                            this,
+                            "資料庫已自動建立並完成 migration，但目前沒有可登入的管理員。\r\n\r\n是否現在建立第一位管理員？\r\nThe database is ready, but no administrator exists.",
+                            "需要建立管理員 / Administrator required",
+                            MessageBoxButtons.YesNo,
+                            MessageBoxIcon.Information
+                        );
+                        if (createAdministrator == DialogResult.Yes) FreshDatabaseSetup(sender, args);
+                        return;
+                    }
+                    if (!PortIsAvailable(port, environment.Config.ListenAddress == "0.0.0.0"))
+                        throw new InvalidOperationException("啟動前 Port 已被占用，已停止以避免重複啟動。 / Port became occupied before startup.");
+                    string logFile = Path.Combine(environment.LogsDirectory, "server-" + DateTime.Now.ToString("yyyy-MM-dd") + ".log");
+                    Directory.CreateDirectory(environment.LogsDirectory);
+                    ProcessStartInfo info = new ProcessStartInfo(environment.PythonExe, "-m waitress --listen=" + environment.Config.ListenAddress + ":" + port + " --threads=8 --ident=dorm-staff-system wsgi:app");
+                    info.WorkingDirectory = environment.ProjectRoot; info.UseShellExecute = false; info.CreateNoWindow = true; info.RedirectStandardOutput = true; info.RedirectStandardError = true;
+                    info.StandardOutputEncoding = Encoding.UTF8; info.StandardErrorEncoding = Encoding.UTF8; info.EnvironmentVariables["PYTHONUTF8"] = "1";
+                    serverProcess = new Process(); serverProcess.StartInfo = info; serverProcess.EnableRaisingEvents = true;
+                    serverProcess.OutputDataReceived += delegate(object s, DataReceivedEventArgs e) { if (e.Data != null) AppendServerLog(logFile, e.Data); };
+                    serverProcess.ErrorDataReceived += delegate(object s, DataReceivedEventArgs e) { if (e.Data != null) AppendServerLog(logFile, e.Data); };
+                    serverProcess.Exited += delegate { WriteLog("系統程序已停止。 / Server stopped."); BeginInvoke((MethodInvoker)UpdateStatus); };
+                    serverProcess.Start(); serverProcess.BeginOutputReadLine(); serverProcess.BeginErrorReadLine();
+                    File.WriteAllText(Path.Combine(environment.RuntimeDirectory, "server.pid"), serverProcess.Id.ToString(), Encoding.ASCII);
+                }
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message, "系統啟動失敗", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
             WriteLog("系統已啟動：http://127.0.0.1:" + port);
             UpdateStatus();
             if (environment.Config.OpenBrowserAfterStart) { ThreadPool.QueueUserWorkItem(delegate { Thread.Sleep(900); BeginInvoke((MethodInvoker)OpenBrowser); }); }
@@ -1491,13 +1845,13 @@ namespace DormStaffPortable
         {
             try
             {
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://127.0.0.1:" + environment.Config.Port + "/auth/login");
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://127.0.0.1:" + environment.Config.Port + "/healthz");
                 request.Timeout = 700; request.ReadWriteTimeout = 700;
                 using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
                 using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
                 {
                     string content = reader.ReadToEnd();
-                    return response.StatusCode == HttpStatusCode.OK && (content.Contains("宿舍工讀生") || content.Contains("Dormitory Student Worker System"));
+                    return response.StatusCode == HttpStatusCode.OK && content.Contains("dorm-staff-system");
                 }
             }
             catch { return false; }
@@ -1529,11 +1883,29 @@ namespace DormStaffPortable
             WriteLog(message);
         }
 
+        private void CleanupOldLogs()
+        {
+            try
+            {
+                if (!Directory.Exists(environment.LogsDirectory)) return;
+                foreach (string file in Directory.GetFiles(environment.LogsDirectory, "*.log"))
+                    if (File.GetLastWriteTimeUtc(file) < DateTime.UtcNow.AddDays(-30)) File.Delete(file);
+            }
+            catch (IOException) { }
+            catch (UnauthorizedAccessException) { }
+        }
+
         private void WriteLog(string message)
         {
             if (InvokeRequired) { BeginInvoke((MethodInvoker)delegate { WriteLog(message); }); return; }
             string line = "[" + DateTime.Now.ToString("HH:mm:ss") + "] " + message + Environment.NewLine;
-            logBox.AppendText(line); logBox.SelectionStart = logBox.TextLength; logBox.ScrollToCaret();
+            logBox.AppendText(line);
+            if (logBox.TextLength > 500000)
+            {
+                int cut = logBox.Text.IndexOf('\n', 100000);
+                if (cut > 0) { logBox.Select(0, cut + 1); logBox.SelectedText = ""; }
+            }
+            logBox.SelectionStart = logBox.TextLength; logBox.ScrollToCaret();
             try { Directory.CreateDirectory(environment.LogsDirectory); File.AppendAllText(Path.Combine(environment.LogsDirectory, "launcher-" + DateTime.Now.ToString("yyyy-MM-dd") + ".log"), line, Encoding.UTF8); } catch { }
         }
 
@@ -1564,13 +1936,51 @@ namespace DormStaffPortable
         private void SetActionsEnabled(bool enabled) { foreach (Button button in actionButtons) button.Enabled = enabled; }
         private void UpdateStatus()
         {
-            bool healthy = AppIsHealthy();
-            bool running = healthy || GetRunningServerProcess() != null;
-            bool portOccupied = !running && ConfiguredPortIsOccupied();
+            if (!IsHandleCreated)
+            {
+                ApplyStatus(false, GetRunningServerProcess() != null, false, false, "", watchdogTaskStatus);
+                return;
+            }
+            if (statusRefreshRunning) return;
+            statusRefreshRunning = true;
+            ThreadPool.QueueUserWorkItem(delegate
+            {
+                try
+                {
+                    bool healthy = AppIsHealthy();
+                    bool running = healthy || GetRunningServerProcess() != null;
+                    bool portOccupied = !running && ConfiguredPortIsOccupied();
+                    string maintenanceOperation;
+                    bool maintenance = manager.MaintenanceIsActive(out maintenanceOperation);
+                    WatchdogTaskStatus tasks = watchdogTaskStatus;
+                    if (DateTime.UtcNow - watchdogStatusCheckedUtc > TimeSpan.FromSeconds(30))
+                    {
+                        tasks = manager.GetWatchdogTaskStatus();
+                        watchdogTaskStatus = tasks;
+                        watchdogStatusCheckedUtc = DateTime.UtcNow;
+                    }
+                    if (!IsDisposed) BeginInvoke((MethodInvoker)delegate
+                    {
+                        statusRefreshRunning = false;
+                        ApplyStatus(healthy, running, portOccupied, maintenance, maintenanceOperation, tasks);
+                    });
+                }
+                catch
+                {
+                    if (!IsDisposed) BeginInvoke((MethodInvoker)delegate { statusRefreshRunning = false; });
+                }
+            });
+        }
+
+        private void ApplyStatus(bool healthy, bool running, bool portOccupied, bool maintenance, string maintenanceOperation, WatchdogTaskStatus tasks)
+        {
             bool runtimeReady = environment.PythonIsInstalled && environment.GitIsInstalled;
-            string serviceStatus = healthy ? "● 執行中 Running" : running ? "● 啟動中／無回應 Check server" : portOccupied ? "● Port 已占用／系統無回應" : (runtimeReady && environment.ProjectIsValid ? "● 已就緒 Ready" : runtimeReady ? "● 請選擇專案 Select project" : "○ 尚未安裝 Not installed");
-            statusLabel.Text = serviceStatus + (environment.Config.AutoStartEnabled ? "\r\n自啟動：開 Auto-start: On" : "\r\n自啟動：關 Auto-start: Off");
-            statusLabel.ForeColor = healthy ? Color.FromArgb(91, 224, 151) : running ? Color.FromArgb(255, 200, 87) : Color.White;
+            string serviceStatus = maintenance ? "● 維護中 " + maintenanceOperation : healthy ? "● 執行中 Running" : running ? "● 啟動中／無回應 Check server" : portOccupied ? "● Port 已占用／系統無回應" : (runtimeReady && environment.ProjectIsValid ? "● 已就緒 Ready" : runtimeReady ? "● 請選擇專案 Select project" : "○ 尚未安裝 Not installed");
+            string autoStart = tasks.Known
+                ? (tasks.FullyEnabled ? "\r\n自啟動：開 Auto-start: On" : tasks.WatchdogEnabled || tasks.LauncherEnabled ? "\r\n自啟動：不完整 Repair" : "\r\n自啟動：關 Auto-start: Off")
+                : (environment.Config.AutoStartEnabled ? "\r\n自啟動：待確認 Checking" : "\r\n自啟動：關 Auto-start: Off");
+            statusLabel.Text = serviceStatus + autoStart;
+            statusLabel.ForeColor = healthy ? Color.FromArgb(91, 224, 151) : running || maintenance ? Color.FromArgb(255, 200, 87) : Color.White;
             if (lastRunningState.HasValue && lastRunningState.Value != running)
                 WriteLog(running ? "偵測到系統已啟動。 / Server detected running." : "偵測到系統已停止。 / Server detected stopped.");
             lastRunningState = running;
@@ -1588,6 +1998,13 @@ namespace DormStaffPortable
         {
             statusTimer.Stop();
             if (updateInProgress) return;
+            if (operationRunning)
+            {
+                MessageBox.Show("維護作業仍在執行，完成前不能關閉 Launcher。\r\nA maintenance operation is still running.", "作業進行中", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                args.Cancel = true;
+                statusTimer.Start();
+                return;
+            }
             if (GetRunningServerProcess() != null)
             {
                 DialogResult result = MessageBox.Show("關閉啟動器也會停止系統，是否繼續？\r\nClosing the launcher will stop the server.", "確認關閉", MessageBoxButtons.YesNo, MessageBoxIcon.Question);

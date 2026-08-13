@@ -18,6 +18,7 @@ from ..models import (
     DocumentPageKind,
     DocumentType,
     Shift,
+    ShiftPublicationStatus,
     ShiftStatus,
     ShiftType,
     StaffProfile,
@@ -27,7 +28,7 @@ from ..models import (
     WorkLocation,
 )
 from ..services.payroll import calculate_staff_cost, get_payroll_setting
-from ..services.notifications import notifications_for_user
+from ..services.notifications import notification_page_for_user, notifications_for_user
 from ..services.compliance import (
     active_countries,
     canonical_country_name,
@@ -115,6 +116,7 @@ def dashboard():
             .where(
                 Shift.staff_id == profile.id,
                 Shift.status == ShiftStatus.SCHEDULED,
+                Shift.publication_status == ShiftPublicationStatus.PUBLISHED,
                 Shift.shift_date >= today,
             )
             .order_by(Shift.shift_date)
@@ -127,6 +129,7 @@ def dashboard():
             .where(
                 Shift.staff_id == profile.id,
                 Shift.status == ShiftStatus.SCHEDULED,
+                Shift.publication_status == ShiftPublicationStatus.PUBLISHED,
                 Shift.shift_date >= month_start,
                 Shift.shift_date < next_month,
             )
@@ -186,11 +189,14 @@ def dashboard():
 @bp.get("/notifications")
 @role_required(Role.STUDENT)
 def notifications_page():
-    open_notifications, completed_notifications = notifications_for_user(current_user)
+    open_notifications, completed_notifications, pagination = notification_page_for_user(
+        current_user, page=request.args.get("page", 1, type=int)
+    )
     return render_template(
         "notifications.html",
         open_notifications=open_notifications,
         completed_notifications=completed_notifications,
+        pagination=pagination,
         dashboard_url=url_for("student.dashboard"),
     )
 
@@ -440,6 +446,7 @@ def requests_page():
             "student/requests.html", own_shifts=[], target_shifts=[], target_profiles=[],
             leave_requests=[], swap_requests=[], filter_scope="ALL",
             filter_month=local_today().strftime("%Y-%m"), profile=None,
+            history_page=1, history_pages=0,
         )
     today = local_today()
     own_shifts = db.session.scalars(
@@ -448,6 +455,7 @@ def requests_page():
         .where(
             Shift.staff_id == profile.id,
             Shift.status == ShiftStatus.SCHEDULED,
+            Shift.publication_status == ShiftPublicationStatus.PUBLISHED,
             Shift.shift_date >= today,
         )
         .order_by(Shift.shift_date, ShiftType.display_order)
@@ -463,6 +471,7 @@ def requests_page():
         .where(
             Shift.staff_id != profile.id,
             Shift.status == ShiftStatus.SCHEDULED,
+            Shift.publication_status == ShiftPublicationStatus.PUBLISHED,
             Shift.shift_date >= today,
         )
         .order_by(Shift.shift_date, ShiftType.display_order)
@@ -510,8 +519,11 @@ def requests_page():
                 SwapRequest.target_shift.has(db.and_(Shift.shift_date >= month_start, Shift.shift_date < month_end)),
             )
         )
-    leave_requests = db.session.scalars(leave_statement).all()
-    swap_requests = db.session.scalars(swap_statement).all()
+    page = max(1, request.args.get("page", 1, type=int))
+    leave_pagination = db.paginate(leave_statement, page=page, per_page=50, error_out=False)
+    swap_pagination = db.paginate(swap_statement, page=page, per_page=50, error_out=False)
+    leave_requests = leave_pagination.items
+    swap_requests = swap_pagination.items
     return render_template(
         "student/requests.html",
         own_shifts=own_shifts,
@@ -522,6 +534,8 @@ def requests_page():
         profile=profile,
         filter_scope=filter_scope,
         filter_month=filter_month,
+        history_page=page,
+        history_pages=max(leave_pagination.pages, swap_pagination.pages),
     )
 
 
@@ -683,6 +697,7 @@ def shift_events():
         .where(
             Shift.staff_id == profile.id,
             Shift.status.in_([ShiftStatus.SCHEDULED, ShiftStatus.ON_LEAVE]),
+            Shift.publication_status == ShiftPublicationStatus.PUBLISHED,
             Shift.shift_date >= start,
             Shift.shift_date < end,
         )
@@ -728,6 +743,7 @@ def monthly_hours_api():
             .where(
                 Shift.staff_id == profile.id,
                 Shift.status == ShiftStatus.SCHEDULED,
+                Shift.publication_status == ShiftPublicationStatus.PUBLISHED,
                 Shift.shift_date >= start,
                 Shift.shift_date < end,
             )

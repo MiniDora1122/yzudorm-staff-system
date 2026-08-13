@@ -128,7 +128,7 @@ PowerShell：
 ```powershell
 py -3 -m venv .venv
 .\.venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
+python -m pip install -r requirements-dev.txt
 Copy-Item .env.example .env
 flask --app wsgi.py db upgrade
 flask --app wsgi.py seed
@@ -150,6 +150,20 @@ flask --app wsgi.py run --debug
 ```powershell
 flask --app wsgi.py documents-cleanup --actor-user-id 1
 ```
+
+## 自動驗證備份、月份結算與缺員
+
+- 系統預設每天 `02:00` 建立一次完整 portable ZIP；備份會先驗證 manifest 內每個檔案的 SHA-256，再對 SQLite 快照執行 `PRAGMA integrity_check`，全部成功才保留。
+- 管理員可由「設定 → 月份結算與備份」查看最近結果、手動執行、發布整月草稿、結算鎖定及填寫原因解鎖。
+- 正式環境請把 `AUTOMATIC_BACKUP_DIR` 改到另一顆受 BitLocker 保護的磁碟。預設同機資料夾只提供誤刪復原能力，不能防止整顆硬碟故障。
+- CLI 可手動執行：
+
+```powershell
+flask --app wsgi.py backup-run --actor-user-id 1
+```
+
+- 「群組／缺員」可建立學生群組，將需求發布給指定群組、指定學生或全部有效學生；學生申請與管理員核准時都會重新檢查排班限制。
+- 新增排班預設為草稿；學生端、薪資與正式報表只計算已發布班表。
 
 ## 測試
 

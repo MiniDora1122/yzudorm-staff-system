@@ -303,13 +303,30 @@ def notifications_for_user(user: User) -> tuple[list[Notification], list[Notific
         statement = statement.where(Notification.recipient_role == Role.ADMIN)
     else:
         statement = statement.where(Notification.recipient_user_id == user.id)
-    items = db.session.scalars(statement.order_by(Notification.updated_at.desc())).all()
+    items = db.session.scalars(
+        statement.where(Notification.status == NotificationStatus.OPEN).order_by(Notification.updated_at.desc())
+    ).all()
     open_items = sorted(
-        (item for item in items if item.status == NotificationStatus.OPEN),
+        items,
         key=lambda item: (SEVERITY_ORDER.get(item.severity, 9), -item.id),
     )
-    completed_items = [item for item in items if item.status == NotificationStatus.COMPLETED]
-    return open_items, completed_items
+    return open_items, []
+
+
+def notification_page_for_user(user: User, *, page: int, per_page: int = 30):
+    open_items = notifications_for_user(user)[0]
+    statement = db.select(Notification).where(Notification.status == NotificationStatus.COMPLETED)
+    if user.role == Role.ADMIN:
+        statement = statement.where(Notification.recipient_role == Role.ADMIN)
+    else:
+        statement = statement.where(Notification.recipient_user_id == user.id)
+    pagination = db.paginate(
+        statement.order_by(Notification.completed_at.desc(), Notification.id.desc()),
+        page=max(1, page),
+        per_page=per_page,
+        error_out=False,
+    )
+    return open_items, pagination.items, pagination
 
 
 def open_notification_count(user: User) -> int:
@@ -321,3 +338,65 @@ def open_notification_count(user: User) -> int:
     else:
         statement = statement.where(Notification.recipient_user_id == user.id)
     return db.session.scalar(statement) or 0
+
+
+def notify_user(
+    user_id: int,
+    *,
+    key: str,
+    category: str,
+    severity: str,
+    title_zh: str,
+    title_en: str,
+    message_zh: str,
+    message_en: str,
+    target_url: str,
+) -> Notification:
+    item = db.session.scalar(db.select(Notification).where(Notification.notification_key == key))
+    if item is None:
+        item = Notification(notification_key=key, recipient_user_id=user_id)
+        db.session.add(item)
+    item.category = category
+    item.severity = severity
+    item.title_zh = title_zh
+    item.title_en = title_en
+    item.message_zh = message_zh
+    item.message_en = message_en
+    item.target_url = target_url
+    item.status = NotificationStatus.OPEN
+    item.completed_at = None
+    return item
+
+
+def notify_admins(
+    *,
+    key: str,
+    category: str,
+    severity: str,
+    title_zh: str,
+    title_en: str,
+    message_zh: str,
+    message_en: str,
+    target_url: str,
+) -> Notification:
+    item = db.session.scalar(db.select(Notification).where(Notification.notification_key == key))
+    if item is None:
+        item = Notification(notification_key=key, recipient_role=Role.ADMIN)
+        db.session.add(item)
+    item.category = category
+    item.severity = severity
+    item.title_zh = title_zh
+    item.title_en = title_en
+    item.message_zh = message_zh
+    item.message_en = message_en
+    item.target_url = target_url
+    item.status = NotificationStatus.OPEN
+    item.completed_at = None
+    return item
+
+
+def complete_notification(key: str) -> None:
+    item = db.session.scalar(db.select(Notification).where(Notification.notification_key == key))
+    if item and item.status == NotificationStatus.OPEN:
+        item.status = NotificationStatus.COMPLETED
+        item.completed_at = utc_now()

@@ -9,7 +9,6 @@ APScheduler>=3.11,<4
 cachelib>=0.13,<1
 cryptography>=45,<47
 python-dotenv>=1.0,<2
-pytest>=8.3,<9
 Pillow>=11.3,<13
 openpyxl>=3.1,<4
 tzdata>=2024.1
