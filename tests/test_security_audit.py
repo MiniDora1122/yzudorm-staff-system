@@ -64,8 +64,10 @@ def test_audit_page_is_admin_only_and_supports_filters(client):
     assert b"LOGIN_FAILED" in page.data
     assert b"203.0.113.9" in page.data
     assert "安全事件與操作稽核".encode("utf-8") in page.data
+    assert b'class="audit-local-time"' in page.data
+    assert b'Z">' in page.data
+    assert b'Intl.DateTimeFormat().resolvedOptions().timeZone' in page.data
 
     client.post("/auth/logout")
     login(client, "student-test", "StudentTest!2026")
     assert client.get("/admin/audit-logs").status_code == 403
-

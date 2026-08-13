@@ -546,7 +546,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     const shiftId = document.getElementById("shiftId").value;
     const repeatWeekly = !shiftId && document.getElementById("repeatWeekly").checked;
-    const keepAdding = !shiftId && !repeatWeekly && document.getElementById("continueAdding").checked;
+    const keepAdding = !shiftId && document.getElementById("continueAdding").checked;
     const payload = {
       shift_date: document.getElementById("shiftDate").value,
       staff_id: document.getElementById("shiftStaff").value,
@@ -581,7 +581,15 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
       if (!keepAdding) modal.hide();
-      else showError(formError, "");
+      else {
+        if (repeatWeekly) {
+          document.getElementById("repeatWeekly").checked = false;
+          document.getElementById("recurrenceFields").classList.add("d-none");
+          document.getElementById("recurrenceEnd").required = false;
+          document.getElementById("recurrenceEnd").value = "";
+        }
+        showError(formError, "");
+      }
       calendar.refetchEvents();
       loadHours();
       showAlert(shiftId ? "排班已更新。" : repeatWeekly ? "每週重複排班系列已建立。 / Weekly recurring series created." : keepAdding ? "已新增，可繼續選擇日期或班別。" : "排班已新增。");

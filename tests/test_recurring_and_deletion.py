@@ -48,6 +48,15 @@ def test_weekly_series_creates_real_shifts_through_end_date(client, app):
         assert db.session.scalar(db.select(AuditLog).where(AuditLog.action == "SHIFT_SERIES_CREATED"))
 
 
+def test_weekly_series_can_keep_staff_and_shift_for_next_entry(client):
+    login(client)
+    script = client.get("/static/js/admin_schedule.js")
+    assert script.status_code == 200
+    assert b'const keepAdding = !shiftId && document.getElementById("continueAdding").checked;' in script.data
+    assert b'document.getElementById("repeatWeekly").checked = false;' in script.data
+    assert b'if (!keepAdding) modal.hide();' in script.data
+
+
 def test_weekly_series_rolls_back_every_occurrence_when_one_conflicts(client, app):
     values = assignment_ids(app)
     login(client)

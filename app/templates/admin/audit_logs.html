@@ -5,6 +5,7 @@
   <span class="eyebrow">SECURITY & AUDIT</span>
   <h1 class="h2 fw-bold mt-2 mb-1" data-en="Security events and audit logs">安全事件與操作稽核</h1>
   <p class="text-secondary mb-0" data-en="Review authentication events and important operations. Passwords and complete document identifiers are never recorded.">查詢登入安全事件與重要操作；不記錄密碼及完整證件號碼。</p>
+  <p class="small text-secondary mb-0 mt-1"><i class="bi bi-clock me-1"></i>時間依此裝置時區顯示 <span id="auditTimezoneLabel" class="bilingual-english">Shown in this device's time zone</span></p>
 </div>
 
 <section class="card app-card border-0 shadow-sm mb-4">
@@ -27,7 +28,7 @@
       <tbody>
       {% for item in audit_logs %}
         <tr>
-          <td class="ps-4 text-nowrap">{{ item.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+          <td class="ps-4 text-nowrap"><time class="audit-local-time" datetime="{{ item.created_at.isoformat() }}{% if not item.created_at.tzinfo %}Z{% endif %}">{{ item.created_at.strftime('%Y-%m-%d %H:%M:%S') }} UTC</time></td>
           <td>{% if item.actor %}<strong>{{ item.actor.username }}</strong><div class="small text-secondary">#{{ item.actor_user_id }}</div>{% else %}<span class="text-secondary">未知／未登入<br><small>Unknown</small></span>{% endif %}</td>
           <td><span class="badge text-bg-light border">{{ item.action }}</span></td>
           <td>{{ item.safe_summary }}</td>
@@ -40,4 +41,16 @@
   </div>
   {% if pagination.pages > 1 %}<div class="card-footer bg-white border-0 p-3 d-flex justify-content-between align-items-center"><span class="small text-secondary">第 {{ pagination.page }}／{{ pagination.pages }} 頁</span><div class="btn-group"><a class="btn btn-sm btn-outline-primary {% if not pagination.has_prev %}disabled{% endif %}" href="{{ url_for('admin.audit_logs_page', page=pagination.prev_num, **filters) }}">上一頁 Previous</a><a class="btn btn-sm btn-outline-primary {% if not pagination.has_next %}disabled{% endif %}" href="{{ url_for('admin.audit_logs_page', page=pagination.next_num, **filters) }}">下一頁 Next</a></div></div>{% endif %}
 </section>
+{% endblock %}
+{% block scripts %}
+<script>
+document.querySelectorAll(".audit-local-time").forEach((element) => {
+  const value = new Date(element.dateTime);
+  if (Number.isNaN(value.getTime())) return;
+  const pad = (number) => String(number).padStart(2, "0");
+  element.textContent = `${value.getFullYear()}-${pad(value.getMonth() + 1)}-${pad(value.getDate())} ${pad(value.getHours())}:${pad(value.getMinutes())}:${pad(value.getSeconds())}`;
+});
+const auditTimezoneLabel = document.getElementById("auditTimezoneLabel");
+if (auditTimezoneLabel) auditTimezoneLabel.textContent = Intl.DateTimeFormat().resolvedOptions().timeZone || "Local time";
+</script>
 {% endblock %}
