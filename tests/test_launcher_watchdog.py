@@ -80,3 +80,7 @@ def test_git_update_closes_launcher_before_replacing_it():
     assert "Already up to date." in launcher
     assert "oldCommit.Equals(targetCommit" in launcher
     assert 'maintenanceOperation != "UPDATE_RECOVERY_REQUIRED"' in launcher
+    assert '$previousErrorActionPreference = $ErrorActionPreference' in updater
+    assert '$ErrorActionPreference = "Continue"' in updater
+    assert '$exitCode = $LASTEXITCODE' in updater
+    assert 'if ($exitCode -ne 0)' in updater

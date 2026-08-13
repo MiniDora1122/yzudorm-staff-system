@@ -39,11 +39,19 @@ function Read-KeyValues([string]$Path) {
 
 function Invoke-Checked([string]$FilePath, [string[]]$Arguments, [string]$WorkingDirectory) {
     Push-Location $WorkingDirectory
+    $previousErrorActionPreference = $ErrorActionPreference
     try {
+        $ErrorActionPreference = "Continue"
+        # Native tools such as Alembic write normal INFO messages to stderr.
+        # Treat the process exit code, not the output stream, as authoritative.
         $output = & $FilePath @Arguments 2>&1
+        $exitCode = $LASTEXITCODE
         foreach ($line in $output) { Write-UpdateLog ([string]$line) }
-        if ($LASTEXITCODE -ne 0) { throw "$FilePath failed with exit code $LASTEXITCODE" }
-    } finally { Pop-Location }
+        if ($exitCode -ne 0) { throw "$FilePath failed with exit code $exitCode" }
+    } finally {
+        $ErrorActionPreference = $previousErrorActionPreference
+        Pop-Location
+    }
 }
 
 function Restore-PreviousVersion(
