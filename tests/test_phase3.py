@@ -68,6 +68,41 @@ def test_duplicate_leave_is_rejected_and_pending_can_cancel(client, app):
         assert db.session.get(LeaveRequest, request_id).status == LeaveStatus.CANCELLED
 
 
+def test_requester_leave_and_swap_reasons_cannot_be_blank(client, app):
+    values = ids(app)
+    login(client)
+    leave_shift_id = create_shift_as_admin(
+        client, values, "2026-08-20", "student_one", "TEST_AM"
+    )
+    swap_shift_id = create_shift_as_admin(
+        client, values, "2026-08-21", "student_one", "TEST_AM"
+    )
+    logout(client)
+    login(client, "student-test", "StudentTest!2026")
+
+    client.post(
+        "/student/leave-requests",
+        data={"shift_id": leave_shift_id, "reason": "   ", "note": ""},
+    )
+    client.post(
+        "/student/swap-requests",
+        data={
+            "requester_shift_id": swap_shift_id,
+            "target_staff_id": values["student_two"],
+            "target_shift_id": "",
+            "note": "   ",
+        },
+    )
+
+    with app.app_context():
+        assert db.session.scalar(db.select(db.func.count()).select_from(LeaveRequest)) == 0
+        assert db.session.scalar(db.select(db.func.count()).select_from(SwapRequest)) == 0
+
+    page = client.get("/student/requests")
+    assert b'id="leaveReason" name="reason" maxlength="255" required' in page.data
+    assert b'id="swapNote" name="note" maxlength="1000" rows="2" required' in page.data
+
+
 def test_admin_approves_leave_and_preserves_vacancy_and_audit(client, app):
     values = ids(app)
     login(client)
@@ -154,6 +189,7 @@ def test_admin_cannot_approve_before_peer_accepts(client, app):
             "requester_shift_id": requester_shift_id,
             "target_staff_id": values["student_two"],
             "target_shift_id": "",
+            "note": "請對方承接",
         },
     )
     with app.app_context():
@@ -179,7 +215,11 @@ def test_swap_creation_rejects_conflicts_before_peer_or_admin_review(client, app
     login(client, "student-test", "StudentTest!2026")
     client.post(
         "/student/swap-requests",
-        data={"requester_shift_id": requester_shift_id, "target_staff_id": values["student_two"]},
+        data={
+            "requester_shift_id": requester_shift_id,
+            "target_staff_id": values["student_two"],
+            "note": "申請換班",
+        },
     )
     with app.app_context():
         swap_id = db.session.scalar(db.select(SwapRequest.id))
@@ -212,6 +252,8 @@ def test_approved_swap_updates_both_shifts_and_audit(client, app):
     logout(client)
     login(client, "student-two", "StudentTwo!2026")
     client.post(f"/student/swap-requests/{swap_id}/respond", data={"decision": "ACCEPT"})
+    with app.app_context():
+        assert db.session.get(SwapRequest, swap_id).peer_status == SwapPeerStatus.ACCEPTED
     logout(client)
     login(client)
     response = client.post(

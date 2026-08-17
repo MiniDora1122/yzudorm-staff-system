@@ -607,8 +607,8 @@ def create_swap():
     target_staff = db.session.get(StaffProfile, target_staff_id)
     target_shift = db.session.get(Shift, target_shift_id) if target_shift_id else None
     note = request.form.get("note", "").strip()
-    if profile is None or requester_shift is None or target_staff is None or len(note) > 1000:
-        flash("換班資料不完整或備註過長。", "danger")
+    if profile is None or requester_shift is None or target_staff is None or not note or len(note) > 1000:
+        flash("換班原因為必填，且不可超過 1000 字。 / Swap reason is required.", "danger")
         return redirect(url_for("student.requests_page"))
     try:
         create_swap_request(

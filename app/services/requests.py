@@ -62,6 +62,9 @@ def validate_swap_assignments(
 def create_leave_request(
     *, profile: StaffProfile, shift: Shift, reason: str, note: str | None, actor_user_id: int, today: date
 ) -> LeaveRequest:
+    reason = reason.strip()
+    if not reason or len(reason) > 255:
+        raise WorkflowError("REASON_REQUIRED", "請假原因為必填，且不可超過 255 字。 / Leave reason is required.")
     if shift.staff_id != profile.id:
         raise WorkflowError("NOT_OWNER", "只能替自己的排班提出請假。")
     if shift.status != ShiftStatus.SCHEDULED:
@@ -144,6 +147,9 @@ def create_swap_request(
     actor_user_id: int,
     today: date,
 ) -> SwapRequest:
+    note = (note or "").strip()
+    if not note or len(note) > 1000:
+        raise WorkflowError("REASON_REQUIRED", "換班原因為必填，且不可超過 1000 字。 / Swap reason is required.")
     if requester_shift.staff_id != requester.id:
         raise WorkflowError("NOT_OWNER", "不能交換不屬於自己的排班。")
     if requester_shift.status != ShiftStatus.SCHEDULED or requester_shift.shift_date < today:
@@ -189,7 +195,7 @@ def create_swap_request(
         requester_shift_id=requester_shift.id,
         target_staff_id=target_staff.id,
         target_shift_id=target_shift.id if target_shift else None,
-        note=note or None,
+        note=note,
     )
     db.session.add(request_item)
     db.session.flush()

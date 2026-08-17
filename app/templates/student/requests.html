@@ -30,7 +30,7 @@
     <h2 class="h5 fw-bold" data-en="Request leave"><i class="bi bi-calendar-x text-warning me-2"></i>提出請假</h2><p class="small text-secondary" data-en="Only your active future shifts can be selected.">只能選擇自己尚未過期的有效排班。</p>
     <form method="post" action="{{ url_for('student.create_leave') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <div class="mb-3"><label class="form-label" for="leaveShift" data-en="Shift">排班</label><select class="form-select" id="leaveShift" name="shift_id" required><option value="">請選擇 Select</option>{% for shift in own_shifts %}<option value="{{ shift.id }}">{{ shift_text(shift) }}</option>{% endfor %}</select></div>
-      <div class="mb-3"><label class="form-label" for="leaveReason" data-en="Reason">原因</label><input class="form-control" id="leaveReason" name="reason" maxlength="255" required></div>
+      <div class="mb-3"><label class="form-label" for="leaveReason" data-en="Reason">請假原因 <span class="text-danger">*</span></label><input class="form-control" id="leaveReason" name="reason" maxlength="255" required></div>
       <div class="mb-3"><label class="form-label" for="leaveNote" data-en="Note">備註</label><textarea class="form-control" id="leaveNote" name="note" maxlength="1000" rows="2"></textarea></div>
       <button class="btn btn-warning w-100" type="submit" data-en="Submit leave request">送出請假申請</button>
     </form>
@@ -41,7 +41,7 @@
       <div class="mb-3"><label class="form-label" for="requesterShift" data-en="My shift">我的班</label><select class="form-select" id="requesterShift" name="requester_shift_id" required><option value="">請選擇 Select</option>{% for shift in own_shifts %}<option value="{{ shift.id }}">{{ shift_text(shift) }}</option>{% endfor %}</select></div>
       <div class="row g-3 mb-3"><div class="col-md-5"><label class="form-label" for="targetStaff">換班對象</label><select class="form-select" id="targetStaff" name="target_staff_id" required><option value="">請選擇</option>{% for staff in target_profiles %}<option value="{{ staff.id }}">{{ staff.name }}</option>{% endfor %}</select></div>
       <div class="col-md-7"><label class="form-label" for="targetShift">對方班表</label><select class="form-select" id="targetShift" name="target_shift_id"><option value="">不交換對方班表，直接請對方承接</option>{% for shift in target_shifts %}<option value="{{ shift.id }}" data-staff-id="{{ shift.staff_id }}">{{ shift.staff.name }}｜{{ shift_text(shift) }}</option>{% endfor %}</select></div></div>
-      <div class="mb-3"><label class="form-label" for="swapNote">說明</label><textarea class="form-control" id="swapNote" name="note" maxlength="1000" rows="2"></textarea></div>
+      <div class="mb-3"><label class="form-label" for="swapNote" data-en="Swap reason">換班原因 <span class="text-danger">*</span></label><textarea class="form-control" id="swapNote" name="note" maxlength="1000" rows="2" required></textarea></div>
       <button class="btn btn-primary w-100" type="submit" data-en="Send swap invitation">送出換班邀請</button>
     </form>
   </div></div></div>
