@@ -6,7 +6,7 @@
   <div class="page-heading">
     <span class="eyebrow">STUDENT</span>
     <h1 class="h2 fw-bold mt-2 mb-1" data-en="Hello, {{ profile.name if profile else current_user.username }}">你好，{{ profile.name if profile else current_user.username }}</h1>
-    <p class="text-secondary mb-0" data-en="Only information associated with your account is shown here.">這裡只會顯示與你本人帳號相關的資料。</p>
+    <p class="text-secondary mb-0" data-en="Your information is shown by default; the calendar can also display all published schedules.">首頁預設顯示你的資料；月曆也可以切換查看所有已發布班表。</p>
   </div>
   <a class="btn btn-outline-primary" href="{{ url_for('student.profile') }}" data-en="My profile"><i class="bi bi-person me-2"></i>我的資料</a>
 </div>
@@ -40,17 +40,23 @@
         <span class="eyebrow" data-en="MY SCHEDULE">我的班表</span>
         <h2 class="h5 fw-bold mt-2 mb-0" data-en="Monthly calendar">月曆</h2>
       </div>
+      <div class="btn-group" id="studentScheduleScope" role="group" aria-label="班表顯示範圍 Schedule scope">
+        <input class="btn-check" type="radio" name="studentScheduleScope" id="studentScheduleMine" value="mine" checked>
+        <label class="btn btn-sm btn-outline-primary" for="studentScheduleMine">我的班表 <small class="d-block">My schedule</small></label>
+        <input class="btn-check" type="radio" name="studentScheduleScope" id="studentScheduleAll" value="all">
+        <label class="btn btn-sm btn-outline-primary" for="studentScheduleAll">所有班表 <small class="d-block">All schedules</small></label>
+      </div>
       <div class="d-flex gap-3 small text-secondary calendar-legend flex-wrap">
         {% for location in locations %}<span><i class="legend-dot" style="background: {{ location.color }}"></i>{{ location.name }} <small>{{ location.name_en }}</small></span>{% endfor %}
         <span data-en="Leave / swap status is shown in the calendar"><i class="bi bi-tag me-1"></i>請假／換班狀態顯示於班表內</span>
       </div>
     </div>
-    <div id="studentCalendar" class="schedule-calendar location-lane-calendar student-calendar" aria-label="我的排班月曆"></div>
+    <div id="studentCalendar" class="schedule-calendar location-lane-calendar student-calendar" aria-label="班表月曆 Schedule calendar"></div>
   </div>
 </div>
 <div class="card app-card border-0 shadow-sm" id="upcomingShifts">
   <div class="card-body p-4">
-    <h2 class="h5 fw-bold mb-3" data-en="My upcoming shifts">我的近期排班</h2>
+    <h2 class="h5 fw-bold mb-3" data-en="My upcoming shifts">我的近期排班 <small class="fw-normal text-secondary">（只顯示近期 5 筆）<span class="bilingual-english">Only the next 5 shifts are shown</span></small></h2>
     <div class="table-responsive">
       <table class="table align-middle mb-0">
         <thead><tr><th data-en="Date">日期</th><th data-en="Location">地點</th><th data-en="Shift type">班別</th><th data-en="Time">時間</th></tr></thead>
@@ -75,6 +81,7 @@
       </div>
       <div class="modal-body">
         <dl class="row mb-0 shift-detail-list">
+          <dt class="col-4" data-en="Student worker">工讀生</dt><dd class="col-8" id="studentShiftStaff">—</dd>
           <dt class="col-4" data-en="Date">日期</dt><dd class="col-8" id="studentShiftDate">—</dd>
           <dt class="col-4" data-en="Location">地點</dt><dd class="col-8"><span id="studentShiftLocation">—</span><small class="bilingual-english" id="studentShiftLocationEn"></small></dd>
           <dt class="col-4" data-en="Shift type">班別</dt><dd class="col-8"><span id="studentShiftType">—</span><small class="bilingual-english" id="studentShiftTypeEn"></small></dd>

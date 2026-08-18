@@ -147,3 +147,14 @@ def test_student_request_chooser_and_wage_disclaimer_are_visible(client):
     assert "尚未扣除勞保、健保等費用，僅供試算參考。".encode("utf-8") in dashboard.data
     assert b'href="#studentScheduleApp"' in dashboard.data
     assert b'href="#upcomingShifts"' in dashboard.data
+    assert b'id="studentScheduleMine"' in dashboard.data
+    assert b'id="studentScheduleAll"' in dashboard.data
+    assert "只顯示近期 5 筆".encode("utf-8") in dashboard.data
+    assert b"Only the next 5 shifts are shown" in dashboard.data
+
+    student_calendar_js = client.get("/static/js/student_calendar.js").data
+    admin_schedule_js = client.get("/static/js/admin_schedule.js").data
+    for calendar_js in (student_calendar_js, admin_schedule_js):
+        assert b'info.view.type === "listMonth"' in calendar_js
+        assert b"getMonth() + 1" in calendar_js
+        assert b"getDate()" in calendar_js

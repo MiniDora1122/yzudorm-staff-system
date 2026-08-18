@@ -2,7 +2,15 @@ from datetime import date, time
 from decimal import Decimal
 
 from app.extensions import db
-from app.models import Shift, ShiftStatus, ShiftType, StaffProfile, User, WorkLocation
+from app.models import (
+    Shift,
+    ShiftPublicationStatus,
+    ShiftStatus,
+    ShiftType,
+    StaffProfile,
+    User,
+    WorkLocation,
+)
 
 from .conftest import login
 
@@ -166,6 +174,14 @@ def test_student_calendar_only_returns_own_shifts(client, app):
                     status=ShiftStatus.SCHEDULED,
                     created_by=admin.id,
                 ),
+                Shift(
+                    shift_date=date(2026, 8, 18),
+                    shift_type_id=values["TEST_PM"],
+                    staff_id=values["student_two"],
+                    status=ShiftStatus.SCHEDULED,
+                    publication_status=ShiftPublicationStatus.DRAFT,
+                    created_by=admin.id,
+                ),
             ]
         )
         db.session.commit()
@@ -176,6 +192,25 @@ def test_student_calendar_only_returns_own_shifts(client, app):
     assert len(response.json) == 1
     assert response.json[0]["extendedProps"]["staffName"] == "測試學生"
     assert response.json[0]["extendedProps"]["locationLabel"] == "辦公室"
+
+    all_schedules = client.get(
+        "/student/api/shifts?start=2026-08-01&end=2026-09-01&scope=all"
+    )
+    assert all_schedules.status_code == 200
+    assert len(all_schedules.json) == 2
+    assert {event["extendedProps"]["staffName"] for event in all_schedules.json} == {
+        "測試學生",
+        "第二位學生",
+    }
+    assert all(
+        event["extendedProps"]["publicationStatus"] == "PUBLISHED"
+        for event in all_schedules.json
+    )
+
+    invalid_scope = client.get(
+        "/student/api/shifts?start=2026-08-01&end=2026-09-01&scope=unknown"
+    )
+    assert invalid_scope.status_code == 400
 
     hours = client.get("/student/api/monthly-hours?month=2026-08")
     assert hours.status_code == 200

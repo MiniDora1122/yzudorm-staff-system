@@ -681,6 +681,9 @@ def shift_events():
     profile = current_user.staff_profile
     if profile is None:
         return jsonify([])
+    scope = request.args.get("scope", "mine").strip().lower()
+    if scope not in {"mine", "all"}:
+        return jsonify({"error": {"code": "VALIDATION_ERROR", "message": "班表範圍格式錯誤。 / Invalid schedule scope."}}), 400
     try:
         start = parse_calendar_date(request.args.get("start"))
         end = parse_calendar_date(request.args.get("end"))
@@ -696,7 +699,6 @@ def shift_events():
         )
         .join(ShiftType)
         .where(
-            Shift.staff_id == profile.id,
             Shift.status.in_([ShiftStatus.SCHEDULED, ShiftStatus.ON_LEAVE]),
             Shift.publication_status == ShiftPublicationStatus.PUBLISHED,
             Shift.shift_date >= start,
@@ -704,6 +706,8 @@ def shift_events():
         )
         .order_by(Shift.shift_date, ShiftType.display_order)
     )
+    if scope == "mine":
+        statement = statement.where(Shift.staff_id == profile.id)
     shifts = db.session.scalars(statement).all()
     annotations = workflow_annotations(shifts, profile_id=profile.id)
     events = [
@@ -711,7 +715,7 @@ def shift_events():
         for shift in shifts
     ]
     own_ids = {shift.id for shift in shifts}
-    for invitation in direct_swap_invitations(profile_id=profile.id, start=start, end=end):
+    for invitation in direct_swap_invitations(profile_id=profile.id, start=start, end=end) if scope == "mine" else []:
         if invitation.requester_shift_id in own_ids:
             continue
         event = shift_to_event(invitation.requester_shift, student_view=True)

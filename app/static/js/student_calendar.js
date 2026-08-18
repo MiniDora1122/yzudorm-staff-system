@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const locations = JSON.parse(document.getElementById("studentLocationsJson").textContent);
   const calendarElement = document.getElementById("studentCalendar");
+  const scheduleScope = document.getElementById("studentScheduleScope");
   const modal = new bootstrap.Modal(document.getElementById("studentShiftModal"));
   let visibleMonth = "";
   let laneSyncFrame = 0;
@@ -12,6 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const monthKey = (date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
   const englishMonth = (date) => new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric" }).format(date);
+  const selectedScope = () => document.querySelector('input[name="studentScheduleScope"]:checked')?.value || "mine";
 
   const loadHours = async () => {
     if (!visibleMonth) return;
@@ -130,8 +132,13 @@ document.addEventListener("DOMContentLoaded", () => {
     buttonText: { today: "今天", month: "月曆", list: "清單" },
     dayHeaderContent: (info) => {
       const wrapper = document.createElement("span");
+      if (info.view.type === "listMonth") {
+        const date = document.createElement("strong");
+        date.textContent = `${String(info.date.getMonth() + 1).padStart(2, "0")}/${String(info.date.getDate()).padStart(2, "0")}`;
+        wrapper.append(date);
+      }
       const chinese = document.createElement("span");
-      chinese.textContent = new Intl.DateTimeFormat("zh-TW", { weekday: "short" }).format(info.date);
+      chinese.textContent = `${info.view.type === "listMonth" ? " " : ""}${new Intl.DateTimeFormat("zh-TW", { weekday: "short" }).format(info.date)}`;
       const english = document.createElement("small");
       english.lang = "en";
       english.textContent = new Intl.DateTimeFormat("en-US", { weekday: "short" }).format(info.date);
@@ -159,7 +166,7 @@ document.addEventListener("DOMContentLoaded", () => {
       wrapper.className = "calendar-event-content";
       if (info.view.type === "listMonth") {
         const chinese = document.createElement("span");
-        chinese.textContent = `${props.locationLabel}｜${props.shiftTypeName}｜${props.timeLabel}`;
+        chinese.textContent = `${selectedScope() === "all" ? `${props.staffName}｜` : ""}${props.locationLabel}｜${props.shiftTypeName}｜${props.timeLabel}`;
         const english = document.createElement("small");
         english.lang = "en";
         english.textContent = `${props.locationLabelEn} | ${props.shiftTypeNameEn}`;
@@ -169,8 +176,13 @@ document.addEventListener("DOMContentLoaded", () => {
         time.className = "calendar-event-time";
         time.textContent = props.timeLabel;
         const type = document.createElement("strong");
-        type.textContent = props.shiftTypeName;
+        type.textContent = selectedScope() === "all" ? props.staffName : props.shiftTypeName;
         wrapper.append(time, type);
+        if (selectedScope() === "all") {
+          const detail = document.createElement("small");
+          detail.textContent = `${props.shiftTypeName} ${props.shiftTypeNameEn}`;
+          wrapper.append(detail);
+        }
       }
       (props.workflowAnnotations || []).forEach((annotation) => {
         const badge = document.createElement("span");
@@ -183,7 +195,8 @@ document.addEventListener("DOMContentLoaded", () => {
     eventDidMount: (info) => {
       const props = info.event.extendedProps;
       const workflowText = (props.workflowAnnotations || []).map((item) => item.label).join("、");
-      info.el.title = `${props.locationLabel}｜${props.shiftTypeName}｜${props.timeLabel}${workflowText ? `｜${workflowText}` : ""}`;
+      const staffPrefix = selectedScope() === "all" ? `${props.staffName}｜` : "";
+      info.el.title = `${staffPrefix}${props.locationLabel}｜${props.shiftTypeName}｜${props.timeLabel}${workflowText ? `｜${workflowText}` : ""}`;
       info.el.dataset.locationId = String(props.locationId);
       info.el.dataset.locationCode = props.location;
       if (info.view.type !== "dayGridMonth") return;
@@ -193,7 +206,14 @@ document.addEventListener("DOMContentLoaded", () => {
       if (lane) lane.append(harness);
       scheduleEventPlacement();
     },
-    events: app.dataset.eventsUrl,
+    events: async (info, success, failure) => {
+      const params = new URLSearchParams({ start: info.startStr, end: info.endStr, scope: selectedScope() });
+      try {
+        const response = await fetch(`${app.dataset.eventsUrl}?${params}`, { credentials: "same-origin" });
+        if (!response.ok) throw new Error("無法載入班表。 / Unable to load schedules.");
+        success(await response.json());
+      } catch (error) { failure(error); }
+    },
     datesSet: (info) => {
       visibleMonth = monthKey(info.view.currentStart);
       window.setTimeout(() => {
@@ -206,6 +226,7 @@ document.addEventListener("DOMContentLoaded", () => {
     eventsSet: scheduleEventPlacement,
     eventClick: (info) => {
       const props = info.event.extendedProps;
+      document.getElementById("studentShiftStaff").textContent = props.staffName;
       document.getElementById("studentShiftDate").textContent = props.shiftDate;
       document.getElementById("studentShiftLocation").textContent = props.locationLabel;
       document.getElementById("studentShiftLocationEn").textContent = props.locationLabelEn;
@@ -218,6 +239,8 @@ document.addEventListener("DOMContentLoaded", () => {
       modal.show();
     },
   });
+
+  scheduleScope?.addEventListener("change", () => calendar.refetchEvents());
 
   calendar.render();
   const refreshResponsiveCalendarLayout = () => {

@@ -277,8 +277,13 @@ document.addEventListener("DOMContentLoaded", () => {
     buttonText: { today: "今天", month: "月曆", list: "清單" },
     dayHeaderContent: (info) => {
       const wrapper = document.createElement("span");
+      if (info.view.type === "listMonth") {
+        const date = document.createElement("strong");
+        date.textContent = `${String(info.date.getMonth() + 1).padStart(2, "0")}/${String(info.date.getDate()).padStart(2, "0")}`;
+        wrapper.append(date);
+      }
       const chinese = document.createElement("span");
-      chinese.textContent = new Intl.DateTimeFormat("zh-TW", { weekday: "short" }).format(info.date);
+      chinese.textContent = `${info.view.type === "listMonth" ? " " : ""}${new Intl.DateTimeFormat("zh-TW", { weekday: "short" }).format(info.date)}`;
       const english = document.createElement("small");
       english.lang = "en";
       english.textContent = new Intl.DateTimeFormat("en-US", { weekday: "short" }).format(info.date);
