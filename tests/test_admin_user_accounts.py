@@ -130,6 +130,14 @@ def test_primary_pages_include_smaller_english_labels(client):
     dashboard = client.get("/admin/")
     assert b'data-en="Admin accounts"' in admin_page.data
     assert b'data-en="Admin dashboard"' in dashboard.data
+    assert b"admin-navbar" in dashboard.data
+    assert b"white-space: nowrap" in client.get("/static/css/app.css").data
+    assert b"nav-link bg-transparent border-0" in dashboard.data
+    assert dashboard.data.count(b'data-bilingual-processed="true"') >= 5
+    assert dashboard.data.count(b"nav-dropdown-indicator") == 4
+    assert b"navbar-notification-count { margin-left: .25rem;" in client.get("/static/css/app.css").data
+    assert b'<span class="nav-primary-label"><i class="bi bi-bell-fill' in dashboard.data
+    assert b'element.classList.contains("nav-primary-label")' in client.get("/static/js/bilingual.js").data
     assert b"font-size: .7em" in client.get("/static/css/app.css").data
     assert b"js/bilingual.js" in dashboard.data
     bilingual_script = client.get("/static/js/bilingual.js")

@@ -140,6 +140,15 @@ def test_deployment_files_are_available():
         assert (PROJECT_ROOT / relative).is_file(), relative
 
 
+def test_production_waitress_trusts_only_local_apache_proxy():
+    source = (PROJECT_ROOT / "deployment" / "start-production.ps1").read_text(
+        encoding="utf-8"
+    )
+    assert '"--trusted-proxy=127.0.0.1"' in source
+    assert '"--trusted-proxy-count=1"' in source
+    assert "x-forwarded-for x-forwarded-proto x-forwarded-host x-forwarded-port" in source
+
+
 def test_launcher_persists_secret_key_recovery_backup():
     source = (PROJECT_ROOT / "portable-windows-launcher" / "DormStaffLauncher.cs").read_text(
         encoding="utf-8"

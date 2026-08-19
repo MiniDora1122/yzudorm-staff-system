@@ -53,6 +53,25 @@ namespace DormStaffPortable
                 }
                 return;
             }
+            if (args.Length > 0 && String.Equals(args[0], "--install-terminal-headless", StringComparison.OrdinalIgnoreCase))
+            {
+                string logPath = Path.Combine(environment.BaseDirectory, "terminal-install.log");
+                try
+                {
+                    PortableManager manager = new PortableManager(environment, delegate(string message)
+                    {
+                        File.AppendAllText(logPath, "[" + DateTime.Now.ToString("HH:mm:ss") + "] " + message + Environment.NewLine, Encoding.UTF8);
+                    });
+                    manager.InstallTerminalRuntime();
+                    Environment.Exit(0);
+                }
+                catch (Exception ex)
+                {
+                    File.AppendAllText(logPath, ex.ToString() + Environment.NewLine, Encoding.UTF8);
+                    Environment.Exit(1);
+                }
+                return;
+            }
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
@@ -92,6 +111,8 @@ namespace DormStaffPortable
         public int WatchdogIntervalMinutes = 5;
         public bool AutoStartEnabled;
         public bool OpenBrowserAfterStart = true;
+        public bool AttendanceEnabled = true;
+        public string AttendanceTransportMode = "ENCRYPTED_HTTP";
 
         public static LauncherConfig Load(string path)
         {
@@ -121,6 +142,10 @@ namespace DormStaffPortable
                     config.AutoStartEnabled = value == "1" || value.Equals("true", StringComparison.OrdinalIgnoreCase);
                 else if (key.Equals("OpenBrowserAfterStart", StringComparison.OrdinalIgnoreCase))
                     config.OpenBrowserAfterStart = value == "1" || value.Equals("true", StringComparison.OrdinalIgnoreCase);
+                else if (key.Equals("AttendanceEnabled", StringComparison.OrdinalIgnoreCase))
+                    config.AttendanceEnabled = value == "1" || value.Equals("true", StringComparison.OrdinalIgnoreCase);
+                else if (key.Equals("AttendanceTransportMode", StringComparison.OrdinalIgnoreCase) && (value == "HTTPS" || value == "ENCRYPTED_HTTP"))
+                    config.AttendanceTransportMode = value;
             }
             return config;
         }
@@ -137,7 +162,9 @@ namespace DormStaffPortable
                 "RepositoryUrl=" + RepositoryUrl,
                 "WatchdogIntervalMinutes=" + WatchdogIntervalMinutes,
                 "AutoStartEnabled=" + (AutoStartEnabled ? "1" : "0"),
-                "OpenBrowserAfterStart=" + (OpenBrowserAfterStart ? "1" : "0")
+                "OpenBrowserAfterStart=" + (OpenBrowserAfterStart ? "1" : "0"),
+                "AttendanceEnabled=" + (AttendanceEnabled ? "1" : "0"),
+                "AttendanceTransportMode=" + AttendanceTransportMode
             };
             File.WriteAllLines(path, lines, new UTF8Encoding(false));
         }
@@ -375,6 +402,20 @@ namespace DormStaffPortable
         public void InstallOrRepair()
         {
             using (AcquireMaintenance("INSTALL_REPAIR")) InstallOrRepairCore();
+        }
+
+        public void InstallTerminalRuntime()
+        {
+            using (AcquireMaintenance("TERMINAL_INSTALL"))
+            {
+                EnsureSupportedWindows();
+                Directory.CreateDirectory(environment.RuntimeDirectory);
+                Directory.CreateDirectory(environment.DownloadsDirectory);
+                Directory.CreateDirectory(environment.LogsDirectory);
+                EnsureGit();
+                ValidateProject();
+                log("打卡終端環境完成。 / Attendance terminal runtime ready.");
+            }
         }
 
         private void InstallOrRepairCore()
@@ -1320,6 +1361,8 @@ namespace DormStaffPortable
         private readonly NumericUpDown watchdogMinutesBox = new NumericUpDown();
         private readonly CheckBox lanCheck = new CheckBox();
         private readonly CheckBox browserCheck = new CheckBox();
+        private readonly CheckBox attendanceCheck = new CheckBox();
+        private readonly ComboBox attendanceModeBox = new ComboBox();
         private readonly RichTextBox logBox = new RichTextBox();
         private readonly List<Button> actionButtons = new List<Button>();
         private readonly System.Windows.Forms.Timer statusTimer = new System.Windows.Forms.Timer();
@@ -1392,10 +1435,9 @@ namespace DormStaffPortable
             Controls.Add(body); body.BringToFront();
 
             GroupBox settings = new GroupBox { Text = "設定 / Settings", Dock = DockStyle.Fill, Padding = new Padding(14) };
-            TableLayoutPanel settingGrid = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 3, RowCount = 7 };
+            TableLayoutPanel settingGrid = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 3, RowCount = 9 };
             settingGrid.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110)); settingGrid.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100)); settingGrid.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 76));
-            for (int i = 0; i < 6; i++) settingGrid.RowStyles.Add(new RowStyle(SizeType.Absolute, 38));
-            settingGrid.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+            for (int i = 0; i < 9; i++) settingGrid.RowStyles.Add(new RowStyle(SizeType.Absolute, 38));
             AddSettingRow(settingGrid, 0, "專案資料夾", projectBox, MakeButton("選擇", delegate { ChooseProject(); }));
             AddSettingRow(settingGrid, 1, "監聽 Port", portBox, null);
             AddSettingRow(settingGrid, 2, "Git 分支", branchBox, null);
@@ -1404,15 +1446,20 @@ namespace DormStaffPortable
             settingGrid.Controls.Add(lanCheck, 1, 4); settingGrid.SetColumnSpan(lanCheck, 2);
             browserCheck.Text = "啟動後自動開啟瀏覽器"; browserCheck.AutoSize = true;
             settingGrid.Controls.Add(browserCheck, 1, 5);
+            attendanceCheck.Text = "啟用上下班打卡服務 / Enable attendance"; attendanceCheck.AutoSize = true;
+            settingGrid.Controls.Add(attendanceCheck, 1, 6); settingGrid.SetColumnSpan(attendanceCheck, 2);
+            attendanceModeBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            attendanceModeBox.Items.AddRange(new object[] { "ENCRYPTED_HTTP", "HTTPS" });
+            AddSettingRow(settingGrid, 7, "打卡傳輸", attendanceModeBox, null);
             Button save = MakeButton("儲存", delegate { SaveSettings(); }); settingGrid.Controls.Add(save, 2, 5);
             watchdogMinutesBox.Minimum = 1; watchdogMinutesBox.Maximum = 1440; watchdogMinutesBox.DecimalPlaces = 0;
-            AddSettingRow(settingGrid, 6, "巡檢分鐘", watchdogMinutesBox, null);
+            AddSettingRow(settingGrid, 8, "巡檢分鐘", watchdogMinutesBox, null);
             settings.Controls.Add(settingGrid); body.Controls.Add(settings, 0, 0);
 
             GroupBox actions = new GroupBox { Text = "操作 / Actions", Dock = DockStyle.Fill, Padding = new Padding(14) };
-            TableLayoutPanel actionGrid = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 2, RowCount = 8 };
+            TableLayoutPanel actionGrid = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 2, RowCount = 9 };
             actionGrid.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50)); actionGrid.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
-            for (int i = 0; i < 8; i++) actionGrid.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            for (int i = 0; i < 9; i++) actionGrid.RowStyles.Add(new RowStyle(SizeType.Percent, 11.11F));
             AddAction(actionGrid, 0, 0, "① 安裝／修復環境\r\nInstall / Repair", Color.FromArgb(21, 101, 192), delegate { RunBackground("安裝環境", manager.InstallOrRepair); });
             AddAction(actionGrid, 1, 0, "② 啟動系統\r\nStart", Color.FromArgb(24, 135, 84), StartServer);
             AddAction(actionGrid, 0, 1, "停止系統\r\nStop", Color.FromArgb(185, 46, 52), StopServer);
@@ -1428,6 +1475,8 @@ namespace DormStaffPortable
             AddAction(actionGrid, 0, 6, "匯出診斷支援包\r\nDiagnostic bundle", Color.FromArgb(53, 88, 115), ExportDiagnosticBundle);
             actionGrid.SetColumnSpan(actionButtons[actionButtons.Count - 1], 2);
             AddAction(actionGrid, 0, 7, "全新初始化：清空資料並建立第一位管理員\r\nFresh database setup", Color.FromArgb(139, 31, 38), FreshDatabaseSetup);
+            actionGrid.SetColumnSpan(actionButtons[actionButtons.Count - 1], 2);
+            AddAction(actionGrid, 0, 8, "打卡裝置與註冊包管理\r\nAttendance devices / registration", Color.FromArgb(14, 103, 122), OpenAttendanceManagement);
             actionGrid.SetColumnSpan(actionButtons[actionButtons.Count - 1], 2);
             actions.Controls.Add(actionGrid); body.Controls.Add(actions, 1, 0);
 
@@ -1462,6 +1511,9 @@ namespace DormStaffPortable
             repositoryBox.Text = environment.Config.RepositoryUrl;
             lanCheck.Checked = environment.Config.ListenAddress == "0.0.0.0";
             browserCheck.Checked = environment.Config.OpenBrowserAfterStart;
+            attendanceCheck.Checked = environment.Config.AttendanceEnabled;
+            attendanceModeBox.SelectedItem = environment.Config.AttendanceTransportMode;
+            if (attendanceModeBox.SelectedIndex < 0) attendanceModeBox.SelectedItem = "ENCRYPTED_HTTP";
             watchdogMinutesBox.Value = environment.Config.WatchdogIntervalMinutes;
         }
 
@@ -1477,10 +1529,41 @@ namespace DormStaffPortable
             environment.Config.RepositoryUrl = repositoryBox.Text.Trim();
             environment.Config.WatchdogIntervalMinutes = Decimal.ToInt32(watchdogMinutesBox.Value);
             environment.Config.OpenBrowserAfterStart = browserCheck.Checked;
+            environment.Config.AttendanceEnabled = attendanceCheck.Checked;
+            environment.Config.AttendanceTransportMode = attendanceModeBox.SelectedItem == null ? "ENCRYPTED_HTTP" : attendanceModeBox.SelectedItem.ToString();
             environment.Config.Save(environment.ConfigPath);
+            if (environment.ProjectIsValid)
+            {
+                WriteEnvironmentSetting("ATTENDANCE_ENABLED", environment.Config.AttendanceEnabled ? "1" : "0");
+                WriteEnvironmentSetting("ATTENDANCE_TRANSPORT_MODE", environment.Config.AttendanceTransportMode);
+                WriteEnvironmentSetting("ATTENDANCE_REQUIRE_HTTPS", environment.Config.AttendanceTransportMode == "HTTPS" ? "1" : "0");
+            }
             WriteLog("設定已儲存。 / Settings saved.");
+            WriteLog("打卡設定會在下次啟動系統時生效。 / Attendance settings apply on the next server start.");
             UpdateStatus();
             return true;
+        }
+
+        private void WriteEnvironmentSetting(string key, string value)
+        {
+            string path = environment.EnvFile;
+            List<string> lines = File.Exists(path)
+                ? new List<string>(File.ReadAllLines(path, Encoding.UTF8))
+                : new List<string>();
+            bool replaced = false;
+            for (int i = 0; i < lines.Count; i++)
+            {
+                string trimmed = lines[i].TrimStart();
+                if (!trimmed.StartsWith(key + "=", StringComparison.OrdinalIgnoreCase)) continue;
+                lines[i] = key + "=" + value;
+                replaced = true;
+                break;
+            }
+            if (!replaced) lines.Add(key + "=" + value);
+            string temporary = path + ".launcher.tmp";
+            File.WriteAllLines(temporary, lines, new UTF8Encoding(false));
+            if (File.Exists(path)) File.Replace(temporary, path, null);
+            else File.Move(temporary, path);
         }
 
         private void ChooseProject()
@@ -1809,7 +1892,7 @@ namespace DormStaffPortable
                         throw new InvalidOperationException("啟動前 Port 已被占用，已停止以避免重複啟動。 / Port became occupied before startup.");
                     string logFile = Path.Combine(environment.LogsDirectory, "server-" + DateTime.Now.ToString("yyyy-MM-dd") + ".log");
                     Directory.CreateDirectory(environment.LogsDirectory);
-                    ProcessStartInfo info = new ProcessStartInfo(environment.PythonExe, "-m waitress --listen=" + environment.Config.ListenAddress + ":" + port + " --threads=8 --ident=dorm-staff-system wsgi:app");
+                    ProcessStartInfo info = new ProcessStartInfo(environment.PythonExe, "-m waitress --listen=" + environment.Config.ListenAddress + ":" + port + " --threads=8 --trusted-proxy=127.0.0.1 --trusted-proxy-count=1 --trusted-proxy-headers=\"x-forwarded-for x-forwarded-proto x-forwarded-host x-forwarded-port\" --ident=dorm-staff-system wsgi:app");
                     info.WorkingDirectory = environment.ProjectRoot; info.UseShellExecute = false; info.CreateNoWindow = true; info.RedirectStandardOutput = true; info.RedirectStandardError = true;
                     info.StandardOutputEncoding = Encoding.UTF8; info.StandardErrorEncoding = Encoding.UTF8; info.EnvironmentVariables["PYTHONUTF8"] = "1";
                     serverProcess = new Process(); serverProcess.StartInfo = info; serverProcess.EnableRaisingEvents = true;
@@ -1892,6 +1975,12 @@ namespace DormStaffPortable
         {
             try { Process.Start(new ProcessStartInfo("http://127.0.0.1:" + environment.Config.Port) { UseShellExecute = true }); }
             catch (Exception ex) { MessageBox.Show(ex.Message, "無法開啟瀏覽器"); }
+        }
+
+        private void OpenAttendanceManagement(object sender, EventArgs args)
+        {
+            try { Process.Start(new ProcessStartInfo("http://127.0.0.1:" + environment.Config.Port + "/admin/attendance#devices") { UseShellExecute = true }); }
+            catch (Exception ex) { MessageBox.Show(ex.Message, "無法開啟打卡管理"); }
         }
 
         private void OpenTextFile(string path)

@@ -20,6 +20,11 @@ def test_launcher_watchdog_uses_native_task_scheduler_and_health_check():
     assert "RepetitionInterval" in configure
     assert "/healthz" in watchdog
     assert '"service"\\s*:\\s*"dorm-staff-system"' in watchdog
+    assert '"--trusted-proxy=127.0.0.1"' in watchdog
+    assert '"--trusted-proxy-count=1"' in watchdog
+    assert "--trusted-proxy=127.0.0.1" in launcher
+    assert "--trusted-proxy-count=1" in launcher
+    assert "x-forwarded-for x-forwarded-proto x-forwarded-host x-forwarded-port" in launcher
     assert "Port $port is occupied" in watchdog
     assert '".venv\\server.pid"' in watchdog
     assert "WatchdogIntervalMinutes" in launcher

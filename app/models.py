@@ -98,6 +98,36 @@ class VacancyApplicationStatus(str, Enum):
     CANCELLED = "CANCELLED"
 
 
+class AttendanceMethod(str, Enum):
+    CARD = "CARD"
+    ACCOUNT = "ACCOUNT"
+    ADMIN = "ADMIN"
+
+
+class AttendanceDirection(str, Enum):
+    IN = "IN"
+    OUT = "OUT"
+    UNKNOWN = "UNKNOWN"
+
+
+class AttendanceStatus(str, Enum):
+    NORMAL = "NORMAL"
+    LATE_REASON_REQUIRED = "LATE_REASON_REQUIRED"
+    LATE_PENDING_REVIEW = "LATE_PENDING_REVIEW"
+    MISSING_CLOCK_IN = "MISSING_CLOCK_IN"
+    UNMATCHED = "UNMATCHED"
+    REVIEWED = "REVIEWED"
+    REJECTED = "REJECTED"
+    DUPLICATE = "DUPLICATE"
+
+
+class CardStatus(str, Enum):
+    ACTIVE = "ACTIVE"
+    LOST = "LOST"
+    REPLACED = "REPLACED"
+    REVOKED = "REVOKED"
+
+
 class User(UserMixin, db.Model):
     __tablename__ = "users"
 
@@ -684,3 +714,121 @@ class VacancyApplication(db.Model):
     requirement: Mapped[StaffingRequirement] = relationship(back_populates="applications")
     staff: Mapped[StaffProfile] = relationship()
     reviewer: Mapped[User | None] = relationship(foreign_keys=[reviewed_by])
+
+
+class AttendancePolicy(db.Model):
+    __tablename__ = "attendance_policies"
+
+    id: Mapped[int] = mapped_column(primary_key=True, default=1)
+    early_checkin_minutes: Mapped[int] = mapped_column(Integer, default=60, nullable=False)
+    late_grace_minutes: Mapped[int] = mapped_column(Integer, default=5, nullable=False)
+    checkout_after_minutes: Mapped[int] = mapped_column(Integer, default=120, nullable=False)
+    duplicate_seconds: Mapped[int] = mapped_column(Integer, default=60, nullable=False)
+    updated_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, onupdate=utc_now, nullable=False)
+
+
+class AttendanceDevice(db.Model):
+    __tablename__ = "attendance_devices"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    device_code: Mapped[str] = mapped_column(String(60), unique=True, nullable=False, index=True)
+    name: Mapped[str] = mapped_column(String(120), nullable=False)
+    location_id: Mapped[int] = mapped_column(ForeignKey("work_locations.id"), nullable=False)
+    allowed_cidr: Mapped[str | None] = mapped_column(String(80))
+    secret_encrypted: Mapped[str | None] = mapped_column(Text)
+    enrollment_token_hash: Mapped[str | None] = mapped_column(String(64), unique=True)
+    enrollment_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False, index=True)
+    enrolled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    last_seen_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    last_ip: Mapped[str | None] = mapped_column(String(45))
+    last_sequence: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    created_by: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    revoked_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
+    revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
+
+    location: Mapped[WorkLocation] = relationship()
+
+
+class AttendanceDeviceNonce(db.Model):
+    __tablename__ = "attendance_device_nonces"
+    __table_args__ = (UniqueConstraint("device_id", "nonce", name="uq_attendance_device_nonce"),)
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    device_id: Mapped[int] = mapped_column(ForeignKey("attendance_devices.id"), nullable=False, index=True)
+    nonce: Mapped[str] = mapped_column(String(64), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False, index=True)
+
+
+class StaffCard(db.Model):
+    __tablename__ = "staff_cards"
+    __table_args__ = (
+        Index("ix_staff_cards_staff_status", "staff_id", "status"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    staff_id: Mapped[int] = mapped_column(ForeignKey("staff_profiles.id"), nullable=False)
+    uid_hash: Mapped[str] = mapped_column(String(64), unique=True, nullable=False, index=True)
+    uid_last4: Mapped[str] = mapped_column(String(4), nullable=False)
+    status: Mapped[CardStatus] = mapped_column(SqlEnum(CardStatus, native_enum=False), default=CardStatus.ACTIVE, nullable=False)
+    registered_by: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    registered_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
+    disabled_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
+    disabled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    disable_reason: Mapped[str | None] = mapped_column(String(500))
+    last_used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+    staff: Mapped[StaffProfile] = relationship()
+
+
+class AttendanceEvent(db.Model):
+    __tablename__ = "attendance_events"
+    __table_args__ = (
+        Index("ix_attendance_events_staff_time", "staff_id", "occurred_at"),
+        Index("ix_attendance_events_status_time", "status", "occurred_at"),
+        Index("ix_attendance_events_shift_direction", "shift_id", "direction"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    event_uuid: Mapped[str] = mapped_column(String(36), unique=True, nullable=False, index=True)
+    device_id: Mapped[int] = mapped_column(ForeignKey("attendance_devices.id"), nullable=False)
+    staff_id: Mapped[int | None] = mapped_column(ForeignKey("staff_profiles.id"), index=True)
+    card_id: Mapped[int | None] = mapped_column(ForeignKey("staff_cards.id"))
+    shift_id: Mapped[int | None] = mapped_column(ForeignKey("shifts.id"), index=True)
+    method: Mapped[AttendanceMethod] = mapped_column(SqlEnum(AttendanceMethod, native_enum=False), nullable=False)
+    direction: Mapped[AttendanceDirection] = mapped_column(SqlEnum(AttendanceDirection, native_enum=False), nullable=False)
+    status: Mapped[AttendanceStatus] = mapped_column(SqlEnum(AttendanceStatus, native_enum=False), nullable=False, index=True)
+    occurred_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    received_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
+    source_ip: Mapped[str | None] = mapped_column(String(45))
+    offline_synced: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    device_sequence: Mapped[int] = mapped_column(Integer, nullable=False)
+    late_minutes: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    reason_category: Mapped[str | None] = mapped_column(String(80))
+    reason_text: Mapped[str | None] = mapped_column(String(1000))
+    claimed_arrival_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    reviewed_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
+    reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    review_note: Mapped[str | None] = mapped_column(String(1000))
+
+    device: Mapped[AttendanceDevice] = relationship()
+    staff: Mapped[StaffProfile | None] = relationship()
+    card: Mapped[StaffCard | None] = relationship()
+    shift: Mapped[Shift | None] = relationship()
+    reviewer: Mapped[User | None] = relationship(foreign_keys=[reviewed_by])
+
+
+class AttendanceAdjustment(db.Model):
+    __tablename__ = "attendance_adjustments"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    event_id: Mapped[int] = mapped_column(ForeignKey("attendance_events.id"), nullable=False, index=True)
+    direction: Mapped[AttendanceDirection] = mapped_column(SqlEnum(AttendanceDirection, native_enum=False), nullable=False)
+    adjusted_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    reason: Mapped[str] = mapped_column(String(1000), nullable=False)
+    created_by: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
+
+    event: Mapped[AttendanceEvent] = relationship()

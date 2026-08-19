@@ -181,6 +181,7 @@
           </div>
           <div class="modal-footer justify-content-between">
             <div class="dropup d-none" id="deleteShiftGroup"><button class="btn btn-outline-danger dropdown-toggle" id="deleteShiftButton" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-en="Delete"><i class="bi bi-trash3 me-1"></i>刪除</button><ul class="dropdown-menu"><li><button class="dropdown-item text-danger delete-scope-button" type="button" data-scope="single" data-en="Delete only this shift">只刪除這一筆</button></li><li class="series-delete-option"><button class="dropdown-item text-danger delete-scope-button" type="button" data-scope="future" data-en="Delete this and following occurrences">刪除本筆及後續重複時段</button></li><li class="series-delete-option"><button class="dropdown-item text-danger delete-scope-button" type="button" data-scope="series" data-en="Delete the entire recurring series">刪除本重複系列全部排班</button></li></ul></div>
+            <a class="btn btn-outline-info d-none" id="shiftAttendanceLink" href="#"><i class="bi bi-clock-history me-1"></i>查看打卡 <small>Attendance</small></a>
             <div class="d-flex gap-2 ms-auto">
               <button class="btn btn-outline-secondary" type="button" data-bs-dismiss="modal" data-en="Cancel">取消</button>
               <button class="btn btn-primary" id="saveShiftButton" type="submit" data-en="Save shift">儲存排班</button>

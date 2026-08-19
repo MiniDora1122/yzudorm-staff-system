@@ -88,6 +88,7 @@
           <dt class="col-4" data-en="Time">時間</dt><dd class="col-8" id="studentShiftTime">—</dd>
           <dt class="col-4" data-en="Hours">時數</dt><dd class="col-8" id="studentShiftHours">—</dd>
           <dt class="col-4" data-en="Request status">申請狀態</dt><dd class="col-8" id="studentShiftWorkflow">—</dd>
+          <dt class="col-4" data-en="Attendance status">打卡狀態</dt><dd class="col-8"><span id="studentShiftAttendance">尚無打卡</span><a class="d-none ms-2" id="studentShiftAttendanceLink" href="{{ url_for('student.attendance_page') }}">查看紀錄</a></dd>
         </dl>
       </div>
       <div class="modal-footer"><button class="btn btn-primary" type="button" data-bs-dismiss="modal" data-en="Close">知道了</button></div>

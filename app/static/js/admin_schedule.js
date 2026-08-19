@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const saveButton = document.getElementById("saveShiftButton");
   const deleteButton = document.getElementById("deleteShiftButton");
   const deleteGroup = document.getElementById("deleteShiftGroup");
+  const attendanceLink = document.getElementById("shiftAttendanceLink");
   const bulkToolbar = document.getElementById("bulkDeleteToolbar");
   const selectedShiftIds = new Set();
   let bulkDeleteMode = false;
@@ -31,6 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const localDateString = (date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
   const monthKey = (date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
   const englishMonth = (date) => new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric" }).format(date);
+  const requestedDate = new URLSearchParams(window.location.search).get("date");
 
   const showAlert = (message, category = "success") => {
     const alert = document.getElementById("scheduleAlert");
@@ -235,6 +237,8 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("shiftModalTitle").textContent = "新增排班";
     document.getElementById("shiftModalTitle").dataset.en = "Add shift";
     deleteGroup.classList.add("d-none");
+    attendanceLink.classList.add("d-none");
+    attendanceLink.removeAttribute("href");
     document.getElementById("recurrencePanel").classList.remove("d-none");
     document.getElementById("recurrenceFields").classList.add("d-none");
     document.getElementById("recurrenceEnd").required = false;
@@ -258,6 +262,9 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("shiftModalTitle").textContent = "編輯排班";
     document.getElementById("shiftModalTitle").dataset.en = "Edit shift";
     deleteGroup.classList.remove("d-none");
+    const attendance = (props.workflowAnnotations || []).filter((item) => item.kind === "ATTENDANCE");
+    attendanceLink.classList.toggle("d-none", attendance.length === 0);
+    if (attendance.length) attendanceLink.href = attendance[0].url;
     document.querySelectorAll(".series-delete-option").forEach((element) => element.classList.toggle("d-none", !editingSeriesId));
     document.getElementById("recurrencePanel").classList.add("d-none");
     document.getElementById("recurrenceEnd").required = false;
@@ -268,6 +275,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const calendar = new FullCalendar.Calendar(calendarElement, {
     initialView: "dayGridMonth",
+    initialDate: /^\d{4}-\d{2}-\d{2}$/.test(requestedDate || "") ? requestedDate : undefined,
     locale: "zh-tw",
     firstDay: 0,
     height: "auto",

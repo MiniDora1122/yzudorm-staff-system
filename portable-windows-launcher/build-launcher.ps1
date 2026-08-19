@@ -22,3 +22,9 @@ if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $output)) {
     throw "Launcher compilation failed."
 }
 Write-Output "Built: $output"
+
+$terminalBuild = Join-Path (Split-Path $launcherRoot -Parent) "attendance-terminal\build-terminal.ps1"
+if (Test-Path -LiteralPath $terminalBuild) {
+    & $terminalBuild -Clean:$Clean
+    if ($LASTEXITCODE -ne 0) { throw "Attendance terminal compilation failed." }
+}

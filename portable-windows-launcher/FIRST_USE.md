@@ -10,6 +10,8 @@
 6. 若尚未有管理員，按「啟動系統」時會引導使用者建立第一位管理員。
 7. 完成後再次按「啟動系統」，再按「開啟系統」。
 
+Launcher 的「啟用上下班打卡服務」與「打卡傳輸」會同步寫入專案 `.env`；選 `ENCRYPTED_HTTP` 時仍只應讓終端在封閉內網連線，網頁端維持 HTTPS。設定變更需停止並重新啟動系統。打卡設備請使用獨立的 `attendance-terminal\DormAttendanceTerminal.exe`，不要在設備端啟動中央網站服務。
+
 新版 Launcher 也會在啟動 migration 前修復舊版 `.env` 的 `sqlite:///instance/dorm_staff.db` 設定，避免 SQLite 被解析成重複的 `instance\instance` 路徑。
 
 所有 runtime 都安裝在 Launcher 所在資料夾的 `.venv`，不會修改 Windows 系統 Python 或 Git；此資料夾可隨時由 Launcher 重建，也不會塞進系統資料備份。設定保存在 `launcher.ini`，預設專案路徑使用 `..`，所以整個資料夾搬到不同磁碟後仍可運作。

@@ -27,6 +27,7 @@ from ..models import (
     ShiftPublicationStatus,
     ShiftStatus,
     ShiftType,
+    StaffCard,
     StaffProfile,
     StaffDocument,
     SwapAdminStatus,
@@ -63,6 +64,7 @@ from ..services.reports import (
     workflow_history_csv,
 )
 from ..services.audit import add_audit
+from ..services.attendance import attendance_annotations
 from ..services.requests import WorkflowError, review_leave_request, review_swap_request
 from ..services.retention import cleanup_expired_documents, get_retention_policy, save_retention_policy
 from ..services.scheduling import (
@@ -644,6 +646,14 @@ def staff():
     documents_by_staff = {}
     for group in group_document_sets(current_documents):
         documents_by_staff.setdefault(group["primary"].staff_id, []).append(group)
+    cards = db.session.scalars(
+        db.select(StaffCard)
+        .where(StaffCard.staff_id.in_(profile_ids or [-1]))
+        .order_by(StaffCard.registered_at.desc())
+    ).all()
+    cards_by_staff = {}
+    for card in cards:
+        cards_by_staff.setdefault(card.staff_id, []).append(card)
     return render_template(
         "admin/staff.html",
         profiles=profiles,
@@ -658,6 +668,7 @@ def staff():
         pagination=pagination,
         account_status=account_status,
         search=search,
+        cards_by_staff=cards_by_staff,
     )
 
 
@@ -1821,7 +1832,14 @@ def shift_events():
 
     shifts = db.session.scalars(statement).all()
     annotations = workflow_annotations(shifts)
-    return jsonify([add_annotations(shift_to_event(shift), annotations.get(shift.id, [])) for shift in shifts])
+    clock_annotations = attendance_annotations(shifts)
+    return jsonify([
+        add_annotations(
+            shift_to_event(shift),
+            annotations.get(shift.id, []) + clock_annotations.get(shift.id, []),
+        )
+        for shift in shifts
+    ])
 
 
 @bp.post("/api/shifts")

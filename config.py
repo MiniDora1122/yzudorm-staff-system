@@ -67,6 +67,10 @@ class Config:
     DOCUMENT_ENCRYPTION_KEY = os.getenv("DOCUMENT_ENCRYPTION_KEY")
     EXPIRY_WARNING_DAYS = (60, 30)
     NOTIFICATION_SYNC_INTERVAL_SECONDS = int(os.getenv("NOTIFICATION_SYNC_INTERVAL_SECONDS", "120"))
+    ATTENDANCE_ENABLED = env_flag("ATTENDANCE_ENABLED", True)
+    ATTENDANCE_TRANSPORT_MODE = os.getenv("ATTENDANCE_TRANSPORT_MODE", "HTTPS").strip().upper()
+    # Kept for older .env files; HTTPS mode remains the safe default.
+    ATTENDANCE_REQUIRE_HTTPS = env_flag("ATTENDANCE_REQUIRE_HTTPS", True)
 
 
 class TestConfig(Config):
@@ -77,3 +81,6 @@ class TestConfig(Config):
     TRUST_PROXY = False
     MAINTENANCE_SCHEDULER_ENABLED = False
     AUTOMATIC_BACKUP_ENABLED = False
+    ATTENDANCE_REQUIRE_HTTPS = False
+    ATTENDANCE_ENABLED = True
+    ATTENDANCE_TRANSPORT_MODE = "HTTPS"

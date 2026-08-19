@@ -45,10 +45,12 @@ def create_app(config_object=Config):
     from .admin import bp as admin_bp
     from .auth import bp as auth_bp
     from .student import bp as student_bp
+    from .attendance_api import bp as attendance_api_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(admin_bp)
     app.register_blueprint(student_bp)
+    app.register_blueprint(attendance_api_bp)
 
     from .seed import register_commands
     from .services.backups import register_backup_commands
@@ -88,6 +90,16 @@ def create_app(config_object=Config):
         from .services.notifications import open_notification_count
 
         return {"nav_open_notification_count": open_notification_count(current_user)}
+
+    @app.template_filter("localdt")
+    def local_datetime_filter(value, pattern="%Y-%m-%d %H:%M"):
+        if value is None:
+            return "—"
+        from datetime import timezone
+        from zoneinfo import ZoneInfo
+        if value.tzinfo is None:
+            value = value.replace(tzinfo=timezone.utc)
+        return value.astimezone(ZoneInfo(app.config["APP_TIMEZONE"])).strftime(pattern)
 
     @app.get("/")
     def index():

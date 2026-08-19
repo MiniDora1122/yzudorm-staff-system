@@ -22,6 +22,8 @@ def app(tmp_path):
             "DOCUMENT_KEY_BACKUP_DIR": str(tmp_path / "private_keys" / "backup"),
             "DOCUMENT_ENCRYPTION_KEY": Fernet.generate_key().decode("ascii"),
             "DOCUMENT_CLEANUP_SCHEDULER_ENABLED": False,
+            "ATTENDANCE_ENABLED": True,
+            "ATTENDANCE_TRANSPORT_MODE": "HTTPS",
         }
     )
     with app.app_context():

@@ -121,6 +121,9 @@ try {
         "-m", "waitress",
         "--listen=$listenAddress`:$port",
         "--threads=8",
+        "--trusted-proxy=127.0.0.1",
+        "--trusted-proxy-count=1",
+        "--trusted-proxy-headers=x-forwarded-for x-forwarded-proto x-forwarded-host x-forwarded-port",
         "--ident=dorm-staff-system",
         "wsgi:app"
     )

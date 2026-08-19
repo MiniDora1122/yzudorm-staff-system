@@ -228,7 +228,7 @@
   ].join(",");
 
   const addTranslation = (element) => {
-    if (element.dataset.en || element.dataset.bilingualProcessed) return;
+    if (element.dataset.en || element.dataset.bilingualProcessed || element.classList.contains("nav-primary-label")) return;
     const textNodes = Array.from(element.childNodes).filter((node) => node.nodeType === Node.TEXT_NODE);
     const sourceNode = textNodes.find((node) => translations.has(node.textContent.trim()));
     if (!sourceNode) return;

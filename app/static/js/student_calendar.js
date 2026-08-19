@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const monthKey = (date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
   const englishMonth = (date) => new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric" }).format(date);
+  const requestedDate = new URLSearchParams(window.location.search).get("date");
   const selectedScope = () => document.querySelector('input[name="studentScheduleScope"]:checked')?.value || "mine";
 
   const loadHours = async () => {
@@ -123,6 +124,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const calendar = new FullCalendar.Calendar(calendarElement, {
     initialView: "dayGridMonth",
+    initialDate: /^\d{4}-\d{2}-\d{2}$/.test(requestedDate || "") ? requestedDate : undefined,
     locale: "zh-tw",
     firstDay: 0,
     height: "auto",
@@ -235,7 +237,11 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("studentShiftTime").textContent = props.timeLabel;
       document.getElementById("studentShiftHours").textContent = `${props.hours} 小時`;
       document.getElementById("studentShiftWorkflow").textContent =
-        (props.workflowAnnotations || []).map((item) => item.label).join("、") || "無";
+        (props.workflowAnnotations || []).filter((item) => item.kind !== "ATTENDANCE").map((item) => item.label).join("、") || "無";
+      const attendance = (props.workflowAnnotations || []).filter((item) => item.kind === "ATTENDANCE");
+      document.getElementById("studentShiftAttendance").textContent =
+        attendance.map((item) => item.label).join("、") || "尚無打卡";
+      document.getElementById("studentShiftAttendanceLink").classList.toggle("d-none", attendance.length === 0);
       modal.show();
     },
   });

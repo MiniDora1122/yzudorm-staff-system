@@ -26,5 +26,5 @@ Set-Location -LiteralPath $projectRoot
 # Waitress writes normal startup logs to stderr, so keep the long-running
 # process alive while still teeing both streams to the daily log.
 $ErrorActionPreference = "Continue"
-& $python -m waitress "--listen=$listen" "--threads=$Threads" "--ident=dorm-staff-system" "wsgi:app" 2>&1 |
+& $python -m waitress "--listen=$listen" "--threads=$Threads" "--trusted-proxy=127.0.0.1" "--trusted-proxy-count=1" "--trusted-proxy-headers=x-forwarded-for x-forwarded-proto x-forwarded-host x-forwarded-port" "--ident=dorm-staff-system" "wsgi:app" 2>&1 |
     Tee-Object -FilePath $logFile -Append

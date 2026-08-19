@@ -56,6 +56,7 @@ from ..services.requests import (
     respond_swap_request,
 )
 from ..services.scheduling import month_bounds, shift_to_event
+from ..services.attendance import attendance_annotations
 from ..services.workflow_calendar import (
     add_annotations,
     direct_swap_invitations,
@@ -710,8 +711,12 @@ def shift_events():
         statement = statement.where(Shift.staff_id == profile.id)
     shifts = db.session.scalars(statement).all()
     annotations = workflow_annotations(shifts, profile_id=profile.id)
+    clock_annotations = attendance_annotations(shifts, profile_id=profile.id)
     events = [
-        add_annotations(shift_to_event(shift, student_view=True), annotations.get(shift.id, []))
+        add_annotations(
+            shift_to_event(shift, student_view=True),
+            annotations.get(shift.id, []) + clock_annotations.get(shift.id, []),
+        )
         for shift in shifts
     ]
     own_ids = {shift.id for shift in shifts}
