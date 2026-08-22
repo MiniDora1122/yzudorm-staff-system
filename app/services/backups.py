@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import hashlib
-from datetime import timedelta
+from datetime import timedelta, timezone
 from pathlib import Path
 
 from flask import current_app
@@ -9,7 +9,7 @@ from flask import current_app
 from deployment.create_portable_backup import create_backup
 
 from ..extensions import db
-from ..models import BackupRun, utc_now
+from ..models import BackupPolicy, BackupRun, BackupScheduleMode, utc_now
 from ..time_utils import local_now
 from .audit import add_audit
 
@@ -24,6 +24,60 @@ def backup_directory() -> Path:
 
 def latest_backup_run() -> BackupRun | None:
     return db.session.scalar(db.select(BackupRun).order_by(BackupRun.started_at.desc()).limit(1))
+
+
+def backup_policy() -> dict:
+    policy = db.session.get(BackupPolicy, 1)
+    if policy:
+        return {
+            "enabled": policy.enabled,
+            "mode": policy.mode,
+            "interval_hours": policy.interval_hours,
+            "daily_hour": policy.daily_hour,
+            "daily_minute": policy.daily_minute,
+        }
+    return {
+        "enabled": bool(current_app.config.get("AUTOMATIC_BACKUP_ENABLED")),
+        "mode": BackupScheduleMode.DAILY,
+        "interval_hours": 24,
+        "daily_hour": int(current_app.config["AUTOMATIC_BACKUP_HOUR"]),
+        "daily_minute": int(current_app.config["AUTOMATIC_BACKUP_MINUTE"]),
+    }
+
+
+def save_backup_policy(
+    *,
+    enabled: bool,
+    mode: BackupScheduleMode,
+    interval_hours: int,
+    daily_hour: int,
+    daily_minute: int,
+    actor_user_id: int,
+) -> BackupPolicy:
+    policy = db.session.get(BackupPolicy, 1)
+    if policy is None:
+        policy = BackupPolicy(id=1, updated_by=actor_user_id)
+        db.session.add(policy)
+    policy.enabled = enabled
+    policy.mode = mode
+    policy.interval_hours = interval_hours
+    policy.daily_hour = daily_hour
+    policy.daily_minute = daily_minute
+    policy.updated_by = actor_user_id
+    schedule = (
+        f"每隔 {interval_hours} 小時" if mode == BackupScheduleMode.INTERVAL
+        else f"每日 {daily_hour:02d}:{daily_minute:02d}"
+    )
+    db.session.flush()
+    add_audit(
+        actor_user_id,
+        "BACKUP_POLICY_UPDATED",
+        "BackupPolicy",
+        policy.id,
+        f"自動備份{'啟用' if enabled else '停用'}，排程：{schedule}",
+    )
+    db.session.commit()
+    return policy
 
 
 def _file_sha256(path: Path) -> str:
@@ -86,26 +140,25 @@ def run_backup(*, actor_user_id: int | None = None) -> BackupRun:
 
 
 def run_backup_if_due() -> BackupRun | None:
-    if not current_app.config.get("AUTOMATIC_BACKUP_ENABLED"):
+    policy = backup_policy()
+    if not policy["enabled"]:
         return None
     now = local_now()
-    due_time = (
-        int(current_app.config["AUTOMATIC_BACKUP_HOUR"]),
-        int(current_app.config["AUTOMATIC_BACKUP_MINUTE"]),
-    )
-    if (now.hour, now.minute) < due_time:
-        return None
-    last_success = db.session.scalar(
-        db.select(BackupRun)
-        .where(BackupRun.status == "SUCCESS")
-        .order_by(BackupRun.finished_at.desc())
-        .limit(1)
-    )
-    if last_success and last_success.finished_at:
-        finished = last_success.finished_at
-        if finished.tzinfo is None:
-            finished = finished.replace(tzinfo=now.tzinfo)
-        if finished.astimezone(now.tzinfo).date() == now.date():
+    latest = latest_backup_run()
+    last_attempt = latest.started_at if latest else None
+    if last_attempt and last_attempt.tzinfo is None:
+        last_attempt = last_attempt.replace(tzinfo=timezone.utc)
+    if last_attempt:
+        last_attempt = last_attempt.astimezone(now.tzinfo)
+
+    if policy["mode"] == BackupScheduleMode.INTERVAL:
+        if last_attempt and now - last_attempt < timedelta(hours=policy["interval_hours"]):
+            return None
+    else:
+        due_time = (policy["daily_hour"], policy["daily_minute"])
+        if (now.hour, now.minute) < due_time:
+            return None
+        if last_attempt and last_attempt.date() == now.date():
             return None
     return run_backup()
 

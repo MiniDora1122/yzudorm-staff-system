@@ -154,6 +154,10 @@ def _card_return_url(staff_id: int | None = None) -> str:
     return url_for("admin.staff")
 
 
+def _activation_minutes() -> int:
+    return int(request.form.get("activation_hours", "")) * 60
+
+
 @bp.post("/attendance/devices")
 @role_required(Role.ADMIN)
 def create_attendance_device():
@@ -182,6 +186,7 @@ def create_attendance_device():
                 server_url=request.form.get("server_url", "").strip(),
                 passphrase=request.form.get("package_password", ""),
                 transport_mode=mode,
+                activation_minutes=_activation_minutes(),
             )
         else:
             token = new_enrollment(device)
@@ -226,6 +231,7 @@ def download_attendance_package(device_id: int):
             server_url=request.form.get("server_url", "").strip(),
             passphrase=request.form.get("package_password", ""),
             transport_mode=current_app.config.get("ATTENDANCE_TRANSPORT_MODE", "HTTPS"),
+            activation_minutes=_activation_minutes(),
         )
         add_audit(current_user.id, "ATTENDANCE_DEVICE_REKEYED", "AttendanceDevice", device.id, f"重新產生打卡裝置 {device.device_code} 註冊包")
         db.session.commit()
@@ -233,10 +239,43 @@ def download_attendance_package(device_id: int):
             BytesIO(package), mimetype="application/octet-stream", as_attachment=True,
             download_name=f"{device.device_code}.dormclock",
         )
-    except AttendanceError as exc:
+    except (AttendanceError, ValueError) as exc:
         db.session.rollback()
-        flash(str(exc), "danger")
+        flash(str(exc) if isinstance(exc, AttendanceError) else "請填寫有效的啟用期限。", "danger")
         return redirect(_settings_url("devices"))
+
+
+@bp.post("/attendance/devices/<int:device_id>/update")
+@role_required(Role.ADMIN)
+def update_attendance_device(device_id: int):
+    device = db.get_or_404(AttendanceDevice, device_id)
+    name = request.form.get("name", "").strip()
+    if not name or len(name) > 120:
+        flash("裝置名稱不可空白且不得超過 120 個字元。", "danger")
+        return redirect(_settings_url("devices"))
+    device.name = name
+    add_audit(current_user.id, "ATTENDANCE_DEVICE_UPDATED", "AttendanceDevice", device.id, f"更新打卡裝置 {device.device_code} 名稱")
+    db.session.commit()
+    flash("裝置名稱已更新。 / Device name updated.", "success")
+    return redirect(_settings_url("devices"))
+
+
+@bp.post("/attendance/devices/<int:device_id>/confirm-identity")
+@role_required(Role.ADMIN)
+def confirm_attendance_device_identity(device_id: int):
+    device = db.get_or_404(AttendanceDevice, device_id)
+    if not device.pending_mac_addresses_json:
+        flash("此裝置沒有待確認的電腦或 MAC 異動。", "warning")
+        return redirect(_settings_url("devices"))
+    device.computer_name = device.pending_computer_name
+    device.mac_addresses_json = device.pending_mac_addresses_json
+    device.pending_computer_name = None
+    device.pending_mac_addresses_json = None
+    device.identity_changed_at = None
+    add_audit(current_user.id, "ATTENDANCE_DEVICE_IDENTITY_CONFIRMED", "AttendanceDevice", device.id, f"確認打卡裝置 {device.device_code} 電腦與 MAC 異動")
+    db.session.commit()
+    flash("裝置電腦名稱與 MAC 異動已確認。", "success")
+    return redirect(_settings_url("devices"))
 
 
 @bp.post("/attendance/devices/<int:device_id>/revoke")
@@ -245,6 +284,8 @@ def revoke_attendance_device(device_id: int):
     device = db.get_or_404(AttendanceDevice, device_id)
     device.is_active = False
     device.secret_encrypted = None
+    device.enrollment_token_hash = None
+    device.enrollment_expires_at = None
     device.revoked_by = current_user.id
     device.revoked_at = utc_now()
     add_audit(current_user.id, "ATTENDANCE_DEVICE_REVOKED", "AttendanceDevice", device.id, f"撤銷打卡裝置 {device.device_code}")

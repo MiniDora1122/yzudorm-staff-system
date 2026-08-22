@@ -76,14 +76,19 @@ namespace DormStaffPortable
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             string updateResult = "";
+            bool autoStartRequest = false;
             foreach (string argument in args)
+            {
                 if (argument.StartsWith("--update-result=", StringComparison.OrdinalIgnoreCase)) updateResult = argument.Substring(16);
+                if (argument.Equals("--auto-start", StringComparison.OrdinalIgnoreCase)) autoStartRequest = true;
+            }
             bool firstInstance;
             using (Mutex instanceMutex = new Mutex(true, InstanceMutexName(environment.BaseDirectory), out firstInstance))
             {
                 if (!firstInstance)
                 {
-                    MessageBox.Show("此資料夾的 Launcher 已經開啟。\r\nThe Launcher for this folder is already running.", "Launcher 已在執行", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    if (!autoStartRequest)
+                        MessageBox.Show("此資料夾的 Launcher 已經開啟。\r\nThe Launcher for this folder is already running.", "Launcher 已在執行", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
                 Application.Run(new LauncherForm(environment, updateResult));
@@ -834,6 +839,17 @@ namespace DormStaffPortable
             string branch = RunChecked(environment.GitExe, "branch --show-current", environment.ProjectRoot).Output.Trim();
             if (!branch.Equals(environment.Config.GitBranch, StringComparison.Ordinal))
                 throw new InvalidOperationException("目前分支是 " + branch + "，不是設定的 " + environment.Config.GitBranch + "。 ");
+            Uri repository;
+            if (!Uri.TryCreate(environment.Config.RepositoryUrl, UriKind.Absolute, out repository) || repository.Scheme != Uri.UriSchemeHttps)
+                throw new InvalidOperationException("Git 更新網址必須是完整的 HTTPS repository URL。 / Update URL must use HTTPS.");
+            string remotes = RunChecked(environment.GitExe, "remote", environment.ProjectRoot).Output;
+            bool remoteExists = new List<string>(remotes.Replace("\r", "").Split('\n')).Exists(
+                item => item.Trim().Equals(environment.Config.GitRemote, StringComparison.Ordinal)
+            );
+            RunChecked(environment.GitExe,
+                "remote " + (remoteExists ? "set-url " : "add ") + Quote(environment.Config.GitRemote) + " " + Quote(environment.Config.RepositoryUrl),
+                environment.ProjectRoot);
+            log("Git 更新來源：" + environment.Config.RepositoryUrl + "（" + environment.Config.GitBranch + "）");
             string oldCommit = RunChecked(environment.GitExe, "rev-parse HEAD", environment.ProjectRoot).Output.Trim();
             RunChecked(environment.GitExe, "fetch " + Quote(environment.Config.GitRemote) + " " + Quote(environment.Config.GitBranch), environment.ProjectRoot);
             string targetCommit = RunChecked(environment.GitExe, "rev-parse " + Quote(environment.Config.GitRemote + "/" + environment.Config.GitBranch), environment.ProjectRoot).Output.Trim();
@@ -1366,6 +1382,7 @@ namespace DormStaffPortable
         private readonly RichTextBox logBox = new RichTextBox();
         private readonly List<Button> actionButtons = new List<Button>();
         private readonly System.Windows.Forms.Timer statusTimer = new System.Windows.Forms.Timer();
+        private readonly System.Windows.Forms.Timer autoStartTimer = new System.Windows.Forms.Timer();
         private Process serverProcess;
         private bool operationRunning;
         private bool updateInProgress;
@@ -1397,6 +1414,10 @@ namespace DormStaffPortable
             statusTimer.Interval = 2000;
             statusTimer.Tick += delegate { UpdateStatus(); ImportWatchdogLog(); };
             statusTimer.Start();
+            UpdateAutoStartTimer();
+            autoStartTimer.Tick += delegate { EnsureAutoStartServer(); };
+            autoStartTimer.Start();
+            Shown += delegate { EnsureAutoStartServer(); };
             WriteLog("Launcher 路徑：" + environment.BaseDirectory);
             WriteLog("專案路徑：" + environment.ProjectRoot);
             if (!String.IsNullOrWhiteSpace(updateResult))
@@ -1441,7 +1462,7 @@ namespace DormStaffPortable
             AddSettingRow(settingGrid, 0, "專案資料夾", projectBox, MakeButton("選擇", delegate { ChooseProject(); }));
             AddSettingRow(settingGrid, 1, "監聽 Port", portBox, null);
             AddSettingRow(settingGrid, 2, "Git 分支", branchBox, null);
-            AddSettingRow(settingGrid, 3, "Git URL", repositoryBox, MakeButton("Clone", delegate { CloneProject(); }));
+            AddSettingRow(settingGrid, 3, "Git 更新網址", repositoryBox, MakeButton("Clone", delegate { CloneProject(); }));
             lanCheck.Text = "允許區域網路連線（0.0.0.0；需自行設定防火牆）"; lanCheck.AutoSize = true;
             settingGrid.Controls.Add(lanCheck, 1, 4); settingGrid.SetColumnSpan(lanCheck, 2);
             browserCheck.Text = "啟動後自動開啟瀏覽器"; browserCheck.AutoSize = true;
@@ -1453,7 +1474,7 @@ namespace DormStaffPortable
             AddSettingRow(settingGrid, 7, "打卡傳輸", attendanceModeBox, null);
             Button save = MakeButton("儲存", delegate { SaveSettings(); }); settingGrid.Controls.Add(save, 2, 5);
             watchdogMinutesBox.Minimum = 1; watchdogMinutesBox.Maximum = 1440; watchdogMinutesBox.DecimalPlaces = 0;
-            AddSettingRow(settingGrid, 8, "巡檢分鐘", watchdogMinutesBox, null);
+            AddSettingRow(settingGrid, 8, "巡檢分鐘（預設 5）", watchdogMinutesBox, null);
             settings.Controls.Add(settingGrid); body.Controls.Add(settings, 0, 0);
 
             GroupBox actions = new GroupBox { Text = "操作 / Actions", Dock = DockStyle.Fill, Padding = new Padding(14) };
@@ -1522,6 +1543,8 @@ namespace DormStaffPortable
             int port;
             if (!Int32.TryParse(portBox.Text.Trim(), out port) || port < 1 || port > 65535) { MessageBox.Show("Port 必須介於 1–65535。 ", "設定錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning); return false; }
             if (!Regex.IsMatch(branchBox.Text.Trim(), "^[A-Za-z0-9._/-]+$")) { MessageBox.Show("Git 分支名稱格式不正確。 ", "設定錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning); return false; }
+            Uri repository;
+            if (!Uri.TryCreate(repositoryBox.Text.Trim(), UriKind.Absolute, out repository) || repository.Scheme != Uri.UriSchemeHttps) { MessageBox.Show("Git 更新網址必須是完整的 HTTPS repository URL。", "設定錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning); return false; }
             environment.Config.ProjectPath = environment.MakePortableProjectPath(projectBox.Text.Trim());
             environment.Config.Port = port.ToString();
             environment.Config.ListenAddress = lanCheck.Checked ? "0.0.0.0" : "127.0.0.1";
@@ -1532,6 +1555,7 @@ namespace DormStaffPortable
             environment.Config.AttendanceEnabled = attendanceCheck.Checked;
             environment.Config.AttendanceTransportMode = attendanceModeBox.SelectedItem == null ? "ENCRYPTED_HTTP" : attendanceModeBox.SelectedItem.ToString();
             environment.Config.Save(environment.ConfigPath);
+            UpdateAutoStartTimer();
             if (environment.ProjectIsValid)
             {
                 WriteEnvironmentSetting("ATTENDANCE_ENABLED", environment.Config.AttendanceEnabled ? "1" : "0");
@@ -1675,11 +1699,13 @@ namespace DormStaffPortable
                 manager.ConfigureWatchdog(enable, environment.Config.WatchdogIntervalMinutes);
                 environment.Config.AutoStartEnabled = enable;
                 environment.Config.Save(environment.ConfigPath);
+                UpdateAutoStartTimer();
                 watchdogStatusCheckedUtc = DateTime.MinValue;
+                if (enable) EnsureAutoStartServer();
                 MessageBox.Show(
                     this,
                     enable
-                        ? "自啟動巡檢已啟用。Windows 登入後會顯示 Launcher，並在背景定期檢查系統。\r\nAuto-start watchdog and Launcher enabled."
+                        ? "自啟動巡檢已啟用。Windows 登入後會顯示 Launcher；若 Launcher 被關閉或系統停止，最多於設定的巡檢時間後重新顯示並啟動。\r\nVisible Launcher auto-start and recovery enabled."
                         : "自啟動巡檢已停用。目前已執行的系統不會被停止。\r\nAuto-start watchdog disabled.",
                     "完成 / Completed",
                     MessageBoxButtons.OK,
@@ -1734,7 +1760,8 @@ namespace DormStaffPortable
                 return;
             }
             DialogResult confirmation = MessageBox.Show(this,
-                "更新時會暫停系統、關閉 Launcher，完成後自動開啟新版 Launcher。是否繼續？\r\nThe server and Launcher will restart during update.",
+                "更新來源：" + environment.Config.RepositoryUrl + "\r\n分支：" + environment.Config.GitBranch +
+                "\r\n\r\n更新時會暫停系統、關閉 Launcher，完成後自動開啟新版 Launcher。是否繼續？\r\nThe server and Launcher will restart during update.",
                 "Git 安全更新 / Safe update", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
             if (confirmation != DialogResult.Yes) return;
             string marker = Path.Combine(environment.RuntimeDirectory, "update-in-progress");
@@ -2047,6 +2074,20 @@ namespace DormStaffPortable
         }
 
         private void SetActionsEnabled(bool enabled) { foreach (Button button in actionButtons) button.Enabled = enabled; }
+
+        private void UpdateAutoStartTimer()
+        {
+            autoStartTimer.Interval = Math.Max(1, environment.Config.WatchdogIntervalMinutes) * 60 * 1000;
+        }
+
+        private void EnsureAutoStartServer()
+        {
+            if (!environment.Config.AutoStartEnabled || operationRunning || updateInProgress) return;
+            if (AppIsHealthy() || GetRunningServerProcess() != null || ConfiguredPortIsOccupied()) return;
+            WriteLog("自啟動巡檢發現系統未執行，正在啟動。 / Auto-start is starting the server.");
+            StartServer(this, EventArgs.Empty);
+        }
+
         private void UpdateStatus()
         {
             if (!IsHandleCreated)
@@ -2110,18 +2151,20 @@ namespace DormStaffPortable
         private void OnFormClosing(object sender, FormClosingEventArgs args)
         {
             statusTimer.Stop();
+            autoStartTimer.Stop();
             if (updateInProgress) return;
             if (operationRunning)
             {
                 MessageBox.Show("維護作業仍在執行，完成前不能關閉 Launcher。\r\nA maintenance operation is still running.", "作業進行中", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 args.Cancel = true;
                 statusTimer.Start();
+                autoStartTimer.Start();
                 return;
             }
             if (GetRunningServerProcess() != null)
             {
                 DialogResult result = MessageBox.Show("關閉啟動器也會停止系統，是否繼續？\r\nClosing the launcher will stop the server.", "確認關閉", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                if (result != DialogResult.Yes) { args.Cancel = true; statusTimer.Start(); return; }
+                if (result != DialogResult.Yes) { args.Cancel = true; statusTimer.Start(); autoStartTimer.Start(); return; }
                 StopServer();
             }
         }

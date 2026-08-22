@@ -12,6 +12,7 @@ from dataclasses import dataclass
 from datetime import date, datetime, time, timedelta, timezone
 from zoneinfo import ZoneInfo
 from urllib.parse import urlsplit
+from uuid import UUID
 
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
@@ -93,6 +94,8 @@ def decrypt_device_payload(body: bytes, *, path: str) -> tuple[EncryptedRequestC
     device = db.session.scalar(db.select(AttendanceDevice).where(AttendanceDevice.device_code == code))
     if not device or not device.is_active:
         raise AttendanceError("DEVICE_NOT_ALLOWED", "此裝置未獲授權。 / Device not authorized.", 401)
+    if path != "/attendance-api/activate" and not device.enrolled_at:
+        raise AttendanceError("DEVICE_NOT_ACTIVATED", "此裝置尚未完成一次性啟用。", 401)
     source = request.remote_addr or ""
     if not _source_allowed(device, source):
         raise AttendanceError("DEVICE_NETWORK_DENIED", "此裝置來源網路不在允許範圍。", 403)
@@ -125,6 +128,8 @@ def decrypt_device_payload(body: bytes, *, path: str) -> tuple[EncryptedRequestC
     db.session.add(AttendanceDeviceNonce(device_id=device.id, nonce=request_id))
     device.last_seen_at = utc_now()
     device.last_ip = source[:45] or None
+    if path != "/attendance-api/activate":
+        observe_device_identity(device, payload.get("_device"))
     return EncryptedRequestContext(device, request_id, path), payload
 
 
@@ -148,7 +153,8 @@ def encrypt_device_response(context: EncryptedRequestContext, payload: dict, sta
 
 
 def create_provisioning_package(
-    device: AttendanceDevice, *, server_url: str, passphrase: str, transport_mode: str
+    device: AttendanceDevice, *, server_url: str, passphrase: str, transport_mode: str,
+    activation_minutes: int,
 ) -> bytes:
     if len(passphrase) < 10:
         raise AttendanceError("WEAK_PACKAGE_PASSWORD", "註冊包密碼至少需要 10 個字元。")
@@ -157,11 +163,15 @@ def create_provisioning_package(
         raise AttendanceError("INVALID_SERVER_URL", "中央系統網址必須以 http:// 或 https:// 開頭。")
     if transport_mode not in {"HTTPS", "ENCRYPTED_HTTP"}:
         raise AttendanceError("INVALID_TRANSPORT", "打卡傳輸模式設定錯誤。")
+    if not 5 <= activation_minutes <= 10_080:
+        raise AttendanceError("INVALID_ACTIVATION_WINDOW", "啟用期限需介於 5 分鐘至 7 天。")
     secret = secrets.token_urlsafe(48)
+    activation_token = secrets.token_urlsafe(32)
+    expires_at = utc_now() + timedelta(minutes=activation_minutes)
     device.secret_encrypted = encrypt_device_secret(secret)
-    device.enrolled_at = utc_now()
-    device.enrollment_token_hash = None
-    device.enrollment_expires_at = None
+    device.enrolled_at = None
+    device.enrollment_token_hash = hashlib.sha256(activation_token.encode()).hexdigest()
+    device.enrollment_expires_at = expires_at
     payload = json.dumps({
         "format": "dorm-attendance-device-v1",
         "server": server_url.rstrip("/"),
@@ -169,6 +179,8 @@ def create_provisioning_package(
         "device_name": device.name,
         "location": device.location.name,
         "secret": secret,
+        "activation_token": activation_token,
+        "activation_expires_at": expires_at.isoformat(),
         "transport_mode": transport_mode,
         "key_version": 1,
     }, ensure_ascii=False, separators=(",", ":")).encode()
@@ -179,6 +191,77 @@ def create_provisioning_package(
         "format": "dorm-attendance-provision-v1", "iterations": 300000,
         "salt": _b64(salt), "nonce": _b64(nonce), "ciphertext": _b64(ciphertext),
     }, separators=(",", ":")).encode()
+
+
+def _device_identity(value: dict | None) -> tuple[str, str, list[str]]:
+    try:
+        installation_id = str(UUID(str((value or {})["installation_id"])))
+        computer_name = str((value or {})["computer_name"]).strip()[:255]
+        raw_macs = (value or {})["mac_addresses"]
+    except (KeyError, TypeError, ValueError, AttributeError):
+        raise AttendanceError("INVALID_DEVICE_IDENTITY", "無法辨識終端電腦或網路卡資料。")
+    macs = []
+    for value in raw_macs if isinstance(raw_macs, list) else []:
+        compact = "".join(character for character in str(value).upper() if character in "0123456789ABCDEF")
+        if len(compact) == 12:
+            mac = ":".join(compact[index:index + 2] for index in range(0, 12, 2))
+            if mac not in macs:
+                macs.append(mac)
+    if not computer_name or not macs:
+        raise AttendanceError("INVALID_DEVICE_IDENTITY", "終端必須回報電腦名稱與至少一個 MAC 位址。")
+    return installation_id, computer_name, sorted(macs)[:16]
+
+
+def activate_device(device: AttendanceDevice, payload: dict) -> None:
+    token = str(payload.get("activation_token", ""))
+    expected = device.enrollment_token_hash or ""
+    expires_at = _aware(device.enrollment_expires_at) if device.enrollment_expires_at else None
+    installation_id, computer_name, macs = _device_identity(payload.get("_device"))
+    encoded_macs = json.dumps(macs, separators=(",", ":"))
+    if (not expected and device.enrolled_at and device.installation_id == installation_id
+            and device.computer_name == computer_name and device.mac_addresses_json == encoded_macs):
+        return
+    if not expected or not hmac.compare_digest(hashlib.sha256(token.encode()).hexdigest(), expected):
+        raise AttendanceError("ACTIVATION_USED", "此註冊包已使用或無效，請由管理員重新產生。", 401)
+    if not expires_at or expires_at < utc_now():
+        raise AttendanceError("ACTIVATION_EXPIRED", "此註冊包已逾期，請由管理員重新產生。", 401)
+    duplicate = db.session.scalar(db.select(AttendanceDevice.id).where(
+        AttendanceDevice.installation_id == installation_id,
+        AttendanceDevice.id != device.id,
+    ))
+    if duplicate:
+        raise AttendanceError("INSTALLATION_ALREADY_BOUND", "此電腦安裝識別碼已綁定其他裝置。", 409)
+    device.installation_id = installation_id
+    device.computer_name = computer_name
+    device.mac_addresses_json = encoded_macs
+    device.pending_computer_name = None
+    device.pending_mac_addresses_json = None
+    device.identity_changed_at = None
+    device.enrolled_at = utc_now()
+    device.enrollment_token_hash = None
+    device.enrollment_expires_at = None
+    add_audit(None, "ATTENDANCE_DEVICE_ACTIVATED", "AttendanceDevice", device.id, f"打卡裝置 {device.device_code} 完成一次性啟用")
+
+
+def observe_device_identity(device: AttendanceDevice, value: dict | None) -> None:
+    if not value:
+        return
+    installation_id, computer_name, macs = _device_identity(value)
+    if device.installation_id and installation_id != device.installation_id:
+        raise AttendanceError("DEVICE_IDENTITY_MISMATCH", "裝置安裝識別碼不符，請重新註冊。", 401)
+    encoded_macs = json.dumps(macs, separators=(",", ":"))
+    if not device.installation_id:
+        device.installation_id = installation_id
+        device.computer_name = computer_name
+        device.mac_addresses_json = encoded_macs
+        return
+    if computer_name == device.computer_name and encoded_macs == device.mac_addresses_json:
+        return
+    if computer_name != device.pending_computer_name or encoded_macs != device.pending_mac_addresses_json:
+        device.pending_computer_name = computer_name
+        device.pending_mac_addresses_json = encoded_macs
+        device.identity_changed_at = utc_now()
+        add_audit(None, "ATTENDANCE_DEVICE_IDENTITY_CHANGED", "AttendanceDevice", device.id, f"打卡裝置 {device.device_code} 回報電腦或 MAC 異動")
 
 
 def policy() -> AttendancePolicy:
@@ -259,6 +342,8 @@ def verify_device_request(body: bytes, *, path: str) -> AttendanceDevice:
     device = db.session.scalar(db.select(AttendanceDevice).where(AttendanceDevice.device_code == code))
     if not device or not device.is_active:
         raise AttendanceError("DEVICE_NOT_ALLOWED", "此裝置未獲授權。 / Device not authorized.", 401)
+    if not device.enrolled_at:
+        raise AttendanceError("DEVICE_NOT_ACTIVATED", "此裝置尚未完成一次性啟用。", 401)
     source = request.remote_addr or ""
     if not _source_allowed(device, source):
         raise AttendanceError("DEVICE_NETWORK_DENIED", "此裝置來源網路不在允許範圍。", 403)
@@ -291,6 +376,10 @@ def verify_device_request(body: bytes, *, path: str) -> AttendanceDevice:
     db.session.add(AttendanceDeviceNonce(device_id=device.id, nonce=nonce))
     device.last_seen_at = utc_now()
     device.last_ip = source[:45] or None
+    try:
+        observe_device_identity(device, json.loads(body or b"{}").get("_device"))
+    except (AttributeError, json.JSONDecodeError):
+        raise AttendanceError("INVALID_DEVICE_IDENTITY", "裝置識別資料格式錯誤。")
     return device
 
 

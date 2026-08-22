@@ -3,7 +3,7 @@ import hmac
 import json
 import importlib.util
 from pathlib import Path
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from uuid import uuid4
 
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
@@ -244,13 +244,14 @@ def test_provisioning_package_sets_unique_device_secret(app):
         db.session.add(device)
         package = create_provisioning_package(
             device, server_url="http://192.168.1.10:5000", passphrase="correct horse battery",
-            transport_mode="ENCRYPTED_HTTP",
+            transport_mode="ENCRYPTED_HTTP", activation_minutes=120,
         )
         outer = json.loads(package)
         assert outer["format"] == "dorm-attendance-provision-v1"
         assert b"192.168.1.10" not in package
         assert b"CLOCK-PACKAGE-01" not in package
-        assert device.secret_encrypted and device.enrolled_at
+        assert device.secret_encrypted and not device.enrolled_at
+        assert device.enrollment_token_hash and device.enrollment_expires_at
 
 
 def test_admin_creates_dynamic_device_and_downloads_encrypted_package(client, app):
@@ -262,6 +263,7 @@ def test_admin_creates_dynamic_device_and_downloads_encrypted_package(client, ap
         "device_code": "CLOCK-FUTURE-27", "name": "Future terminal",
         "location_id": location_id, "allowed_cidr": "10.20.0.0/16",
         "server_url": "http://10.20.0.5:5000", "package_password": "package password 2026",
+        "activation_hours": "12",
     })
     assert response.status_code == 200
     assert response.headers["Content-Disposition"].endswith("CLOCK-FUTURE-27.dormclock")
@@ -281,6 +283,12 @@ def test_server_package_is_compatible_with_terminal_importer(app, monkeypatch):
     terminal = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(terminal)
     monkeypatch.setattr(terminal, "save_config", lambda _data: None)
+    activation_calls = []
+    monkeypatch.setattr(terminal, "device_identity", lambda: {
+        "installation_id": "d0441544-a797-4144-9a58-2941b5549d09",
+        "computer_name": "CLOCK-PC", "mac_addresses": ["AA:BB:CC:DD:EE:FF"],
+    })
+    monkeypatch.setattr(terminal, "signed_json", lambda config, path, payload: activation_calls.append((path, payload)) or {"activated": True})
     with app.app_context():
         office = db.session.scalar(db.select(WorkLocation).where(WorkLocation.code == "OFFICE"))
         admin = db.session.scalar(db.select(User).where(User.username == "admin-test"))
@@ -288,12 +296,106 @@ def test_server_package_is_compatible_with_terminal_importer(app, monkeypatch):
         db.session.add(device)
         package = create_provisioning_package(
             device, server_url="http://10.0.0.5:5000", passphrase="interop password 2026",
-            transport_mode="ENCRYPTED_HTTP",
+            transport_mode="ENCRYPTED_HTTP", activation_minutes=60,
         )
         result = terminal.import_package_data(package.decode(), "interop password 2026")
         assert result["device_id"] == "CLOCK-INTEROP"
         assert result["transport_mode"] == "ENCRYPTED_HTTP"
         assert result["secret"].encode() == decrypt_device_secret(device)
+        assert "activation_token" not in result
+        assert activation_calls[0][0] == "/attendance-api/activate"
+
+
+def test_encrypted_package_activation_is_one_time_and_binds_identity(client, app, monkeypatch):
+    import app.services.attendance as attendance
+    monkeypatch.setattr(attendance, "utc_now", lambda: FIXED_NOW)
+    app.config["ATTENDANCE_TRANSPORT_MODE"] = "ENCRYPTED_HTTP"
+    setup_attendance(app)
+    token = "one-time-activation-token"
+    with app.app_context():
+        device = db.session.scalar(db.select(AttendanceDevice).where(AttendanceDevice.device_code == "CLOCK-OFFICE-01"))
+        device.enrolled_at = None
+        device.enrollment_token_hash = hashlib.sha256(token.encode()).hexdigest()
+        device.enrollment_expires_at = FIXED_NOW + timedelta(hours=2)
+        db.session.commit()
+    identity = {
+        "installation_id": "22d2061b-4639-45c0-8f59-cbb3c165fa81",
+        "computer_name": "OFFICE-PC-01", "mac_addresses": ["AABBCCDDEEFF"],
+    }
+    response, result, _ = encrypted_post(client, "/attendance-api/activate", {
+        "activation_token": token, "_device": identity,
+    })
+    assert response.status_code == 200 and result["activated"] is True
+    with app.app_context():
+        device = db.session.scalar(db.select(AttendanceDevice).where(AttendanceDevice.device_code == "CLOCK-OFFICE-01"))
+        assert device.enrolled_at is not None
+        assert device.enrollment_token_hash is None
+        assert device.computer_name == "OFFICE-PC-01"
+        assert device.mac_addresses == ["AA:BB:CC:DD:EE:FF"]
+    response, result, _ = encrypted_post(client, "/attendance-api/activate", {
+        "activation_token": token,
+        "_device": {**identity, "installation_id": "219e8e0c-9644-4e0c-b732-caad13388137"},
+    })
+    assert response.status_code == 401
+    assert result["error"]["code"] == "ACTIVATION_USED"
+
+
+def test_expired_activation_package_is_rejected(client, app, monkeypatch):
+    import app.services.attendance as attendance
+    monkeypatch.setattr(attendance, "utc_now", lambda: FIXED_NOW)
+    app.config["ATTENDANCE_TRANSPORT_MODE"] = "ENCRYPTED_HTTP"
+    setup_attendance(app)
+    token = "expired-activation-token"
+    with app.app_context():
+        device = db.session.scalar(db.select(AttendanceDevice).where(AttendanceDevice.device_code == "CLOCK-OFFICE-01"))
+        device.enrolled_at = None
+        device.enrollment_token_hash = hashlib.sha256(token.encode()).hexdigest()
+        device.enrollment_expires_at = FIXED_NOW - timedelta(minutes=1)
+        db.session.commit()
+    response, result, _ = encrypted_post(client, "/attendance-api/activate", {
+        "activation_token": token,
+        "_device": {"installation_id": "343f3a2c-8b8c-490e-b41f-8fb80f216481", "computer_name": "LATE-PC", "mac_addresses": ["11:22:33:44:55:66"]},
+    })
+    assert response.status_code == 401
+    assert result["error"]["code"] == "ACTIVATION_EXPIRED"
+
+
+def test_mac_change_waits_for_admin_confirmation(client, app, monkeypatch):
+    import app.services.attendance as attendance
+    monkeypatch.setattr(attendance, "utc_now", lambda: FIXED_NOW)
+    app.config["ATTENDANCE_TRANSPORT_MODE"] = "ENCRYPTED_HTTP"
+    setup_attendance(app)
+    installation_id = "98805f27-e1d8-4e3a-92c0-91012022bb14"
+    with app.app_context():
+        device = db.session.scalar(db.select(AttendanceDevice).where(AttendanceDevice.device_code == "CLOCK-OFFICE-01"))
+        device.installation_id = installation_id
+        device.computer_name = "OFFICE-PC"
+        device.mac_addresses_json = '["AA:BB:CC:DD:EE:FF"]'
+        db.session.commit()
+    response, _result, _ = encrypted_post(client, "/attendance-api/punch", {
+        "event_id": str(uuid4()), "sequence": 1, "occurred_at": "2026-08-19T08:55:00+08:00",
+        "method": "CARD", "card_uid": "CARD0001", "offline": False,
+        "_device": {"installation_id": installation_id, "computer_name": "OFFICE-PC-RENAMED", "mac_addresses": ["00:11:22:33:44:55"]},
+    })
+    assert response.status_code == 200
+    with app.app_context():
+        device = db.session.scalar(db.select(AttendanceDevice).where(AttendanceDevice.device_code == "CLOCK-OFFICE-01"))
+        device_id = device.id
+        assert device.computer_name == "OFFICE-PC"
+        assert device.pending_computer_name == "OFFICE-PC-RENAMED"
+        assert device.pending_mac_addresses == ["00:11:22:33:44:55"]
+    login(client)
+    renamed = client.post(f"/admin/attendance/devices/{device_id}/update", data={"name": "辦公室入口打卡機"})
+    assert renamed.status_code == 302
+    settings = client.get("/admin/settings/attendance")
+    assert "OFFICE-PC-RENAMED".encode() in settings.data
+    confirmed = client.post(f"/admin/attendance/devices/{device_id}/confirm-identity")
+    assert confirmed.status_code == 302
+    with app.app_context():
+        device = db.session.get(AttendanceDevice, device_id)
+        assert device.name == "辦公室入口打卡機"
+        assert device.computer_name == "OFFICE-PC-RENAMED"
+        assert device.pending_mac_addresses_json is None
 
 
 def test_attendance_review_note_and_shift_link_are_visible_to_admin_and_student(client, app, monkeypatch):

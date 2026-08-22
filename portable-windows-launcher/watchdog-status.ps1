@@ -32,5 +32,5 @@ function Write-TaskStatus([string]$Prefix, [string]$Name, [string]$ExpectedPath)
     }
 }
 
-Write-TaskStatus "WATCHDOG" $TaskName (Join-Path $PSScriptRoot "watchdog.ps1")
+Write-TaskStatus "WATCHDOG" $TaskName (Join-Path $PSScriptRoot "DormStaffLauncher.exe")
 Write-TaskStatus "LAUNCHER" $LauncherTaskName (Join-Path $PSScriptRoot "DormStaffLauncher.exe")

@@ -4,22 +4,29 @@
 
 ## 安裝與首次註冊
 
-1. 將完整 Git 專案複製或 clone 到打卡電腦，執行 `DormAttendanceTerminal.exe`。
-2. 按「安裝／修復」；kiosk 本身是自足 EXE，不依賴設備的 Python。第一次需要網路安裝 PortableGit，供後續安全更新使用。
+1. 只需將整個 `attendance-terminal` 資料夾複製到打卡電腦，不需要主系統、`portable-windows-launcher`、Python、Git 或 XAMPP。
+2. 執行 `DormAttendanceTerminal.exe`，按「檢查檔案」確認 `DormAttendanceKiosk.exe`、更新設定及自啟動腳本完整。
 3. 主機管理員在「設定 → 打卡設定」建立裝置，選擇地點及允許的內網 CIDR，輸入中央網址和至少 10 字元的註冊包密碼，下載 `.dormclock`。
 4. 以 USB 等受控方式把註冊包交給對應終端，按「啟動打卡」，選擇註冊包並輸入密碼。匯入完成後立即刪除 USB 與下載資料夾中的註冊包。
 5. 註冊密鑰會使用 Windows DPAPI 綁定目前電腦與 Windows 帳號；不要複製 `%LOCALAPPDATA%\DormAttendanceTerminal` 到其他電腦。
+6. 匯入 `.dormclock` 時中央主機必須在線。註冊包只能啟用一次，且必須在管理員設定的期限內完成；逾期請重新產生註冊包。
+7. 終端會自動回報 Windows 電腦名稱與 MAC 位址。資料異動會保留為待確認狀態，需由管理員在「設定 → 打卡設定」確認。
 
 HTTPS 模式仍可使用 10 分鐘的一次性註冊碼；`ENCRYPTED_HTTP` 必須使用密碼保護的註冊包，密鑰不會透過 HTTP 明文交換。重新下載註冊包會輪替密鑰，舊終端會立即停止同步，適合遺失、搬機或重灌。
 
 ## 日常操作與更新
 
+- 「Git 更新來源」會顯示並保存公開 GitHub repository 的 HTTPS URL；不可輸入帳號、密碼或 Personal Access Token。網址保存在 `%LOCALAPPDATA%\DormAttendanceTerminal\terminal.ini`。
+- 「Git 安全更新」不需要安裝 Git：Windows PowerShell 會下載指定 branch 的 GitHub ZIP，確認其中含完整 `attendance-terminal`，等待程式關閉後備份並更新；驗證失敗會回復舊檔。裝置設定、密鑰與離線佇列都在 `%LOCALAPPDATA%`，不會被更新覆蓋。
+- 「啟用自啟動」會建立目前 Windows 使用者的互動式工作排程：登入桌面時啟動終端，登入期間每 5 分鐘巡檢；若終端被關閉，會重新顯示管理程式、啟動 kiosk 並開啟打卡網頁。Windows 尚未登入時無法顯示桌面程式，因此不會在登入畫面背景啟動。
+- 「停用自啟動」會移除上述工作排程；若要長期停止終端，應先停用再關閉。移動專案資料夾後請重新啟用，讓排程改用新路徑。
 - 「啟動打卡」會啟動本機服務並開啟學生畫面；畫面被關閉時可按「開啟打卡網頁」重新開啟，不會重複啟動服務。
 - 刷卡時將游標放在畫面中的「學生證刷卡區」；讀卡機必須像鍵盤一樣輸出 UID 後送出 Enter。可先用記事本確認讀卡機輸出格式。
 - 「停止打卡」會向本機服務送出帶驗證的關閉要求，並在必要時停止該次啟動的程序樹；日誌顯示「打卡服務已停止」後，`http://127.0.0.1:47831/health` 應無法連線。
 - 刷卡會先以 DPAPI 加密寫入 `%LOCALAPPDATA%\DormAttendanceTerminal\queue.db`，中央主機離線時仍可收卡，恢復後依原時間及序號補傳。
+- 首次啟用一定需要連上中央主機；完成啟用後，刷卡才支援離線暫存。帳號打卡仍需中央主機在線。
 - 帳號密碼只保留在記憶體並立即送出，不寫入磁碟；中央主機離線時帳號打卡不可用，應改刷卡或請管理員補登。
-- 「Git 安全更新」只接受 clean working tree 與 fast-forward 更新，更新前須停止打卡畫面；本機 DPAPI 設定及離線佇列位於 Git 外，不受更新影響。
+- 更新前仍須停止打卡畫面；更新紀錄位於「裝置資料夾」中的 `terminal-update.log`。
 - 正式發放前應使用學校的 Code Signing 憑證簽署兩個 EXE，避免 SmartScreen 無法辨識自行編譯程式。
 
 ## ENCRYPTED_HTTP 的安全邊界
@@ -41,6 +48,6 @@ HTTPS 模式仍可使用 10 分鐘的一次性註冊碼；`ENCRYPTED_HTTP` 必�
 | 終端遺失 | 密鑰仍受 DPAPI 保護 | 管理端立即撤銷裝置並檢查最後 IP／時間 |
 | 磁碟空間不足 | 離線佇列可能無法新增 | 保留磁碟監控；修復後做現場人工核對 |
 | 讀卡機多送字元／未送 Enter | UID 驗證失敗或不觸發 | 用記事本測試輸出格式，再調整讀卡機設定 |
-| 更新失敗／有本機修改 | 拒絕覆蓋並保留舊版 | 查看 `terminal-update.log`，清理 Git 狀態後重試 |
+| 更新下載或驗證失敗 | 回復舊版並重新開啟終端 | 從「裝置資料夾」查看 `terminal-update.log`，確認 GitHub URL、branch 與網路 |
 
 終端應使用固定的專用 Windows 標準帳號、BitLocker、Defender、螢幕鎖與 kiosk mode；學生不可取得系統管理員權限。每個實體終端必須建立自己的裝置，禁止共用註冊包或密鑰。

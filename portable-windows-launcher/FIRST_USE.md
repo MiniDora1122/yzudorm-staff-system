@@ -91,9 +91,11 @@ Launcher 的「匯出／備份系統」可建立完整 portable backup ZIP；「
 
 ## 自啟動巡檢
 
-在 Launcher 設定「巡檢分鐘」（1–1440）後，按「啟用自啟動巡檢」並同意 Windows UAC。系統會建立兩個 Windows 工作排程：`DormStaffSystem-PortableWatchdog` 在開機時及指定間隔檢查網站，只有系統未回應且 Port 未被占用時才啟動 Waitress；`DormStaffSystem-PortableLauncher` 則在目前使用者登入 Windows 時自動顯示 Launcher。
+在 Launcher 設定「巡檢分鐘」（預設 5 分鐘）後，按「啟用自啟動巡檢」並同意 Windows UAC。系統會建立兩個只在目前登入使用者桌面執行的 Windows 工作排程：`DormStaffSystem-PortableLauncher` 在使用者登入 Windows 時顯示 Launcher；`DormStaffSystem-PortableWatchdog` 每隔指定分鐘重新確認。若 Launcher 被關閉，巡檢會重新顯示它；若網站沒有執行，Launcher 會自動啟動網站。
 
-Launcher 每兩秒透過輕量 `/healthz` 檢查應用程式與資料庫，並定期查詢 Windows 工作排程的實際狀態，所以無論系統由 Launcher 或背景巡檢啟動，右上角都會顯示真實運行及自啟動狀態；若兩個排程只剩一個，會顯示「自啟動：不完整」。背景巡檢紀錄也會同步到畫面下方。按「停止系統」可停止背景巡檢啟動的系統，但只要自啟動巡檢仍啟用，下一個巡檢週期就會再次啟動。若要持續停止，請先按「停用自啟動巡檢」，再按「停止系統」。
+Windows 在尚未登入使用者前沒有可顯示視窗的桌面工作階段，因此可見 Launcher 會從 Windows 登入後開始運作，不會以 SYSTEM 身分偷偷在背景桌面外執行。
+
+Launcher 每兩秒透過輕量 `/healthz` 檢查應用程式與資料庫，並定期查詢 Windows 工作排程的實際狀態；右上角會顯示真實運行及自啟動狀態。若兩個排程只剩一個，會顯示「自啟動：不完整」。按「停止系統」可暫時停止，但只要自啟動巡檢仍啟用，下一個巡檢週期就會再次啟動。若要持續停止，請先按「停用自啟動巡檢」，再按「停止系統」。
 
 實際運行狀態以設定 Port 的登入頁健康檢查為準，不依賴 PID 檔是否存在。若背景系統由 Windows SYSTEM 身分啟動，「停止系統」會要求 UAC 權限；Launcher 只會停止由本 portable Python 占用該 Port 的程序，不會停止其他軟體。
 

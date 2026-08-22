@@ -7,6 +7,7 @@ from ..extensions import db
 from ..models import AttendanceEvent, AttendanceMethod
 from ..services.attendance import (
     AttendanceError,
+    activate_device,
     create_event,
     decrypt_device_payload,
     encrypt_device_response,
@@ -57,6 +58,24 @@ def enroll():
         })
     except AttendanceError as exc:
         return error(exc)
+
+
+@bp.post("/activate")
+def activate():
+    context = None
+    try:
+        if current_app.config.get("ATTENDANCE_TRANSPORT_MODE") != "ENCRYPTED_HTTP":
+            raise AttendanceError("ACTIVATION_NOT_AVAILABLE", "此傳輸模式不使用加密註冊包。", 400)
+        context, payload = decrypt_device_payload(request.get_data(cache=True), path=request.path)
+        activate_device(context.device, payload)
+        db.session.commit()
+        return success({
+            "device_name": context.device.name,
+            "location": context.device.location.name,
+            "activated": True,
+        }, context)
+    except AttendanceError as exc:
+        return error(exc, context)
 
 
 @bp.post("/punch")
@@ -114,6 +133,6 @@ def health():
         context, _payload = device_request()
         device = context.device if context else verify_device_request(request.get_data(cache=True), path=request.path)
         db.session.commit()
-        return success({"status": "ok", "device": device.device_code, "location": device.location.name}, context)
+        return success({"status": "ok", "device": device.device_code, "device_name": device.name, "location": device.location.name}, context)
     except AttendanceError as exc:
         return error(exc, context)

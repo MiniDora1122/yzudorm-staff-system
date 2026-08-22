@@ -17,6 +17,10 @@ def test_launcher_watchdog_uses_native_task_scheduler_and_health_check():
     assert "New-ScheduledTaskTrigger -AtLogOn" in configure
     assert '"DormStaffSystem-PortableLauncher"' in configure
     assert "DormStaffLauncher.exe" in configure
+    assert 'Argument "--auto-start"' in configure
+    assert "LogonType Interactive" in configure
+    assert 'UserId "SYSTEM"' not in configure
+    assert "New-TimeSpan -Seconds 0" in configure
     assert "RepetitionInterval" in configure
     assert "/healthz" in watchdog
     assert '"service"\\s*:\\s*"dorm-staff-system"' in watchdog
@@ -51,6 +55,10 @@ def test_launcher_watchdog_uses_native_task_scheduler_and_health_check():
     assert "watchdog-status.ps1" in launcher
     assert '${Prefix}_PATH_OK=' in (LAUNCHER_ROOT / "watchdog-status.ps1").read_text(encoding="utf-8")
     assert "InstanceMutexName" in launcher
+    assert "autoStartRequest" in launcher
+    assert "EnsureAutoStartServer" in launcher
+    assert "Git 更新來源：" in launcher
+    assert 'remoteExists ? "set-url " : "add "' in launcher
     assert "AcquireMaintenance" in launcher
     assert "RunMaintenanceBackground" in launcher
     assert "ExportSupportBundle" in launcher

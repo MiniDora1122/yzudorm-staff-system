@@ -31,7 +31,7 @@ def test_student_can_only_request_leave_for_own_shift(client, app):
     values = ids(app)
     login(client)
     other_shift_id = create_shift_as_admin(
-        client, values, "2026-08-20", "student_two", "TEST_AM"
+        client, values, "2099-08-20", "student_two", "TEST_AM"
     )
     logout(client)
     login(client, "student-test", "StudentTest!2026")
@@ -48,7 +48,7 @@ def test_student_can_only_request_leave_for_own_shift(client, app):
 def test_duplicate_leave_is_rejected_and_pending_can_cancel(client, app):
     values = ids(app)
     login(client)
-    shift_id = create_shift_as_admin(client, values, "2026-08-20", "student_one", "TEST_AM")
+    shift_id = create_shift_as_admin(client, values, "2099-08-20", "student_one", "TEST_AM")
     logout(client)
     login(client, "student-test", "StudentTest!2026")
     payload = {"shift_id": shift_id, "reason": "返鄉", "note": ""}
@@ -72,10 +72,10 @@ def test_requester_leave_and_swap_reasons_cannot_be_blank(client, app):
     values = ids(app)
     login(client)
     leave_shift_id = create_shift_as_admin(
-        client, values, "2026-08-20", "student_one", "TEST_AM"
+        client, values, "2099-08-20", "student_one", "TEST_AM"
     )
     swap_shift_id = create_shift_as_admin(
-        client, values, "2026-08-21", "student_one", "TEST_AM"
+        client, values, "2099-08-21", "student_one", "TEST_AM"
     )
     logout(client)
     login(client, "student-test", "StudentTest!2026")
@@ -106,7 +106,7 @@ def test_requester_leave_and_swap_reasons_cannot_be_blank(client, app):
 def test_admin_approves_leave_and_preserves_vacancy_and_audit(client, app):
     values = ids(app)
     login(client)
-    shift_id = create_shift_as_admin(client, values, "2026-08-20", "student_one", "TEST_AM")
+    shift_id = create_shift_as_admin(client, values, "2099-08-20", "student_one", "TEST_AM")
     logout(client)
     login(client, "student-test", "StudentTest!2026")
     client.post(
@@ -134,7 +134,7 @@ def test_admin_approves_leave_and_preserves_vacancy_and_audit(client, app):
             db.select(db.func.count()).select_from(AuditLog).where(AuditLog.action == "LEAVE_APPROVED")
         ) == 1
 
-    events = client.get("/admin/api/shifts?start=2026-08-01&end=2026-09-01")
+    events = client.get("/admin/api/shifts?start=2099-08-01&end=2099-09-01")
     vacancy = next(event for event in events.json if event["id"] == shift_id)
     assert vacancy["extendedProps"]["isVacancy"] is True
 
@@ -142,7 +142,7 @@ def test_admin_approves_leave_and_preserves_vacancy_and_audit(client, app):
 def test_student_cannot_use_admin_review_route(client, app):
     values = ids(app)
     login(client)
-    shift_id = create_shift_as_admin(client, values, "2026-08-20", "student_one", "TEST_AM")
+    shift_id = create_shift_as_admin(client, values, "2099-08-20", "student_one", "TEST_AM")
     logout(client)
     login(client, "student-test", "StudentTest!2026")
     client.post("/student/leave-requests", data={"shift_id": shift_id, "reason": "請假"})
@@ -157,7 +157,7 @@ def test_swap_requester_must_own_requester_shift(client, app):
     values = ids(app)
     login(client)
     other_shift_id = create_shift_as_admin(
-        client, values, "2026-08-20", "student_two", "TEST_AM"
+        client, values, "2099-08-20", "student_two", "TEST_AM"
     )
     logout(client)
     login(client, "student-test", "StudentTest!2026")
@@ -179,7 +179,7 @@ def test_admin_cannot_approve_before_peer_accepts(client, app):
     values = ids(app)
     login(client)
     requester_shift_id = create_shift_as_admin(
-        client, values, "2026-08-20", "student_one", "TEST_AM"
+        client, values, "2099-08-20", "student_one", "TEST_AM"
     )
     logout(client)
     login(client, "student-test", "StudentTest!2026")
@@ -208,9 +208,9 @@ def test_swap_creation_rejects_conflicts_before_peer_or_admin_review(client, app
     values = ids(app)
     login(client)
     requester_shift_id = create_shift_as_admin(
-        client, values, "2026-08-20", "student_one", "TEST_AM"
+        client, values, "2099-08-20", "student_one", "TEST_AM"
     )
-    create_shift_as_admin(client, values, "2026-08-20", "student_two", "TEST_OVERLAP")
+    create_shift_as_admin(client, values, "2099-08-20", "student_two", "TEST_OVERLAP")
     logout(client)
     login(client, "student-test", "StudentTest!2026")
     client.post(
@@ -231,10 +231,10 @@ def test_approved_swap_updates_both_shifts_and_audit(client, app):
     values = ids(app)
     login(client)
     requester_shift_id = create_shift_as_admin(
-        client, values, "2026-08-20", "student_one", "TEST_AM"
+        client, values, "2099-08-20", "student_one", "TEST_AM"
     )
     target_shift_id = create_shift_as_admin(
-        client, values, "2026-08-21", "student_two", "TEST_PM"
+        client, values, "2099-08-21", "student_two", "TEST_PM"
     )
     logout(client)
     login(client, "student-test", "StudentTest!2026")
@@ -275,8 +275,8 @@ def test_approved_swap_updates_both_shifts_and_audit(client, app):
 def test_student_and_admin_can_filter_leave_and_swap_by_shift_month(client, app):
     values = ids(app)
     login(client)
-    august_shift = create_shift_as_admin(client, values, "2026-08-24", "student_one", "TEST_AM")
-    september_shift = create_shift_as_admin(client, values, "2026-09-24", "student_one", "TEST_AM")
+    august_shift = create_shift_as_admin(client, values, "2099-08-24", "student_one", "TEST_AM")
+    september_shift = create_shift_as_admin(client, values, "2099-09-24", "student_one", "TEST_AM")
     logout(client)
     login(client, "student-test", "StudentTest!2026")
     client.post("/student/leave-requests", data={"shift_id": august_shift, "reason": "八月請假"})
@@ -290,7 +290,7 @@ def test_student_and_admin_can_filter_leave_and_swap_by_shift_month(client, app)
         data={"requester_shift_id": september_shift, "target_staff_id": values["student_two"], "note": "九月換班"},
     )
 
-    august_page = client.get("/student/requests?scope=MONTH&month=2026-08")
+    august_page = client.get("/student/requests?scope=MONTH&month=2099-08")
     assert "八月請假".encode() in august_page.data
     assert "九月請假".encode() not in august_page.data
     assert "八月換班".encode() in august_page.data
@@ -298,7 +298,7 @@ def test_student_and_admin_can_filter_leave_and_swap_by_shift_month(client, app)
 
     logout(client)
     login(client)
-    september_page = client.get("/admin/requests?scope=MONTH&month=2026-09")
+    september_page = client.get("/admin/requests?scope=MONTH&month=2099-09")
     assert "九月請假".encode() in september_page.data
     assert "八月請假".encode() not in september_page.data
     assert "九月換班".encode() in september_page.data
@@ -308,8 +308,8 @@ def test_student_and_admin_can_filter_leave_and_swap_by_shift_month(client, app)
 def test_calendar_marks_leave_swap_and_direct_invitation(client, app):
     values = ids(app)
     login(client)
-    leave_shift = create_shift_as_admin(client, values, "2026-08-25", "student_one", "TEST_AM")
-    swap_shift = create_shift_as_admin(client, values, "2026-08-26", "student_one", "TEST_AM")
+    leave_shift = create_shift_as_admin(client, values, "2099-08-25", "student_one", "TEST_AM")
+    swap_shift = create_shift_as_admin(client, values, "2099-08-26", "student_one", "TEST_AM")
     logout(client)
     login(client, "student-test", "StudentTest!2026")
     client.post("/student/leave-requests", data={"shift_id": leave_shift, "reason": "月曆標示"})
@@ -318,7 +318,7 @@ def test_calendar_marks_leave_swap_and_direct_invitation(client, app):
         data={"requester_shift_id": swap_shift, "target_staff_id": values["student_two"], "note": "直接承接"},
     )
 
-    student_events = client.get("/student/api/shifts?start=2026-08-01&end=2026-09-01").json
+    student_events = client.get("/student/api/shifts?start=2099-08-01&end=2099-09-01").json
     leave_event = next(item for item in student_events if item["id"] == leave_shift)
     swap_event = next(item for item in student_events if item["id"] == swap_shift)
     assert leave_event["extendedProps"]["workflowAnnotations"][0]["label"] == "請假待審核"
@@ -326,12 +326,12 @@ def test_calendar_marks_leave_swap_and_direct_invitation(client, app):
 
     logout(client)
     login(client, "student-two", "StudentTwo!2026")
-    target_events = client.get("/student/api/shifts?start=2026-08-01&end=2026-09-01").json
+    target_events = client.get("/student/api/shifts?start=2099-08-01&end=2099-09-01").json
     invitation = next(item for item in target_events if item["id"].startswith("swap-invitation-"))
     assert invitation["extendedProps"]["isSwapInvitation"] is True
     assert invitation["extendedProps"]["workflowAnnotations"][0]["label"] == "換班邀請待你回覆"
 
     logout(client)
     login(client)
-    admin_events = client.get("/admin/api/shifts?start=2026-08-01&end=2026-09-01").json
+    admin_events = client.get("/admin/api/shifts?start=2099-08-01&end=2099-09-01").json
     assert next(item for item in admin_events if item["id"] == leave_shift)["extendedProps"]["workflowAnnotations"]

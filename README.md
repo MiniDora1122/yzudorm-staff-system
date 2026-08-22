@@ -153,8 +153,8 @@ flask --app wsgi.py documents-cleanup --actor-user-id 1
 
 ## 自動驗證備份、排班鎖定與缺員
 
-- 系統預設每天 `02:00` 建立一次完整 portable ZIP；備份會先驗證 manifest 內每個檔案的 SHA-256，再對 SQLite 快照執行 `PRAGMA integrity_check`，全部成功才保留。
-- 管理員可由「設定 → 排班鎖定與備份」查看最近結果、手動執行、發布整月草稿、鎖定排班及填寫原因解鎖。薪資試算依正式排班即時計算，不與月份鎖定綁定。
+- 系統首次使用預設每天 `02:00` 建立一次完整 portable ZIP；管理員可改成每隔 1–168 小時，或每天固定時間。備份會先驗證 manifest 內每個檔案的 SHA-256，再對 SQLite 快照執行 `PRAGMA integrity_check`，全部成功才保留。
+- 管理員可由「設定 → 排班鎖定與備份」調整自動備份排程、查看最近結果、手動執行、發布整月草稿、鎖定排班及填寫原因解鎖。薪資試算依正式排班即時計算，不與月份鎖定綁定。
 - 正式環境請把 `AUTOMATIC_BACKUP_DIR` 改到另一顆受 BitLocker 保護的磁碟。預設同機資料夾只提供誤刪復原能力，不能防止整顆硬碟故障。
 - CLI 可手動執行：
 
@@ -170,7 +170,8 @@ flask --app wsgi.py backup-run --actor-user-id 1
 - 管理員由「設定 → 打卡設定」登錄學生證 UID、建立／撤銷固定地點打卡裝置與設定遲到寬限；「出勤管理」只顯示當日紀錄與待審核異常。工讀生頁面也可直接登錄學生證。
 - 終端支援鍵盤模擬讀卡機及在線帳號打卡。刷卡先以 Windows DPAPI 加密寫入本機 SQLite，斷線後自動補傳；帳號密碼永不落地，離線時不可使用帳號打卡。
 - 裝置可依需求不限數量新增並綁定動態工作地點；未使用裝置可刪除，已有歷史者會封存以保留稽核關聯。
-- HTTPS 模式可使用 10 分鐘一次性註冊碼；`ENCRYPTED_HTTP` 改用密碼保護的 `.dormclock` 註冊包，每台裝置獨立密鑰，API 請求與回應均以 AES-256-GCM 加密並驗證時間、request id、裝置狀態及選配 CIDR。
+- HTTPS 模式可使用 10 分鐘一次性註冊碼；`ENCRYPTED_HTTP` 改用密碼保護的 `.dormclock` 註冊包。管理員設定 1–168 小時啟用期限，首次匯入必須在線且只能成功一次。每台裝置使用獨立密鑰，API 請求與回應均以 AES-256-GCM 加密並驗證時間、request id、裝置狀態及選配 CIDR。
+- 終端會回報 Windows 電腦名稱與 MAC 位址；異動只會進入待確認狀態，管理員可在「設定 → 打卡設定」核對後接受。
 - `ENCRYPTED_HTTP` 只適合封閉內網的打卡 API；網頁登入、管理端與證件仍應使用 HTTPS。主機 Launcher 可直接啟／停打卡服務及切換 `HTTPS`／`ENCRYPTED_HTTP`，變更於下次啟動服務生效。
 - 系統依正式排班、固定地點、時間與既有紀錄自動判斷上／下班。遲到必須填事由；接近下班但沒有上班紀錄時，建立漏刷異常，由學生申報到班時間、管理員核准後才建立補登調整。
 - Windows 終端使用獨立 `attendance-terminal/DormAttendanceTerminal.exe`，包含首次註冊引導、環境修復與 Git 安全更新；安裝及故障處理請見 `attendance-terminal/README.md`。

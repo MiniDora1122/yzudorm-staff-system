@@ -23,33 +23,29 @@ if ($Mode -eq "Disable") {
     exit 0
 }
 
-$watchdog = Join-Path $PSScriptRoot "watchdog.ps1"
-if (-not (Test-Path -LiteralPath $watchdog)) { throw "watchdog.ps1 not found." }
-$powershell = "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe"
-$arguments = '-NoProfile -ExecutionPolicy Bypass -File "{0}"' -f $watchdog
-$action = New-ScheduledTaskAction -Execute $powershell -Argument $arguments -WorkingDirectory $PSScriptRoot
+$launcher = Join-Path $PSScriptRoot "DormStaffLauncher.exe"
+if (-not (Test-Path -LiteralPath $launcher)) { throw "DormStaffLauncher.exe not found." }
+if ([string]::IsNullOrWhiteSpace($InteractiveUser)) { throw "Original interactive user SID is required." }
+$action = New-ScheduledTaskAction -Execute $launcher -Argument "--auto-start" -WorkingDirectory $PSScriptRoot
 $startupTrigger = New-ScheduledTaskTrigger -AtStartup
 $repeatTrigger = New-ScheduledTaskTrigger -Once -At (Get-Date).AddMinutes(1) `
     -RepetitionInterval (New-TimeSpan -Minutes $IntervalMinutes) `
     -RepetitionDuration (New-TimeSpan -Days 3650)
 $settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -MultipleInstances IgnoreNew `
-    -ExecutionTimeLimit (New-TimeSpan -Minutes 2)
-$taskPrincipal = New-ScheduledTaskPrincipal -UserId "SYSTEM" -LogonType ServiceAccount -RunLevel Highest
+    -ExecutionTimeLimit (New-TimeSpan -Seconds 0)
+$taskPrincipal = New-ScheduledTaskPrincipal -UserId $InteractiveUser -LogonType Interactive -RunLevel Limited
 
 Register-ScheduledTask -TaskName $TaskName -Action $action `
     -Trigger @($startupTrigger, $repeatTrigger) -Settings $settings -Principal $taskPrincipal -Force | Out-Null
 
 try {
-    $launcher = Join-Path $PSScriptRoot "DormStaffLauncher.exe"
-    if (-not (Test-Path -LiteralPath $launcher)) { throw "DormStaffLauncher.exe not found." }
-    if ([string]::IsNullOrWhiteSpace($InteractiveUser)) { throw "Original interactive user SID is required." }
-    $launcherAction = New-ScheduledTaskAction -Execute $launcher -WorkingDirectory $PSScriptRoot
+    $launcherAction = New-ScheduledTaskAction -Execute $launcher -Argument "--auto-start" -WorkingDirectory $PSScriptRoot
     $logonTrigger = New-ScheduledTaskTrigger -AtLogOn -User $InteractiveUser
     $launcherPrincipal = New-ScheduledTaskPrincipal -UserId $InteractiveUser -LogonType Interactive -RunLevel Limited
     Register-ScheduledTask -TaskName $LauncherTaskName -Action $launcherAction -Trigger $logonTrigger `
-        -Settings (New-ScheduledTaskSettingsSet -StartWhenAvailable -MultipleInstances IgnoreNew) `
+        -Settings (New-ScheduledTaskSettingsSet -StartWhenAvailable -MultipleInstances IgnoreNew -ExecutionTimeLimit (New-TimeSpan -Seconds 0)) `
         -Principal $launcherPrincipal -Force | Out-Null
-    Start-ScheduledTask -TaskName $TaskName
+    Start-ScheduledTask -TaskName $LauncherTaskName
 } catch {
     Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false -ErrorAction SilentlyContinue
     Unregister-ScheduledTask -TaskName $LauncherTaskName -Confirm:$false -ErrorAction SilentlyContinue

@@ -7,13 +7,17 @@ ENCRYPTED_HTTP additionally protects every API payload with AES-256-GCM.
 from __future__ import annotations
 
 import base64
+import csv
 import ctypes
 import hashlib
 import hmac
 import json
 import os
+import re
 import secrets
+import socket
 import sqlite3
+import subprocess
 import sys
 import threading
 import time
@@ -33,6 +37,8 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 APP_DIR = Path(os.environ.get("LOCALAPPDATA", Path.home())) / "DormAttendanceTerminal"
 CONFIG_PATH = APP_DIR / "device.json"
 DB_PATH = APP_DIR / "queue.db"
+INSTALLATION_PATH = APP_DIR / "installation-id"
+_IDENTITY_CACHE: tuple[float, dict] | None = None
 
 
 class ApiError(RuntimeError):
@@ -99,6 +105,40 @@ def save_config(data: dict):
     os.replace(temporary, CONFIG_PATH)
 
 
+def device_identity() -> dict:
+    global _IDENTITY_CACHE
+    if _IDENTITY_CACHE and time.time() - _IDENTITY_CACHE[0] < 300:
+        return _IDENTITY_CACHE[1]
+    APP_DIR.mkdir(parents=True, exist_ok=True)
+    if not INSTALLATION_PATH.exists():
+        INSTALLATION_PATH.write_text(str(uuid.uuid4()), encoding="ascii")
+    macs = []
+    try:
+        completed = subprocess.run(
+            ["getmac.exe", "/fo", "csv", "/nh"], capture_output=True, text=True,
+            timeout=5, creationflags=0x08000000 if os.name == "nt" else 0,
+        )
+        for row in csv.reader(completed.stdout.splitlines()):
+            for value in row:
+                compact = "".join(re.findall(r"[0-9A-Fa-f]", value))
+                if len(compact) == 12:
+                    mac = ":".join(compact[index:index + 2] for index in range(0, 12, 2)).upper()
+                    if mac not in macs:
+                        macs.append(mac)
+    except (OSError, subprocess.SubprocessError):
+        pass
+    if not macs:
+        compact = f"{uuid.getnode():012X}"
+        macs.append(":".join(compact[index:index + 2] for index in range(0, 12, 2)))
+    result = {
+        "installation_id": INSTALLATION_PATH.read_text(encoding="ascii").strip(),
+        "computer_name": socket.gethostname(),
+        "mac_addresses": sorted(macs),
+    }
+    _IDENTITY_CACHE = (time.time(), result)
+    return result
+
+
 def _b64(data: bytes) -> str:
     return base64.urlsafe_b64encode(data).decode("ascii").rstrip("=")
 
@@ -130,6 +170,11 @@ def import_package_data(package_text: str, passphrase: str) -> dict:
     config = json.loads(plaintext)
     if config.get("format") != "dorm-attendance-device-v1":
         raise ValueError("註冊包內容格式不相容。")
+    signed_json(config, "/attendance-api/activate", {
+        "activation_token": config.get("activation_token", ""),
+    })
+    config.pop("activation_token", None)
+    config.pop("activation_expires_at", None)
     save_config(config)
     return config
 
@@ -181,6 +226,8 @@ def unsigned_json(url: str, path: str, payload: dict) -> dict:
 
 
 def signed_json(config: dict, path: str, payload: dict) -> dict:
+    payload = dict(payload)
+    payload.setdefault("_device", device_identity())
     if config.get("transport_mode") == "ENCRYPTED_HTTP":
         return encrypted_json(config, path, payload)
     body = json.dumps(payload, separators=(",", ":"), ensure_ascii=False).encode()
@@ -291,8 +338,18 @@ class Kiosk:
         return signed_json(self.config_data, "/attendance-api/punch", payload)
 
     def sync(self):
+        next_health = 0.0
         while True:
             if self.config_data:
+                if time.time() >= next_health:
+                    try:
+                        health = signed_json(self.config_data, "/attendance-api/health", {})
+                        if health.get("device_name") and health["device_name"] != self.config_data.get("device_name"):
+                            self.config_data["device_name"] = health["device_name"]
+                            save_config(self.config_data)
+                    except Exception:
+                        pass
+                    next_health = time.time() + 300
                 for sequence, _event_id, payload in self.queue.pending():
                     payload["offline"] = True
                     try:

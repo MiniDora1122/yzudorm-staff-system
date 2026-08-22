@@ -3,6 +3,7 @@ from __future__ import annotations
 from datetime import date, datetime, time, timezone
 from decimal import Decimal
 from enum import Enum
+import json
 
 from argon2 import PasswordHasher
 from argon2.exceptions import InvalidHashError, VerificationError
@@ -34,6 +35,11 @@ class ShiftStatus(str, Enum):
 class ShiftPublicationStatus(str, Enum):
     DRAFT = "DRAFT"
     PUBLISHED = "PUBLISHED"
+
+
+class BackupScheduleMode(str, Enum):
+    INTERVAL = "INTERVAL"
+    DAILY = "DAILY"
 
 
 class LeaveStatus(str, Enum):
@@ -607,6 +613,30 @@ class BackupRun(db.Model):
     finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
 
+class BackupPolicy(db.Model):
+    __tablename__ = "backup_policies"
+    __table_args__ = (
+        CheckConstraint("interval_hours >= 1 AND interval_hours <= 168", name="ck_backup_policy_interval_hours"),
+        CheckConstraint("daily_hour >= 0 AND daily_hour <= 23", name="ck_backup_policy_daily_hour"),
+        CheckConstraint("daily_minute >= 0 AND daily_minute <= 59", name="ck_backup_policy_daily_minute"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True, default=1)
+    enabled: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    mode: Mapped[BackupScheduleMode] = mapped_column(
+        SqlEnum(BackupScheduleMode, native_enum=False), default=BackupScheduleMode.DAILY, nullable=False
+    )
+    interval_hours: Mapped[int] = mapped_column(Integer, default=24, nullable=False)
+    daily_hour: Mapped[int] = mapped_column(Integer, default=2, nullable=False)
+    daily_minute: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    updated_by: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utc_now, onupdate=utc_now, nullable=False
+    )
+
+    updater: Mapped[User] = relationship(foreign_keys=[updated_by])
+
+
 class StaffGroup(db.Model):
     __tablename__ = "staff_groups"
 
@@ -741,6 +771,12 @@ class AttendanceDevice(db.Model):
     enrollment_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False, index=True)
     enrolled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    installation_id: Mapped[str | None] = mapped_column(String(36), unique=True)
+    computer_name: Mapped[str | None] = mapped_column(String(255))
+    mac_addresses_json: Mapped[str | None] = mapped_column(Text)
+    pending_computer_name: Mapped[str | None] = mapped_column(String(255))
+    pending_mac_addresses_json: Mapped[str | None] = mapped_column(Text)
+    identity_changed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     last_seen_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     last_ip: Mapped[str | None] = mapped_column(String(45))
     last_sequence: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
@@ -750,6 +786,20 @@ class AttendanceDevice(db.Model):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
 
     location: Mapped[WorkLocation] = relationship()
+
+    @property
+    def mac_addresses(self) -> list[str]:
+        try:
+            return json.loads(self.mac_addresses_json or "[]")
+        except (TypeError, json.JSONDecodeError):
+            return []
+
+    @property
+    def pending_mac_addresses(self) -> list[str]:
+        try:
+            return json.loads(self.pending_mac_addresses_json or "[]")
+        except (TypeError, json.JSONDecodeError):
+            return []
 
 
 class AttendanceDeviceNonce(db.Model):
