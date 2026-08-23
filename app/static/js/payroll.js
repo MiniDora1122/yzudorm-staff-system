@@ -5,6 +5,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const monthInput = document.getElementById("payrollMonth");
   const staffModal = new bootstrap.Modal(document.getElementById("staffPayrollModal"));
   const settingsModal = new bootstrap.Modal(document.getElementById("payrollSettingsModal"));
+  const minimumWage = Number(app.dataset.minimumWage || 0);
+  [document.getElementById("staffHourlyWage"), document.getElementById("defaultHourlyWage")].forEach((input) => {
+    if (input && minimumWage) input.min = String(minimumWage);
+  });
+  const staffWageHelp = document.getElementById("staffHourlyWage")?.nextElementSibling;
+  if (staffWageHelp && minimumWage) {
+    staffWageHelp.textContent = `不得低於目前生效的最低時薪 ${minimumWage} 元。 / Must meet the effective minimum wage.`;
+  }
   let reportRows = [];
 
   const today = new Date();

@@ -48,6 +48,37 @@ def test_student_cannot_access_admin_route(client):
     assert response.status_code == 403
 
 
+def test_archived_account_loses_existing_session(client, app):
+    login(client, "student-test", "StudentTest!2026")
+    with app.app_context():
+        user = db.session.scalar(db.select(User).where(User.username == "student-test"))
+        user.is_active = False
+        user.invalidate_sessions()
+        db.session.commit()
+
+    response = client.get("/student/", follow_redirects=False)
+    assert response.status_code == 302
+    assert "/auth/login" in response.headers["Location"]
+    with client.session_transaction() as browser_session:
+        assert "_user_id" not in browser_session
+        assert "session_version" not in browser_session
+
+
+def test_password_reset_invalidates_other_sessions(app):
+    first = app.test_client()
+    second = app.test_client()
+    login(first, "student-test", "StudentTest!2026")
+    login(second)
+    with app.app_context():
+        user = db.session.scalar(db.select(User).where(User.username == "student-test"))
+        user.invalidate_sessions()
+        db.session.commit()
+
+    response = first.get("/student/", follow_redirects=False)
+    assert response.status_code == 302
+    assert "/auth/login" in response.headers["Location"]
+
+
 def test_password_is_not_stored_as_plaintext(app):
     with app.app_context():
         user = db.session.scalar(db.select(User).where(User.username == "student-test"))

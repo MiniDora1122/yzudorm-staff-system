@@ -1,13 +1,13 @@
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from urllib.parse import urljoin, urlparse
 
-from flask import flash, redirect, render_template, request, session, url_for
+from flask import current_app, flash, redirect, render_template, request, session, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 
 from . import bp
 from .forms import ChangePasswordForm, LoginForm, LogoutForm
 from ..extensions import db
-from ..models import Role, User
+from ..models import AuditLog, Role, User
 from ..services.audit import add_audit
 
 
@@ -31,6 +31,24 @@ def masked_username(value: str) -> str:
     return f"{value[0]}{'*' * min(len(value) - 2, 6)}{value[-1]}"
 
 
+def login_is_throttled(user: User | None) -> bool:
+    cutoff = datetime.now(timezone.utc) - timedelta(
+        minutes=current_app.config["LOGIN_RATE_WINDOW_MINUTES"]
+    )
+    failed = db.select(db.func.count(AuditLog.id)).where(
+        AuditLog.action == "LOGIN_FAILED",
+        AuditLog.created_at >= cutoff,
+    )
+    ip_address = (request.remote_addr or "")[:45]
+    ip_count = db.session.scalar(failed.where(AuditLog.ip_address == ip_address)) or 0
+    if ip_count >= current_app.config["LOGIN_RATE_IP_LIMIT"]:
+        return True
+    if user is None:
+        return False
+    account_count = db.session.scalar(failed.where(AuditLog.actor_user_id == user.id)) or 0
+    return account_count >= current_app.config["LOGIN_RATE_ACCOUNT_LIMIT"]
+
+
 @bp.before_app_request
 def enforce_temporary_password_change():
     if not current_user.is_authenticated or not current_user.must_change_password:
@@ -52,6 +70,18 @@ def login():
         user = db.session.scalar(
             db.select(User).where(User.username == form.username.data.strip())
         )
+        if login_is_throttled(user):
+            add_audit(
+                user.id if user is not None else None,
+                "LOGIN_THROTTLED",
+                "User",
+                user.id if user is not None else 0,
+                f"登入嘗試過於頻繁，帳號：{masked_username(form.username.data)}",
+            )
+            db.session.commit()
+            flash("登入嘗試過於頻繁，請稍後再試。 / Too many attempts. Please try again later.", "danger")
+            response = render_template("auth/login.html", form=form), 429
+            return response
         if user is None or not user.is_active or not user.check_password(form.password.data):
             add_audit(
                 user.id if user is not None else None,
@@ -67,8 +97,9 @@ def login():
         user.last_login_at = datetime.now(timezone.utc)
         add_audit(user.id, "LOGIN_SUCCEEDED", "User", user.id, "帳號登入成功")
         db.session.commit()
+        current_app.session_interface.regenerate(session)
         login_user(user)
-        session.pop("notification_sync_at", None)
+        session["session_version"] = user.session_version
         session.permanent = True
         flash("登入成功。", "success")
 
@@ -106,6 +137,8 @@ def change_password():
         else:
             current_user.set_password(form.new_password.data)
             current_user.must_change_password = False
+            current_user.invalidate_sessions()
+            session["session_version"] = current_user.session_version
             add_audit(
                 current_user.id,
                 "PASSWORD_CHANGED",

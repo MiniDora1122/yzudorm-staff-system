@@ -1,0 +1,72 @@
+{
+  "nodes": [
+    {
+      "id": "file:app/templates/_notification_panel.html",
+      "type": "file",
+      "name": "_notification_panel.html",
+      "filePath": "app/templates/_notification_panel.html",
+      "summary": "提供儀表板共用的『重要未完成事項』Jinja macro，以中英雙語顯示通知與處理入口。",
+      "tags": [
+        "template",
+        "jinja2",
+        "bilingual"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/templates/_status_badge.html",
+      "type": "file",
+      "name": "_status_badge.html",
+      "filePath": "app/templates/_status_badge.html",
+      "summary": "提供請假、換班狀態 badge 與排班文字格式化 Jinja macro。",
+      "tags": [
+        "template",
+        "jinja2",
+        "bilingual"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/templates/base.html",
+      "type": "file",
+      "name": "base.html",
+      "filePath": "app/templates/base.html",
+      "summary": "全站 Jinja 基底模板，建立依角色切換的雙語導覽列、通知數量、設定選單與共用前端資源。",
+      "tags": [
+        "template",
+        "jinja2",
+        "bilingual"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/templates/notifications.html",
+      "type": "file",
+      "name": "notifications.html",
+      "filePath": "app/templates/notifications.html",
+      "summary": "通知中心頁面將工作區分為未完成與已完成歷史，支援嚴重度樣式及分頁。",
+      "tags": [
+        "template",
+        "jinja2",
+        "bilingual"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:app/templates/notifications.html",
+      "target": "file:app/templates/base.html",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:app/templates/_notification_panel.html",
+      "target": "file:app/templates/notifications.html",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

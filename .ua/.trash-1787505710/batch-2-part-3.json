@@ -1,0 +1,919 @@
+{
+  "nodes": [
+    {
+      "id": "file:app/services/maintenance.py",
+      "type": "file",
+      "name": "maintenance.py",
+      "filePath": "app/services/maintenance.py",
+      "summary": "以程序鎖週期執行文件清理、通知同步與備份等背景維護。",
+      "tags": [
+        "service",
+        "application",
+        "business-logic"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "採用 Python 與 SQLAlchemy service 分層。"
+    },
+    {
+      "id": "function:app/services/maintenance.py:_try_process_lock",
+      "type": "function",
+      "name": "_try_process_lock",
+      "filePath": "app/services/maintenance.py",
+      "lineRange": [
+        20,
+        40
+      ],
+      "summary": "處理try process lock 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/maintenance.py:_maintenance_tick",
+      "type": "function",
+      "name": "_maintenance_tick",
+      "filePath": "app/services/maintenance.py",
+      "lineRange": [
+        43,
+        60
+      ],
+      "summary": "處理maintenance tick 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/maintenance.py:init_maintenance_scheduler",
+      "type": "function",
+      "name": "init_maintenance_scheduler",
+      "filePath": "app/services/maintenance.py",
+      "lineRange": [
+        63,
+        86
+      ],
+      "summary": "處理init maintenance scheduler 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/services/notifications.py",
+      "type": "file",
+      "name": "notifications.py",
+      "filePath": "app/services/notifications.py",
+      "summary": "同步管理員與學生的未完成通知，涵蓋證件、效期、申請與裝置異常。",
+      "tags": [
+        "service",
+        "notifications",
+        "business-logic"
+      ],
+      "complexity": "complex",
+      "languageNotes": "採用 Python 與 SQLAlchemy service 分層。"
+    },
+    {
+      "id": "function:app/services/notifications.py:_document_label",
+      "type": "function",
+      "name": "_document_label",
+      "filePath": "app/services/notifications.py",
+      "lineRange": [
+        56,
+        59
+      ],
+      "summary": "處理document label 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "notifications"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/notifications.py:_scope_statement",
+      "type": "function",
+      "name": "_scope_statement",
+      "filePath": "app/services/notifications.py",
+      "lineRange": [
+        62,
+        72
+      ],
+      "summary": "處理scope statement 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "notifications"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/notifications.py:_sync_specs",
+      "type": "function",
+      "name": "_sync_specs",
+      "filePath": "app/services/notifications.py",
+      "lineRange": [
+        75,
+        118
+      ],
+      "summary": "處理sync specs 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "notifications"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/notifications.py:sync_admin_notifications",
+      "type": "function",
+      "name": "sync_admin_notifications",
+      "filePath": "app/services/notifications.py",
+      "lineRange": [
+        121,
+        234
+      ],
+      "summary": "同步sync admin notifications 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "notifications"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/services/notifications.py:sync_student_notifications",
+      "type": "function",
+      "name": "sync_student_notifications",
+      "filePath": "app/services/notifications.py",
+      "lineRange": [
+        237,
+        322
+      ],
+      "summary": "同步sync student notifications 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "notifications"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/services/notifications.py:refresh_notifications_for_user",
+      "type": "function",
+      "name": "refresh_notifications_for_user",
+      "filePath": "app/services/notifications.py",
+      "lineRange": [
+        325,
+        335
+      ],
+      "summary": "處理refresh notifications for user 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "notifications"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/notifications.py:notifications_for_user",
+      "type": "function",
+      "name": "notifications_for_user",
+      "filePath": "app/services/notifications.py",
+      "lineRange": [
+        338,
+        351
+      ],
+      "summary": "處理notifications for user 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "notifications"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/notifications.py:notification_page_for_user",
+      "type": "function",
+      "name": "notification_page_for_user",
+      "filePath": "app/services/notifications.py",
+      "lineRange": [
+        354,
+        367
+      ],
+      "summary": "處理notification page for user 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "notifications"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/notifications.py:open_notification_count",
+      "type": "function",
+      "name": "open_notification_count",
+      "filePath": "app/services/notifications.py",
+      "lineRange": [
+        370,
+        378
+      ],
+      "summary": "處理open notification count 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "notifications"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/notifications.py:notify_user",
+      "type": "function",
+      "name": "notify_user",
+      "filePath": "app/services/notifications.py",
+      "lineRange": [
+        381,
+        406
+      ],
+      "summary": "處理notify user 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "notifications"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/notifications.py:notify_admins",
+      "type": "function",
+      "name": "notify_admins",
+      "filePath": "app/services/notifications.py",
+      "lineRange": [
+        409,
+        433
+      ],
+      "summary": "處理notify admins 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "notifications"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/notifications.py:complete_notification",
+      "type": "function",
+      "name": "complete_notification",
+      "filePath": "app/services/notifications.py",
+      "lineRange": [
+        436,
+        440
+      ],
+      "summary": "處理complete notification 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "notifications"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/services/notifications.py:NotificationSpec",
+      "type": "class",
+      "name": "NotificationSpec",
+      "filePath": "app/services/notifications.py",
+      "lineRange": [
+        45,
+        53
+      ],
+      "summary": "NotificationSpec 封裝 notifications.py 的相關設定、狀態與行為。",
+      "tags": [
+        "data-model",
+        "service",
+        "notifications"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/services/payroll.py",
+      "type": "file",
+      "name": "payroll.py",
+      "filePath": "app/services/payroll.py",
+      "summary": "依生效日薪資設定與可計薪時數試算薪資、保費及雇主成本。",
+      "tags": [
+        "service",
+        "payroll",
+        "business-logic"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "採用 Python 與 SQLAlchemy service 分層。"
+    },
+    {
+      "id": "function:app/services/payroll.py:money",
+      "type": "function",
+      "name": "money",
+      "filePath": "app/services/payroll.py",
+      "lineRange": [
+        14,
+        15
+      ],
+      "summary": "處理money 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "payroll"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/payroll.py:get_payroll_setting",
+      "type": "function",
+      "name": "get_payroll_setting",
+      "filePath": "app/services/payroll.py",
+      "lineRange": [
+        18,
+        24
+      ],
+      "summary": "處理get payroll setting 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "payroll"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/payroll.py:minimum_wage_on",
+      "type": "function",
+      "name": "minimum_wage_on",
+      "filePath": "app/services/payroll.py",
+      "lineRange": [
+        27,
+        34
+      ],
+      "summary": "處理minimum wage on 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "payroll"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/payroll.py:payable_hours_expression",
+      "type": "function",
+      "name": "payable_hours_expression",
+      "filePath": "app/services/payroll.py",
+      "lineRange": [
+        37,
+        38
+      ],
+      "summary": "處理payable hours expression 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "payroll"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/payroll.py:payable_hours_for_shift",
+      "type": "function",
+      "name": "payable_hours_for_shift",
+      "filePath": "app/services/payroll.py",
+      "lineRange": [
+        41,
+        42
+      ],
+      "summary": "處理payable hours for shift 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "payroll"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/payroll.py:calculate_staff_cost",
+      "type": "function",
+      "name": "calculate_staff_cost",
+      "filePath": "app/services/payroll.py",
+      "lineRange": [
+        45,
+        126
+      ],
+      "summary": "計算calculate staff cost 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "payroll"
+      ],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:app/services/maintenance.py",
+      "target": "function:app/services/maintenance.py:_try_process_lock",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/maintenance.py",
+      "target": "function:app/services/maintenance.py:_try_process_lock",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/maintenance.py",
+      "target": "function:app/services/maintenance.py:_maintenance_tick",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/maintenance.py",
+      "target": "function:app/services/maintenance.py:_maintenance_tick",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/maintenance.py",
+      "target": "function:app/services/maintenance.py:init_maintenance_scheduler",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/maintenance.py",
+      "target": "function:app/services/maintenance.py:init_maintenance_scheduler",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/notifications.py",
+      "target": "function:app/services/notifications.py:_document_label",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/notifications.py",
+      "target": "function:app/services/notifications.py:_document_label",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/notifications.py",
+      "target": "function:app/services/notifications.py:_scope_statement",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/notifications.py",
+      "target": "function:app/services/notifications.py:_scope_statement",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/notifications.py",
+      "target": "function:app/services/notifications.py:_sync_specs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/notifications.py",
+      "target": "function:app/services/notifications.py:_sync_specs",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/notifications.py",
+      "target": "function:app/services/notifications.py:sync_admin_notifications",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/notifications.py",
+      "target": "function:app/services/notifications.py:sync_admin_notifications",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/notifications.py",
+      "target": "function:app/services/notifications.py:sync_student_notifications",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/notifications.py",
+      "target": "function:app/services/notifications.py:sync_student_notifications",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/notifications.py",
+      "target": "function:app/services/notifications.py:refresh_notifications_for_user",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/notifications.py",
+      "target": "function:app/services/notifications.py:refresh_notifications_for_user",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/notifications.py",
+      "target": "function:app/services/notifications.py:notifications_for_user",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/notifications.py",
+      "target": "function:app/services/notifications.py:notifications_for_user",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/notifications.py",
+      "target": "function:app/services/notifications.py:notification_page_for_user",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/notifications.py",
+      "target": "function:app/services/notifications.py:notification_page_for_user",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/notifications.py",
+      "target": "function:app/services/notifications.py:open_notification_count",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/notifications.py",
+      "target": "function:app/services/notifications.py:open_notification_count",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/notifications.py",
+      "target": "function:app/services/notifications.py:notify_user",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/notifications.py",
+      "target": "function:app/services/notifications.py:notify_user",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/notifications.py",
+      "target": "function:app/services/notifications.py:notify_admins",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/notifications.py",
+      "target": "function:app/services/notifications.py:notify_admins",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/notifications.py",
+      "target": "function:app/services/notifications.py:complete_notification",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/notifications.py",
+      "target": "function:app/services/notifications.py:complete_notification",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/notifications.py",
+      "target": "class:app/services/notifications.py:NotificationSpec",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/notifications.py",
+      "target": "class:app/services/notifications.py:NotificationSpec",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/payroll.py",
+      "target": "function:app/services/payroll.py:money",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/payroll.py",
+      "target": "function:app/services/payroll.py:money",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/payroll.py",
+      "target": "function:app/services/payroll.py:get_payroll_setting",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/payroll.py",
+      "target": "function:app/services/payroll.py:get_payroll_setting",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/payroll.py",
+      "target": "function:app/services/payroll.py:minimum_wage_on",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/payroll.py",
+      "target": "function:app/services/payroll.py:minimum_wage_on",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/payroll.py",
+      "target": "function:app/services/payroll.py:payable_hours_expression",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/payroll.py",
+      "target": "function:app/services/payroll.py:payable_hours_expression",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/payroll.py",
+      "target": "function:app/services/payroll.py:payable_hours_for_shift",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/payroll.py",
+      "target": "function:app/services/payroll.py:payable_hours_for_shift",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/payroll.py",
+      "target": "function:app/services/payroll.py:calculate_staff_cost",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/payroll.py",
+      "target": "function:app/services/payroll.py:calculate_staff_cost",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/maintenance.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/maintenance.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/maintenance.py",
+      "target": "file:app/services/backups.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/maintenance.py",
+      "target": "file:app/services/notifications.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/maintenance.py",
+      "target": "file:app/services/retention.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/notifications.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/notifications.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/notifications.py",
+      "target": "file:app/services/compliance.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/notifications.py",
+      "target": "file:app/services/documents.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/notifications.py",
+      "target": "file:app/time_utils.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/payroll.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/payroll.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:app/services/maintenance.py:init_maintenance_scheduler",
+      "target": "function:app/services/maintenance.py:_try_process_lock",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/notifications.py:_sync_specs",
+      "target": "function:app/services/notifications.py:_scope_statement",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/notifications.py:_sync_specs",
+      "target": "function:app/models.py:utc_now",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/notifications.py:sync_admin_notifications",
+      "target": "class:app/services/notifications.py:NotificationSpec",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/notifications.py:sync_admin_notifications",
+      "target": "function:app/services/notifications.py:_document_label",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/notifications.py:sync_admin_notifications",
+      "target": "function:app/services/notifications.py:_sync_specs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/notifications.py:sync_student_notifications",
+      "target": "function:app/services/notifications.py:_document_label",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/notifications.py:sync_student_notifications",
+      "target": "class:app/services/notifications.py:NotificationSpec",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/notifications.py:sync_student_notifications",
+      "target": "function:app/services/notifications.py:_sync_specs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/notifications.py:refresh_notifications_for_user",
+      "target": "function:app/services/notifications.py:sync_admin_notifications",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/notifications.py:refresh_notifications_for_user",
+      "target": "function:app/services/notifications.py:sync_student_notifications",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/notifications.py:notification_page_for_user",
+      "target": "function:app/services/notifications.py:notifications_for_user",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/notifications.py:complete_notification",
+      "target": "function:app/models.py:utc_now",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/payroll.py:calculate_staff_cost",
+      "target": "function:app/services/payroll.py:minimum_wage_on",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/payroll.py:calculate_staff_cost",
+      "target": "function:app/services/payroll.py:money",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

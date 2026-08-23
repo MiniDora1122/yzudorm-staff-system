@@ -71,12 +71,27 @@ def test_terminal_git_update_uses_saved_https_repository_url():
     assert 'uri.Host.Equals("github.com"' in launcher
     assert "UserInfo" in launcher
     assert 'Read-Setting "RepositoryUrl"' in updater
+    assert 'Read-Setting "TrustedCommit"' in updater
+    assert "zip/$trustedCommit" in updater
+    assert "zip/$branch" not in updater
     assert 'https://codeload.github.com/' in updater
     assert "Invoke-WebRequest" in updater
     assert "Expand-Archive" in updater
     assert 'Downloaded update is missing $name' in updater
     assert "Previous terminal files restored" in updater
     assert 'Join-Path $deviceData "update-in-progress"' in updater
+
+
+def test_terminal_reserves_account_sequences_and_uses_accessible_reason_dialog():
+    root = Path(__file__).parents[1] / "attendance-terminal"
+    source = (root / "attendance_terminal.py").read_text(encoding="utf-8")
+
+    assert "def reserve_online" in source
+    assert "self.queue.reserve_online" in source
+    assert "def next_sequence" not in source
+    assert '<dialog id="reasonDialog">' in source
+    assert "prompt(" not in source
+    assert 'elif self.path == "/enroll"' in source
 
 
 def test_terminal_runtime_has_no_parent_project_or_portable_runtime_dependency():

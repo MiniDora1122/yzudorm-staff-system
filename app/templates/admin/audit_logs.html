@@ -31,7 +31,7 @@
           <td class="ps-4 text-nowrap"><time class="audit-local-time" datetime="{{ item.created_at.isoformat() }}{% if not item.created_at.tzinfo %}Z{% endif %}">{{ item.created_at.strftime('%Y-%m-%d %H:%M:%S') }} UTC</time></td>
           <td>{% if item.actor %}<strong>{{ item.actor.username }}</strong><div class="small text-secondary">#{{ item.actor_user_id }}</div>{% else %}<span class="text-secondary">未知／未登入<br><small>Unknown</small></span>{% endif %}</td>
           <td><span class="badge text-bg-light border">{{ item.action }}</span></td>
-          <td>{{ item.safe_summary }}</td>
+          <td>{{ item.safe_summary }}{% if item.changes_json %}<details class="small mt-2"><summary class="text-primary">查看變更前後 View changes</summary><pre class="small bg-light border rounded p-2 mt-1 mb-0 text-wrap">{{ item.changes_json }}</pre></details>{% endif %}</td>
           <td><code>{{ item.ip_address or '—' }}</code><div class="small text-secondary text-break" title="{{ item.user_agent or '' }}">{{ (item.user_agent or '—')|truncate(70) }}</div></td>
           <td class="pe-4"><span class="badge text-bg-secondary">{{ item.http_method or '—' }}</span><div class="small text-secondary text-break mt-1">{{ item.route or '—' }}</div></td>
         </tr>

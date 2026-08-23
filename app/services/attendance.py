@@ -10,6 +10,7 @@ from collections import defaultdict
 from collections.abc import Iterable
 from dataclasses import dataclass
 from datetime import date, datetime, time, timedelta, timezone
+from decimal import Decimal, ROUND_HALF_UP
 from zoneinfo import ZoneInfo
 from urllib.parse import urlsplit
 from uuid import UUID
@@ -19,16 +20,19 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from flask import current_app, request
+from sqlalchemy.exc import IntegrityError
 
 from ..extensions import db
 from ..models import (
     AttendanceAdjustment,
+    AttendanceReconciliation,
     AuditLog,
     AttendanceDevice,
     AttendanceDirection,
     AttendanceEvent,
     AttendanceMethod,
     AttendancePolicy,
+    AttendanceReviewHistory,
     AttendanceStatus,
     CardStatus,
     Shift,
@@ -93,7 +97,7 @@ def decrypt_device_payload(body: bytes, *, path: str) -> tuple[EncryptedRequestC
         raise AttendanceError("INVALID_ENVELOPE", "加密打卡封包格式錯誤。", 400)
     device = db.session.scalar(db.select(AttendanceDevice).where(AttendanceDevice.device_code == code))
     if not device or not device.is_active:
-        raise AttendanceError("DEVICE_NOT_ALLOWED", "此裝置未獲授權。 / Device not authorized.", 401)
+        raise AttendanceError("DEVICE_NOT_ALLOWED", "此裝置未註冊、已封存或已刪除，請由管理員重新註冊。 / Device unavailable.", 401)
     if path != "/attendance-api/activate" and not device.enrolled_at:
         raise AttendanceError("DEVICE_NOT_ACTIVATED", "此裝置尚未完成一次性啟用。", 401)
     source = request.remote_addr or ""
@@ -114,7 +118,8 @@ def decrypt_device_payload(body: bytes, *, path: str) -> tuple[EncryptedRequestC
     )):
         raise AttendanceError("REPLAYED_REQUEST", "重複的裝置請求已被拒絕。", 409)
     try:
-        plaintext = AESGCM(_transport_key(decrypt_device_secret(device), "request")).decrypt(
+        use_pending = path == "/attendance-api/activate" and bool(device.pending_secret_encrypted)
+        plaintext = AESGCM(_transport_key(decrypt_device_secret(device, pending=use_pending), "request")).decrypt(
             nonce, ciphertext, _request_aad(request.method, path, code, request_id, timestamp)
         )
         payload = json.loads(plaintext)
@@ -168,8 +173,14 @@ def create_provisioning_package(
     secret = secrets.token_urlsafe(48)
     activation_token = secrets.token_urlsafe(32)
     expires_at = utc_now() + timedelta(minutes=activation_minutes)
-    device.secret_encrypted = encrypt_device_secret(secret)
-    device.enrolled_at = None
+    # Keep the current terminal working until the replacement package proves
+    # possession of its new secret by completing activation.
+    encrypted_secret = encrypt_device_secret(secret)
+    if device.secret_encrypted and device.enrolled_at:
+        device.pending_secret_encrypted = encrypted_secret
+    else:
+        device.secret_encrypted = encrypted_secret
+        device.pending_secret_encrypted = None
     device.enrollment_token_hash = hashlib.sha256(activation_token.encode()).hexdigest()
     device.enrollment_expires_at = expires_at
     payload = json.dumps({
@@ -238,6 +249,9 @@ def activate_device(device: AttendanceDevice, payload: dict) -> None:
     device.pending_mac_addresses_json = None
     device.identity_changed_at = None
     device.enrolled_at = utc_now()
+    if device.pending_secret_encrypted:
+        device.secret_encrypted = device.pending_secret_encrypted
+        device.pending_secret_encrypted = None
     device.enrollment_token_hash = None
     device.enrollment_expires_at = None
     add_audit(None, "ATTENDANCE_DEVICE_ACTIVATED", "AttendanceDevice", device.id, f"打卡裝置 {device.device_code} 完成一次性啟用")
@@ -291,11 +305,12 @@ def encrypt_device_secret(secret: str) -> str:
     return Fernet(current_app.config["DOCUMENT_ENCRYPTION_KEY"].encode("ascii")).encrypt(secret.encode()).decode()
 
 
-def decrypt_device_secret(device: AttendanceDevice) -> bytes:
-    if not device.secret_encrypted:
+def decrypt_device_secret(device: AttendanceDevice, *, pending: bool = False) -> bytes:
+    encrypted = device.pending_secret_encrypted if pending else device.secret_encrypted
+    if not encrypted:
         raise AttendanceError("DEVICE_NOT_ENROLLED", "打卡裝置尚未完成註冊。", 401)
     return Fernet(current_app.config["DOCUMENT_ENCRYPTION_KEY"].encode("ascii")).decrypt(
-        device.secret_encrypted.encode()
+        encrypted.encode()
     )
 
 
@@ -341,7 +356,7 @@ def verify_device_request(body: bytes, *, path: str) -> AttendanceDevice:
     signature = request.headers.get("X-Attendance-Signature", "")
     device = db.session.scalar(db.select(AttendanceDevice).where(AttendanceDevice.device_code == code))
     if not device or not device.is_active:
-        raise AttendanceError("DEVICE_NOT_ALLOWED", "此裝置未獲授權。 / Device not authorized.", 401)
+        raise AttendanceError("DEVICE_NOT_ALLOWED", "此裝置未註冊、已封存或已刪除，請由管理員重新註冊。 / Device unavailable.", 401)
     if not device.enrolled_at:
         raise AttendanceError("DEVICE_NOT_ACTIVATED", "此裝置尚未完成一次性啟用。", 401)
     source = request.remote_addr or ""
@@ -508,9 +523,6 @@ def create_event(*, device: AttendanceDevice, profile: StaffProfile, card: Staff
         UUID(event_uuid)
     except (ValueError, TypeError):
         raise AttendanceError("INVALID_EVENT_ID", "事件識別碼格式錯誤。")
-    existing = db.session.scalar(db.select(AttendanceEvent).where(AttendanceEvent.event_uuid == event_uuid))
-    if existing:
-        return existing
     occurred_at = parse_occurred_at(payload.get("occurred_at", ""))
     try:
         sequence = int(payload.get("sequence"))
@@ -518,8 +530,31 @@ def create_event(*, device: AttendanceDevice, profile: StaffProfile, card: Staff
         raise AttendanceError("INVALID_SEQUENCE", "裝置事件序號格式錯誤。")
     if sequence <= 0:
         raise AttendanceError("INVALID_SEQUENCE", "裝置事件序號必須大於零。")
+    try:
+        method = AttendanceMethod(payload.get("method"))
+    except ValueError as exc:
+        raise AttendanceError("INVALID_METHOD", "打卡驗證方式不正確。") from exc
+    existing = db.session.scalar(db.select(AttendanceEvent).where(AttendanceEvent.event_uuid == event_uuid))
+    if existing:
+        if (
+            existing.device_id != device.id
+            or existing.staff_id != profile.id
+            or existing.card_id != (card.id if card else None)
+            or existing.device_sequence != sequence
+            or existing.method != method
+            or _aware(existing.occurred_at) != occurred_at
+        ):
+            raise AttendanceError("EVENT_ID_REUSED", "事件識別碼已被不同的打卡資料使用。", 409)
+        return existing
+    sequence_owner = db.session.scalar(
+        db.select(AttendanceEvent).where(
+            AttendanceEvent.device_id == device.id,
+            AttendanceEvent.device_sequence == sequence,
+        )
+    )
+    if sequence_owner:
+        raise AttendanceError("SEQUENCE_REUSED", "此裝置事件序號已被其他打卡資料使用。", 409)
     result = classify_punch(profile, device, occurred_at)
-    method = AttendanceMethod(payload.get("method"))
     event = AttendanceEvent(
         event_uuid=event_uuid,
         device_id=device.id,
@@ -537,7 +572,11 @@ def create_event(*, device: AttendanceDevice, profile: StaffProfile, card: Staff
     )
     db.session.add(event)
     device.last_sequence = max(device.last_sequence, sequence)
-    db.session.flush()
+    try:
+        db.session.flush()
+    except IntegrityError as exc:
+        db.session.rollback()
+        raise AttendanceError("DUPLICATE_EVENT", "打卡事件或裝置序號已存在，請勿重複送出。", 409) from exc
     if event.status == AttendanceStatus.LATE_REASON_REQUIRED:
         notify_user(
             profile.user_id, key=f"ATTENDANCE_REASON:{event.id}", category="ATTENDANCE_REASON", severity="WARNING",
@@ -565,22 +604,36 @@ def create_event(*, device: AttendanceDevice, profile: StaffProfile, card: Staff
 
 
 def submit_reason(event: AttendanceEvent, *, category: str, reason: str, claimed_arrival: str | None = None) -> None:
-    if event.status not in {AttendanceStatus.LATE_REASON_REQUIRED, AttendanceStatus.MISSING_CLOCK_IN}:
+    if event.status not in {
+        AttendanceStatus.LATE_REASON_REQUIRED, AttendanceStatus.MISSING_CLOCK_IN, AttendanceStatus.RETURNED
+    }:
         raise AttendanceError("REASON_NOT_ALLOWED", "此打卡紀錄目前不需要或不能再修改事由。", 409)
     reason = reason.strip()
     if not reason or len(reason) > 1000:
         raise AttendanceError("REASON_REQUIRED", "請填寫 1 至 1000 字的事由。")
     event.reason_category = category.strip()[:80] or "其他"
     event.reason_text = reason
-    if event.status == AttendanceStatus.LATE_REASON_REQUIRED:
+    was_returned = event.status == AttendanceStatus.RETURNED
+    if event.status == AttendanceStatus.LATE_REASON_REQUIRED or (was_returned and event.direction != AttendanceDirection.OUT):
         event.status = AttendanceStatus.LATE_PENDING_REVIEW
-    elif event.status == AttendanceStatus.MISSING_CLOCK_IN:
+    else:
         if not claimed_arrival:
             raise AttendanceError("ARRIVAL_TIME_REQUIRED", "漏刷上班必須填寫實際到班時間。")
         local = datetime.fromisoformat(claimed_arrival)
         if local.tzinfo is None:
             local = local.replace(tzinfo=ZoneInfo(current_app.config["APP_TIMEZONE"]))
         event.claimed_arrival_at = local.astimezone(timezone.utc)
+        event.status = AttendanceStatus.MISSING_CLOCK_IN
+    if was_returned:
+        db.session.add(AttendanceReviewHistory(
+            event=event, previous_status=AttendanceStatus.RETURNED.value,
+            new_status=event.status.value, decision="RESUBMITTED", note=reason,
+            reviewed_by=event.staff.user_id if event.staff else None,
+        ))
+        event.reviewed_by = None
+        event.reviewed_at = None
+        event.review_note = None
+        complete_notification(f"ATTENDANCE_RESULT:{event.id}")
     complete_notification(f"ATTENDANCE_REASON:{event.id}")
     notify_admins(
         key=f"ATTENDANCE_REVIEW:{event.id}", category="ATTENDANCE_REVIEW", severity="WARNING",
@@ -602,17 +655,27 @@ def review_event(event: AttendanceEvent, *, decision: str, note: str, actor_user
     note = note.strip()[:1000]
     if decision == "REJECT" and not note:
         raise AttendanceError("REVIEW_NOTE_REQUIRED", "退回時必須填寫管理員備註。")
-    if event.status == AttendanceStatus.MISSING_CLOCK_IN and decision == "APPROVE":
+    previous_status = event.status
+    if previous_status == AttendanceStatus.MISSING_CLOCK_IN and decision == "APPROVE":
         if not event.claimed_arrival_at or not event.reason_text:
             raise AttendanceError("INCOMPLETE_EXPLANATION", "學生尚未填寫到班時間與漏刷原因。")
         db.session.add(AttendanceAdjustment(
             event_id=event.id, direction=AttendanceDirection.IN, adjusted_at=event.claimed_arrival_at,
             reason=f"管理員核准漏刷補登：{event.reason_text}", created_by=actor_user_id,
         ))
-    event.status = AttendanceStatus.REVIEWED if decision == "APPROVE" else AttendanceStatus.REJECTED
+    if decision == "APPROVE":
+        event.status = AttendanceStatus.REVIEWED
+    elif previous_status in {AttendanceStatus.LATE_PENDING_REVIEW, AttendanceStatus.MISSING_CLOCK_IN}:
+        event.status = AttendanceStatus.RETURNED
+    else:
+        event.status = AttendanceStatus.REJECTED
     event.reviewed_by = actor_user_id
     event.reviewed_at = utc_now()
     event.review_note = note or None
+    db.session.add(AttendanceReviewHistory(
+        event=event, previous_status=previous_status.value, new_status=event.status.value,
+        decision=decision, note=event.review_note, reviewed_by=actor_user_id,
+    ))
     complete_notification(f"ATTENDANCE_REVIEW:{event.id}")
     complete_notification(f"ATTENDANCE_REASON:{event.id}")
     if event.staff:
@@ -621,16 +684,113 @@ def review_event(event: AttendanceEvent, *, decision: str, note: str, actor_user
             event.staff.user_id,
             key=result_key,
             category="ATTENDANCE_RESULT",
-            severity="SUCCESS" if decision == "APPROVE" else "WARNING",
+            severity="SUCCESS" if decision == "APPROVE" else "DANGER",
             title_zh="出勤異常已核准" if decision == "APPROVE" else "出勤異常已退回",
             title_en="Attendance exception approved" if decision == "APPROVE" else "Attendance exception returned",
             message_zh=event.review_note or "管理員已完成確認。",
             message_en="The administrator completed the attendance review.",
             target_url="/student/attendance",
         )
-        complete_notification(result_key)
+        if decision == "APPROVE":
+            complete_notification(result_key)
     add_audit(actor_user_id, f"ATTENDANCE_{decision}D", "AttendanceEvent", event.id, f"審核出勤事件 #{event.id}")
     db.session.commit()
+
+
+def calculated_hours_for_shifts(shifts: list[Shift]) -> dict[int, Decimal | None]:
+    """Calculate many shifts with two bulk queries instead of two queries per shift."""
+    shift_ids = [shift.id for shift in shifts]
+    if not shift_ids:
+        return {}
+    events = db.session.scalars(
+        db.select(AttendanceEvent)
+        .where(
+            AttendanceEvent.shift_id.in_(shift_ids),
+            AttendanceEvent.status.notin_({AttendanceStatus.DUPLICATE, AttendanceStatus.REJECTED}),
+            AttendanceEvent.direction.in_({AttendanceDirection.IN, AttendanceDirection.OUT}),
+        )
+        .order_by(AttendanceEvent.occurred_at)
+    ).all()
+    event_ids = [event.id for event in events]
+    adjustments = db.session.scalars(
+        db.select(AttendanceAdjustment)
+        .where(AttendanceAdjustment.event_id.in_(event_ids or [-1]))
+        .order_by(AttendanceAdjustment.created_at, AttendanceAdjustment.id)
+    ).all()
+    events_by_shift: dict[int, list[AttendanceEvent]] = {shift_id: [] for shift_id in shift_ids}
+    adjustments_by_event: dict[int, list[AttendanceAdjustment]] = {}
+    for event in events:
+        if event.shift_id in events_by_shift:
+            events_by_shift[event.shift_id].append(event)
+    for item in adjustments:
+        adjustments_by_event.setdefault(item.event_id, []).append(item)
+    return {
+        shift_id: _calculated_hours(events_by_shift[shift_id], adjustments_by_event)
+        for shift_id in shift_ids
+    }
+
+
+def _calculated_hours(
+    events: list[AttendanceEvent], adjustments_by_event: dict[int, list[AttendanceAdjustment]]
+) -> Decimal | None:
+    in_times = [event.occurred_at for event in events if event.direction == AttendanceDirection.IN]
+    out_times = [event.occurred_at for event in events if event.direction == AttendanceDirection.OUT]
+    for event in events:
+        for item in adjustments_by_event.get(event.id, []):
+            (in_times if item.direction == AttendanceDirection.IN else out_times).append(item.adjusted_at)
+    if not in_times or not out_times:
+        return None
+    started_at = min(_aware(value) for value in in_times)
+    ended_at = max(_aware(value) for value in out_times)
+    if ended_at <= started_at:
+        return None
+    return (Decimal(str((ended_at - started_at).total_seconds())) / Decimal("3600")).quantize(
+        Decimal("0.01"), rounding=ROUND_HALF_UP
+    )
+
+
+def calculated_hours_for_shift(shift: Shift) -> Decimal | None:
+    return calculated_hours_for_shifts([shift]).get(shift.id)
+
+
+def reconcile_shift_hours(
+    shift: Shift, *, payable_hours: Decimal, note: str, actor_user_id: int
+) -> AttendanceReconciliation:
+    if payable_hours < 0 or payable_hours > 8:
+        raise AttendanceError("INVALID_PAYABLE_HOURS", "單筆計薪時數必須介於 0 到 8 小時。")
+    note = note.strip()
+    if not note or len(note) > 1000:
+        raise AttendanceError("RECONCILIATION_NOTE_REQUIRED", "請填寫 1 至 1000 字的核對依據。")
+    record = shift.reconciliation or AttendanceReconciliation(shift=shift)
+    before = None if record.id is None else {
+        "calculated_hours": str(record.calculated_hours) if record.calculated_hours is not None else None,
+        "payable_hours": str(record.payable_hours),
+        "note": record.note,
+    }
+    record.calculated_hours = calculated_hours_for_shift(shift)
+    record.payable_hours = payable_hours.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+    record.note = note
+    record.reviewed_by = actor_user_id
+    record.reviewed_at = utc_now()
+    db.session.add(record)
+    db.session.flush()
+    add_audit(
+        actor_user_id,
+        "ATTENDANCE_HOURS_RECONCILED",
+        "AttendanceReconciliation",
+        record.id,
+        f"核對排班 #{shift.id} 計薪時數 {record.payable_hours}",
+        changes={
+            "before": before,
+            "after": {
+                "calculated_hours": str(record.calculated_hours) if record.calculated_hours is not None else None,
+                "payable_hours": str(record.payable_hours),
+                "note": record.note,
+            },
+        },
+    )
+    db.session.commit()
+    return record
 
 
 def attendance_annotations(shifts: Iterable[Shift], *, profile_id: int | None = None) -> dict[int, list[dict]]:
@@ -675,6 +835,23 @@ def attendance_annotations(shifts: Iterable[Shift], *, profile_id: int | None = 
             "eventId": event.id,
             "url": "/student/attendance" if profile_id is not None else f"/admin/attendance?date={event.shift.shift_date}",
         })
+    event_ids = [event.id for event in events]
+    adjustments = db.session.scalars(
+        db.select(AttendanceAdjustment)
+        .where(AttendanceAdjustment.event_id.in_(event_ids))
+        .order_by(AttendanceAdjustment.created_at)
+    ).all() if event_ids else []
+    for item in adjustments:
+        event = item.event
+        if not event.shift_id:
+            continue
+        direction_label = "上班" if item.direction == AttendanceDirection.IN else "下班"
+        annotations[event.shift_id].append({
+            "kind": "ATTENDANCE_ADJUSTMENT", "status": "REVIEWED",
+            "label": f"補登{direction_label} {_aware(item.adjusted_at).astimezone(tz):%H:%M}",
+            "class": "info", "eventId": event.id,
+            "url": "/student/attendance" if profile_id is not None else f"/admin/attendance?date={event.shift.shift_date}",
+        })
     return annotations
 
 
@@ -686,8 +863,8 @@ def event_json(event: AttendanceEvent) -> dict:
         "status": event.status.value,
         "occurred_at": _aware(event.occurred_at).isoformat(),
         "late_minutes": event.late_minutes,
-        "requires_reason": event.status in {AttendanceStatus.LATE_REASON_REQUIRED, AttendanceStatus.MISSING_CLOCK_IN},
-        "requires_arrival_time": event.status == AttendanceStatus.MISSING_CLOCK_IN,
+        "requires_reason": event.status in {AttendanceStatus.LATE_REASON_REQUIRED, AttendanceStatus.MISSING_CLOCK_IN, AttendanceStatus.RETURNED},
+        "requires_arrival_time": event.status == AttendanceStatus.MISSING_CLOCK_IN or (event.status == AttendanceStatus.RETURNED and event.direction == AttendanceDirection.OUT),
         "location": event.device.location.name,
         "shift": (
             f"{event.shift.shift_type.start_time:%H:%M}–{event.shift.shift_type.end_time:%H:%M}"

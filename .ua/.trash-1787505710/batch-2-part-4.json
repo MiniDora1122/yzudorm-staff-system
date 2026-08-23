@@ -1,0 +1,1297 @@
+{
+  "nodes": [
+    {
+      "id": "file:app/services/reports.py",
+      "type": "file",
+      "name": "reports.py",
+      "filePath": "app/services/reports.py",
+      "summary": "產生月工時與每日矩陣 XLSX，以及排班、薪資、流程與效期 CSV。",
+      "tags": [
+        "service",
+        "reports",
+        "business-logic"
+      ],
+      "complexity": "complex",
+      "languageNotes": "採用 Python 與 SQLAlchemy service 分層。"
+    },
+    {
+      "id": "function:app/services/reports.py:_roc_year",
+      "type": "function",
+      "name": "_roc_year",
+      "filePath": "app/services/reports.py",
+      "lineRange": [
+        46,
+        47
+      ],
+      "summary": "處理roc year 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "reports"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/reports.py:_active_profiles",
+      "type": "function",
+      "name": "_active_profiles",
+      "filePath": "app/services/reports.py",
+      "lineRange": [
+        50,
+        55
+      ],
+      "summary": "處理active profiles 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "reports"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/reports.py:_profiles_for_month",
+      "type": "function",
+      "name": "_profiles_for_month",
+      "filePath": "app/services/reports.py",
+      "lineRange": [
+        58,
+        75
+      ],
+      "summary": "處理profiles for month 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "reports"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/reports.py:_month_shifts",
+      "type": "function",
+      "name": "_month_shifts",
+      "filePath": "app/services/reports.py",
+      "lineRange": [
+        78,
+        94
+      ],
+      "summary": "處理month shifts 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "reports"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/reports.py:build_monthly_hours_workbook",
+      "type": "function",
+      "name": "build_monthly_hours_workbook",
+      "filePath": "app/services/reports.py",
+      "lineRange": [
+        97,
+        214
+      ],
+      "summary": "處理build monthly hours workbook 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "reports"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/services/reports.py:build_daily_hours_matrix_workbook",
+      "type": "function",
+      "name": "build_daily_hours_matrix_workbook",
+      "filePath": "app/services/reports.py",
+      "lineRange": [
+        217,
+        343
+      ],
+      "summary": "處理build daily hours matrix workbook 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "reports"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/services/reports.py:csv_bytes",
+      "type": "function",
+      "name": "csv_bytes",
+      "filePath": "app/services/reports.py",
+      "lineRange": [
+        346,
+        351
+      ],
+      "summary": "處理csv bytes 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "reports"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/reports.py:shift_detail_csv",
+      "type": "function",
+      "name": "shift_detail_csv",
+      "filePath": "app/services/reports.py",
+      "lineRange": [
+        354,
+        374
+      ],
+      "summary": "處理shift detail csv 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "reports"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/reports.py:payroll_cost_csv",
+      "type": "function",
+      "name": "payroll_cost_csv",
+      "filePath": "app/services/reports.py",
+      "lineRange": [
+        377,
+        420
+      ],
+      "summary": "處理payroll cost csv 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "reports"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/reports.py:workflow_history_csv",
+      "type": "function",
+      "name": "workflow_history_csv",
+      "filePath": "app/services/reports.py",
+      "lineRange": [
+        423,
+        487
+      ],
+      "summary": "處理workflow history csv 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "reports"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/services/reports.py:document_expiry_csv",
+      "type": "function",
+      "name": "document_expiry_csv",
+      "filePath": "app/services/reports.py",
+      "lineRange": [
+        490,
+        520
+      ],
+      "summary": "處理document expiry csv 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "reports"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/services/requests.py",
+      "type": "file",
+      "name": "requests.py",
+      "filePath": "app/services/requests.py",
+      "summary": "實作請假換班申請、同儕回覆、管理員審核及核准前衝突重驗。",
+      "tags": [
+        "service",
+        "workflow",
+        "business-logic"
+      ],
+      "complexity": "complex",
+      "languageNotes": "採用 Python 與 SQLAlchemy service 分層。"
+    },
+    {
+      "id": "function:app/services/requests.py:validate_swap_assignments",
+      "type": "function",
+      "name": "validate_swap_assignments",
+      "filePath": "app/services/requests.py",
+      "lineRange": [
+        29,
+        61
+      ],
+      "summary": "驗證validate swap assignments 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "workflow"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/requests.py:create_leave_request",
+      "type": "function",
+      "name": "create_leave_request",
+      "filePath": "app/services/requests.py",
+      "lineRange": [
+        64,
+        100
+      ],
+      "summary": "建立create leave request 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "workflow"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/requests.py:cancel_leave_request",
+      "type": "function",
+      "name": "cancel_leave_request",
+      "filePath": "app/services/requests.py",
+      "lineRange": [
+        103,
+        110
+      ],
+      "summary": "取消cancel leave request 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "workflow"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/requests.py:review_leave_request",
+      "type": "function",
+      "name": "review_leave_request",
+      "filePath": "app/services/requests.py",
+      "lineRange": [
+        114,
+        140
+      ],
+      "summary": "審核review leave request 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "workflow"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/requests.py:create_swap_request",
+      "type": "function",
+      "name": "create_swap_request",
+      "filePath": "app/services/requests.py",
+      "lineRange": [
+        143,
+        207
+      ],
+      "summary": "建立create swap request 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "workflow"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/services/requests.py:cancel_swap_request",
+      "type": "function",
+      "name": "cancel_swap_request",
+      "filePath": "app/services/requests.py",
+      "lineRange": [
+        210,
+        217
+      ],
+      "summary": "取消cancel swap request 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "workflow"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/requests.py:respond_swap_request",
+      "type": "function",
+      "name": "respond_swap_request",
+      "filePath": "app/services/requests.py",
+      "lineRange": [
+        220,
+        244
+      ],
+      "summary": "處理respond swap request 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "workflow"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/requests.py:review_swap_request",
+      "type": "function",
+      "name": "review_swap_request",
+      "filePath": "app/services/requests.py",
+      "lineRange": [
+        248,
+        314
+      ],
+      "summary": "審核review swap request 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "workflow"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:app/services/requests.py:WorkflowError",
+      "type": "class",
+      "name": "WorkflowError",
+      "filePath": "app/services/requests.py",
+      "lineRange": [
+        22,
+        26
+      ],
+      "summary": "WorkflowError 表示此領域可預期的驗證或流程錯誤。",
+      "tags": [
+        "data-model",
+        "service",
+        "workflow"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/services/retention.py",
+      "type": "file",
+      "name": "retention.py",
+      "filePath": "app/services/retention.py",
+      "summary": "管理證件保存期限、排程清理、實體檔案刪除與稽核。",
+      "tags": [
+        "service",
+        "application",
+        "business-logic"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "採用 Python 與 SQLAlchemy service 分層。"
+    },
+    {
+      "id": "function:app/services/retention.py:get_retention_policy",
+      "type": "function",
+      "name": "get_retention_policy",
+      "filePath": "app/services/retention.py",
+      "lineRange": [
+        11,
+        12
+      ],
+      "summary": "處理get retention policy 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/retention.py:configured_retention_days",
+      "type": "function",
+      "name": "configured_retention_days",
+      "filePath": "app/services/retention.py",
+      "lineRange": [
+        15,
+        19
+      ],
+      "summary": "處理configured retention days 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/retention.py:retention_deadline",
+      "type": "function",
+      "name": "retention_deadline",
+      "filePath": "app/services/retention.py",
+      "lineRange": [
+        22,
+        24
+      ],
+      "summary": "處理retention deadline 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/retention.py:recalculate_retention_deadlines",
+      "type": "function",
+      "name": "recalculate_retention_deadlines",
+      "filePath": "app/services/retention.py",
+      "lineRange": [
+        27,
+        38
+      ],
+      "summary": "處理recalculate retention deadlines 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/retention.py:save_retention_policy",
+      "type": "function",
+      "name": "save_retention_policy",
+      "filePath": "app/services/retention.py",
+      "lineRange": [
+        41,
+        62
+      ],
+      "summary": "驗證並儲存save retention policy 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/retention.py:cleanup_expired_documents",
+      "type": "function",
+      "name": "cleanup_expired_documents",
+      "filePath": "app/services/retention.py",
+      "lineRange": [
+        66,
+        102
+      ],
+      "summary": "處理cleanup expired documents 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/retention.py:run_cleanup_if_due",
+      "type": "function",
+      "name": "run_cleanup_if_due",
+      "filePath": "app/services/retention.py",
+      "lineRange": [
+        105,
+        118
+      ],
+      "summary": "執行run cleanup if due 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/retention.py:_scheduled_tick",
+      "type": "function",
+      "name": "_scheduled_tick",
+      "filePath": "app/services/retention.py",
+      "lineRange": [
+        121,
+        124
+      ],
+      "summary": "處理scheduled tick 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/retention.py:register_retention_commands",
+      "type": "function",
+      "name": "register_retention_commands",
+      "filePath": "app/services/retention.py",
+      "lineRange": [
+        127,
+        134
+      ],
+      "summary": "處理register retention commands 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "application"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:app/services/reports.py",
+      "target": "function:app/services/reports.py:_roc_year",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/reports.py",
+      "target": "function:app/services/reports.py:_roc_year",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/reports.py",
+      "target": "function:app/services/reports.py:_active_profiles",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/reports.py",
+      "target": "function:app/services/reports.py:_active_profiles",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/reports.py",
+      "target": "function:app/services/reports.py:_profiles_for_month",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/reports.py",
+      "target": "function:app/services/reports.py:_profiles_for_month",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/reports.py",
+      "target": "function:app/services/reports.py:_month_shifts",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/reports.py",
+      "target": "function:app/services/reports.py:_month_shifts",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/reports.py",
+      "target": "function:app/services/reports.py:build_monthly_hours_workbook",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/reports.py",
+      "target": "function:app/services/reports.py:build_monthly_hours_workbook",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/reports.py",
+      "target": "function:app/services/reports.py:build_daily_hours_matrix_workbook",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/reports.py",
+      "target": "function:app/services/reports.py:build_daily_hours_matrix_workbook",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/reports.py",
+      "target": "function:app/services/reports.py:csv_bytes",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/reports.py",
+      "target": "function:app/services/reports.py:csv_bytes",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/reports.py",
+      "target": "function:app/services/reports.py:shift_detail_csv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/reports.py",
+      "target": "function:app/services/reports.py:shift_detail_csv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/reports.py",
+      "target": "function:app/services/reports.py:payroll_cost_csv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/reports.py",
+      "target": "function:app/services/reports.py:payroll_cost_csv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/reports.py",
+      "target": "function:app/services/reports.py:workflow_history_csv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/reports.py",
+      "target": "function:app/services/reports.py:workflow_history_csv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/reports.py",
+      "target": "function:app/services/reports.py:document_expiry_csv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/reports.py",
+      "target": "function:app/services/reports.py:document_expiry_csv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/requests.py",
+      "target": "function:app/services/requests.py:validate_swap_assignments",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/requests.py",
+      "target": "function:app/services/requests.py:validate_swap_assignments",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/requests.py",
+      "target": "function:app/services/requests.py:create_leave_request",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/requests.py",
+      "target": "function:app/services/requests.py:create_leave_request",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/requests.py",
+      "target": "function:app/services/requests.py:cancel_leave_request",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/requests.py",
+      "target": "function:app/services/requests.py:cancel_leave_request",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/requests.py",
+      "target": "function:app/services/requests.py:review_leave_request",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/requests.py",
+      "target": "function:app/services/requests.py:review_leave_request",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/requests.py",
+      "target": "function:app/services/requests.py:create_swap_request",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/requests.py",
+      "target": "function:app/services/requests.py:create_swap_request",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/requests.py",
+      "target": "function:app/services/requests.py:cancel_swap_request",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/requests.py",
+      "target": "function:app/services/requests.py:cancel_swap_request",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/requests.py",
+      "target": "function:app/services/requests.py:respond_swap_request",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/requests.py",
+      "target": "function:app/services/requests.py:respond_swap_request",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/requests.py",
+      "target": "function:app/services/requests.py:review_swap_request",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/requests.py",
+      "target": "function:app/services/requests.py:review_swap_request",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/requests.py",
+      "target": "class:app/services/requests.py:WorkflowError",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/requests.py",
+      "target": "class:app/services/requests.py:WorkflowError",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/retention.py",
+      "target": "function:app/services/retention.py:get_retention_policy",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/retention.py",
+      "target": "function:app/services/retention.py:get_retention_policy",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/retention.py",
+      "target": "function:app/services/retention.py:configured_retention_days",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/retention.py",
+      "target": "function:app/services/retention.py:configured_retention_days",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/retention.py",
+      "target": "function:app/services/retention.py:retention_deadline",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/retention.py",
+      "target": "function:app/services/retention.py:retention_deadline",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/retention.py",
+      "target": "function:app/services/retention.py:recalculate_retention_deadlines",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/retention.py",
+      "target": "function:app/services/retention.py:recalculate_retention_deadlines",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/retention.py",
+      "target": "function:app/services/retention.py:save_retention_policy",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/retention.py",
+      "target": "function:app/services/retention.py:save_retention_policy",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/retention.py",
+      "target": "function:app/services/retention.py:cleanup_expired_documents",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/retention.py",
+      "target": "function:app/services/retention.py:cleanup_expired_documents",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/retention.py",
+      "target": "function:app/services/retention.py:run_cleanup_if_due",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/retention.py",
+      "target": "function:app/services/retention.py:run_cleanup_if_due",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/retention.py",
+      "target": "function:app/services/retention.py:_scheduled_tick",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/retention.py",
+      "target": "function:app/services/retention.py:_scheduled_tick",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/retention.py",
+      "target": "function:app/services/retention.py:register_retention_commands",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/retention.py",
+      "target": "function:app/services/retention.py:register_retention_commands",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/reports.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/reports.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/reports.py",
+      "target": "file:app/services/documents.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/reports.py",
+      "target": "file:app/services/payroll.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/requests.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/requests.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/requests.py",
+      "target": "file:app/services/audit.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/requests.py",
+      "target": "file:app/services/scheduling.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/retention.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/retention.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/retention.py",
+      "target": "file:app/services/storage_lock.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/retention.py",
+      "target": "file:app/time_utils.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:app/services/reports.py:build_monthly_hours_workbook",
+      "target": "function:app/services/reports.py:_profiles_for_month",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/reports.py:build_monthly_hours_workbook",
+      "target": "function:app/services/reports.py:_month_shifts",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/reports.py:build_monthly_hours_workbook",
+      "target": "function:app/services/reports.py:_roc_year",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/reports.py:build_daily_hours_matrix_workbook",
+      "target": "function:app/services/reports.py:_profiles_for_month",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/reports.py:build_daily_hours_matrix_workbook",
+      "target": "function:app/services/reports.py:_month_shifts",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/reports.py:build_daily_hours_matrix_workbook",
+      "target": "function:app/services/reports.py:_roc_year",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/reports.py:shift_detail_csv",
+      "target": "function:app/services/reports.py:_month_shifts",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/reports.py:shift_detail_csv",
+      "target": "function:app/services/reports.py:csv_bytes",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/reports.py:payroll_cost_csv",
+      "target": "function:app/services/reports.py:_profiles_for_month",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/reports.py:payroll_cost_csv",
+      "target": "function:app/services/reports.py:csv_bytes",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/reports.py:workflow_history_csv",
+      "target": "function:app/services/reports.py:csv_bytes",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/reports.py:document_expiry_csv",
+      "target": "function:app/services/reports.py:_active_profiles",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/reports.py:document_expiry_csv",
+      "target": "function:app/services/reports.py:csv_bytes",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/requests.py:validate_swap_assignments",
+      "target": "function:app/services/scheduling.py:validate_shift_assignment",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/requests.py:validate_swap_assignments",
+      "target": "class:app/services/requests.py:WorkflowError",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/requests.py:create_leave_request",
+      "target": "class:app/services/requests.py:WorkflowError",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/requests.py:cancel_leave_request",
+      "target": "class:app/services/requests.py:WorkflowError",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/requests.py:review_leave_request",
+      "target": "class:app/services/requests.py:WorkflowError",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/requests.py:review_leave_request",
+      "target": "function:app/models.py:utc_now",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/requests.py:create_swap_request",
+      "target": "class:app/services/requests.py:WorkflowError",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/requests.py:create_swap_request",
+      "target": "function:app/services/requests.py:validate_swap_assignments",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/requests.py:cancel_swap_request",
+      "target": "class:app/services/requests.py:WorkflowError",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/requests.py:respond_swap_request",
+      "target": "class:app/services/requests.py:WorkflowError",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/requests.py:respond_swap_request",
+      "target": "function:app/services/requests.py:validate_swap_assignments",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/requests.py:respond_swap_request",
+      "target": "function:app/models.py:utc_now",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/requests.py:review_swap_request",
+      "target": "class:app/services/requests.py:WorkflowError",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/requests.py:review_swap_request",
+      "target": "function:app/models.py:utc_now",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/requests.py:review_swap_request",
+      "target": "function:app/services/scheduling.py:validate_shift_assignment",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/retention.py:configured_retention_days",
+      "target": "function:app/services/retention.py:get_retention_policy",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/retention.py:retention_deadline",
+      "target": "function:app/services/retention.py:configured_retention_days",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/retention.py:recalculate_retention_deadlines",
+      "target": "function:app/services/retention.py:retention_deadline",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/retention.py:save_retention_policy",
+      "target": "function:app/services/retention.py:get_retention_policy",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/retention.py:save_retention_policy",
+      "target": "function:app/services/retention.py:recalculate_retention_deadlines",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/retention.py:cleanup_expired_documents",
+      "target": "function:app/models.py:utc_now",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/retention.py:cleanup_expired_documents",
+      "target": "function:app/services/retention.py:get_retention_policy",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/retention.py:run_cleanup_if_due",
+      "target": "function:app/services/retention.py:get_retention_policy",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/retention.py:run_cleanup_if_due",
+      "target": "function:app/services/retention.py:cleanup_expired_documents",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/retention.py:_scheduled_tick",
+      "target": "function:app/services/retention.py:run_cleanup_if_due",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

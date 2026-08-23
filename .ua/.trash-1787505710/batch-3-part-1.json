@@ -1,0 +1,1732 @@
+{
+  "nodes": [
+    {
+      "id": "file:app/admin/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "app/admin/__init__.py",
+      "summary": "建立管理員 Blueprint 並集中載入出勤、營運與人力路由。",
+      "tags": [
+        "admin",
+        "api-handler",
+        "authorization",
+        "workflow"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/admin/attendance.py",
+      "type": "file",
+      "name": "attendance.py",
+      "filePath": "app/admin/attendance.py",
+      "summary": "管理出勤核對、打卡裝置、學生證、政策及異常審核的管理員路由。",
+      "tags": [
+        "admin",
+        "api-handler",
+        "authorization",
+        "workflow"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:app/admin/attendance.py:attendance_page",
+      "type": "function",
+      "name": "attendance_page",
+      "filePath": "app/admin/attendance.py",
+      "lineRange": [
+        53,
+        167
+      ],
+      "summary": "彙整並呈現出勤資料，並處理必要的驗證、狀態更新與錯誤。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/admin/attendance.py:reconcile_attendance_shift",
+      "type": "function",
+      "name": "reconcile_attendance_shift",
+      "filePath": "app/admin/attendance.py",
+      "lineRange": [
+        172,
+        185
+      ],
+      "summary": "重新計算排班出勤與計薪時數，並處理必要的驗證、狀態更新與錯誤。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/attendance.py:attendance_settings",
+      "type": "function",
+      "name": "attendance_settings",
+      "filePath": "app/admin/attendance.py",
+      "lineRange": [
+        190,
+        205
+      ],
+      "summary": "實作 attendance settings 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/attendance.py:_settings_url",
+      "type": "function",
+      "name": "_settings_url",
+      "filePath": "app/admin/attendance.py",
+      "lineRange": [
+        208,
+        209
+      ],
+      "summary": "實作 settings url 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/attendance.py:_device_or_404",
+      "type": "function",
+      "name": "_device_or_404",
+      "filePath": "app/admin/attendance.py",
+      "lineRange": [
+        212,
+        216
+      ],
+      "summary": "實作 device or 404 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/attendance.py:_card_return_url",
+      "type": "function",
+      "name": "_card_return_url",
+      "filePath": "app/admin/attendance.py",
+      "lineRange": [
+        219,
+        222
+      ],
+      "summary": "實作 card return url 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/attendance.py:_activation_minutes",
+      "type": "function",
+      "name": "_activation_minutes",
+      "filePath": "app/admin/attendance.py",
+      "lineRange": [
+        225,
+        226
+      ],
+      "summary": "實作 activation minutes 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/attendance.py:create_attendance_device",
+      "type": "function",
+      "name": "create_attendance_device",
+      "filePath": "app/admin/attendance.py",
+      "lineRange": [
+        231,
+        276
+      ],
+      "summary": "建立打卡裝置與註冊資料，並處理必要的驗證、狀態更新與錯誤。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/attendance.py:renew_attendance_enrollment",
+      "type": "function",
+      "name": "renew_attendance_enrollment",
+      "filePath": "app/admin/attendance.py",
+      "lineRange": [
+        281,
+        287
+      ],
+      "summary": "實作 renew attendance enrollment 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/attendance.py:download_attendance_package",
+      "type": "function",
+      "name": "download_attendance_package",
+      "filePath": "app/admin/attendance.py",
+      "lineRange": [
+        292,
+        314
+      ],
+      "summary": "產生加密裝置設定包，並處理必要的驗證、狀態更新與錯誤。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/attendance.py:update_attendance_device",
+      "type": "function",
+      "name": "update_attendance_device",
+      "filePath": "app/admin/attendance.py",
+      "lineRange": [
+        319,
+        329
+      ],
+      "summary": "處理 update attendance device 設定或更新並驗證結果。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/attendance.py:update_attendance_device_offline_alert",
+      "type": "function",
+      "name": "update_attendance_device_offline_alert",
+      "filePath": "app/admin/attendance.py",
+      "lineRange": [
+        334,
+        370
+      ],
+      "summary": "更新單一裝置離線提醒，並處理必要的驗證、狀態更新與錯誤。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/attendance.py:confirm_attendance_device_identity",
+      "type": "function",
+      "name": "confirm_attendance_device_identity",
+      "filePath": "app/admin/attendance.py",
+      "lineRange": [
+        375,
+        388
+      ],
+      "summary": "確認裝置身分指紋，並處理必要的驗證、狀態更新與錯誤。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/attendance.py:_disable_device",
+      "type": "function",
+      "name": "_disable_device",
+      "filePath": "app/admin/attendance.py",
+      "lineRange": [
+        391,
+        399
+      ],
+      "summary": "實作 disable device 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/attendance.py:archive_attendance_device",
+      "type": "function",
+      "name": "archive_attendance_device",
+      "filePath": "app/admin/attendance.py",
+      "lineRange": [
+        404,
+        410
+      ],
+      "summary": "實作 archive attendance device 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/attendance.py:restore_attendance_device",
+      "type": "function",
+      "name": "restore_attendance_device",
+      "filePath": "app/admin/attendance.py",
+      "lineRange": [
+        415,
+        426
+      ],
+      "summary": "執行 restore attendance device 回復流程並保護既有資料。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/attendance.py:delete_attendance_device",
+      "type": "function",
+      "name": "delete_attendance_device",
+      "filePath": "app/admin/attendance.py",
+      "lineRange": [
+        431,
+        451
+      ],
+      "summary": "實作 delete attendance device 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/attendance.py:register_staff_card",
+      "type": "function",
+      "name": "register_staff_card",
+      "filePath": "app/admin/attendance.py",
+      "lineRange": [
+        456,
+        485
+      ],
+      "summary": "登錄雜湊化學生證識別碼，並處理必要的驗證、狀態更新與錯誤。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/attendance.py:disable_staff_card",
+      "type": "function",
+      "name": "disable_staff_card",
+      "filePath": "app/admin/attendance.py",
+      "lineRange": [
+        490,
+        499
+      ],
+      "summary": "實作 disable staff card 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/attendance.py:update_attendance_policy",
+      "type": "function",
+      "name": "update_attendance_policy",
+      "filePath": "app/admin/attendance.py",
+      "lineRange": [
+        504,
+        528
+      ],
+      "summary": "更新打卡與異常判定政策，並處理必要的驗證、狀態更新與錯誤。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/attendance.py:review_attendance_event",
+      "type": "function",
+      "name": "review_attendance_event",
+      "filePath": "app/admin/attendance.py",
+      "lineRange": [
+        534,
+        591
+      ],
+      "summary": "審核並更新異常打卡，並處理必要的驗證、狀態更新與錯誤。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/admin/operations.py",
+      "type": "file",
+      "name": "operations.py",
+      "filePath": "app/admin/operations.py",
+      "summary": "提供月份發布／鎖定與備份、復原演練等營運控制路由。",
+      "tags": [
+        "admin",
+        "api-handler",
+        "authorization",
+        "workflow"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/admin/operations.py:_selected_month",
+      "type": "function",
+      "name": "_selected_month",
+      "filePath": "app/admin/operations.py",
+      "lineRange": [
+        25,
+        27
+      ],
+      "summary": "實作 selected month 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/operations.py:operations_page",
+      "type": "function",
+      "name": "operations_page",
+      "filePath": "app/admin/operations.py",
+      "lineRange": [
+        32,
+        49
+      ],
+      "summary": "彙整月份與備份營運狀態，並處理必要的驗證、狀態更新與錯誤。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/operations.py:publish_period",
+      "type": "function",
+      "name": "publish_period",
+      "filePath": "app/admin/operations.py",
+      "lineRange": [
+        54,
+        62
+      ],
+      "summary": "發布月份班表，並處理必要的驗證、狀態更新與錯誤。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/operations.py:close_period",
+      "type": "function",
+      "name": "close_period",
+      "filePath": "app/admin/operations.py",
+      "lineRange": [
+        67,
+        75
+      ],
+      "summary": "鎖定月份班表，並處理必要的驗證、狀態更新與錯誤。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/operations.py:unlock_period",
+      "type": "function",
+      "name": "unlock_period",
+      "filePath": "app/admin/operations.py",
+      "lineRange": [
+        80,
+        92
+      ],
+      "summary": "解除月份班表鎖定，並處理必要的驗證、狀態更新與錯誤。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/operations.py:run_backup_now",
+      "type": "function",
+      "name": "run_backup_now",
+      "filePath": "app/admin/operations.py",
+      "lineRange": [
+        97,
+        103
+      ],
+      "summary": "立即執行一致性備份，並處理必要的驗證、狀態更新與錯誤。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/operations.py:backup_restore_drill",
+      "type": "function",
+      "name": "backup_restore_drill",
+      "filePath": "app/admin/operations.py",
+      "lineRange": [
+        108,
+        116
+      ],
+      "summary": "執行備份復原演練，並處理必要的驗證、狀態更新與錯誤。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/operations.py:update_backup_settings",
+      "type": "function",
+      "name": "update_backup_settings",
+      "filePath": "app/admin/operations.py",
+      "lineRange": [
+        121,
+        140
+      ],
+      "summary": "更新自動備份政策，並處理必要的驗證、狀態更新與錯誤。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/admin/workforce.py",
+      "type": "file",
+      "name": "workforce.py",
+      "filePath": "app/admin/workforce.py",
+      "summary": "管理學生群組、缺員需求與承接申請審核。",
+      "tags": [
+        "admin",
+        "api-handler",
+        "authorization",
+        "workflow"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:app/admin/workforce.py:_selected_ids",
+      "type": "function",
+      "name": "_selected_ids",
+      "filePath": "app/admin/workforce.py",
+      "lineRange": [
+        40,
+        45
+      ],
+      "summary": "實作 selected ids 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/workforce.py:workforce_page",
+      "type": "function",
+      "name": "workforce_page",
+      "filePath": "app/admin/workforce.py",
+      "lineRange": [
+        50,
+        103
+      ],
+      "summary": "彙整群組、缺員與申請，並處理必要的驗證、狀態更新與錯誤。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/admin/workforce.py:create_staff_group",
+      "type": "function",
+      "name": "create_staff_group",
+      "filePath": "app/admin/workforce.py",
+      "lineRange": [
+        108,
+        125
+      ],
+      "summary": "建立學生群組，並處理必要的驗證、狀態更新與錯誤。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/workforce.py:update_staff_group",
+      "type": "function",
+      "name": "update_staff_group",
+      "filePath": "app/admin/workforce.py",
+      "lineRange": [
+        130,
+        150
+      ],
+      "summary": "更新學生群組與成員，並處理必要的驗證、狀態更新與錯誤。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/workforce.py:archive_staff_group",
+      "type": "function",
+      "name": "archive_staff_group",
+      "filePath": "app/admin/workforce.py",
+      "lineRange": [
+        155,
+        164
+      ],
+      "summary": "實作 archive staff group 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/workforce.py:create_staffing_requirement",
+      "type": "function",
+      "name": "create_staffing_requirement",
+      "filePath": "app/admin/workforce.py",
+      "lineRange": [
+        169,
+        210
+      ],
+      "summary": "發布指定受眾的缺員需求，並處理必要的驗證、狀態更新與錯誤。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/workforce.py:cancel_staffing_requirement",
+      "type": "function",
+      "name": "cancel_staffing_requirement",
+      "filePath": "app/admin/workforce.py",
+      "lineRange": [
+        215,
+        225
+      ],
+      "summary": "實作 cancel staffing requirement 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/workforce.py:review_vacancy_application",
+      "type": "function",
+      "name": "review_vacancy_application",
+      "filePath": "app/admin/workforce.py",
+      "lineRange": [
+        230,
+        246
+      ],
+      "summary": "審核缺員承接申請，並處理必要的驗證、狀態更新與錯誤。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/decorators.py",
+      "type": "file",
+      "name": "decorators.py",
+      "filePath": "app/decorators.py",
+      "summary": "提供伺服器端角色授權裝飾器，限制 ADMIN 與 STUDENT route。",
+      "tags": [
+        "application",
+        "module",
+        "workflow"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/decorators.py:role_required",
+      "type": "function",
+      "name": "role_required",
+      "filePath": "app/decorators.py",
+      "lineRange": [
+        9,
+        20
+      ],
+      "summary": "驗證登入角色並拒絕越權，並處理必要的驗證、狀態更新與錯誤。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/services/periods.py",
+      "type": "file",
+      "name": "periods.py",
+      "filePath": "app/services/periods.py",
+      "summary": "封裝月份班表發布、鎖定、解鎖與摘要計算並寫入稽核。",
+      "tags": [
+        "service",
+        "business-logic",
+        "validation",
+        "transaction"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:app/services/periods.py:month_start_for",
+      "type": "function",
+      "name": "month_start_for",
+      "filePath": "app/services/periods.py",
+      "lineRange": [
+        33,
+        34
+      ],
+      "summary": "控制 month start for 程序生命週期並驗證服務狀態。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/periods.py:settlement_for",
+      "type": "function",
+      "name": "settlement_for",
+      "filePath": "app/services/periods.py",
+      "lineRange": [
+        37,
+        40
+      ],
+      "summary": "實作 settlement for 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/periods.py:ensure_month_open",
+      "type": "function",
+      "name": "ensure_month_open",
+      "filePath": "app/services/periods.py",
+      "lineRange": [
+        43,
+        48
+      ],
+      "summary": "處理 ensure month open 設定或更新並驗證結果。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/periods.py:period_summary",
+      "type": "function",
+      "name": "period_summary",
+      "filePath": "app/services/periods.py",
+      "lineRange": [
+        51,
+        159
+      ],
+      "summary": "計算月份發布、鎖定、缺員與薪資摘要，並處理必要的驗證、狀態更新與錯誤。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/services/periods.py:publish_month",
+      "type": "function",
+      "name": "publish_month",
+      "filePath": "app/services/periods.py",
+      "lineRange": [
+        162,
+        188
+      ],
+      "summary": "交易式發布月份草稿，並處理必要的驗證、狀態更新與錯誤。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/periods.py:close_month",
+      "type": "function",
+      "name": "close_month",
+      "filePath": "app/services/periods.py",
+      "lineRange": [
+        191,
+        210
+      ],
+      "summary": "檢查後鎖定月份班表，並處理必要的驗證、狀態更新與錯誤。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/periods.py:unlock_month",
+      "type": "function",
+      "name": "unlock_month",
+      "filePath": "app/services/periods.py",
+      "lineRange": [
+        213,
+        227
+      ],
+      "summary": "解鎖月份並記錄原因，並處理必要的驗證、狀態更新與錯誤。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/services/periods.py:PeriodError",
+      "type": "class",
+      "name": "PeriodError",
+      "filePath": "app/services/periods.py",
+      "lineRange": [
+        29,
+        30
+      ],
+      "summary": "月份操作失敗時使用的領域錯誤。",
+      "tags": [
+        "class",
+        "domain-error",
+        "workflow"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:attendance_page",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:attendance_page",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:reconcile_attendance_shift",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:reconcile_attendance_shift",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:attendance_settings",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:attendance_settings",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:_settings_url",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:_settings_url",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:_device_or_404",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:_device_or_404",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:_card_return_url",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:_card_return_url",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:_activation_minutes",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:_activation_minutes",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:create_attendance_device",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:create_attendance_device",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:renew_attendance_enrollment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:renew_attendance_enrollment",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:download_attendance_package",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:download_attendance_package",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:update_attendance_device",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:update_attendance_device",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:update_attendance_device_offline_alert",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:update_attendance_device_offline_alert",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:confirm_attendance_device_identity",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:confirm_attendance_device_identity",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:_disable_device",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:_disable_device",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:archive_attendance_device",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:archive_attendance_device",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:restore_attendance_device",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:restore_attendance_device",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:delete_attendance_device",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:delete_attendance_device",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:register_staff_card",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:register_staff_card",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:disable_staff_card",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:disable_staff_card",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:update_attendance_policy",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:update_attendance_policy",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:review_attendance_event",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "function:app/admin/attendance.py:review_attendance_event",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/operations.py",
+      "target": "function:app/admin/operations.py:_selected_month",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/operations.py",
+      "target": "function:app/admin/operations.py:_selected_month",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/operations.py",
+      "target": "function:app/admin/operations.py:operations_page",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/operations.py",
+      "target": "function:app/admin/operations.py:operations_page",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/operations.py",
+      "target": "function:app/admin/operations.py:publish_period",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/operations.py",
+      "target": "function:app/admin/operations.py:publish_period",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/operations.py",
+      "target": "function:app/admin/operations.py:close_period",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/operations.py",
+      "target": "function:app/admin/operations.py:close_period",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/operations.py",
+      "target": "function:app/admin/operations.py:unlock_period",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/operations.py",
+      "target": "function:app/admin/operations.py:unlock_period",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/operations.py",
+      "target": "function:app/admin/operations.py:run_backup_now",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/operations.py",
+      "target": "function:app/admin/operations.py:run_backup_now",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/operations.py",
+      "target": "function:app/admin/operations.py:backup_restore_drill",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/operations.py",
+      "target": "function:app/admin/operations.py:backup_restore_drill",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/operations.py",
+      "target": "function:app/admin/operations.py:update_backup_settings",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/operations.py",
+      "target": "function:app/admin/operations.py:update_backup_settings",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/workforce.py",
+      "target": "function:app/admin/workforce.py:_selected_ids",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/workforce.py",
+      "target": "function:app/admin/workforce.py:_selected_ids",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/workforce.py",
+      "target": "function:app/admin/workforce.py:workforce_page",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/workforce.py",
+      "target": "function:app/admin/workforce.py:workforce_page",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/workforce.py",
+      "target": "function:app/admin/workforce.py:create_staff_group",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/workforce.py",
+      "target": "function:app/admin/workforce.py:create_staff_group",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/workforce.py",
+      "target": "function:app/admin/workforce.py:update_staff_group",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/workforce.py",
+      "target": "function:app/admin/workforce.py:update_staff_group",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/workforce.py",
+      "target": "function:app/admin/workforce.py:archive_staff_group",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/workforce.py",
+      "target": "function:app/admin/workforce.py:archive_staff_group",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/workforce.py",
+      "target": "function:app/admin/workforce.py:create_staffing_requirement",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/workforce.py",
+      "target": "function:app/admin/workforce.py:create_staffing_requirement",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/workforce.py",
+      "target": "function:app/admin/workforce.py:cancel_staffing_requirement",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/workforce.py",
+      "target": "function:app/admin/workforce.py:cancel_staffing_requirement",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/workforce.py",
+      "target": "function:app/admin/workforce.py:review_vacancy_application",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/workforce.py",
+      "target": "function:app/admin/workforce.py:review_vacancy_application",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/decorators.py",
+      "target": "function:app/decorators.py:role_required",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/decorators.py",
+      "target": "function:app/decorators.py:role_required",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/periods.py",
+      "target": "function:app/services/periods.py:month_start_for",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/periods.py",
+      "target": "function:app/services/periods.py:month_start_for",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/periods.py",
+      "target": "function:app/services/periods.py:settlement_for",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/periods.py",
+      "target": "function:app/services/periods.py:settlement_for",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/periods.py",
+      "target": "function:app/services/periods.py:ensure_month_open",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/periods.py",
+      "target": "function:app/services/periods.py:ensure_month_open",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/periods.py",
+      "target": "function:app/services/periods.py:period_summary",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/periods.py",
+      "target": "function:app/services/periods.py:period_summary",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/periods.py",
+      "target": "function:app/services/periods.py:publish_month",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/periods.py",
+      "target": "function:app/services/periods.py:publish_month",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/periods.py",
+      "target": "function:app/services/periods.py:close_month",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/periods.py",
+      "target": "function:app/services/periods.py:close_month",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/periods.py",
+      "target": "function:app/services/periods.py:unlock_month",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/periods.py",
+      "target": "function:app/services/periods.py:unlock_month",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/periods.py",
+      "target": "class:app/services/periods.py:PeriodError",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/periods.py",
+      "target": "class:app/services/periods.py:PeriodError",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/__init__.py",
+      "target": "file:app/admin/attendance.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/admin/__init__.py",
+      "target": "file:app/admin/operations.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/admin/__init__.py",
+      "target": "file:app/admin/routes.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/admin/__init__.py",
+      "target": "file:app/admin/workforce.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "file:app/decorators.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "file:app/services/attendance.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "file:app/services/audit.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "file:app/services/scheduling.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/admin/attendance.py",
+      "target": "file:app/time_utils.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/admin/operations.py",
+      "target": "file:app/decorators.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/admin/operations.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/admin/operations.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/admin/operations.py",
+      "target": "file:app/services/backups.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/admin/operations.py",
+      "target": "file:app/services/periods.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/admin/operations.py",
+      "target": "file:app/services/scheduling.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/admin/operations.py",
+      "target": "file:app/time_utils.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/admin/workforce.py",
+      "target": "file:app/decorators.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/admin/workforce.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/admin/workforce.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/admin/workforce.py",
+      "target": "file:app/services/audit.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/admin/workforce.py",
+      "target": "file:app/services/periods.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/admin/workforce.py",
+      "target": "file:app/services/workforce.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/admin/workforce.py",
+      "target": "file:app/time_utils.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/decorators.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/periods.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/periods.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/periods.py",
+      "target": "file:app/services/audit.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/periods.py",
+      "target": "file:app/services/compliance.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/periods.py",
+      "target": "file:app/services/scheduling.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    }
+  ]
+}

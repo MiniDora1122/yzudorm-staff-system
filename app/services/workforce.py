@@ -22,7 +22,7 @@ from ..models import (
 from .audit import add_audit
 from .notifications import complete_notification, notify_admins, notify_user
 from .periods import ensure_month_open
-from .scheduling import SchedulingConflict, create_shift, validate_shift_assignment
+from .scheduling import SchedulingConflict, create_shift, schedule_serialized, validate_shift_assignment
 
 
 class WorkforceError(ValueError):
@@ -112,6 +112,7 @@ def submit_application(
             shift_type=requirement.shift_type,
             staff=profile,
             allow_location_overlap=True,
+            allow_availability_conflict=True,
         )
     except SchedulingConflict as exc:
         raise WorkforceError(f"此班與你的班表或時數限制衝突：{exc.message}") from exc
@@ -177,6 +178,7 @@ def cancel_application(
     db.session.commit()
 
 
+@schedule_serialized
 def review_application(
     application: VacancyApplication,
     *,

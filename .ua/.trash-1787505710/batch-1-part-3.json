@@ -1,0 +1,1643 @@
+{
+  "nodes": [
+    {
+      "id": "file:tests/test_documents.py",
+      "type": "file",
+      "name": "test_documents.py",
+      "filePath": "tests/test_documents.py",
+      "summary": "以 pytest 驗證documents相關流程的權限、業務規則與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:tests/test_documents.py:logout",
+      "type": "function",
+      "name": "logout",
+      "filePath": "tests/test_documents.py",
+      "lineRange": [
+        11,
+        12
+      ],
+      "summary": "logout 實作 test_documents.py 所屬模組的一項可重用流程。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_documents.py:image_upload",
+      "type": "function",
+      "name": "image_upload",
+      "filePath": "tests/test_documents.py",
+      "lineRange": [
+        15,
+        19
+      ],
+      "summary": "image_upload 實作 test_documents.py 所屬模組的一項可重用流程。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_documents.py:ensure_foreign_student",
+      "type": "function",
+      "name": "ensure_foreign_student",
+      "filePath": "tests/test_documents.py",
+      "lineRange": [
+        22,
+        26
+      ],
+      "summary": "ensure_foreign_student 實作 test_documents.py 所屬模組的一項可重用流程。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_documents.py:upload_residence",
+      "type": "function",
+      "name": "upload_residence",
+      "filePath": "tests/test_documents.py",
+      "lineRange": [
+        29,
+        41
+      ],
+      "summary": "upload_residence 實作 test_documents.py 所屬模組的一項可重用流程。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_documents.py:admin_review",
+      "type": "function",
+      "name": "admin_review",
+      "filePath": "tests/test_documents.py",
+      "lineRange": [
+        44,
+        54
+      ],
+      "summary": "admin_review 實作 test_documents.py 所屬模組的一項可重用流程。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_documents.py:test_document_is_encrypted_and_unconfirmed_data_does_not_overwrite_profile",
+      "type": "function",
+      "name": "test_document_is_encrypted_and_unconfirmed_data_does_not_overwrite_profile",
+      "filePath": "tests/test_documents.py",
+      "lineRange": [
+        57,
+        75
+      ],
+      "summary": "驗證「document is encrypted and unconfirmed data does not overwrite profile」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_documents.py:test_owner_submits_then_admin_approves_and_confirmed_image_is_retained",
+      "type": "function",
+      "name": "test_owner_submits_then_admin_approves_and_confirmed_image_is_retained",
+      "filePath": "tests/test_documents.py",
+      "lineRange": [
+        78,
+        108
+      ],
+      "summary": "驗證「owner submits then admin approves and confirmed image is retained」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_documents.py:test_student_cannot_read_another_students_document_but_admin_can_download",
+      "type": "function",
+      "name": "test_student_cannot_read_another_students_document_but_admin_can_download",
+      "filePath": "tests/test_documents.py",
+      "lineRange": [
+        111,
+        128
+      ],
+      "summary": "驗證「student cannot read another students document but admin can download」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_documents.py:test_invalid_file_is_rejected",
+      "type": "function",
+      "name": "test_invalid_file_is_rejected",
+      "filePath": "tests/test_documents.py",
+      "lineRange": [
+        131,
+        147
+      ],
+      "summary": "驗證「invalid file is rejected」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_documents.py:test_image_signature_must_match_extension_and_mime",
+      "type": "function",
+      "name": "test_image_signature_must_match_extension_and_mime",
+      "filePath": "tests/test_documents.py",
+      "lineRange": [
+        150,
+        166
+      ],
+      "summary": "驗證「image signature must match extension and mime」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_documents.py:test_replacement_keeps_document_history_for_admin_download",
+      "type": "function",
+      "name": "test_replacement_keeps_document_history_for_admin_download",
+      "filePath": "tests/test_documents.py",
+      "lineRange": [
+        169,
+        198
+      ],
+      "summary": "驗證「replacement keeps document history for admin download」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_documents.py:test_admin_rejection_requires_reason_and_student_can_correct",
+      "type": "function",
+      "name": "test_admin_rejection_requires_reason_and_student_can_correct",
+      "filePath": "tests/test_documents.py",
+      "lineRange": [
+        201,
+        244
+      ],
+      "summary": "驗證「admin rejection requires reason and student can correct」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_documents.py:test_admin_must_verify_residence_fields_before_approval",
+      "type": "function",
+      "name": "test_admin_must_verify_residence_fields_before_approval",
+      "filePath": "tests/test_documents.py",
+      "lineRange": [
+        247,
+        281
+      ],
+      "summary": "驗證「admin must verify residence fields before approval」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_documents.py:test_residence_requires_both_sides",
+      "type": "function",
+      "name": "test_residence_requires_both_sides",
+      "filePath": "tests/test_documents.py",
+      "lineRange": [
+        284,
+        299
+      ],
+      "summary": "驗證「residence requires both sides」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_documents.py:test_admin_can_download_complete_document_set_as_zip",
+      "type": "function",
+      "name": "test_admin_can_download_complete_document_set_as_zip",
+      "filePath": "tests/test_documents.py",
+      "lineRange": [
+        302,
+        312
+      ],
+      "summary": "驗證「admin can download complete document set as zip」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/test_locations_payroll.py",
+      "type": "file",
+      "name": "test_locations_payroll.py",
+      "filePath": "tests/test_locations_payroll.py",
+      "summary": "以 pytest 驗證locations、payroll相關流程的權限、業務規則與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_locations_payroll.py:test_admin_can_add_location_and_shift_type",
+      "type": "function",
+      "name": "test_admin_can_add_location_and_shift_type",
+      "filePath": "tests/test_locations_payroll.py",
+      "lineRange": [
+        8,
+        56
+      ],
+      "summary": "驗證「admin can add location and shift type」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_locations_payroll.py:test_duplicate_location_is_rejected",
+      "type": "function",
+      "name": "test_duplicate_location_is_rejected",
+      "filePath": "tests/test_locations_payroll.py",
+      "lineRange": [
+        59,
+        66
+      ],
+      "summary": "驗證「duplicate location is rejected」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_locations_payroll.py:test_archived_location_disappears_and_same_location_can_be_restored",
+      "type": "function",
+      "name": "test_archived_location_disappears_and_same_location_can_be_restored",
+      "filePath": "tests/test_locations_payroll.py",
+      "lineRange": [
+        69,
+        90
+      ],
+      "summary": "驗證「archived location disappears and same location can be restored」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_locations_payroll.py:test_archived_shift_type_with_same_code_is_restored",
+      "type": "function",
+      "name": "test_archived_shift_type_with_same_code_is_restored",
+      "filePath": "tests/test_locations_payroll.py",
+      "lineRange": [
+        93,
+        131
+      ],
+      "summary": "驗證「archived shift type with same code is restored」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_locations_payroll.py:test_payroll_report_calculates_employer_costs",
+      "type": "function",
+      "name": "test_payroll_report_calculates_employer_costs",
+      "filePath": "tests/test_locations_payroll.py",
+      "lineRange": [
+        134,
+        157
+      ],
+      "summary": "驗證「payroll report calculates employer costs」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_locations_payroll.py:test_student_payroll_response_hides_insurance_costs",
+      "type": "function",
+      "name": "test_student_payroll_response_hides_insurance_costs",
+      "filePath": "tests/test_locations_payroll.py",
+      "lineRange": [
+        160,
+        191
+      ],
+      "summary": "驗證「student payroll response hides insurance costs」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_locations_payroll.py:test_student_cannot_create_location",
+      "type": "function",
+      "name": "test_student_cannot_create_location",
+      "filePath": "tests/test_locations_payroll.py",
+      "lineRange": [
+        194,
+        204
+      ],
+      "summary": "驗證「student cannot create location」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/test_models.py",
+      "type": "file",
+      "name": "test_models.py",
+      "filePath": "tests/test_models.py",
+      "summary": "以 pytest 驗證models相關流程的權限、業務規則與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_models.py:test_model_basic_crud",
+      "type": "function",
+      "name": "test_model_basic_crud",
+      "filePath": "tests/test_models.py",
+      "lineRange": [
+        8,
+        60
+      ],
+      "summary": "驗證「model basic crud」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:tests/test_notifications.py",
+      "type": "file",
+      "name": "test_notifications.py",
+      "filePath": "tests/test_notifications.py",
+      "summary": "以 pytest 驗證notifications相關流程的權限、業務規則與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_notifications.py:_submit_residence_document",
+      "type": "function",
+      "name": "_submit_residence_document",
+      "filePath": "tests/test_notifications.py",
+      "lineRange": [
+        13,
+        28
+      ],
+      "summary": "_submit_residence_document 實作 test_notifications.py 所屬模組的一項可重用流程。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_notifications.py:test_notification_pages_are_role_protected",
+      "type": "function",
+      "name": "test_notification_pages_are_role_protected",
+      "filePath": "tests/test_notifications.py",
+      "lineRange": [
+        31,
+        39
+      ],
+      "summary": "驗證「notification pages are role protected」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_notifications.py:test_opening_notification_does_not_complete_it_but_finishing_review_does",
+      "type": "function",
+      "name": "test_opening_notification_does_not_complete_it_but_finishing_review_does",
+      "filePath": "tests/test_notifications.py",
+      "lineRange": [
+        42,
+        76
+      ],
+      "summary": "驗證「opening notification does not complete it but finishing review does」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_notifications.py:test_student_rejected_document_stays_open_until_resubmitted",
+      "type": "function",
+      "name": "test_student_rejected_document_stays_open_until_resubmitted",
+      "filePath": "tests/test_notifications.py",
+      "lineRange": [
+        79,
+        111
+      ],
+      "summary": "驗證「student rejected document stays open until resubmitted」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_notifications.py:test_notification_reconciliation_runs_on_every_page",
+      "type": "function",
+      "name": "test_notification_reconciliation_runs_on_every_page",
+      "filePath": "tests/test_notifications.py",
+      "lineRange": [
+        114,
+        130
+      ],
+      "summary": "驗證「notification reconciliation runs on every page」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/test_operations_workforce.py",
+      "type": "file",
+      "name": "test_operations_workforce.py",
+      "filePath": "tests/test_operations_workforce.py",
+      "summary": "以 pytest 驗證operations、workforce相關流程的權限、業務規則與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_operations_workforce.py:_ids",
+      "type": "function",
+      "name": "_ids",
+      "filePath": "tests/test_operations_workforce.py",
+      "lineRange": [
+        23,
+        35
+      ],
+      "summary": "_ids 實作 test_operations_workforce.py 所屬模組的一項可重用流程。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_operations_workforce.py:test_draft_publish_close_unlock_workflow",
+      "type": "function",
+      "name": "test_draft_publish_close_unlock_workflow",
+      "filePath": "tests/test_operations_workforce.py",
+      "lineRange": [
+        38,
+        93
+      ],
+      "summary": "驗證「draft publish close unlock workflow」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_operations_workforce.py:test_group_targeted_vacancy_application_becomes_published_shift",
+      "type": "function",
+      "name": "test_group_targeted_vacancy_application_becomes_published_shift",
+      "filePath": "tests/test_operations_workforce.py",
+      "lineRange": [
+        96,
+        150
+      ],
+      "summary": "驗證「group targeted vacancy application becomes published shift」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_operations_workforce.py:test_archived_staff_can_be_restored",
+      "type": "function",
+      "name": "test_archived_staff_can_be_restored",
+      "filePath": "tests/test_operations_workforce.py",
+      "lineRange": [
+        153,
+        165
+      ],
+      "summary": "驗證「archived staff can be restored」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_operations_workforce.py:test_backup_verifier_checks_manifest_and_sqlite_integrity",
+      "type": "function",
+      "name": "test_backup_verifier_checks_manifest_and_sqlite_integrity",
+      "filePath": "tests/test_operations_workforce.py",
+      "lineRange": [
+        168,
+        188
+      ],
+      "summary": "驗證「backup verifier checks manifest and sqlite integrity」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/test_phase3.py",
+      "type": "file",
+      "name": "test_phase3.py",
+      "filePath": "tests/test_phase3.py",
+      "summary": "以 pytest 驗證phase3相關流程的權限、業務規則與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:tests/test_phase3.py:logout",
+      "type": "function",
+      "name": "logout",
+      "filePath": "tests/test_phase3.py",
+      "lineRange": [
+        17,
+        18
+      ],
+      "summary": "logout 實作 test_phase3.py 所屬模組的一項可重用流程。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_phase3.py:create_shift_as_admin",
+      "type": "function",
+      "name": "create_shift_as_admin",
+      "filePath": "tests/test_phase3.py",
+      "lineRange": [
+        21,
+        27
+      ],
+      "summary": "create_shift_as_admin 實作 test_phase3.py 所屬模組的一項可重用流程。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_phase3.py:test_student_can_only_request_leave_for_own_shift",
+      "type": "function",
+      "name": "test_student_can_only_request_leave_for_own_shift",
+      "filePath": "tests/test_phase3.py",
+      "lineRange": [
+        30,
+        45
+      ],
+      "summary": "驗證「student can only request leave for own shift」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_phase3.py:test_duplicate_leave_is_rejected_and_pending_can_cancel",
+      "type": "function",
+      "name": "test_duplicate_leave_is_rejected_and_pending_can_cancel",
+      "filePath": "tests/test_phase3.py",
+      "lineRange": [
+        48,
+        68
+      ],
+      "summary": "驗證「duplicate leave is rejected and pending can cancel」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_phase3.py:test_requester_leave_and_swap_reasons_cannot_be_blank",
+      "type": "function",
+      "name": "test_requester_leave_and_swap_reasons_cannot_be_blank",
+      "filePath": "tests/test_phase3.py",
+      "lineRange": [
+        71,
+        103
+      ],
+      "summary": "驗證「requester leave and swap reasons cannot be blank」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_phase3.py:test_admin_approves_leave_and_preserves_vacancy_and_audit",
+      "type": "function",
+      "name": "test_admin_approves_leave_and_preserves_vacancy_and_audit",
+      "filePath": "tests/test_phase3.py",
+      "lineRange": [
+        106,
+        139
+      ],
+      "summary": "驗證「admin approves leave and preserves vacancy and audit」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_phase3.py:test_student_cannot_use_admin_review_route",
+      "type": "function",
+      "name": "test_student_cannot_use_admin_review_route",
+      "filePath": "tests/test_phase3.py",
+      "lineRange": [
+        142,
+        153
+      ],
+      "summary": "驗證「student cannot use admin review route」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_phase3.py:test_swap_requester_must_own_requester_shift",
+      "type": "function",
+      "name": "test_swap_requester_must_own_requester_shift",
+      "filePath": "tests/test_phase3.py",
+      "lineRange": [
+        156,
+        175
+      ],
+      "summary": "驗證「swap requester must own requester shift」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_phase3.py:test_admin_cannot_approve_before_peer_accepts",
+      "type": "function",
+      "name": "test_admin_cannot_approve_before_peer_accepts",
+      "filePath": "tests/test_phase3.py",
+      "lineRange": [
+        178,
+        204
+      ],
+      "summary": "驗證「admin cannot approve before peer accepts」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_phase3.py:test_swap_creation_rejects_conflicts_before_peer_or_admin_review",
+      "type": "function",
+      "name": "test_swap_creation_rejects_conflicts_before_peer_or_admin_review",
+      "filePath": "tests/test_phase3.py",
+      "lineRange": [
+        207,
+        227
+      ],
+      "summary": "驗證「swap creation rejects conflicts before peer or admin review」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_phase3.py:test_approved_swap_updates_both_shifts_and_audit",
+      "type": "function",
+      "name": "test_approved_swap_updates_both_shifts_and_audit",
+      "filePath": "tests/test_phase3.py",
+      "lineRange": [
+        230,
+        272
+      ],
+      "summary": "驗證「approved swap updates both shifts and audit」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_phase3.py:test_student_and_admin_can_filter_leave_and_swap_by_shift_month",
+      "type": "function",
+      "name": "test_student_and_admin_can_filter_leave_and_swap_by_shift_month",
+      "filePath": "tests/test_phase3.py",
+      "lineRange": [
+        275,
+        305
+      ],
+      "summary": "驗證「student and admin can filter leave and swap by shift month」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_phase3.py:test_calendar_marks_leave_swap_and_direct_invitation",
+      "type": "function",
+      "name": "test_calendar_marks_leave_swap_and_direct_invitation",
+      "filePath": "tests/test_phase3.py",
+      "lineRange": [
+        308,
+        337
+      ],
+      "summary": "驗證「calendar marks leave swap and direct invitation」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:tests/test_documents.py",
+      "target": "function:tests/test_documents.py:logout",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_documents.py",
+      "target": "function:tests/test_documents.py:logout",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_documents.py",
+      "target": "function:tests/test_documents.py:image_upload",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_documents.py",
+      "target": "function:tests/test_documents.py:image_upload",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_documents.py",
+      "target": "function:tests/test_documents.py:ensure_foreign_student",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_documents.py",
+      "target": "function:tests/test_documents.py:ensure_foreign_student",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_documents.py",
+      "target": "function:tests/test_documents.py:upload_residence",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_documents.py",
+      "target": "function:tests/test_documents.py:upload_residence",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_documents.py",
+      "target": "function:tests/test_documents.py:admin_review",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_documents.py",
+      "target": "function:tests/test_documents.py:admin_review",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_documents.py",
+      "target": "function:tests/test_documents.py:test_document_is_encrypted_and_unconfirmed_data_does_not_overwrite_profile",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_documents.py",
+      "target": "function:tests/test_documents.py:test_document_is_encrypted_and_unconfirmed_data_does_not_overwrite_profile",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_documents.py",
+      "target": "function:tests/test_documents.py:test_owner_submits_then_admin_approves_and_confirmed_image_is_retained",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_documents.py",
+      "target": "function:tests/test_documents.py:test_owner_submits_then_admin_approves_and_confirmed_image_is_retained",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_documents.py",
+      "target": "function:tests/test_documents.py:test_student_cannot_read_another_students_document_but_admin_can_download",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_documents.py",
+      "target": "function:tests/test_documents.py:test_student_cannot_read_another_students_document_but_admin_can_download",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_documents.py",
+      "target": "function:tests/test_documents.py:test_invalid_file_is_rejected",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_documents.py",
+      "target": "function:tests/test_documents.py:test_invalid_file_is_rejected",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_documents.py",
+      "target": "function:tests/test_documents.py:test_image_signature_must_match_extension_and_mime",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_documents.py",
+      "target": "function:tests/test_documents.py:test_image_signature_must_match_extension_and_mime",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_documents.py",
+      "target": "function:tests/test_documents.py:test_replacement_keeps_document_history_for_admin_download",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_documents.py",
+      "target": "function:tests/test_documents.py:test_replacement_keeps_document_history_for_admin_download",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_documents.py",
+      "target": "function:tests/test_documents.py:test_admin_rejection_requires_reason_and_student_can_correct",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_documents.py",
+      "target": "function:tests/test_documents.py:test_admin_rejection_requires_reason_and_student_can_correct",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_documents.py",
+      "target": "function:tests/test_documents.py:test_admin_must_verify_residence_fields_before_approval",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_documents.py",
+      "target": "function:tests/test_documents.py:test_admin_must_verify_residence_fields_before_approval",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_documents.py",
+      "target": "function:tests/test_documents.py:test_residence_requires_both_sides",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_documents.py",
+      "target": "function:tests/test_documents.py:test_residence_requires_both_sides",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_documents.py",
+      "target": "function:tests/test_documents.py:test_admin_can_download_complete_document_set_as_zip",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_documents.py",
+      "target": "function:tests/test_documents.py:test_admin_can_download_complete_document_set_as_zip",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_locations_payroll.py",
+      "target": "function:tests/test_locations_payroll.py:test_admin_can_add_location_and_shift_type",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_locations_payroll.py",
+      "target": "function:tests/test_locations_payroll.py:test_admin_can_add_location_and_shift_type",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_locations_payroll.py",
+      "target": "function:tests/test_locations_payroll.py:test_duplicate_location_is_rejected",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_locations_payroll.py",
+      "target": "function:tests/test_locations_payroll.py:test_duplicate_location_is_rejected",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_locations_payroll.py",
+      "target": "function:tests/test_locations_payroll.py:test_archived_location_disappears_and_same_location_can_be_restored",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_locations_payroll.py",
+      "target": "function:tests/test_locations_payroll.py:test_archived_location_disappears_and_same_location_can_be_restored",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_locations_payroll.py",
+      "target": "function:tests/test_locations_payroll.py:test_archived_shift_type_with_same_code_is_restored",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_locations_payroll.py",
+      "target": "function:tests/test_locations_payroll.py:test_archived_shift_type_with_same_code_is_restored",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_locations_payroll.py",
+      "target": "function:tests/test_locations_payroll.py:test_payroll_report_calculates_employer_costs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_locations_payroll.py",
+      "target": "function:tests/test_locations_payroll.py:test_payroll_report_calculates_employer_costs",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_locations_payroll.py",
+      "target": "function:tests/test_locations_payroll.py:test_student_payroll_response_hides_insurance_costs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_locations_payroll.py",
+      "target": "function:tests/test_locations_payroll.py:test_student_payroll_response_hides_insurance_costs",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_locations_payroll.py",
+      "target": "function:tests/test_locations_payroll.py:test_student_cannot_create_location",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_locations_payroll.py",
+      "target": "function:tests/test_locations_payroll.py:test_student_cannot_create_location",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_models.py",
+      "target": "function:tests/test_models.py:test_model_basic_crud",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_models.py",
+      "target": "function:tests/test_models.py:test_model_basic_crud",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_notifications.py",
+      "target": "function:tests/test_notifications.py:_submit_residence_document",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_notifications.py",
+      "target": "function:tests/test_notifications.py:test_notification_pages_are_role_protected",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_notifications.py",
+      "target": "function:tests/test_notifications.py:test_notification_pages_are_role_protected",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_notifications.py",
+      "target": "function:tests/test_notifications.py:test_opening_notification_does_not_complete_it_but_finishing_review_does",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_notifications.py",
+      "target": "function:tests/test_notifications.py:test_opening_notification_does_not_complete_it_but_finishing_review_does",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_notifications.py",
+      "target": "function:tests/test_notifications.py:test_student_rejected_document_stays_open_until_resubmitted",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_notifications.py",
+      "target": "function:tests/test_notifications.py:test_student_rejected_document_stays_open_until_resubmitted",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_notifications.py",
+      "target": "function:tests/test_notifications.py:test_notification_reconciliation_runs_on_every_page",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_notifications.py",
+      "target": "function:tests/test_notifications.py:test_notification_reconciliation_runs_on_every_page",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_operations_workforce.py",
+      "target": "function:tests/test_operations_workforce.py:_ids",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_operations_workforce.py",
+      "target": "function:tests/test_operations_workforce.py:test_draft_publish_close_unlock_workflow",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_operations_workforce.py",
+      "target": "function:tests/test_operations_workforce.py:test_draft_publish_close_unlock_workflow",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_operations_workforce.py",
+      "target": "function:tests/test_operations_workforce.py:test_group_targeted_vacancy_application_becomes_published_shift",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_operations_workforce.py",
+      "target": "function:tests/test_operations_workforce.py:test_group_targeted_vacancy_application_becomes_published_shift",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_operations_workforce.py",
+      "target": "function:tests/test_operations_workforce.py:test_archived_staff_can_be_restored",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_operations_workforce.py",
+      "target": "function:tests/test_operations_workforce.py:test_archived_staff_can_be_restored",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_operations_workforce.py",
+      "target": "function:tests/test_operations_workforce.py:test_backup_verifier_checks_manifest_and_sqlite_integrity",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_operations_workforce.py",
+      "target": "function:tests/test_operations_workforce.py:test_backup_verifier_checks_manifest_and_sqlite_integrity",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_phase3.py",
+      "target": "function:tests/test_phase3.py:logout",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_phase3.py",
+      "target": "function:tests/test_phase3.py:logout",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_phase3.py",
+      "target": "function:tests/test_phase3.py:create_shift_as_admin",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_phase3.py",
+      "target": "function:tests/test_phase3.py:create_shift_as_admin",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_phase3.py",
+      "target": "function:tests/test_phase3.py:test_student_can_only_request_leave_for_own_shift",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_phase3.py",
+      "target": "function:tests/test_phase3.py:test_student_can_only_request_leave_for_own_shift",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_phase3.py",
+      "target": "function:tests/test_phase3.py:test_duplicate_leave_is_rejected_and_pending_can_cancel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_phase3.py",
+      "target": "function:tests/test_phase3.py:test_duplicate_leave_is_rejected_and_pending_can_cancel",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_phase3.py",
+      "target": "function:tests/test_phase3.py:test_requester_leave_and_swap_reasons_cannot_be_blank",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_phase3.py",
+      "target": "function:tests/test_phase3.py:test_requester_leave_and_swap_reasons_cannot_be_blank",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_phase3.py",
+      "target": "function:tests/test_phase3.py:test_admin_approves_leave_and_preserves_vacancy_and_audit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_phase3.py",
+      "target": "function:tests/test_phase3.py:test_admin_approves_leave_and_preserves_vacancy_and_audit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_phase3.py",
+      "target": "function:tests/test_phase3.py:test_student_cannot_use_admin_review_route",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_phase3.py",
+      "target": "function:tests/test_phase3.py:test_student_cannot_use_admin_review_route",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_phase3.py",
+      "target": "function:tests/test_phase3.py:test_swap_requester_must_own_requester_shift",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_phase3.py",
+      "target": "function:tests/test_phase3.py:test_swap_requester_must_own_requester_shift",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_phase3.py",
+      "target": "function:tests/test_phase3.py:test_admin_cannot_approve_before_peer_accepts",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_phase3.py",
+      "target": "function:tests/test_phase3.py:test_admin_cannot_approve_before_peer_accepts",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_phase3.py",
+      "target": "function:tests/test_phase3.py:test_swap_creation_rejects_conflicts_before_peer_or_admin_review",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_phase3.py",
+      "target": "function:tests/test_phase3.py:test_swap_creation_rejects_conflicts_before_peer_or_admin_review",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_phase3.py",
+      "target": "function:tests/test_phase3.py:test_approved_swap_updates_both_shifts_and_audit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_phase3.py",
+      "target": "function:tests/test_phase3.py:test_approved_swap_updates_both_shifts_and_audit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_phase3.py",
+      "target": "function:tests/test_phase3.py:test_student_and_admin_can_filter_leave_and_swap_by_shift_month",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_phase3.py",
+      "target": "function:tests/test_phase3.py:test_student_and_admin_can_filter_leave_and_swap_by_shift_month",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_phase3.py",
+      "target": "function:tests/test_phase3.py:test_calendar_marks_leave_swap_and_direct_invitation",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_phase3.py",
+      "target": "function:tests/test_phase3.py:test_calendar_marks_leave_swap_and_direct_invitation",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_documents.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_documents.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_documents.py",
+      "target": "file:tests/conftest.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_locations_payroll.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_locations_payroll.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_locations_payroll.py",
+      "target": "file:tests/conftest.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_locations_payroll.py",
+      "target": "file:tests/test_scheduling.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_models.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_models.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_notifications.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_notifications.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_notifications.py",
+      "target": "file:tests/conftest.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_notifications.py",
+      "target": "file:tests/test_documents.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_operations_workforce.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_operations_workforce.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_operations_workforce.py",
+      "target": "file:deployment/create_portable_backup.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_operations_workforce.py",
+      "target": "file:tests/conftest.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_phase3.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_phase3.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_phase3.py",
+      "target": "file:tests/conftest.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_phase3.py",
+      "target": "file:tests/test_scheduling.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    }
+  ]
+}

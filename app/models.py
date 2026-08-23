@@ -8,7 +8,7 @@ import json
 from argon2 import PasswordHasher
 from argon2.exceptions import InvalidHashError, VerificationError
 from flask_login import UserMixin
-from sqlalchemy import Boolean, CheckConstraint, Date, DateTime, Enum as SqlEnum, ForeignKey, Index, Integer, Numeric, String, Text, Time, UniqueConstraint
+from sqlalchemy import Boolean, CheckConstraint, Date, DateTime, Enum as SqlEnum, ForeignKey, Index, Integer, Numeric, String, Text, Time, UniqueConstraint, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .extensions import db
@@ -123,6 +123,7 @@ class AttendanceStatus(str, Enum):
     MISSING_CLOCK_IN = "MISSING_CLOCK_IN"
     UNMATCHED = "UNMATCHED"
     REVIEWED = "REVIEWED"
+    RETURNED = "RETURNED"
     REJECTED = "REJECTED"
     DUPLICATE = "DUPLICATE"
 
@@ -143,6 +144,7 @@ class User(UserMixin, db.Model):
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     role: Mapped[Role] = mapped_column(SqlEnum(Role, native_enum=False), nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    session_version: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
     must_change_password: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     last_login_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
@@ -173,6 +175,9 @@ class User(UserMixin, db.Model):
 
     def has_role(self, role: Role) -> bool:
         return self.role == role
+
+    def invalidate_sessions(self) -> None:
+        self.session_version += 1
 
 
 class StaffProfile(db.Model):
@@ -320,6 +325,24 @@ class PayrollSetting(db.Model):
     )
 
 
+class MinimumWageRate(db.Model):
+    __tablename__ = "minimum_wage_rates"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    effective_date: Mapped[date] = mapped_column(Date, unique=True, nullable=False, index=True)
+    hourly_wage: Mapped[Decimal] = mapped_column(Numeric(8, 2), nullable=False)
+    created_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
+
+
+class ScheduleWriteLock(db.Model):
+    """Singleton row used to serialize validation plus writes across processes."""
+    __tablename__ = "schedule_write_locks"
+
+    id: Mapped[int] = mapped_column(primary_key=True, default=1)
+    touched_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
+
+
 
 class Shift(db.Model):
     __tablename__ = "shifts"
@@ -333,6 +356,7 @@ class Shift(db.Model):
     shift_type_id: Mapped[int] = mapped_column(ForeignKey("shift_types.id"), nullable=False)
     staff_id: Mapped[int] = mapped_column(ForeignKey("staff_profiles.id"), nullable=False)
     series_id: Mapped[int | None] = mapped_column(ForeignKey("shift_series.id"), index=True)
+    import_batch_id: Mapped[int | None] = mapped_column(ForeignKey("shift_import_batches.id"), index=True)
     status: Mapped[ShiftStatus] = mapped_column(
         SqlEnum(ShiftStatus, native_enum=False), default=ShiftStatus.SCHEDULED, nullable=False
     )
@@ -353,6 +377,21 @@ class Shift(db.Model):
     staff: Mapped[StaffProfile] = relationship(back_populates="shifts")
     creator: Mapped[User] = relationship(back_populates="created_shifts", foreign_keys=[created_by])
     series: Mapped[ShiftSeries | None] = relationship(back_populates="shifts")
+    reconciliation: Mapped[AttendanceReconciliation | None] = relationship(back_populates="shift", uselist=False)
+
+
+class ShiftImportBatch(db.Model):
+    __tablename__ = "shift_import_batches"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    original_filename: Mapped[str] = mapped_column(String(255), nullable=False)
+    row_count: Mapped[int] = mapped_column(Integer, nullable=False)
+    created_by: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
+    undone_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
+    undone_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+    shifts: Mapped[list[Shift]] = relationship(foreign_keys="Shift.import_batch_id")
 
 
 class ShiftSeries(db.Model):
@@ -373,9 +412,34 @@ class ShiftSeries(db.Model):
     shifts: Mapped[list[Shift]] = relationship(back_populates="series")
 
 
+class StaffAvailability(db.Model):
+    __tablename__ = "staff_availability"
+    __table_args__ = (
+        CheckConstraint("end_time > start_time", name="ck_staff_availability_time_order"),
+        Index("ix_staff_availability_staff_date", "staff_id", "availability_date"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    staff_id: Mapped[int] = mapped_column(ForeignKey("staff_profiles.id"), nullable=False)
+    availability_date: Mapped[date] = mapped_column(Date, nullable=False)
+    start_time: Mapped[time] = mapped_column(Time, nullable=False)
+    end_time: Mapped[time] = mapped_column(Time, nullable=False)
+    is_available: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    note: Mapped[str | None] = mapped_column(String(300))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
+
+    staff: Mapped[StaffProfile] = relationship()
+
+
 class LeaveRequest(db.Model):
     __tablename__ = "leave_requests"
-    __table_args__ = (Index("ix_leave_requests_status_created", "status", "created_at"),)
+    __table_args__ = (
+        Index("ix_leave_requests_status_created", "status", "created_at"),
+        Index(
+            "uq_leave_requests_pending_shift", "shift_id", unique=True,
+            sqlite_where=text("status = 'PENDING'"), postgresql_where=text("status = 'PENDING'"),
+        ),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True)
     staff_id: Mapped[int] = mapped_column(ForeignKey("staff_profiles.id"), nullable=False, index=True)
@@ -400,7 +464,14 @@ class LeaveRequest(db.Model):
 
 class SwapRequest(db.Model):
     __tablename__ = "swap_requests"
-    __table_args__ = (Index("ix_swap_requests_admin_status_created", "admin_status", "created_at"),)
+    __table_args__ = (
+        Index("ix_swap_requests_admin_status_created", "admin_status", "created_at"),
+        Index(
+            "uq_swap_requests_active_requester_shift", "requester_shift_id", unique=True,
+            sqlite_where=text("admin_status IN ('NOT_READY', 'PENDING') AND peer_status != 'REJECTED'"),
+            postgresql_where=text("admin_status IN ('NOT_READY', 'PENDING') AND peer_status != 'REJECTED'"),
+        ),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True)
     requester_id: Mapped[int] = mapped_column(ForeignKey("staff_profiles.id"), nullable=False, index=True)
@@ -453,6 +524,7 @@ class AuditLog(db.Model):
     entity_type: Mapped[str] = mapped_column(String(80), nullable=False)
     entity_id: Mapped[int] = mapped_column(nullable=False, index=True)
     safe_summary: Mapped[str] = mapped_column(String(500), nullable=False)
+    changes_json: Mapped[str | None] = mapped_column(Text)
     ip_address: Mapped[str | None] = mapped_column(String(45), index=True)
     user_agent: Mapped[str | None] = mapped_column(String(500))
     http_method: Mapped[str | None] = mapped_column(String(10))
@@ -609,6 +681,9 @@ class BackupRun(db.Model):
     size_bytes: Mapped[int | None] = mapped_column()
     sha256: Mapped[str | None] = mapped_column(String(64))
     validation_message: Mapped[str | None] = mapped_column(String(500))
+    last_drill_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    last_drill_status: Mapped[str | None] = mapped_column(String(20))
+    last_drill_message: Mapped[str | None] = mapped_column(String(500))
     started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
     finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
@@ -754,6 +829,7 @@ class AttendancePolicy(db.Model):
     late_grace_minutes: Mapped[int] = mapped_column(Integer, default=5, nullable=False)
     checkout_after_minutes: Mapped[int] = mapped_column(Integer, default=120, nullable=False)
     duplicate_seconds: Mapped[int] = mapped_column(Integer, default=60, nullable=False)
+    offline_threshold_minutes: Mapped[int] = mapped_column(Integer, default=15, nullable=False)
     updated_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, onupdate=utc_now, nullable=False)
 
@@ -767,6 +843,7 @@ class AttendanceDevice(db.Model):
     location_id: Mapped[int] = mapped_column(ForeignKey("work_locations.id"), nullable=False)
     allowed_cidr: Mapped[str | None] = mapped_column(String(80))
     secret_encrypted: Mapped[str | None] = mapped_column(Text)
+    pending_secret_encrypted: Mapped[str | None] = mapped_column(Text)
     enrollment_token_hash: Mapped[str | None] = mapped_column(String(64), unique=True)
     enrollment_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False, index=True)
@@ -779,10 +856,16 @@ class AttendanceDevice(db.Model):
     identity_changed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     last_seen_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     last_ip: Mapped[str | None] = mapped_column(String(45))
+    offline_alert_enabled: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    offline_threshold_minutes: Mapped[int] = mapped_column(Integer, default=15, nullable=False)
+    offline_monitor_weekdays: Mapped[str] = mapped_column(String(20), default="0,1,2,3,4,5,6", nullable=False)
+    offline_monitor_start: Mapped[time] = mapped_column(Time, default=time.min, nullable=False)
+    offline_monitor_end: Mapped[time] = mapped_column(Time, default=lambda: time(23, 59), nullable=False)
     last_sequence: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     created_by: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
     revoked_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
     revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
 
     location: Mapped[WorkLocation] = relationship()
@@ -800,6 +883,10 @@ class AttendanceDevice(db.Model):
             return json.loads(self.pending_mac_addresses_json or "[]")
         except (TypeError, json.JSONDecodeError):
             return []
+
+    @property
+    def offline_weekdays(self) -> set[int]:
+        return {int(value) for value in self.offline_monitor_weekdays.split(",") if value.isdigit() and 0 <= int(value) <= 6}
 
 
 class AttendanceDeviceNonce(db.Model):
@@ -839,6 +926,7 @@ class AttendanceEvent(db.Model):
         Index("ix_attendance_events_staff_time", "staff_id", "occurred_at"),
         Index("ix_attendance_events_status_time", "status", "occurred_at"),
         Index("ix_attendance_events_shift_direction", "shift_id", "direction"),
+        Index("uq_attendance_events_device_sequence", "device_id", "device_sequence", unique=True),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -868,6 +956,25 @@ class AttendanceEvent(db.Model):
     card: Mapped[StaffCard | None] = relationship()
     shift: Mapped[Shift | None] = relationship()
     reviewer: Mapped[User | None] = relationship(foreign_keys=[reviewed_by])
+    review_history: Mapped[list[AttendanceReviewHistory]] = relationship(
+        back_populates="event", cascade="all, delete-orphan", order_by="AttendanceReviewHistory.created_at"
+    )
+
+
+class AttendanceReviewHistory(db.Model):
+    __tablename__ = "attendance_review_history"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    event_id: Mapped[int] = mapped_column(ForeignKey("attendance_events.id"), nullable=False, index=True)
+    previous_status: Mapped[str] = mapped_column(String(40), nullable=False)
+    new_status: Mapped[str] = mapped_column(String(40), nullable=False)
+    decision: Mapped[str] = mapped_column(String(30), nullable=False)
+    note: Mapped[str | None] = mapped_column(String(1000))
+    reviewed_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
+
+    event: Mapped[AttendanceEvent] = relationship(back_populates="review_history")
+    reviewer: Mapped[User | None] = relationship()
 
 
 class AttendanceAdjustment(db.Model):
@@ -882,3 +989,18 @@ class AttendanceAdjustment(db.Model):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
 
     event: Mapped[AttendanceEvent] = relationship()
+
+
+class AttendanceReconciliation(db.Model):
+    __tablename__ = "attendance_reconciliations"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    shift_id: Mapped[int] = mapped_column(ForeignKey("shifts.id"), unique=True, nullable=False, index=True)
+    calculated_hours: Mapped[Decimal | None] = mapped_column(Numeric(5, 2))
+    payable_hours: Mapped[Decimal] = mapped_column(Numeric(5, 2), nullable=False)
+    note: Mapped[str] = mapped_column(String(1000), nullable=False)
+    reviewed_by: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    reviewed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
+
+    shift: Mapped[Shift] = relationship(back_populates="reconciliation")
+    reviewer: Mapped[User] = relationship()

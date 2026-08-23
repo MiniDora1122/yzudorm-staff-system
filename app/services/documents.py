@@ -24,6 +24,7 @@ from ..models import (
 from ..time_utils import local_today
 from .audit import add_audit
 from .requests import WorkflowError
+from .storage_lock import document_storage_serialized
 from .retention import retention_deadline
 
 
@@ -129,6 +130,7 @@ def _normalize_image(upload: FileStorage) -> tuple[bytes, int, int, str]:
     return output.getvalue(), width, height, original_name
 
 
+@document_storage_serialized
 def upload_document_set(
     *,
     profile: StaffProfile,
@@ -259,6 +261,7 @@ def read_document(document: StaffDocument) -> bytes:
         raise DocumentError("DOCUMENT_UNAVAILABLE", "文件不存在或無法解密。") from exc
 
 
+@document_storage_serialized
 def confirm_document_set(
     *, document: StaffDocument, profile: StaffProfile, fields: dict, actor_user_id: int
 ) -> None:
@@ -315,6 +318,7 @@ def confirm_document_set(
     db.session.commit()
 
 
+@document_storage_serialized
 def review_document_set(
     *,
     document: StaffDocument,
@@ -323,6 +327,8 @@ def review_document_set(
     fields_confirmed: bool,
     actor_user_id: int,
 ) -> None:
+    from .notifications import complete_notification
+
     documents = document_set_documents(document)
     if not documents or any(item.status != DocumentStatus.PENDING_ADMIN for item in documents):
         raise DocumentError("INVALID_STATUS", "此文件目前不在待管理員審核狀態。")
@@ -353,6 +359,7 @@ def review_document_set(
             document.id,
             f"退回{document.document_type.value}整組文件，共 {len(documents)} 頁",
         )
+        complete_notification(f"ADMIN:DOCUMENT_REVIEW:{document.document_set_id}")
         db.session.commit()
         return
 
@@ -400,6 +407,7 @@ def review_document_set(
         document.id,
         f"管理員核准{document.document_type.value}整組文件，共 {len(documents)} 頁：{','.join(confirmed_fields)}",
     )
+    complete_notification(f"ADMIN:DOCUMENT_REVIEW:{document.document_set_id}")
     db.session.commit()
 
 
@@ -431,6 +439,7 @@ def document_path(document: StaffDocument) -> Path | None:
     return _document_path(document.storage_key)
 
 
+@document_storage_serialized
 def delete_document_set(*, document: StaffDocument, profile: StaffProfile, actor_user_id: int) -> None:
     if document.staff_id != profile.id:
         raise DocumentError("NOT_OWNER", "只能移除自己的待確認文件。")

@@ -1,0 +1,154 @@
+{
+  "nodes": [
+    {
+      "id": "document:attendance-terminal/README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "attendance-terminal/README.md",
+      "summary": "說明 Windows 打卡終端安裝、更新、安全邊界與疑難排解。",
+      "tags": [
+        "documentation",
+        "operations",
+        "deployment"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:attendance-terminal/build-terminal.ps1",
+      "type": "file",
+      "name": "build-terminal.ps1",
+      "filePath": "attendance-terminal/build-terminal.ps1",
+      "summary": "使用 PyInstaller 與 C# compiler 建置 Kiosk 和 Windows 啟動器。",
+      "tags": [
+        "powershell",
+        "windows",
+        "automation",
+        "operations"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:attendance-terminal/configure-autostart.ps1",
+      "type": "file",
+      "name": "configure-autostart.ps1",
+      "filePath": "attendance-terminal/configure-autostart.ps1",
+      "summary": "以 Windows Scheduled Task 設定打卡終端自動啟動。",
+      "tags": [
+        "powershell",
+        "windows",
+        "automation",
+        "operations"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:attendance-terminal/start-terminal.ps1",
+      "type": "file",
+      "name": "start-terminal.ps1",
+      "filePath": "attendance-terminal/start-terminal.ps1",
+      "summary": "驗證並啟動打卡終端 Windows 執行檔。",
+      "tags": [
+        "powershell",
+        "windows",
+        "automation",
+        "operations"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:attendance-terminal/terminal-defaults.ini",
+      "type": "config",
+      "name": "terminal-defaults.ini",
+      "filePath": "attendance-terminal/terminal-defaults.ini",
+      "summary": "保存終端自動更新的預設 GitHub repository 與 branch。",
+      "tags": [
+        "application",
+        "module",
+        "workflow"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:attendance-terminal/terminal-self-update.ps1",
+      "type": "file",
+      "name": "terminal-self-update.ps1",
+      "filePath": "attendance-terminal/terminal-self-update.ps1",
+      "summary": "下載並驗證終端更新，失敗時回復原檔案。",
+      "tags": [
+        "powershell",
+        "windows",
+        "automation",
+        "operations"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:attendance-terminal/terminal-self-update.ps1:Read-Setting",
+      "type": "function",
+      "name": "Read-Setting",
+      "filePath": "attendance-terminal/terminal-self-update.ps1",
+      "lineRange": [
+        22,
+        31
+      ],
+      "summary": "依序讀取預設與裝置 INI，允許本機設定覆寫更新來源。",
+      "tags": [
+        "powershell",
+        "function",
+        "operations"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:attendance-terminal/terminal-self-update.ps1",
+      "target": "function:attendance-terminal/terminal-self-update.ps1:Read-Setting",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "document:attendance-terminal/README.md",
+      "target": "file:attendance-terminal/build-terminal.ps1",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:attendance-terminal/README.md",
+      "target": "file:attendance-terminal/configure-autostart.ps1",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:attendance-terminal/README.md",
+      "target": "file:attendance-terminal/start-terminal.ps1",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:attendance-terminal/README.md",
+      "target": "config:attendance-terminal/terminal-defaults.ini",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:attendance-terminal/README.md",
+      "target": "file:attendance-terminal/terminal-self-update.ps1",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:attendance-terminal/terminal-defaults.ini",
+      "target": "file:attendance-terminal/terminal-self-update.ps1",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ]
+}

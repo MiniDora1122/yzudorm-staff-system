@@ -1,0 +1,1101 @@
+{
+  "nodes": [
+    {
+      "id": "file:app/services/storage_lock.py",
+      "type": "file",
+      "name": "storage_lock.py",
+      "filePath": "app/services/storage_lock.py",
+      "summary": "提供跨執行緒與跨程序的證件儲存序列化裝飾器。",
+      "tags": [
+        "service",
+        "application",
+        "business-logic"
+      ],
+      "complexity": "simple",
+      "languageNotes": "採用 Python 與 SQLAlchemy service 分層。"
+    },
+    {
+      "id": "function:app/services/storage_lock.py:document_storage_serialized",
+      "type": "function",
+      "name": "document_storage_serialized",
+      "filePath": "app/services/storage_lock.py",
+      "lineRange": [
+        8,
+        15
+      ],
+      "summary": "處理document storage serialized 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/services/workflow_calendar.py",
+      "type": "file",
+      "name": "workflow_calendar.py",
+      "filePath": "app/services/workflow_calendar.py",
+      "summary": "把請假、換班及邀請狀態轉為排班月曆註記。",
+      "tags": [
+        "service",
+        "workflow",
+        "business-logic"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "採用 Python 與 SQLAlchemy service 分層。"
+    },
+    {
+      "id": "function:app/services/workflow_calendar.py:swap_annotation",
+      "type": "function",
+      "name": "swap_annotation",
+      "filePath": "app/services/workflow_calendar.py",
+      "lineRange": [
+        19,
+        29
+      ],
+      "summary": "處理swap annotation 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "workflow"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/workflow_calendar.py:workflow_annotations",
+      "type": "function",
+      "name": "workflow_annotations",
+      "filePath": "app/services/workflow_calendar.py",
+      "lineRange": [
+        32,
+        69
+      ],
+      "summary": "處理workflow annotations 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "workflow"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/workflow_calendar.py:add_annotations",
+      "type": "function",
+      "name": "add_annotations",
+      "filePath": "app/services/workflow_calendar.py",
+      "lineRange": [
+        72,
+        74
+      ],
+      "summary": "處理add annotations 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "workflow"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/workflow_calendar.py:direct_swap_invitations",
+      "type": "function",
+      "name": "direct_swap_invitations",
+      "filePath": "app/services/workflow_calendar.py",
+      "lineRange": [
+        77,
+        97
+      ],
+      "summary": "處理direct swap invitations 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "workflow"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/student/routes.py",
+      "type": "file",
+      "name": "routes.py",
+      "filePath": "app/student/routes.py",
+      "summary": "學生端 Flask 路由，涵蓋首頁、班表、可排班時段、個資與證件、請假及換班流程。",
+      "tags": [
+        "api-handler",
+        "flask-route",
+        "application"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Flask Blueprint 組合 Jinja 頁面與 JSON API，權限由後端驗證。"
+    },
+    {
+      "id": "function:app/student/routes.py:require_foreign_student_documents",
+      "type": "function",
+      "name": "require_foreign_student_documents",
+      "filePath": "app/student/routes.py",
+      "lineRange": [
+        73,
+        100
+      ],
+      "summary": "處理require foreign student documents 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/student/routes.py:dashboard",
+      "type": "function",
+      "name": "dashboard",
+      "filePath": "app/student/routes.py",
+      "lineRange": [
+        105,
+        192
+      ],
+      "summary": "處理dashboard 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/student/routes.py:notifications_page",
+      "type": "function",
+      "name": "notifications_page",
+      "filePath": "app/student/routes.py",
+      "lineRange": [
+        197,
+        207
+      ],
+      "summary": "處理notifications page 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/student/routes.py:availability_page",
+      "type": "function",
+      "name": "availability_page",
+      "filePath": "app/student/routes.py",
+      "lineRange": [
+        212,
+        223
+      ],
+      "summary": "處理availability page 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/student/routes.py:create_availability",
+      "type": "function",
+      "name": "create_availability",
+      "filePath": "app/student/routes.py",
+      "lineRange": [
+        228,
+        252
+      ],
+      "summary": "建立create availability 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/student/routes.py:delete_availability",
+      "type": "function",
+      "name": "delete_availability",
+      "filePath": "app/student/routes.py",
+      "lineRange": [
+        257,
+        265
+      ],
+      "summary": "刪除或封存delete availability 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/student/routes.py:profile",
+      "type": "function",
+      "name": "profile",
+      "filePath": "app/student/routes.py",
+      "lineRange": [
+        268,
+        293
+      ],
+      "summary": "處理profile 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/student/routes.py:update_profile",
+      "type": "function",
+      "name": "update_profile",
+      "filePath": "app/student/routes.py",
+      "lineRange": [
+        298,
+        327
+      ],
+      "summary": "更新update profile 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/student/routes.py:parse_optional_date",
+      "type": "function",
+      "name": "parse_optional_date",
+      "filePath": "app/student/routes.py",
+      "lineRange": [
+        330,
+        337
+      ],
+      "summary": "解析parse optional date 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/student/routes.py:upload_staff_document",
+      "type": "function",
+      "name": "upload_staff_document",
+      "filePath": "app/student/routes.py",
+      "lineRange": [
+        342,
+        379
+      ],
+      "summary": "處理upload staff document 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/student/routes.py:confirm_staff_document",
+      "type": "function",
+      "name": "confirm_staff_document",
+      "filePath": "app/student/routes.py",
+      "lineRange": [
+        384,
+        407
+      ],
+      "summary": "處理confirm staff document 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/student/routes.py:view_staff_document",
+      "type": "function",
+      "name": "view_staff_document",
+      "filePath": "app/student/routes.py",
+      "lineRange": [
+        412,
+        425
+      ],
+      "summary": "處理view staff document 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/student/routes.py:download_staff_document",
+      "type": "function",
+      "name": "download_staff_document",
+      "filePath": "app/student/routes.py",
+      "lineRange": [
+        430,
+        448
+      ],
+      "summary": "授權下載download staff document 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/student/routes.py:download_staff_document_set",
+      "type": "function",
+      "name": "download_staff_document_set",
+      "filePath": "app/student/routes.py",
+      "lineRange": [
+        453,
+        482
+      ],
+      "summary": "授權下載download staff document set 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/student/routes.py:delete_staff_document",
+      "type": "function",
+      "name": "delete_staff_document",
+      "filePath": "app/student/routes.py",
+      "lineRange": [
+        487,
+        499
+      ],
+      "summary": "刪除或封存delete staff document 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/student/routes.py:requests_page",
+      "type": "function",
+      "name": "requests_page",
+      "filePath": "app/student/routes.py",
+      "lineRange": [
+        504,
+        601
+      ],
+      "summary": "處理requests page 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/student/routes.py:create_leave",
+      "type": "function",
+      "name": "create_leave",
+      "filePath": "app/student/routes.py",
+      "lineRange": [
+        606,
+        635
+      ],
+      "summary": "建立create leave 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/student/routes.py:cancel_leave",
+      "type": "function",
+      "name": "cancel_leave",
+      "filePath": "app/student/routes.py",
+      "lineRange": [
+        640,
+        652
+      ],
+      "summary": "取消cancel leave 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/student/routes.py:create_swap",
+      "type": "function",
+      "name": "create_swap",
+      "filePath": "app/student/routes.py",
+      "lineRange": [
+        657,
+        688
+      ],
+      "summary": "建立create swap 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/student/routes.py:respond_swap",
+      "type": "function",
+      "name": "respond_swap",
+      "filePath": "app/student/routes.py",
+      "lineRange": [
+        693,
+        710
+      ],
+      "summary": "處理respond swap 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/student/routes.py:cancel_swap",
+      "type": "function",
+      "name": "cancel_swap",
+      "filePath": "app/student/routes.py",
+      "lineRange": [
+        715,
+        727
+      ],
+      "summary": "取消cancel swap 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/student/routes.py:parse_calendar_date",
+      "type": "function",
+      "name": "parse_calendar_date",
+      "filePath": "app/student/routes.py",
+      "lineRange": [
+        730,
+        736
+      ],
+      "summary": "解析parse calendar date 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/student/routes.py:shift_events",
+      "type": "function",
+      "name": "shift_events",
+      "filePath": "app/student/routes.py",
+      "lineRange": [
+        741,
+        793
+      ],
+      "summary": "處理shift events 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/student/routes.py:monthly_hours_api",
+      "type": "function",
+      "name": "monthly_hours_api",
+      "filePath": "app/student/routes.py",
+      "lineRange": [
+        798,
+        836
+      ],
+      "summary": "處理monthly hours api 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:app/services/storage_lock.py",
+      "target": "function:app/services/storage_lock.py:document_storage_serialized",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/storage_lock.py",
+      "target": "function:app/services/storage_lock.py:document_storage_serialized",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/workflow_calendar.py",
+      "target": "function:app/services/workflow_calendar.py:swap_annotation",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/workflow_calendar.py",
+      "target": "function:app/services/workflow_calendar.py:swap_annotation",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/workflow_calendar.py",
+      "target": "function:app/services/workflow_calendar.py:workflow_annotations",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/workflow_calendar.py",
+      "target": "function:app/services/workflow_calendar.py:workflow_annotations",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/workflow_calendar.py",
+      "target": "function:app/services/workflow_calendar.py:add_annotations",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/workflow_calendar.py",
+      "target": "function:app/services/workflow_calendar.py:add_annotations",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/workflow_calendar.py",
+      "target": "function:app/services/workflow_calendar.py:direct_swap_invitations",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/workflow_calendar.py",
+      "target": "function:app/services/workflow_calendar.py:direct_swap_invitations",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:require_foreign_student_documents",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:require_foreign_student_documents",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:dashboard",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:dashboard",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:notifications_page",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:notifications_page",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:availability_page",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:availability_page",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:create_availability",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:create_availability",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:delete_availability",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:delete_availability",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:profile",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:profile",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:update_profile",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:update_profile",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:parse_optional_date",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:parse_optional_date",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:upload_staff_document",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:upload_staff_document",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:confirm_staff_document",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:confirm_staff_document",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:view_staff_document",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:view_staff_document",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:download_staff_document",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:download_staff_document",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:download_staff_document_set",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:download_staff_document_set",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:delete_staff_document",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:delete_staff_document",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:requests_page",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:requests_page",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:create_leave",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:create_leave",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:cancel_leave",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:cancel_leave",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:create_swap",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:create_swap",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:respond_swap",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:respond_swap",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:cancel_swap",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:cancel_swap",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:parse_calendar_date",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:parse_calendar_date",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:shift_events",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:shift_events",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:monthly_hours_api",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "function:app/student/routes.py:monthly_hours_api",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/workflow_calendar.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/workflow_calendar.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "file:app/decorators.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "file:app/services/attendance.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "file:app/services/audit.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "file:app/services/compliance.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "file:app/services/documents.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "file:app/services/notifications.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "file:app/services/payroll.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "file:app/services/requests.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "file:app/services/scheduling.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "file:app/services/workflow_calendar.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/student/routes.py",
+      "target": "file:app/time_utils.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:app/services/workflow_calendar.py:workflow_annotations",
+      "target": "function:app/services/workflow_calendar.py:swap_annotation",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/student/routes.py:confirm_staff_document",
+      "target": "function:app/student/routes.py:parse_optional_date",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/student/routes.py:requests_page",
+      "target": "function:app/services/scheduling.py:month_bounds",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/student/routes.py:shift_events",
+      "target": "function:app/student/routes.py:parse_calendar_date",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/student/routes.py:shift_events",
+      "target": "function:app/services/attendance.py:attendance_annotations",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/student/routes.py:shift_events",
+      "target": "function:app/services/scheduling.py:shift_to_event",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/student/routes.py:monthly_hours_api",
+      "target": "function:app/services/scheduling.py:month_bounds",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

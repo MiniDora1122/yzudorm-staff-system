@@ -5,7 +5,7 @@ import csv
 import re
 from zipfile import ZIP_DEFLATED, ZipFile
 
-from flask import current_app, flash, jsonify, redirect, render_template, request, send_file, url_for
+from flask import current_app, flash, jsonify, redirect, render_template, request, send_file, session, url_for
 from flask_login import current_user
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import joinedload
@@ -15,8 +15,10 @@ from ..decorators import role_required
 from ..extensions import db
 from ..models import (
     Country,
+    MinimumWageRate,
     PayrollSetting,
     AuditLog,
+    AttendanceReconciliation,
     DocumentStatus,
     LeaveRequest,
     LeaveStatus,
@@ -24,6 +26,7 @@ from ..models import (
     SchedulingExceptionPeriod,
     SchedulingPolicy,
     Shift,
+    ShiftImportBatch,
     ShiftPublicationStatus,
     ShiftStatus,
     ShiftType,
@@ -36,7 +39,7 @@ from ..models import (
     WorkLocation,
     utc_now,
 )
-from ..services.payroll import calculate_staff_cost, get_payroll_setting, money
+from ..services.payroll import calculate_staff_cost, get_payroll_setting, minimum_wage_on, money, payable_hours_expression
 from ..services.notifications import notification_page_for_user, notifications_for_user
 from ..services.compliance import active_countries, canonical_country_name, get_scheduling_policy
 from ..services.accounts import (
@@ -65,6 +68,7 @@ from ..services.reports import (
 )
 from ..services.audit import add_audit
 from ..services.attendance import attendance_annotations
+from ..services.health import system_health_summary
 from ..services.requests import WorkflowError, review_leave_request, review_swap_request
 from ..services.retention import cleanup_expired_documents, get_retention_policy, save_retention_policy
 from ..services.scheduling import (
@@ -72,12 +76,13 @@ from ..services.scheduling import (
     create_shift,
     create_weekly_shift_series,
     month_bounds,
+    schedule_serialized,
     shift_to_event,
     update_shift,
     validate_shift_assignment,
 )
 from ..services.workflow_calendar import add_annotations, workflow_annotations
-from ..time_utils import local_today
+from ..time_utils import local_date_utc_bounds, local_today
 
 
 @bp.get("/")
@@ -147,6 +152,7 @@ def dashboard():
         today=today,
         tomorrow=tomorrow,
         open_notifications=notifications_for_user(current_user)[0],
+        system_health=system_health_summary(),
     )
 
 
@@ -182,11 +188,11 @@ def audit_logs_page():
         statement = statement.where(AuditLog.ip_address == ip_address)
     try:
         if date_from:
-            statement = statement.where(AuditLog.created_at >= datetime.combine(date.fromisoformat(date_from), time.min))
+            start_utc, _ = local_date_utc_bounds(date.fromisoformat(date_from))
+            statement = statement.where(AuditLog.created_at >= start_utc)
         if date_to:
-            statement = statement.where(
-                AuditLog.created_at < datetime.combine(date.fromisoformat(date_to) + timedelta(days=1), time.min)
-            )
+            _, end_utc = local_date_utc_bounds(date.fromisoformat(date_to))
+            statement = statement.where(AuditLog.created_at < end_utc)
     except ValueError:
         flash("日期格式錯誤，已忽略日期篩選。 / Invalid date filter ignored.", "warning")
 
@@ -361,6 +367,11 @@ def update_scheduling_policy():
         flash("每週起始日設定無效。 / Invalid week start day.", "danger")
         return redirect(url_for("admin.scheduling_settings"))
     policy = get_scheduling_policy()
+    before = None if policy is None else {
+        "enabled": policy.foreign_weekly_limit_enabled,
+        "weekly_hour_limit": str(policy.weekly_hour_limit),
+        "week_starts_on": policy.week_starts_on,
+    }
     if policy is None:
         policy = SchedulingPolicy(id=1)
         db.session.add(policy)
@@ -374,6 +385,7 @@ def update_scheduling_policy():
         "SchedulingPolicy",
         1,
         f"每週限制={'啟用' if policy.foreign_weekly_limit_enabled else '停用'}；上限 {limit} 小時；起始星期={week_starts_on}",
+        changes={"before": before, "after": {"enabled": policy.foreign_weekly_limit_enabled, "weekly_hour_limit": str(limit), "week_starts_on": week_starts_on}},
     )
     db.session.commit()
     flash("排班限制已更新。 / Scheduling policy updated.", "success")
@@ -480,6 +492,9 @@ def schedule():
             }
             for location in locations
         ],
+        import_batches=db.session.scalars(
+            db.select(ShiftImportBatch).order_by(ShiftImportBatch.created_at.desc()).limit(5)
+        ).all(),
     )
 
 
@@ -497,19 +512,27 @@ def shift_import_template():
 
 @bp.post("/shifts/import")
 @role_required(Role.ADMIN)
+@schedule_serialized
 def import_shifts():
     uploaded = request.files.get("shift_file")
+    mode = request.form.get("mode", "import")
     allow_location_overlap = request.form.get("allow_location_overlap") == "yes"
+    allow_availability_conflict = request.form.get("allow_availability_conflict") == "yes"
     try:
         publication_status = ShiftPublicationStatus(
             request.form.get("publication_status", ShiftPublicationStatus.DRAFT.value)
         )
     except ValueError:
         publication_status = ShiftPublicationStatus.DRAFT
-    if uploaded is None or not uploaded.filename:
+    if mode == "confirm":
+        filename = request.form.get("original_filename", "shift-import.csv")[:255]
+        raw = request.form.get("csv_text", "").encode("utf-8")
+    elif uploaded is not None and uploaded.filename:
+        filename = uploaded.filename[:255]
+        raw = uploaded.read(1_000_001)
+    else:
         flash("請選擇 CSV 排班檔案。 / Please select a CSV schedule file.", "danger")
         return redirect(url_for("admin.schedule"))
-    raw = uploaded.read(1_000_001)
     if len(raw) > 1_000_000:
         flash("CSV 檔案不可超過 1MB。 / CSV files must not exceed 1MB.", "danger")
         return redirect(url_for("admin.schedule"))
@@ -533,7 +556,14 @@ def import_shifts():
         ).all()
     }
     created = []
+    batch = None
     try:
+        if mode != "preview":
+            batch = ShiftImportBatch(
+                original_filename=filename, row_count=0, created_by=current_user.id
+            )
+            db.session.add(batch)
+            db.session.flush()
         for line_number, row in enumerate(reader, start=2):
             if line_number > 501:
                 raise ValueError("一次最多匯入 500 筆排班。 / Maximum 500 shifts per import.")
@@ -557,19 +587,34 @@ def import_shifts():
                 raise ValueError(f"第 {line_number} 列找不到學號 {student_number}。")
             if shift_type is None:
                 raise ValueError(f"第 {line_number} 列找不到班別代碼 {shift_code}。")
-            created.append(
-                create_shift(
+            item = create_shift(
                     shift_date=shift_date,
                     shift_type=shift_type,
                     staff=staff,
                     actor_id=current_user.id,
                     allow_location_overlap=allow_location_overlap,
+                    allow_availability_conflict=allow_availability_conflict,
                     publication_status=publication_status,
                     commit=False,
                 )
-            )
+            item.import_batch_id = batch.id if batch else None
+            created.append(item)
         if not created:
             raise ValueError("CSV 沒有可匯入的排班資料。 / No schedule rows found in CSV.")
+        if mode == "preview":
+            preview_rows = [{
+                "date": item.shift_date, "student": item.staff.name,
+                "student_number": item.staff.student_number, "shift_type": item.shift_type.name,
+            } for item in created]
+            db.session.rollback()
+            session.pop("shift_import_errors", None)
+            return render_template(
+                "admin/shift_import_preview.html", rows=preview_rows, errors=[], csv_text=text,
+                original_filename=filename, publication_status=publication_status.value,
+                allow_location_overlap=allow_location_overlap,
+                allow_availability_conflict=allow_availability_conflict,
+            )
+        batch.row_count = len(created)
         add_audit(
             current_user.id,
             "SHIFTS_BULK_IMPORTED",
@@ -581,9 +626,67 @@ def import_shifts():
     except (ValueError, SchedulingConflict, IntegrityError) as exc:
         db.session.rollback()
         message = exc.message if isinstance(exc, SchedulingConflict) else str(exc)
+        error = {
+            "line": locals().get("line_number"), "message": message,
+            "date": locals().get("normalized", {}).get("日期", ""),
+            "student_number": locals().get("normalized", {}).get("學號", ""),
+            "shift_type_code": locals().get("normalized", {}).get("班別代碼", ""),
+        }
+        session["shift_import_errors"] = [error]
+        if mode == "preview":
+            return render_template(
+                "admin/shift_import_preview.html", rows=[], errors=[error], csv_text=text,
+                original_filename=filename, publication_status=publication_status.value,
+                allow_location_overlap=allow_location_overlap,
+                allow_availability_conflict=allow_availability_conflict,
+            )
         flash(f"批量匯入失敗，未寫入任何資料：{message}", "danger")
         return redirect(url_for("admin.schedule"))
     flash(f"已成功匯入 {len(created)} 筆排班。 / Imported {len(created)} shifts.", "success")
+    return redirect(url_for("admin.schedule"))
+
+
+@bp.get("/shifts/import-errors.csv")
+@role_required(Role.ADMIN)
+def shift_import_errors():
+    output = StringIO()
+    writer = csv.writer(output)
+    writer.writerow(["列號", "日期", "學號", "班別代碼", "錯誤"])
+    for error in session.get("shift_import_errors", []):
+        writer.writerow([
+            error.get("line", ""), error.get("date", ""), error.get("student_number", ""),
+            error.get("shift_type_code", ""), error.get("message", ""),
+        ])
+    return send_file(
+        BytesIO(("\ufeff" + output.getvalue()).encode("utf-8")),
+        mimetype="text/csv; charset=utf-8", as_attachment=True,
+        download_name="shift-import-errors.csv",
+    )
+
+
+@bp.post("/shifts/import-batches/<int:batch_id>/undo")
+@role_required(Role.ADMIN)
+@schedule_serialized
+def undo_shift_import(batch_id: int):
+    from ..services.periods import PeriodError, ensure_month_open
+    batch = db.get_or_404(ShiftImportBatch, batch_id)
+    if batch.undone_at:
+        flash("此匯入批次已復原。 / Import batch already undone.", "warning")
+        return redirect(url_for("admin.schedule"))
+    active = [shift for shift in batch.shifts if shift.status == ShiftStatus.SCHEDULED]
+    try:
+        for month_date in {shift.shift_date.replace(day=1) for shift in active}:
+            ensure_month_open(month_date)
+    except PeriodError as exc:
+        flash(str(exc), "danger")
+        return redirect(url_for("admin.schedule"))
+    for shift in active:
+        shift.status = ShiftStatus.CANCELLED
+    batch.undone_by = current_user.id
+    batch.undone_at = utc_now()
+    add_audit(current_user.id, "SHIFT_IMPORT_UNDONE", "ShiftImportBatch", batch.id, f"復原匯入批次，取消 {len(active)} 筆排班")
+    db.session.commit()
+    flash(f"已復原本次匯入並取消 {len(active)} 筆排班；歷史紀錄仍保留。", "success")
     return redirect(url_for("admin.schedule"))
 
 
@@ -750,6 +853,7 @@ def delete_administrator(user_id: int):
         flash("系統至少必須保留一個有效管理員帳號。 / At least one active administrator is required.", "danger")
         return redirect(url_for("admin.admin_accounts"))
     administrator.is_active = False
+    administrator.invalidate_sessions()
     administrator.archived_at = utc_now()
     administrator.archived_by = current_user.id
     add_audit(current_user.id, "ADMIN_ARCHIVED", "User", administrator.id, f"停用管理員 {administrator.username}")
@@ -860,6 +964,7 @@ def delete_staff(staff_id: int):
         )
         return redirect(url_for("admin.staff"))
     profile.user.is_active = False
+    profile.user.invalidate_sessions()
     profile.user.archived_at = utc_now()
     profile.user.archived_by = current_user.id
     add_audit(current_user.id, "STAFF_ARCHIVED", "StaffProfile", profile.id, f"停用工讀生 {profile.student_number}")
@@ -1072,7 +1177,13 @@ def download_staff_document_set(set_id: str):
 def payroll():
     profiles = db.session.scalars(db.select(StaffProfile).order_by(StaffProfile.name)).all()
     setting = get_payroll_setting(local_today())
-    return render_template("admin/payroll.html", profiles=profiles, setting=setting)
+    wage_rates = db.session.scalars(
+        db.select(MinimumWageRate).order_by(MinimumWageRate.effective_date.desc())
+    ).all()
+    return render_template(
+        "admin/payroll.html", profiles=profiles, setting=setting,
+        wage_rates=wage_rates, current_minimum_wage=minimum_wage_on(local_today()),
+    )
 
 
 @bp.post("/staff/<int:staff_id>")
@@ -1557,6 +1668,7 @@ def create_shift_type_api():
 
 @bp.put("/api/shift-types/<int:shift_type_id>")
 @role_required(Role.ADMIN)
+@schedule_serialized
 def update_shift_type_api(shift_type_id: int):
     shift_type = db.session.get(ShiftType, shift_type_id)
     if shift_type is None or not shift_type.is_active:
@@ -1612,6 +1724,7 @@ def update_shift_type_api(shift_type_id: int):
                 staff=shift.staff,
                 exclude_shift_id=shift.id,
                 allow_location_overlap=True,
+                allow_availability_conflict=True,
             )
         db.session.commit()
     except SchedulingConflict as exc:
@@ -1652,6 +1765,36 @@ def decimal_field(payload: dict, name: str, *, minimum: Decimal, maximum: Decima
     return value
 
 
+@bp.post("/payroll/minimum-wages")
+@role_required(Role.ADMIN)
+def save_minimum_wage():
+    try:
+        effective_date = date.fromisoformat(request.form.get("effective_date", ""))
+        hourly_wage = Decimal(request.form.get("hourly_wage", ""))
+        if hourly_wage <= 0 or hourly_wage > Decimal("10000"):
+            raise ValueError
+    except (ValueError, InvalidOperation):
+        flash("最低工資生效日或時薪格式錯誤。 / Invalid minimum wage rate.", "danger")
+        return redirect(url_for("admin.payroll"))
+    rate = db.session.scalar(
+        db.select(MinimumWageRate).where(MinimumWageRate.effective_date == effective_date)
+    )
+    before = {"effective_date": str(rate.effective_date), "hourly_wage": str(rate.hourly_wage)} if rate else None
+    if rate is None:
+        rate = MinimumWageRate(effective_date=effective_date, created_by=current_user.id)
+        db.session.add(rate)
+    rate.hourly_wage = hourly_wage
+    db.session.flush()
+    add_audit(
+        current_user.id, "MINIMUM_WAGE_SAVED", "MinimumWageRate", rate.id,
+        f"設定 {effective_date} 起最低時薪 {hourly_wage:g} 元",
+        changes={"before": before, "after": {"effective_date": str(effective_date), "hourly_wage": str(hourly_wage)}},
+    )
+    db.session.commit()
+    flash("法規最低工資已儲存。 / Minimum wage rate saved.", "success")
+    return redirect(url_for("admin.payroll"))
+
+
 @bp.post("/api/payroll-settings")
 @role_required(Role.ADMIN)
 def save_payroll_setting_api():
@@ -1661,8 +1804,9 @@ def save_payroll_setting_api():
         hourly_wage = decimal_field(
             payload, "default_hourly_wage", minimum=Decimal("1"), maximum=Decimal("10000")
         )
-        if effective_date >= date(2026, 1, 1) and hourly_wage < Decimal("196"):
-            raise ValueError("2026 年適用時薪不可低於法定最低時薪 196 元。")
+        legal_minimum = minimum_wage_on(effective_date)
+        if hourly_wage < legal_minimum:
+            raise ValueError(f"此生效日適用時薪不可低於法定最低時薪 {legal_minimum:g} 元。")
         percentage_fields = {
             "labor_insurance_rate": (Decimal("0"), Decimal("30")),
             "employment_insurance_rate": (Decimal("0"), Decimal("10")),
@@ -1687,6 +1831,12 @@ def save_payroll_setting_api():
     setting = db.session.scalar(
         db.select(PayrollSetting).where(PayrollSetting.effective_date == effective_date)
     )
+    before = None if setting is None else {
+        "default_hourly_wage": str(setting.default_hourly_wage),
+        "effective_date": str(setting.effective_date),
+        **{name: str(getattr(setting, name)) for name in percentage_fields},
+        "average_dependents": str(setting.average_dependents),
+    }
     if setting is None:
         setting = PayrollSetting(effective_date=effective_date)
         db.session.add(setting)
@@ -1694,6 +1844,12 @@ def save_payroll_setting_api():
     setting.average_dependents = average_dependents
     for field, value in rates.items():
         setattr(setting, field, value)
+    db.session.flush()
+    add_audit(
+        current_user.id, "PAYROLL_SETTING_UPDATED", "PayrollSetting", setting.id,
+        f"更新 {effective_date} 起薪資與法定費率",
+        changes={"before": before, "after": {"default_hourly_wage": str(hourly_wage), "effective_date": str(effective_date), **{name: str(value) for name, value in rates.items()}, "average_dependents": str(average_dependents)}},
+    )
     db.session.commit()
     return jsonify({"message": "薪資與保險費率設定已儲存。", "id": setting.id})
 
@@ -1710,7 +1866,7 @@ def update_staff_payroll_api(staff_id: int):
         profile.hourly_wage = (
             None
             if not hourly_text
-            else decimal_field(payload, "hourly_wage", minimum=Decimal("196"), maximum=Decimal("10000"))
+            else decimal_field(payload, "hourly_wage", minimum=minimum_wage_on(local_today()), maximum=Decimal("10000"))
         )
         for field in ("labor_insured_salary", "health_insured_salary", "pension_salary"):
             text = str(payload.get(field, "")).strip()
@@ -1746,9 +1902,10 @@ def payroll_report_api():
         return api_error("此月份尚未設定薪資與保險費率。", 409, "PAYROLL_NOT_CONFIGURED")
 
     hours_rows = db.session.execute(
-        db.select(Shift.staff_id, db.func.sum(ShiftType.default_hours))
+        db.select(Shift.staff_id, db.func.sum(payable_hours_expression()))
         .select_from(Shift)
         .join(ShiftType)
+        .outerjoin(AttendanceReconciliation, AttendanceReconciliation.shift_id == Shift.id)
         .where(
             Shift.status == ShiftStatus.SCHEDULED,
             Shift.publication_status == ShiftPublicationStatus.PUBLISHED,
@@ -1764,6 +1921,7 @@ def payroll_report_api():
             profile=profile,
             hours=hours_by_staff.get(profile.id, Decimal("0")),
             setting=setting,
+            on_date=start,
         )
         for profile in profiles
     ]
@@ -1804,6 +1962,8 @@ def shift_events():
     try:
         start = parse_calendar_date(request.args.get("start"), "開始日期")
         end = parse_calendar_date(request.args.get("end"), "結束日期")
+        if end <= start or end - start > timedelta(days=93):
+            raise ValueError("日期範圍須為 1 至 93 天。 / Date range must be between 1 and 93 days.")
     except ValueError as exc:
         return api_error(str(exc))
 
@@ -1860,6 +2020,7 @@ def create_shift_api():
                 staff=staff,
                 actor_id=current_user.id,
                 allow_location_overlap=payload.get("allow_location_overlap") is True,
+                allow_availability_conflict=payload.get("allow_availability_conflict") is True,
                 publication_status=publication_status,
             )
             add_audit(
@@ -1877,6 +2038,7 @@ def create_shift_api():
             staff=staff,
             actor_id=current_user.id,
             allow_location_overlap=payload.get("allow_location_overlap") is True,
+            allow_availability_conflict=payload.get("allow_availability_conflict") is True,
             publication_status=publication_status,
         )
     except SchedulingConflict as exc:
@@ -1909,6 +2071,7 @@ def update_shift_api(shift_id: int):
             shift_type=shift_type,
             staff=staff,
             allow_location_overlap=payload.get("allow_location_overlap") is True,
+            allow_availability_conflict=payload.get("allow_availability_conflict") is True,
             publication_status=publication_status,
             actor_id=current_user.id,
         )
@@ -1926,6 +2089,7 @@ def update_shift_api(shift_id: int):
 
 @bp.delete("/api/shifts/<int:shift_id>")
 @role_required(Role.ADMIN)
+@schedule_serialized
 def delete_shift_api(shift_id: int):
     shift = db.session.get(Shift, shift_id)
     if shift is None or shift.status == ShiftStatus.CANCELLED:
@@ -1996,6 +2160,7 @@ def cancel_shift_records(shifts: list[Shift], *, actor_user_id: int, action: str
 
 @bp.post("/api/shifts/bulk-delete")
 @role_required(Role.ADMIN)
+@schedule_serialized
 def bulk_delete_shifts_api():
     payload = request.get_json(silent=True) or {}
     raw_ids = payload.get("shift_ids")
@@ -2051,11 +2216,12 @@ def monthly_hours_api():
         db.select(
             Shift.staff_id,
             WorkLocation.code,
-            db.func.sum(ShiftType.default_hours),
+            db.func.sum(payable_hours_expression()),
         )
         .select_from(Shift)
         .join(ShiftType)
         .join(WorkLocation)
+        .outerjoin(AttendanceReconciliation, AttendanceReconciliation.shift_id == Shift.id)
         .where(
             Shift.status == ShiftStatus.SCHEDULED,
             Shift.publication_status == ShiftPublicationStatus.PUBLISHED,

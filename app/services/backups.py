@@ -7,11 +7,13 @@ from pathlib import Path
 from flask import current_app
 
 from deployment.create_portable_backup import create_backup
+from deployment.create_portable_backup import verify_backup
 
 from ..extensions import db
 from ..models import BackupPolicy, BackupRun, BackupScheduleMode, utc_now
 from ..time_utils import local_now
 from .audit import add_audit
+from .storage_lock import document_storage_serialized
 
 
 def backup_directory() -> Path:
@@ -55,6 +57,12 @@ def save_backup_policy(
     actor_user_id: int,
 ) -> BackupPolicy:
     policy = db.session.get(BackupPolicy, 1)
+    before = None if policy is None else {
+        "enabled": policy.enabled,
+        "mode": policy.mode.value,
+        "interval_hours": policy.interval_hours,
+        "daily_time": f"{policy.daily_hour:02d}:{policy.daily_minute:02d}",
+    }
     if policy is None:
         policy = BackupPolicy(id=1, updated_by=actor_user_id)
         db.session.add(policy)
@@ -75,6 +83,7 @@ def save_backup_policy(
         "BackupPolicy",
         policy.id,
         f"自動備份{'啟用' if enabled else '停用'}，排程：{schedule}",
+        changes={"before": before, "after": {"enabled": enabled, "mode": mode.value, "interval_hours": interval_hours, "daily_time": f"{daily_hour:02d}:{daily_minute:02d}"}},
     )
     db.session.commit()
     return policy
@@ -100,6 +109,7 @@ def prune_old_backups() -> int:
     return removed
 
 
+@document_storage_serialized
 def run_backup(*, actor_user_id: int | None = None) -> BackupRun:
     started = utc_now()
     run = BackupRun(status="RUNNING", started_at=started)
@@ -151,6 +161,14 @@ def run_backup_if_due() -> BackupRun | None:
     if last_attempt:
         last_attempt = last_attempt.astimezone(now.tzinfo)
 
+    # A failed run must be retried on the same day. Without this branch the
+    # daily schedule treated the failure itself as a completed daily backup.
+    if latest and latest.status == "FAILED" and last_attempt:
+        retry_minutes = max(5, int(current_app.config["AUTOMATIC_BACKUP_RETRY_MINUTES"]))
+        if now - last_attempt < timedelta(minutes=retry_minutes):
+            return None
+        return run_backup()
+
     if policy["mode"] == BackupScheduleMode.INTERVAL:
         if last_attempt and now - last_attempt < timedelta(hours=policy["interval_hours"]):
             return None
@@ -161,6 +179,30 @@ def run_backup_if_due() -> BackupRun | None:
         if last_attempt and last_attempt.date() == now.date():
             return None
     return run_backup()
+
+
+@document_storage_serialized
+def run_restore_drill(run: BackupRun, *, actor_user_id: int) -> bool:
+    run.last_drill_at = utc_now()
+    try:
+        if not run.filename:
+            raise RuntimeError("Backup file name is missing.")
+        root = backup_directory()
+        archive = (root / run.filename).resolve()
+        if archive.parent != root or not archive.is_file():
+            raise RuntimeError("Backup archive is missing or outside the backup directory.")
+        manifest = verify_backup(archive)
+        run.last_drill_status = "SUCCESS"
+        run.last_drill_message = f"SQLite and {manifest.get('verified_document_count', 0)} encrypted documents restored and verified."
+        add_audit(actor_user_id, "BACKUP_RESTORE_DRILL_SUCCEEDED", "BackupRun", run.id, f"備份復原演練成功：{run.filename}")
+        result = True
+    except Exception as exc:
+        run.last_drill_status = "FAILED"
+        run.last_drill_message = str(exc)[:500]
+        add_audit(actor_user_id, "BACKUP_RESTORE_DRILL_FAILED", "BackupRun", run.id, "備份復原演練失敗")
+        result = False
+    db.session.commit()
+    return result
 
 
 def register_backup_commands(app) -> None:

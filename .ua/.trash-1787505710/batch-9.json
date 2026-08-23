@@ -1,0 +1,229 @@
+{
+  "nodes": [
+    {
+      "id": "file:app/templates/admin/admin_accounts.html",
+      "type": "file",
+      "name": "admin_accounts.html",
+      "filePath": "app/templates/admin/admin_accounts.html",
+      "summary": "管理員端 Jinja 頁面，提供管理員帳號新增、重設密碼、封存與復原。",
+      "tags": [
+        "component",
+        "jinja-template",
+        "accounts"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "使用 Jinja2、Bootstrap 與中英雙語標記。"
+    },
+    {
+      "id": "file:app/templates/admin/attendance.html",
+      "type": "file",
+      "name": "attendance.html",
+      "filePath": "app/templates/admin/attendance.html",
+      "summary": "管理員端 Jinja 頁面，提供出勤紀錄查詢與核對。",
+      "tags": [
+        "component",
+        "jinja-template",
+        "attendance"
+      ],
+      "complexity": "simple",
+      "languageNotes": "使用 Jinja2、Bootstrap 與中英雙語標記。"
+    },
+    {
+      "id": "file:app/templates/admin/attendance_settings.html",
+      "type": "file",
+      "name": "attendance_settings.html",
+      "filePath": "app/templates/admin/attendance_settings.html",
+      "summary": "管理員端 Jinja 頁面，提供授權裝置、學生證與打卡政策設定。",
+      "tags": [
+        "component",
+        "jinja-template",
+        "attendance"
+      ],
+      "complexity": "simple",
+      "languageNotes": "使用 Jinja2、Bootstrap 與中英雙語標記。"
+    },
+    {
+      "id": "file:app/templates/admin/audit_logs.html",
+      "type": "file",
+      "name": "audit_logs.html",
+      "filePath": "app/templates/admin/audit_logs.html",
+      "summary": "管理員端 Jinja 頁面，提供安全事件與操作稽核篩選。",
+      "tags": [
+        "component",
+        "jinja-template",
+        "application"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "使用 Jinja2、Bootstrap 與中英雙語標記。"
+    },
+    {
+      "id": "file:app/templates/admin/dashboard.html",
+      "type": "file",
+      "name": "dashboard.html",
+      "filePath": "app/templates/admin/dashboard.html",
+      "summary": "管理員端 Jinja 頁面，提供重要通知、近期排班與關鍵統計。",
+      "tags": [
+        "component",
+        "jinja-template",
+        "application"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "使用 Jinja2、Bootstrap 與中英雙語標記。"
+    },
+    {
+      "id": "file:app/templates/admin/documents.html",
+      "type": "file",
+      "name": "documents.html",
+      "filePath": "app/templates/admin/documents.html",
+      "summary": "管理員端 Jinja 頁面，提供私有加密證件版本與審核。",
+      "tags": [
+        "component",
+        "jinja-template",
+        "documents"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "使用 Jinja2、Bootstrap 與中英雙語標記。"
+    },
+    {
+      "id": "file:app/templates/admin/nationalities.html",
+      "type": "file",
+      "name": "nationalities.html",
+      "filePath": "app/templates/admin/nationalities.html",
+      "summary": "管理員端 Jinja 頁面，提供標準國籍清單維護。",
+      "tags": [
+        "component",
+        "jinja-template",
+        "application"
+      ],
+      "complexity": "simple",
+      "languageNotes": "使用 Jinja2、Bootstrap 與中英雙語標記。"
+    },
+    {
+      "id": "file:app/templates/admin/operations.html",
+      "type": "file",
+      "name": "operations.html",
+      "filePath": "app/templates/admin/operations.html",
+      "summary": "管理員端 Jinja 頁面，提供排班月份鎖定、備份與復原演練。",
+      "tags": [
+        "component",
+        "jinja-template",
+        "application"
+      ],
+      "complexity": "simple",
+      "languageNotes": "使用 Jinja2、Bootstrap 與中英雙語標記。"
+    },
+    {
+      "id": "file:app/templates/admin/payroll.html",
+      "type": "file",
+      "name": "payroll.html",
+      "filePath": "app/templates/admin/payroll.html",
+      "summary": "管理員端 Jinja 頁面，提供薪資與雇主成本試算。",
+      "tags": [
+        "component",
+        "jinja-template",
+        "payroll"
+      ],
+      "complexity": "simple",
+      "languageNotes": "使用 Jinja2、Bootstrap 與中英雙語標記。"
+    },
+    {
+      "id": "file:app/templates/admin/reports.html",
+      "type": "file",
+      "name": "reports.html",
+      "filePath": "app/templates/admin/reports.html",
+      "summary": "管理員端 Jinja 頁面，提供月工時、排班、薪資、流程與證件報表下載。",
+      "tags": [
+        "component",
+        "jinja-template",
+        "reports"
+      ],
+      "complexity": "simple",
+      "languageNotes": "使用 Jinja2、Bootstrap 與中英雙語標記。"
+    },
+    {
+      "id": "file:app/templates/admin/requests.html",
+      "type": "file",
+      "name": "requests.html",
+      "filePath": "app/templates/admin/requests.html",
+      "summary": "管理員端 Jinja 頁面，提供請假與換班審核。",
+      "tags": [
+        "component",
+        "jinja-template",
+        "workflow"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "使用 Jinja2、Bootstrap 與中英雙語標記。"
+    },
+    {
+      "id": "file:app/templates/admin/schedule.html",
+      "type": "file",
+      "name": "schedule.html",
+      "filePath": "app/templates/admin/schedule.html",
+      "summary": "管理員端 Jinja 頁面，提供FullCalendar 地點分列排班、批次操作與匯入。",
+      "tags": [
+        "component",
+        "jinja-template",
+        "scheduling"
+      ],
+      "complexity": "complex",
+      "languageNotes": "使用 Jinja2、Bootstrap 與中英雙語標記。"
+    },
+    {
+      "id": "file:app/templates/admin/scheduling_settings.html",
+      "type": "file",
+      "name": "scheduling_settings.html",
+      "filePath": "app/templates/admin/scheduling_settings.html",
+      "summary": "管理員端 Jinja 頁面，提供每週工時、週界線、適用國籍及例外期間設定。",
+      "tags": [
+        "component",
+        "jinja-template",
+        "application"
+      ],
+      "complexity": "simple",
+      "languageNotes": "使用 Jinja2、Bootstrap 與中英雙語標記。"
+    },
+    {
+      "id": "file:app/templates/admin/shift_import_preview.html",
+      "type": "file",
+      "name": "shift_import_preview.html",
+      "filePath": "app/templates/admin/shift_import_preview.html",
+      "summary": "管理員端 Jinja 頁面，提供批量排班寫入前預覽與錯誤檢查。",
+      "tags": [
+        "component",
+        "jinja-template",
+        "scheduling"
+      ],
+      "complexity": "simple",
+      "languageNotes": "使用 Jinja2、Bootstrap 與中英雙語標記。"
+    },
+    {
+      "id": "file:app/templates/admin/staff.html",
+      "type": "file",
+      "name": "staff.html",
+      "filePath": "app/templates/admin/staff.html",
+      "summary": "管理員端 Jinja 頁面，提供工讀生名冊排序、個資、帳號與封存管理。",
+      "tags": [
+        "component",
+        "jinja-template",
+        "accounts"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "使用 Jinja2、Bootstrap 與中英雙語標記。"
+    },
+    {
+      "id": "file:app/templates/admin/workforce.html",
+      "type": "file",
+      "name": "workforce.html",
+      "filePath": "app/templates/admin/workforce.html",
+      "summary": "管理員端 Jinja 頁面，提供學生群組、缺員受眾與應徵審核。",
+      "tags": [
+        "component",
+        "jinja-template",
+        "application"
+      ],
+      "complexity": "simple",
+      "languageNotes": "使用 Jinja2、Bootstrap 與中英雙語標記。"
+    }
+  ],
+  "edges": []
+}

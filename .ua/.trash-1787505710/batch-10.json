@@ -1,0 +1,89 @@
+{
+  "nodes": [
+    {
+      "id": "file:app/templates/student/attendance.html",
+      "type": "file",
+      "name": "attendance.html",
+      "filePath": "app/templates/student/attendance.html",
+      "summary": "學生出勤頁，顯示卡片、打卡、異常原因與審核歷程。",
+      "tags": [
+        "template",
+        "student-ui",
+        "bilingual",
+        "responsive"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/templates/student/availability.html",
+      "type": "file",
+      "name": "availability.html",
+      "filePath": "app/templates/student/availability.html",
+      "summary": "學生可排班／不可排班時段的新增與管理頁。",
+      "tags": [
+        "template",
+        "student-ui",
+        "bilingual",
+        "responsive"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/templates/student/dashboard.html",
+      "type": "file",
+      "name": "dashboard.html",
+      "filePath": "app/templates/student/dashboard.html",
+      "summary": "學生儀表板，整合通知、時數薪資、近期班表與月曆。",
+      "tags": [
+        "template",
+        "student-ui",
+        "bilingual",
+        "responsive"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/templates/student/profile.html",
+      "type": "file",
+      "name": "profile.html",
+      "filePath": "app/templates/student/profile.html",
+      "summary": "學生資料與加密多頁證件上傳、核對及安全下載頁。",
+      "tags": [
+        "template",
+        "student-ui",
+        "bilingual",
+        "responsive"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/templates/student/requests.html",
+      "type": "file",
+      "name": "requests.html",
+      "filePath": "app/templates/student/requests.html",
+      "summary": "學生請假與換班申請、月份篩選及狀態追蹤頁。",
+      "tags": [
+        "template",
+        "student-ui",
+        "bilingual",
+        "responsive"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/templates/student/vacancies.html",
+      "type": "file",
+      "name": "vacancies.html",
+      "filePath": "app/templates/student/vacancies.html",
+      "summary": "顯示對本人或群組開放的缺員及其申請進度。",
+      "tags": [
+        "template",
+        "student-ui",
+        "bilingual",
+        "responsive"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": []
+}

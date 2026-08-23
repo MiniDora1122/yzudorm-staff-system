@@ -1,0 +1,777 @@
+{
+  "nodes": [
+    {
+      "id": "file:scripts/inspect_reference_workbook.mjs",
+      "type": "file",
+      "name": "inspect_reference_workbook.mjs",
+      "filePath": "scripts/inspect_reference_workbook.mjs",
+      "summary": "以 ExcelJS 檢查參考活頁簿結構與樣式。",
+      "tags": [
+        "application",
+        "module",
+        "workflow"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:scripts/verify_report_workbook.mjs",
+      "type": "file",
+      "name": "verify_report_workbook.mjs",
+      "filePath": "scripts/verify_report_workbook.mjs",
+      "summary": "驗證系統產出 XLSX 的結構與關鍵儲存格。",
+      "tags": [
+        "application",
+        "module",
+        "workflow"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "tests/__init__.py",
+      "summary": "標記 tests 為 Python package。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression",
+        "quality"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/test_attendance_terminal.py",
+      "type": "file",
+      "name": "test_attendance_terminal.py",
+      "filePath": "tests/test_attendance_terminal.py",
+      "summary": "驗證終端 UI、自啟、Git 更新及獨立 runtime 邊界。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression",
+        "quality"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_attendance_terminal.py:load_terminal_module",
+      "type": "function",
+      "name": "load_terminal_module",
+      "filePath": "tests/test_attendance_terminal.py",
+      "lineRange": [
+        9,
+        14
+      ],
+      "summary": "讀取並正規化 load terminal module 設定或資料。",
+      "tags": [
+        "test",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_attendance_terminal.py:test_kiosk_page_exposes_card_scanner_and_authenticated_shutdown",
+      "type": "function",
+      "name": "test_kiosk_page_exposes_card_scanner_and_authenticated_shutdown",
+      "filePath": "tests/test_attendance_terminal.py",
+      "lineRange": [
+        17,
+        40
+      ],
+      "summary": "驗證 kiosk page exposes card scanner and authenticated shutdown 的預期行為與安全邊界。",
+      "tags": [
+        "test",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_attendance_terminal.py:test_terminal_autostart_is_visible_single_instance_and_checked_every_five_minutes",
+      "type": "function",
+      "name": "test_terminal_autostart_is_visible_single_instance_and_checked_every_five_minutes",
+      "filePath": "tests/test_attendance_terminal.py",
+      "lineRange": [
+        43,
+        60
+      ],
+      "summary": "驗證 terminal autostart is visible single instance and checked every five minutes 的預期行為與安全邊界。",
+      "tags": [
+        "test",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_attendance_terminal.py:test_terminal_git_update_uses_saved_https_repository_url",
+      "type": "function",
+      "name": "test_terminal_git_update_uses_saved_https_repository_url",
+      "filePath": "tests/test_attendance_terminal.py",
+      "lineRange": [
+        63,
+        79
+      ],
+      "summary": "驗證 terminal git update uses saved https repository url 的預期行為與安全邊界。",
+      "tags": [
+        "test",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_attendance_terminal.py:test_terminal_runtime_has_no_parent_project_or_portable_runtime_dependency",
+      "type": "function",
+      "name": "test_terminal_runtime_has_no_parent_project_or_portable_runtime_dependency",
+      "filePath": "tests/test_attendance_terminal.py",
+      "lineRange": [
+        82,
+        95
+      ],
+      "summary": "驗證 terminal runtime has no parent project or portable runtime dependency 的預期行為與安全邊界。",
+      "tags": [
+        "test",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/test_launcher_watchdog.py",
+      "type": "file",
+      "name": "test_launcher_watchdog.py",
+      "filePath": "tests/test_launcher_watchdog.py",
+      "summary": "驗證工作排程巡檢、health check 與更新關閉 Launcher。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression",
+        "quality"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_launcher_watchdog.py:test_launcher_watchdog_uses_native_task_scheduler_and_health_check",
+      "type": "function",
+      "name": "test_launcher_watchdog_uses_native_task_scheduler_and_health_check",
+      "filePath": "tests/test_launcher_watchdog.py",
+      "lineRange": [
+        8,
+        65
+      ],
+      "summary": "驗證 launcher watchdog uses native task scheduler and health check 的預期行為與安全邊界。",
+      "tags": [
+        "test",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_launcher_watchdog.py:test_git_update_closes_launcher_before_replacing_it",
+      "type": "function",
+      "name": "test_git_update_closes_launcher_before_replacing_it",
+      "filePath": "tests/test_launcher_watchdog.py",
+      "lineRange": [
+        68,
+        99
+      ],
+      "summary": "驗證 git update closes launcher before replacing it 的預期行為與安全邊界。",
+      "tags": [
+        "test",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/test_portable_migration.py",
+      "type": "file",
+      "name": "test_portable_migration.py",
+      "filePath": "tests/test_portable_migration.py",
+      "summary": "驗證可攜資料檢查、ZIP 安全、回復與失敗回滾。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression",
+        "quality"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:tests/test_portable_migration.py:load_helper",
+      "type": "function",
+      "name": "load_helper",
+      "filePath": "tests/test_portable_migration.py",
+      "lineRange": [
+        20,
+        25
+      ],
+      "summary": "讀取並正規化 load helper 設定或資料。",
+      "tags": [
+        "test",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_portable_migration.py:latest_revision",
+      "type": "function",
+      "name": "latest_revision",
+      "filePath": "tests/test_portable_migration.py",
+      "lineRange": [
+        31,
+        44
+      ],
+      "summary": "實作 latest revision 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "test",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_portable_migration.py:make_minimal_database",
+      "type": "function",
+      "name": "make_minimal_database",
+      "filePath": "tests/test_portable_migration.py",
+      "lineRange": [
+        47,
+        64
+      ],
+      "summary": "實作 make minimal database 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "test",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_portable_migration.py:write_portable_zip",
+      "type": "function",
+      "name": "write_portable_zip",
+      "filePath": "tests/test_portable_migration.py",
+      "lineRange": [
+        67,
+        81
+      ],
+      "summary": "安全寫入 write portable zip 資料或維護紀錄。",
+      "tags": [
+        "test",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_portable_migration.py:test_inspect_database_reports_counts_and_document_warning",
+      "type": "function",
+      "name": "test_inspect_database_reports_counts_and_document_warning",
+      "filePath": "tests/test_portable_migration.py",
+      "lineRange": [
+        84,
+        94
+      ],
+      "summary": "驗證 inspect database reports counts and document warning 的預期行為與安全邊界。",
+      "tags": [
+        "test",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_portable_migration.py:test_inspect_rejects_unknown_newer_revision",
+      "type": "function",
+      "name": "test_inspect_rejects_unknown_newer_revision",
+      "filePath": "tests/test_portable_migration.py",
+      "lineRange": [
+        97,
+        102
+      ],
+      "summary": "驗證 inspect rejects unknown newer revision 的預期行為與安全邊界。",
+      "tags": [
+        "test",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_portable_migration.py:test_full_zip_requires_manifest_and_document_key",
+      "type": "function",
+      "name": "test_full_zip_requires_manifest_and_document_key",
+      "filePath": "tests/test_portable_migration.py",
+      "lineRange": [
+        105,
+        122
+      ],
+      "summary": "驗證 full zip requires manifest and document key 的預期行為與安全邊界。",
+      "tags": [
+        "test",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_portable_migration.py:test_archive_rejects_path_traversal",
+      "type": "function",
+      "name": "test_archive_rejects_path_traversal",
+      "filePath": "tests/test_portable_migration.py",
+      "lineRange": [
+        125,
+        131
+      ],
+      "summary": "驗證 archive rejects path traversal 的預期行為與安全邊界。",
+      "tags": [
+        "test",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_portable_migration.py:test_locked_target_is_never_deleted_when_initial_rename_fails",
+      "type": "function",
+      "name": "test_locked_target_is_never_deleted_when_initial_rename_fails",
+      "filePath": "tests/test_portable_migration.py",
+      "lineRange": [
+        134,
+        158
+      ],
+      "summary": "驗證 locked target is never deleted when initial rename fails 的預期行為與安全邊界。",
+      "tags": [
+        "test",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_portable_migration.py:copy_runtime_project",
+      "type": "function",
+      "name": "copy_runtime_project",
+      "filePath": "tests/test_portable_migration.py",
+      "lineRange": [
+        161,
+        184
+      ],
+      "summary": "實作 copy runtime project 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "test",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_portable_migration.py:run_in_project",
+      "type": "function",
+      "name": "run_in_project",
+      "filePath": "tests/test_portable_migration.py",
+      "lineRange": [
+        187,
+        200
+      ],
+      "summary": "實作 run in project 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "test",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_portable_migration.py:create_runtime_project",
+      "type": "function",
+      "name": "create_runtime_project",
+      "filePath": "tests/test_portable_migration.py",
+      "lineRange": [
+        203,
+        213
+      ],
+      "summary": "實作 create runtime project 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "test",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_portable_migration.py:test_database_restore_replaces_target_and_keeps_rollback_backup",
+      "type": "function",
+      "name": "test_database_restore_replaces_target_and_keeps_rollback_backup",
+      "filePath": "tests/test_portable_migration.py",
+      "lineRange": [
+        216,
+        239
+      ],
+      "summary": "驗證 database restore replaces target and keeps rollback backup 的預期行為與安全邊界。",
+      "tags": [
+        "test",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_portable_migration.py:test_failed_restore_rolls_back_original_database",
+      "type": "function",
+      "name": "test_failed_restore_rolls_back_original_database",
+      "filePath": "tests/test_portable_migration.py",
+      "lineRange": [
+        242,
+        259
+      ],
+      "summary": "驗證 failed restore rolls back original database 的預期行為與安全邊界。",
+      "tags": [
+        "test",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_portable_migration.py:test_full_zip_restore_uses_data_only_and_preserves_current_code",
+      "type": "function",
+      "name": "test_full_zip_restore_uses_data_only_and_preserves_current_code",
+      "filePath": "tests/test_portable_migration.py",
+      "lineRange": [
+        262,
+        287
+      ],
+      "summary": "驗證 full zip restore uses data only and preserves current code 的預期行為與安全邊界。",
+      "tags": [
+        "test",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:tests/test_attendance_terminal.py",
+      "target": "function:tests/test_attendance_terminal.py:load_terminal_module",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_attendance_terminal.py",
+      "target": "function:tests/test_attendance_terminal.py:load_terminal_module",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_attendance_terminal.py",
+      "target": "function:tests/test_attendance_terminal.py:test_kiosk_page_exposes_card_scanner_and_authenticated_shutdown",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_attendance_terminal.py",
+      "target": "function:tests/test_attendance_terminal.py:test_kiosk_page_exposes_card_scanner_and_authenticated_shutdown",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_attendance_terminal.py",
+      "target": "function:tests/test_attendance_terminal.py:test_terminal_autostart_is_visible_single_instance_and_checked_every_five_minutes",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_attendance_terminal.py",
+      "target": "function:tests/test_attendance_terminal.py:test_terminal_autostart_is_visible_single_instance_and_checked_every_five_minutes",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_attendance_terminal.py",
+      "target": "function:tests/test_attendance_terminal.py:test_terminal_git_update_uses_saved_https_repository_url",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_attendance_terminal.py",
+      "target": "function:tests/test_attendance_terminal.py:test_terminal_git_update_uses_saved_https_repository_url",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_attendance_terminal.py",
+      "target": "function:tests/test_attendance_terminal.py:test_terminal_runtime_has_no_parent_project_or_portable_runtime_dependency",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_attendance_terminal.py",
+      "target": "function:tests/test_attendance_terminal.py:test_terminal_runtime_has_no_parent_project_or_portable_runtime_dependency",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_launcher_watchdog.py",
+      "target": "function:tests/test_launcher_watchdog.py:test_launcher_watchdog_uses_native_task_scheduler_and_health_check",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_launcher_watchdog.py",
+      "target": "function:tests/test_launcher_watchdog.py:test_launcher_watchdog_uses_native_task_scheduler_and_health_check",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_launcher_watchdog.py",
+      "target": "function:tests/test_launcher_watchdog.py:test_git_update_closes_launcher_before_replacing_it",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_launcher_watchdog.py",
+      "target": "function:tests/test_launcher_watchdog.py:test_git_update_closes_launcher_before_replacing_it",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_portable_migration.py",
+      "target": "function:tests/test_portable_migration.py:load_helper",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_portable_migration.py",
+      "target": "function:tests/test_portable_migration.py:load_helper",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_portable_migration.py",
+      "target": "function:tests/test_portable_migration.py:latest_revision",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_portable_migration.py",
+      "target": "function:tests/test_portable_migration.py:latest_revision",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_portable_migration.py",
+      "target": "function:tests/test_portable_migration.py:make_minimal_database",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_portable_migration.py",
+      "target": "function:tests/test_portable_migration.py:make_minimal_database",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_portable_migration.py",
+      "target": "function:tests/test_portable_migration.py:write_portable_zip",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_portable_migration.py",
+      "target": "function:tests/test_portable_migration.py:write_portable_zip",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_portable_migration.py",
+      "target": "function:tests/test_portable_migration.py:test_inspect_database_reports_counts_and_document_warning",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_portable_migration.py",
+      "target": "function:tests/test_portable_migration.py:test_inspect_database_reports_counts_and_document_warning",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_portable_migration.py",
+      "target": "function:tests/test_portable_migration.py:test_inspect_rejects_unknown_newer_revision",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_portable_migration.py",
+      "target": "function:tests/test_portable_migration.py:test_inspect_rejects_unknown_newer_revision",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_portable_migration.py",
+      "target": "function:tests/test_portable_migration.py:test_full_zip_requires_manifest_and_document_key",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_portable_migration.py",
+      "target": "function:tests/test_portable_migration.py:test_full_zip_requires_manifest_and_document_key",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_portable_migration.py",
+      "target": "function:tests/test_portable_migration.py:test_archive_rejects_path_traversal",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_portable_migration.py",
+      "target": "function:tests/test_portable_migration.py:test_archive_rejects_path_traversal",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_portable_migration.py",
+      "target": "function:tests/test_portable_migration.py:test_locked_target_is_never_deleted_when_initial_rename_fails",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_portable_migration.py",
+      "target": "function:tests/test_portable_migration.py:test_locked_target_is_never_deleted_when_initial_rename_fails",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_portable_migration.py",
+      "target": "function:tests/test_portable_migration.py:copy_runtime_project",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_portable_migration.py",
+      "target": "function:tests/test_portable_migration.py:copy_runtime_project",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_portable_migration.py",
+      "target": "function:tests/test_portable_migration.py:run_in_project",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_portable_migration.py",
+      "target": "function:tests/test_portable_migration.py:run_in_project",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_portable_migration.py",
+      "target": "function:tests/test_portable_migration.py:create_runtime_project",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_portable_migration.py",
+      "target": "function:tests/test_portable_migration.py:create_runtime_project",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_portable_migration.py",
+      "target": "function:tests/test_portable_migration.py:test_database_restore_replaces_target_and_keeps_rollback_backup",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_portable_migration.py",
+      "target": "function:tests/test_portable_migration.py:test_database_restore_replaces_target_and_keeps_rollback_backup",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_portable_migration.py",
+      "target": "function:tests/test_portable_migration.py:test_failed_restore_rolls_back_original_database",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_portable_migration.py",
+      "target": "function:tests/test_portable_migration.py:test_failed_restore_rolls_back_original_database",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_portable_migration.py",
+      "target": "function:tests/test_portable_migration.py:test_full_zip_restore_uses_data_only_and_preserves_current_code",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_portable_migration.py",
+      "target": "function:tests/test_portable_migration.py:test_full_zip_restore_uses_data_only_and_preserves_current_code",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:scripts/inspect_reference_workbook.mjs",
+      "target": "file:scripts/verify_report_workbook.mjs",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

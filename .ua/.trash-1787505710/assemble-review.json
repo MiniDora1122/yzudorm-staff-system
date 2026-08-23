@@ -1,0 +1,15 @@
+{
+  "fixedSectionOk": true,
+  "nodesRecovered": 0,
+  "edgesRestored": 0,
+  "crossBatchEdgesAdded": 0,
+  "typesRemapped": 0,
+  "complexityRemapped": 0,
+  "notes": [
+    "合併報告中的修正數量合理：僅 tested_by 連結器依測試檔路徑新增 1 條關係並標記 1 個正式程式節點，未出現大量識別碼或複雜度正規化問題。",
+    "重建後的 assembled graph 包含 979 個節點與 1986 條關係；所有節點均有有效且唯一的識別碼，所有關係端點有效且關係不重複。",
+    "未發現未知節點類型或非法複雜度值，亦沒有合併工具無法修正的項目。",
+    "已完整比對 scan-result.json 的 181 筆 importMap 來源項目；其中共有 237 條匯入關係，assembled graph 已全部包含對應 imports 關係，無需補建跨批次關係。",
+    "本次重新審查未發現需要修復或仍待人工判斷的資料品質問題，assembled-graph.json 保持原內容。"
+  ]
+}

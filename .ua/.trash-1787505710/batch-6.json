@@ -1,0 +1,421 @@
+{
+  "nodes": [
+    {
+      "id": "file:app/auth/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "app/auth/__init__.py",
+      "summary": "建立驗證 blueprint，將登入、登出與密碼管理路由掛載到 `/auth`。",
+      "tags": [
+        "authentication",
+        "security",
+        "rbac"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/auth/forms.py",
+      "type": "file",
+      "name": "forms.py",
+      "filePath": "app/auth/forms.py",
+      "summary": "定義登入、登出及修改密碼的 Flask-WTF 表單與伺服器端欄位驗證。",
+      "tags": [
+        "authentication",
+        "security",
+        "rbac"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/auth/forms.py:LoginForm",
+      "type": "class",
+      "name": "LoginForm",
+      "filePath": "app/auth/forms.py",
+      "lineRange": [
+        6,
+        9
+      ],
+      "summary": "LoginForm 封裝 forms.py 中相關狀態與操作。",
+      "tags": [
+        "class",
+        "authentication",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/auth/forms.py:LogoutForm",
+      "type": "class",
+      "name": "LogoutForm",
+      "filePath": "app/auth/forms.py",
+      "lineRange": [
+        12,
+        13
+      ],
+      "summary": "LogoutForm 封裝 forms.py 中相關狀態與操作。",
+      "tags": [
+        "class",
+        "authentication",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/auth/forms.py:ChangePasswordForm",
+      "type": "class",
+      "name": "ChangePasswordForm",
+      "filePath": "app/auth/forms.py",
+      "lineRange": [
+        16,
+        34
+      ],
+      "summary": "ChangePasswordForm 封裝 forms.py 中相關狀態與操作。",
+      "tags": [
+        "class",
+        "authentication",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/auth/routes.py",
+      "type": "file",
+      "name": "routes.py",
+      "filePath": "app/auth/routes.py",
+      "summary": "處理安全登入、登出、Session 更新、嘗試次數限制、臨時密碼強制變更與安全重新導向。",
+      "tags": [
+        "authentication",
+        "security",
+        "rbac"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/auth/routes.py:is_safe_redirect",
+      "type": "function",
+      "name": "is_safe_redirect",
+      "filePath": "app/auth/routes.py",
+      "lineRange": [
+        14,
+        17
+      ],
+      "summary": "is_safe_redirect 實作登入安全、Session、密碼或重新導向流程。",
+      "tags": [
+        "function",
+        "authentication",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/auth/routes.py:home_for",
+      "type": "function",
+      "name": "home_for",
+      "filePath": "app/auth/routes.py",
+      "lineRange": [
+        20,
+        22
+      ],
+      "summary": "home_for 實作登入安全、Session、密碼或重新導向流程。",
+      "tags": [
+        "function",
+        "authentication",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/auth/routes.py:masked_username",
+      "type": "function",
+      "name": "masked_username",
+      "filePath": "app/auth/routes.py",
+      "lineRange": [
+        25,
+        31
+      ],
+      "summary": "masked_username 實作登入安全、Session、密碼或重新導向流程。",
+      "tags": [
+        "function",
+        "authentication",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/auth/routes.py:login_is_throttled",
+      "type": "function",
+      "name": "login_is_throttled",
+      "filePath": "app/auth/routes.py",
+      "lineRange": [
+        34,
+        49
+      ],
+      "summary": "login_is_throttled 實作登入安全、Session、密碼或重新導向流程。",
+      "tags": [
+        "function",
+        "authentication",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/auth/routes.py:enforce_temporary_password_change",
+      "type": "function",
+      "name": "enforce_temporary_password_change",
+      "filePath": "app/auth/routes.py",
+      "lineRange": [
+        53,
+        60
+      ],
+      "summary": "enforce_temporary_password_change 實作登入安全、Session、密碼或重新導向流程。",
+      "tags": [
+        "function",
+        "authentication",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/auth/routes.py:login",
+      "type": "function",
+      "name": "login",
+      "filePath": "app/auth/routes.py",
+      "lineRange": [
+        64,
+        110
+      ],
+      "summary": "login 實作登入安全、Session、密碼或重新導向流程。",
+      "tags": [
+        "function",
+        "authentication",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/auth/routes.py:logout",
+      "type": "function",
+      "name": "logout",
+      "filePath": "app/auth/routes.py",
+      "lineRange": [
+        115,
+        124
+      ],
+      "summary": "logout 實作登入安全、Session、密碼或重新導向流程。",
+      "tags": [
+        "function",
+        "authentication",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/auth/routes.py:change_password",
+      "type": "function",
+      "name": "change_password",
+      "filePath": "app/auth/routes.py",
+      "lineRange": [
+        129,
+        149
+      ],
+      "summary": "change_password 實作登入安全、Session、密碼或重新導向流程。",
+      "tags": [
+        "function",
+        "authentication",
+        "security"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:app/auth/forms.py",
+      "target": "class:app/auth/forms.py:LoginForm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/auth/forms.py",
+      "target": "class:app/auth/forms.py:LoginForm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/auth/forms.py",
+      "target": "class:app/auth/forms.py:LogoutForm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/auth/forms.py",
+      "target": "class:app/auth/forms.py:LogoutForm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/auth/forms.py",
+      "target": "class:app/auth/forms.py:ChangePasswordForm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/auth/forms.py",
+      "target": "class:app/auth/forms.py:ChangePasswordForm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/auth/routes.py",
+      "target": "function:app/auth/routes.py:is_safe_redirect",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/auth/routes.py",
+      "target": "function:app/auth/routes.py:is_safe_redirect",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/auth/routes.py",
+      "target": "function:app/auth/routes.py:home_for",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/auth/routes.py",
+      "target": "function:app/auth/routes.py:home_for",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/auth/routes.py",
+      "target": "function:app/auth/routes.py:masked_username",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/auth/routes.py",
+      "target": "function:app/auth/routes.py:masked_username",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/auth/routes.py",
+      "target": "function:app/auth/routes.py:login_is_throttled",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/auth/routes.py",
+      "target": "function:app/auth/routes.py:login_is_throttled",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/auth/routes.py",
+      "target": "function:app/auth/routes.py:enforce_temporary_password_change",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/auth/routes.py",
+      "target": "function:app/auth/routes.py:enforce_temporary_password_change",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/auth/routes.py",
+      "target": "function:app/auth/routes.py:login",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/auth/routes.py",
+      "target": "function:app/auth/routes.py:login",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/auth/routes.py",
+      "target": "function:app/auth/routes.py:logout",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/auth/routes.py",
+      "target": "function:app/auth/routes.py:logout",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/auth/routes.py",
+      "target": "function:app/auth/routes.py:change_password",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/auth/routes.py",
+      "target": "function:app/auth/routes.py:change_password",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/auth/__init__.py",
+      "target": "file:app/auth/routes.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/auth/routes.py",
+      "target": "file:app/auth/forms.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/auth/routes.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/auth/routes.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/auth/routes.py",
+      "target": "file:app/services/audit.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    }
+  ]
+}

@@ -14,6 +14,7 @@ from sqlalchemy.orm import joinedload
 
 from ..extensions import db
 from ..models import (
+    AttendanceReconciliation,
     DocumentPageKind,
     DocumentStatus,
     LeaveRequest,
@@ -26,7 +27,7 @@ from ..models import (
     SwapRequest,
 )
 from .documents import expiry_state
-from .payroll import calculate_staff_cost, get_payroll_setting
+from .payroll import calculate_staff_cost, get_payroll_setting, payable_hours_expression, payable_hours_for_shift
 
 
 WEEKDAYS = ("日", "一", "二", "三", "四", "五", "六")
@@ -100,7 +101,7 @@ def build_monthly_hours_workbook(start: date, end: date) -> bytes:
     hours_by_staff_date: dict[tuple[int, date], Decimal] = defaultdict(Decimal)
     for shift in shifts:
         hours_by_staff_date[(shift.staff_id, shift.shift_date)] += Decimal(
-            str(shift.shift_type.default_hours)
+            str(payable_hours_for_shift(shift))
         )
 
     workbook = Workbook()
@@ -220,7 +221,7 @@ def build_daily_hours_matrix_workbook(start: date, end: date) -> bytes:
     hours_by_staff_date: dict[tuple[int, date], Decimal] = defaultdict(Decimal)
     for shift in shifts:
         hours_by_staff_date[(shift.staff_id, shift.shift_date)] += Decimal(
-            str(shift.shift_type.default_hours)
+            str(payable_hours_for_shift(shift))
         )
 
     days = [start.replace(day=day) for day in range(1, (end - start).days + 1)]
@@ -362,7 +363,7 @@ def shift_detail_csv(start: date, end: date) -> bytes:
             shift.shift_type.name,
             shift.shift_type.start_time.strftime("%H:%M"),
             shift.shift_type.end_time.strftime("%H:%M"),
-            f"{Decimal(str(shift.shift_type.default_hours)):g}",
+            f"{Decimal(str(payable_hours_for_shift(shift))):g}",
             shift.status.value,
         ]
         for shift in shifts
@@ -378,9 +379,10 @@ def payroll_cost_csv(start: date, end: date) -> bytes:
     if setting is None:
         raise ValueError("此月份尚未設定薪資與保險費率。")
     hours_rows = db.session.execute(
-        db.select(Shift.staff_id, db.func.sum(ShiftType.default_hours))
+        db.select(Shift.staff_id, db.func.sum(payable_hours_expression()))
         .select_from(Shift)
         .join(ShiftType)
+        .outerjoin(AttendanceReconciliation, AttendanceReconciliation.shift_id == Shift.id)
         .where(
             Shift.status == ShiftStatus.SCHEDULED,
             Shift.publication_status == ShiftPublicationStatus.PUBLISHED,
@@ -396,6 +398,7 @@ def payroll_cost_csv(start: date, end: date) -> bytes:
             profile=profile,
             hours=hours_by_staff.get(profile.id, Decimal("0")),
             setting=setting,
+            on_date=start,
         )
         rows.append(
             [

@@ -5,6 +5,7 @@ from datetime import timedelta
 from ..extensions import db
 from ..models import AuditLog, DocumentRetentionPolicy, DocumentStatus, StaffDocument, utc_now
 from ..time_utils import local_now
+from .storage_lock import document_storage_serialized
 
 
 def get_retention_policy() -> DocumentRetentionPolicy | None:
@@ -61,6 +62,7 @@ def save_retention_policy(*, retention_days: int, cleanup_hour: int, cleanup_min
     return policy
 
 
+@document_storage_serialized
 def cleanup_expired_documents(*, actor_user_id: int) -> list[int]:
     """Delete encrypted bytes while retaining safe metadata and an audit trail."""
     from .documents import document_path

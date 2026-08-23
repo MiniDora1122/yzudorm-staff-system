@@ -1,0 +1,1706 @@
+{
+  "nodes": [
+    {
+      "id": "file:app/seed.py",
+      "type": "file",
+      "name": "seed.py",
+      "filePath": "app/seed.py",
+      "summary": "建立開發與示範環境所需的帳號、國籍、地點、班別與系統設定種子資料，並註冊 Flask CLI seed 指令。",
+      "tags": [
+        "python",
+        "application",
+        "business-logic"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:app/seed.py:seed_database",
+      "type": "function",
+      "name": "seed_database",
+      "filePath": "app/seed.py",
+      "lineRange": [
+        93,
+        252
+      ],
+      "summary": "seed_database 實作 seed.py 所屬模組的一項可重用流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "application"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/seed.py:register_commands",
+      "type": "function",
+      "name": "register_commands",
+      "filePath": "app/seed.py",
+      "lineRange": [
+        255,
+        264
+      ],
+      "summary": "register_commands 實作 seed.py 所屬模組的一項可重用流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/services/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "app/services/__init__.py",
+      "summary": "標示 services 為可匯入的 Python 套件，作為業務服務模組的命名空間入口。",
+      "tags": [
+        "python",
+        "application",
+        "business-logic"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/services/document_keys.py",
+      "type": "file",
+      "name": "document_keys.py",
+      "filePath": "app/services/document_keys.py",
+      "summary": "管理證件加密主金鑰與備份金鑰的驗證、原子寫入及遺失復原。",
+      "tags": [
+        "python",
+        "application",
+        "business-logic"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/services/document_keys.py:ensure_document_encryption_key",
+      "type": "function",
+      "name": "ensure_document_encryption_key",
+      "filePath": "app/services/document_keys.py",
+      "lineRange": [
+        43,
+        78
+      ],
+      "summary": "ensure_document_encryption_key 實作 document_keys.py 所屬模組的一項可重用流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/services/health.py",
+      "type": "file",
+      "name": "health.py",
+      "filePath": "app/services/health.py",
+      "summary": "彙整系統健康狀態與逾期未回報的打卡裝置，供儀表板與通知機制使用。",
+      "tags": [
+        "python",
+        "application",
+        "business-logic"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/services/health.py:offline_attendance_devices",
+      "type": "function",
+      "name": "offline_attendance_devices",
+      "filePath": "app/services/health.py",
+      "lineRange": [
+        24,
+        47
+      ],
+      "summary": "offline_attendance_devices 實作 health.py 所屬模組的一項可重用流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/health.py:system_health_summary",
+      "type": "function",
+      "name": "system_health_summary",
+      "filePath": "app/services/health.py",
+      "lineRange": [
+        50,
+        74
+      ],
+      "summary": "system_health_summary 實作 health.py 所屬模組的一項可重用流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/conftest.py",
+      "type": "file",
+      "name": "conftest.py",
+      "filePath": "tests/conftest.py",
+      "summary": "建立隔離資料庫、Flask 測試 client 與登入 helper，供 pytest 套件重用。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/conftest.py:app",
+      "type": "function",
+      "name": "app",
+      "filePath": "tests/conftest.py",
+      "lineRange": [
+        13,
+        139
+      ],
+      "summary": "app 實作 conftest.py 所屬模組的一項可重用流程。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/conftest.py:client",
+      "type": "function",
+      "name": "client",
+      "filePath": "tests/conftest.py",
+      "lineRange": [
+        143,
+        144
+      ],
+      "summary": "client 實作 conftest.py 所屬模組的一項可重用流程。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/conftest.py:login",
+      "type": "function",
+      "name": "login",
+      "filePath": "tests/conftest.py",
+      "lineRange": [
+        147,
+        152
+      ],
+      "summary": "login 實作 conftest.py 所屬模組的一項可重用流程。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/test_admin_accounts.py",
+      "type": "file",
+      "name": "test_admin_accounts.py",
+      "filePath": "tests/test_admin_accounts.py",
+      "summary": "以 pytest 驗證admin、accounts相關流程的權限、業務規則與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_admin_accounts.py:logout",
+      "type": "function",
+      "name": "logout",
+      "filePath": "tests/test_admin_accounts.py",
+      "lineRange": [
+        19,
+        20
+      ],
+      "summary": "logout 實作 test_admin_accounts.py 所屬模組的一項可重用流程。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_admin_accounts.py:test_admin_creates_student_account_with_hashed_temporary_password",
+      "type": "function",
+      "name": "test_admin_creates_student_account_with_hashed_temporary_password",
+      "filePath": "tests/test_admin_accounts.py",
+      "lineRange": [
+        23,
+        42
+      ],
+      "summary": "驗證「admin creates student account with hashed temporary password」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_admin_accounts.py:test_new_student_must_change_temporary_password_before_using_system",
+      "type": "function",
+      "name": "test_new_student_must_change_temporary_password_before_using_system",
+      "filePath": "tests/test_admin_accounts.py",
+      "lineRange": [
+        45,
+        70
+      ],
+      "summary": "驗證「new student must change temporary password before using system」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_admin_accounts.py:test_duplicate_username_or_student_number_does_not_leave_partial_account",
+      "type": "function",
+      "name": "test_duplicate_username_or_student_number_does_not_leave_partial_account",
+      "filePath": "tests/test_admin_accounts.py",
+      "lineRange": [
+        73,
+        84
+      ],
+      "summary": "驗證「duplicate username or student number does not leave partial account」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_admin_accounts.py:test_admin_resets_student_password_and_old_password_immediately_fails",
+      "type": "function",
+      "name": "test_admin_resets_student_password_and_old_password_immediately_fails",
+      "filePath": "tests/test_admin_accounts.py",
+      "lineRange": [
+        87,
+        116
+      ],
+      "summary": "驗證「admin resets student password and old password immediately fails」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_admin_accounts.py:test_students_cannot_create_accounts_or_reset_passwords",
+      "type": "function",
+      "name": "test_students_cannot_create_accounts_or_reset_passwords",
+      "filePath": "tests/test_admin_accounts.py",
+      "lineRange": [
+        119,
+        134
+      ],
+      "summary": "驗證「students cannot create accounts or reset passwords」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_admin_accounts.py:test_password_confirmation_must_match",
+      "type": "function",
+      "name": "test_password_confirmation_must_match",
+      "filePath": "tests/test_admin_accounts.py",
+      "lineRange": [
+        137,
+        143
+      ],
+      "summary": "驗證「password confirmation must match」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/test_admin_user_accounts.py",
+      "type": "file",
+      "name": "test_admin_user_accounts.py",
+      "filePath": "tests/test_admin_user_accounts.py",
+      "summary": "以 pytest 驗證admin、user、accounts相關流程的權限、業務規則與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_admin_user_accounts.py:logout",
+      "type": "function",
+      "name": "logout",
+      "filePath": "tests/test_admin_user_accounts.py",
+      "lineRange": [
+        15,
+        16
+      ],
+      "summary": "logout 實作 test_admin_user_accounts.py 所屬模組的一項可重用流程。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_admin_user_accounts.py:test_admin_can_create_another_admin_with_hashed_temporary_password",
+      "type": "function",
+      "name": "test_admin_can_create_another_admin_with_hashed_temporary_password",
+      "filePath": "tests/test_admin_user_accounts.py",
+      "lineRange": [
+        19,
+        38
+      ],
+      "summary": "驗證「admin can create another admin with hashed temporary password」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_admin_user_accounts.py:test_new_admin_must_change_password_then_can_manage_admin_accounts",
+      "type": "function",
+      "name": "test_new_admin_must_change_password_then_can_manage_admin_accounts",
+      "filePath": "tests/test_admin_user_accounts.py",
+      "lineRange": [
+        41,
+        65
+      ],
+      "summary": "驗證「new admin must change password then can manage admin accounts」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_admin_user_accounts.py:test_student_cannot_view_or_create_admin_accounts",
+      "type": "function",
+      "name": "test_student_cannot_view_or_create_admin_accounts",
+      "filePath": "tests/test_admin_user_accounts.py",
+      "lineRange": [
+        68,
+        73
+      ],
+      "summary": "驗證「student cannot view or create admin accounts」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_admin_user_accounts.py:test_duplicate_admin_username_does_not_create_partial_account",
+      "type": "function",
+      "name": "test_duplicate_admin_username_does_not_create_partial_account",
+      "filePath": "tests/test_admin_user_accounts.py",
+      "lineRange": [
+        76,
+        85
+      ],
+      "summary": "驗證「duplicate admin username does not create partial account」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_admin_user_accounts.py:test_admin_can_reset_another_admin_but_not_self",
+      "type": "function",
+      "name": "test_admin_can_reset_another_admin_but_not_self",
+      "filePath": "tests/test_admin_user_accounts.py",
+      "lineRange": [
+        88,
+        124
+      ],
+      "summary": "驗證「admin can reset another admin but not self」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_admin_user_accounts.py:test_primary_pages_include_smaller_english_labels",
+      "type": "function",
+      "name": "test_primary_pages_include_smaller_english_labels",
+      "filePath": "tests/test_admin_user_accounts.py",
+      "lineRange": [
+        127,
+        151
+      ],
+      "summary": "驗證「primary pages include smaller english labels」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/test_auth.py",
+      "type": "file",
+      "name": "test_auth.py",
+      "filePath": "tests/test_auth.py",
+      "summary": "以 pytest 驗證auth相關流程的權限、業務規則與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_auth.py:test_login_success_redirects_admin",
+      "type": "function",
+      "name": "test_login_success_redirects_admin",
+      "filePath": "tests/test_auth.py",
+      "lineRange": [
+        7,
+        14
+      ],
+      "summary": "驗證「login success redirects admin」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_auth.py:test_login_failure_returns_401",
+      "type": "function",
+      "name": "test_login_failure_returns_401",
+      "filePath": "tests/test_auth.py",
+      "lineRange": [
+        17,
+        20
+      ],
+      "summary": "驗證「login failure returns 401」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_auth.py:test_logout_clears_session",
+      "type": "function",
+      "name": "test_logout_clears_session",
+      "filePath": "tests/test_auth.py",
+      "lineRange": [
+        23,
+        31
+      ],
+      "summary": "驗證「logout clears session」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_auth.py:test_protected_page_requires_login",
+      "type": "function",
+      "name": "test_protected_page_requires_login",
+      "filePath": "tests/test_auth.py",
+      "lineRange": [
+        34,
+        37
+      ],
+      "summary": "驗證「protected page requires login」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_auth.py:test_student_cannot_access_admin_route",
+      "type": "function",
+      "name": "test_student_cannot_access_admin_route",
+      "filePath": "tests/test_auth.py",
+      "lineRange": [
+        40,
+        48
+      ],
+      "summary": "驗證「student cannot access admin route」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_auth.py:test_password_is_not_stored_as_plaintext",
+      "type": "function",
+      "name": "test_password_is_not_stored_as_plaintext",
+      "filePath": "tests/test_auth.py",
+      "lineRange": [
+        51,
+        56
+      ],
+      "summary": "驗證「password is not stored as plaintext」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_auth.py:test_change_password",
+      "type": "function",
+      "name": "test_change_password",
+      "filePath": "tests/test_auth.py",
+      "lineRange": [
+        59,
+        73
+      ],
+      "summary": "驗證「change password」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_auth.py:test_eight_character_password_is_allowed_but_seven_is_rejected",
+      "type": "function",
+      "name": "test_eight_character_password_is_allowed_but_seven_is_rejected",
+      "filePath": "tests/test_auth.py",
+      "lineRange": [
+        76,
+        101
+      ],
+      "summary": "驗證「eight character password is allowed but seven is rejected」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/test_backup_schedule.py",
+      "type": "file",
+      "name": "test_backup_schedule.py",
+      "filePath": "tests/test_backup_schedule.py",
+      "summary": "以 pytest 驗證backup、schedule相關流程的權限、業務規則與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_backup_schedule.py:test_admin_can_choose_interval_or_daily_backup_schedule",
+      "type": "function",
+      "name": "test_admin_can_choose_interval_or_daily_backup_schedule",
+      "filePath": "tests/test_backup_schedule.py",
+      "lineRange": [
+        11,
+        37
+      ],
+      "summary": "驗證「admin can choose interval or daily backup schedule」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_backup_schedule.py:test_backup_failure_retries_after_short_retry_interval",
+      "type": "function",
+      "name": "test_backup_failure_retries_after_short_retry_interval",
+      "filePath": "tests/test_backup_schedule.py",
+      "lineRange": [
+        40,
+        70
+      ],
+      "summary": "驗證「backup failure retries after short retry interval」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_backup_schedule.py:test_failed_daily_backup_is_not_retried_every_five_minutes",
+      "type": "function",
+      "name": "test_failed_daily_backup_is_not_retried_every_five_minutes",
+      "filePath": "tests/test_backup_schedule.py",
+      "lineRange": [
+        73,
+        98
+      ],
+      "summary": "驗證「failed daily backup is not retried every five minutes」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/test_compliance_settings.py",
+      "type": "file",
+      "name": "test_compliance_settings.py",
+      "filePath": "tests/test_compliance_settings.py",
+      "summary": "以 pytest 驗證compliance、settings相關流程的權限、業務規則與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:tests/test_compliance_settings.py:_make_foreign_student",
+      "type": "function",
+      "name": "_make_foreign_student",
+      "filePath": "tests/test_compliance_settings.py",
+      "lineRange": [
+        22,
+        36
+      ],
+      "summary": "_make_foreign_student 實作 test_compliance_settings.py 所屬模組的一項可重用流程。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_compliance_settings.py:test_staff_roster_headers_sort_ascending_and_descending",
+      "type": "function",
+      "name": "test_staff_roster_headers_sort_ascending_and_descending",
+      "filePath": "tests/test_compliance_settings.py",
+      "lineRange": [
+        39,
+        47
+      ],
+      "summary": "驗證「staff roster headers sort ascending and descending」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_compliance_settings.py:test_admin_manages_nationalities_and_student_forms_use_select",
+      "type": "function",
+      "name": "test_admin_manages_nationalities_and_student_forms_use_select",
+      "filePath": "tests/test_compliance_settings.py",
+      "lineRange": [
+        50,
+        71
+      ],
+      "summary": "驗證「admin manages nationalities and student forms use select」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_compliance_settings.py:test_foreign_student_is_redirected_only_until_both_documents_are_uploaded",
+      "type": "function",
+      "name": "test_foreign_student_is_redirected_only_until_both_documents_are_uploaded",
+      "filePath": "tests/test_compliance_settings.py",
+      "lineRange": [
+        74,
+        107
+      ],
+      "summary": "驗證「foreign student is redirected only until both documents are uploaded」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_compliance_settings.py:test_foreign_student_cannot_self_declare_taiwanese_nationality",
+      "type": "function",
+      "name": "test_foreign_student_cannot_self_declare_taiwanese_nationality",
+      "filePath": "tests/test_compliance_settings.py",
+      "lineRange": [
+        110,
+        123
+      ],
+      "summary": "驗證「foreign student cannot self declare taiwanese nationality」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_compliance_settings.py:test_foreign_weekly_limit_can_be_enabled_disabled_and_bypassed_by_period",
+      "type": "function",
+      "name": "test_foreign_weekly_limit_can_be_enabled_disabled_and_bypassed_by_period",
+      "filePath": "tests/test_compliance_settings.py",
+      "lineRange": [
+        126,
+        174
+      ],
+      "summary": "驗證「foreign weekly limit can be enabled disabled and bypassed by period」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_compliance_settings.py:test_week_start_day_is_configurable",
+      "type": "function",
+      "name": "test_week_start_day_is_configurable",
+      "filePath": "tests/test_compliance_settings.py",
+      "lineRange": [
+        177,
+        200
+      ],
+      "summary": "驗證「week start day is configurable」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_compliance_settings.py:test_taiwan_is_limited_unless_admin_explicitly_marks_it_exempt",
+      "type": "function",
+      "name": "test_taiwan_is_limited_unless_admin_explicitly_marks_it_exempt",
+      "filePath": "tests/test_compliance_settings.py",
+      "lineRange": [
+        203,
+        232
+      ],
+      "summary": "驗證「taiwan is limited unless admin explicitly marks it exempt」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_compliance_settings.py:test_admin_updates_week_start_and_taiwan_exemption",
+      "type": "function",
+      "name": "test_admin_updates_week_start_and_taiwan_exemption",
+      "filePath": "tests/test_compliance_settings.py",
+      "lineRange": [
+        235,
+        276
+      ],
+      "summary": "驗證「admin updates week start and taiwan exemption」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_compliance_settings.py:test_deleting_student_archives_account_but_retains_historical_shift",
+      "type": "function",
+      "name": "test_deleting_student_archives_account_but_retains_historical_shift",
+      "filePath": "tests/test_compliance_settings.py",
+      "lineRange": [
+        279,
+        304
+      ],
+      "summary": "驗證「deleting student archives account but retains historical shift」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_compliance_settings.py:test_settings_pages_are_admin_only",
+      "type": "function",
+      "name": "test_settings_pages_are_admin_only",
+      "filePath": "tests/test_compliance_settings.py",
+      "lineRange": [
+        307,
+        310
+      ],
+      "summary": "驗證「settings pages are admin only」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_compliance_settings.py:test_taiwanese_student_is_not_asked_to_upload_sensitive_documents",
+      "type": "function",
+      "name": "test_taiwanese_student_is_not_asked_to_upload_sensitive_documents",
+      "filePath": "tests/test_compliance_settings.py",
+      "lineRange": [
+        313,
+        319
+      ],
+      "summary": "驗證「taiwanese student is not asked to upload sensitive documents」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:app/seed.py",
+      "target": "function:app/seed.py:seed_database",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/seed.py",
+      "target": "function:app/seed.py:seed_database",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/seed.py",
+      "target": "function:app/seed.py:register_commands",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/seed.py",
+      "target": "function:app/seed.py:register_commands",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/document_keys.py",
+      "target": "function:app/services/document_keys.py:ensure_document_encryption_key",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/document_keys.py",
+      "target": "function:app/services/document_keys.py:ensure_document_encryption_key",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/health.py",
+      "target": "function:app/services/health.py:offline_attendance_devices",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/health.py",
+      "target": "function:app/services/health.py:offline_attendance_devices",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/health.py",
+      "target": "function:app/services/health.py:system_health_summary",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/health.py",
+      "target": "function:app/services/health.py:system_health_summary",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/conftest.py",
+      "target": "function:tests/conftest.py:app",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/conftest.py",
+      "target": "function:tests/conftest.py:app",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/conftest.py",
+      "target": "function:tests/conftest.py:client",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/conftest.py",
+      "target": "function:tests/conftest.py:client",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/conftest.py",
+      "target": "function:tests/conftest.py:login",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/conftest.py",
+      "target": "function:tests/conftest.py:login",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_admin_accounts.py",
+      "target": "function:tests/test_admin_accounts.py:logout",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_admin_accounts.py",
+      "target": "function:tests/test_admin_accounts.py:logout",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_admin_accounts.py",
+      "target": "function:tests/test_admin_accounts.py:test_admin_creates_student_account_with_hashed_temporary_password",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_admin_accounts.py",
+      "target": "function:tests/test_admin_accounts.py:test_admin_creates_student_account_with_hashed_temporary_password",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_admin_accounts.py",
+      "target": "function:tests/test_admin_accounts.py:test_new_student_must_change_temporary_password_before_using_system",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_admin_accounts.py",
+      "target": "function:tests/test_admin_accounts.py:test_new_student_must_change_temporary_password_before_using_system",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_admin_accounts.py",
+      "target": "function:tests/test_admin_accounts.py:test_duplicate_username_or_student_number_does_not_leave_partial_account",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_admin_accounts.py",
+      "target": "function:tests/test_admin_accounts.py:test_duplicate_username_or_student_number_does_not_leave_partial_account",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_admin_accounts.py",
+      "target": "function:tests/test_admin_accounts.py:test_admin_resets_student_password_and_old_password_immediately_fails",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_admin_accounts.py",
+      "target": "function:tests/test_admin_accounts.py:test_admin_resets_student_password_and_old_password_immediately_fails",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_admin_accounts.py",
+      "target": "function:tests/test_admin_accounts.py:test_students_cannot_create_accounts_or_reset_passwords",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_admin_accounts.py",
+      "target": "function:tests/test_admin_accounts.py:test_students_cannot_create_accounts_or_reset_passwords",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_admin_accounts.py",
+      "target": "function:tests/test_admin_accounts.py:test_password_confirmation_must_match",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_admin_accounts.py",
+      "target": "function:tests/test_admin_accounts.py:test_password_confirmation_must_match",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_admin_user_accounts.py",
+      "target": "function:tests/test_admin_user_accounts.py:logout",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_admin_user_accounts.py",
+      "target": "function:tests/test_admin_user_accounts.py:logout",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_admin_user_accounts.py",
+      "target": "function:tests/test_admin_user_accounts.py:test_admin_can_create_another_admin_with_hashed_temporary_password",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_admin_user_accounts.py",
+      "target": "function:tests/test_admin_user_accounts.py:test_admin_can_create_another_admin_with_hashed_temporary_password",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_admin_user_accounts.py",
+      "target": "function:tests/test_admin_user_accounts.py:test_new_admin_must_change_password_then_can_manage_admin_accounts",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_admin_user_accounts.py",
+      "target": "function:tests/test_admin_user_accounts.py:test_new_admin_must_change_password_then_can_manage_admin_accounts",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_admin_user_accounts.py",
+      "target": "function:tests/test_admin_user_accounts.py:test_student_cannot_view_or_create_admin_accounts",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_admin_user_accounts.py",
+      "target": "function:tests/test_admin_user_accounts.py:test_student_cannot_view_or_create_admin_accounts",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_admin_user_accounts.py",
+      "target": "function:tests/test_admin_user_accounts.py:test_duplicate_admin_username_does_not_create_partial_account",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_admin_user_accounts.py",
+      "target": "function:tests/test_admin_user_accounts.py:test_duplicate_admin_username_does_not_create_partial_account",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_admin_user_accounts.py",
+      "target": "function:tests/test_admin_user_accounts.py:test_admin_can_reset_another_admin_but_not_self",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_admin_user_accounts.py",
+      "target": "function:tests/test_admin_user_accounts.py:test_admin_can_reset_another_admin_but_not_self",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_admin_user_accounts.py",
+      "target": "function:tests/test_admin_user_accounts.py:test_primary_pages_include_smaller_english_labels",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_admin_user_accounts.py",
+      "target": "function:tests/test_admin_user_accounts.py:test_primary_pages_include_smaller_english_labels",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_auth.py",
+      "target": "function:tests/test_auth.py:test_login_success_redirects_admin",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_auth.py",
+      "target": "function:tests/test_auth.py:test_login_success_redirects_admin",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_auth.py",
+      "target": "function:tests/test_auth.py:test_login_failure_returns_401",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_auth.py",
+      "target": "function:tests/test_auth.py:test_login_failure_returns_401",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_auth.py",
+      "target": "function:tests/test_auth.py:test_logout_clears_session",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_auth.py",
+      "target": "function:tests/test_auth.py:test_logout_clears_session",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_auth.py",
+      "target": "function:tests/test_auth.py:test_protected_page_requires_login",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_auth.py",
+      "target": "function:tests/test_auth.py:test_protected_page_requires_login",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_auth.py",
+      "target": "function:tests/test_auth.py:test_student_cannot_access_admin_route",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_auth.py",
+      "target": "function:tests/test_auth.py:test_student_cannot_access_admin_route",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_auth.py",
+      "target": "function:tests/test_auth.py:test_password_is_not_stored_as_plaintext",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_auth.py",
+      "target": "function:tests/test_auth.py:test_password_is_not_stored_as_plaintext",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_auth.py",
+      "target": "function:tests/test_auth.py:test_change_password",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_auth.py",
+      "target": "function:tests/test_auth.py:test_change_password",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_auth.py",
+      "target": "function:tests/test_auth.py:test_eight_character_password_is_allowed_but_seven_is_rejected",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_auth.py",
+      "target": "function:tests/test_auth.py:test_eight_character_password_is_allowed_but_seven_is_rejected",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_backup_schedule.py",
+      "target": "function:tests/test_backup_schedule.py:test_admin_can_choose_interval_or_daily_backup_schedule",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_backup_schedule.py",
+      "target": "function:tests/test_backup_schedule.py:test_admin_can_choose_interval_or_daily_backup_schedule",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_backup_schedule.py",
+      "target": "function:tests/test_backup_schedule.py:test_backup_failure_retries_after_short_retry_interval",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_backup_schedule.py",
+      "target": "function:tests/test_backup_schedule.py:test_backup_failure_retries_after_short_retry_interval",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_backup_schedule.py",
+      "target": "function:tests/test_backup_schedule.py:test_failed_daily_backup_is_not_retried_every_five_minutes",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_backup_schedule.py",
+      "target": "function:tests/test_backup_schedule.py:test_failed_daily_backup_is_not_retried_every_five_minutes",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_compliance_settings.py",
+      "target": "function:tests/test_compliance_settings.py:_make_foreign_student",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_compliance_settings.py",
+      "target": "function:tests/test_compliance_settings.py:test_staff_roster_headers_sort_ascending_and_descending",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_compliance_settings.py",
+      "target": "function:tests/test_compliance_settings.py:test_staff_roster_headers_sort_ascending_and_descending",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_compliance_settings.py",
+      "target": "function:tests/test_compliance_settings.py:test_admin_manages_nationalities_and_student_forms_use_select",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_compliance_settings.py",
+      "target": "function:tests/test_compliance_settings.py:test_admin_manages_nationalities_and_student_forms_use_select",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_compliance_settings.py",
+      "target": "function:tests/test_compliance_settings.py:test_foreign_student_is_redirected_only_until_both_documents_are_uploaded",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_compliance_settings.py",
+      "target": "function:tests/test_compliance_settings.py:test_foreign_student_is_redirected_only_until_both_documents_are_uploaded",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_compliance_settings.py",
+      "target": "function:tests/test_compliance_settings.py:test_foreign_student_cannot_self_declare_taiwanese_nationality",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_compliance_settings.py",
+      "target": "function:tests/test_compliance_settings.py:test_foreign_student_cannot_self_declare_taiwanese_nationality",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_compliance_settings.py",
+      "target": "function:tests/test_compliance_settings.py:test_foreign_weekly_limit_can_be_enabled_disabled_and_bypassed_by_period",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_compliance_settings.py",
+      "target": "function:tests/test_compliance_settings.py:test_foreign_weekly_limit_can_be_enabled_disabled_and_bypassed_by_period",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_compliance_settings.py",
+      "target": "function:tests/test_compliance_settings.py:test_week_start_day_is_configurable",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_compliance_settings.py",
+      "target": "function:tests/test_compliance_settings.py:test_week_start_day_is_configurable",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_compliance_settings.py",
+      "target": "function:tests/test_compliance_settings.py:test_taiwan_is_limited_unless_admin_explicitly_marks_it_exempt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_compliance_settings.py",
+      "target": "function:tests/test_compliance_settings.py:test_taiwan_is_limited_unless_admin_explicitly_marks_it_exempt",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_compliance_settings.py",
+      "target": "function:tests/test_compliance_settings.py:test_admin_updates_week_start_and_taiwan_exemption",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_compliance_settings.py",
+      "target": "function:tests/test_compliance_settings.py:test_admin_updates_week_start_and_taiwan_exemption",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_compliance_settings.py",
+      "target": "function:tests/test_compliance_settings.py:test_deleting_student_archives_account_but_retains_historical_shift",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_compliance_settings.py",
+      "target": "function:tests/test_compliance_settings.py:test_deleting_student_archives_account_but_retains_historical_shift",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_compliance_settings.py",
+      "target": "function:tests/test_compliance_settings.py:test_settings_pages_are_admin_only",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_compliance_settings.py",
+      "target": "function:tests/test_compliance_settings.py:test_settings_pages_are_admin_only",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_compliance_settings.py",
+      "target": "function:tests/test_compliance_settings.py:test_taiwanese_student_is_not_asked_to_upload_sensitive_documents",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_compliance_settings.py",
+      "target": "function:tests/test_compliance_settings.py:test_taiwanese_student_is_not_asked_to_upload_sensitive_documents",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/seed.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/seed.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/health.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/health.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/conftest.py",
+      "target": "file:app/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/conftest.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/conftest.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_admin_accounts.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_admin_accounts.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_admin_accounts.py",
+      "target": "file:tests/conftest.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_admin_user_accounts.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_admin_user_accounts.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_admin_user_accounts.py",
+      "target": "file:tests/conftest.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_auth.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_auth.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_auth.py",
+      "target": "file:tests/conftest.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_backup_schedule.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_backup_schedule.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_backup_schedule.py",
+      "target": "file:app/services/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_backup_schedule.py",
+      "target": "file:app/services/backups.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_backup_schedule.py",
+      "target": "file:tests/conftest.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_compliance_settings.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_compliance_settings.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_compliance_settings.py",
+      "target": "file:tests/conftest.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_compliance_settings.py",
+      "target": "file:tests/test_documents.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_compliance_settings.py",
+      "target": "file:tests/test_scheduling.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    }
+  ]
+}

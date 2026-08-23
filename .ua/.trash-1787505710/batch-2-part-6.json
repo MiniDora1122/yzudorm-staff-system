@@ -1,0 +1,144 @@
+{
+  "nodes": [
+    {
+      "id": "file:app/time_utils.py",
+      "type": "file",
+      "name": "time_utils.py",
+      "filePath": "app/time_utils.py",
+      "summary": "提供 Asia/Taipei 本地時間、顯示格式與 UTC 查詢邊界工具。",
+      "tags": [
+        "configuration",
+        "flask",
+        "application"
+      ],
+      "complexity": "simple",
+      "languageNotes": "採用 Python 與 SQLAlchemy service 分層。"
+    },
+    {
+      "id": "function:app/time_utils.py:local_today",
+      "type": "function",
+      "name": "local_today",
+      "filePath": "app/time_utils.py",
+      "lineRange": [
+        7,
+        9
+      ],
+      "summary": "處理local today 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/time_utils.py:local_now",
+      "type": "function",
+      "name": "local_now",
+      "filePath": "app/time_utils.py",
+      "lineRange": [
+        12,
+        14
+      ],
+      "summary": "處理local now 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/time_utils.py:format_local_datetime",
+      "type": "function",
+      "name": "format_local_datetime",
+      "filePath": "app/time_utils.py",
+      "lineRange": [
+        17,
+        22
+      ],
+      "summary": "處理format local datetime 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/time_utils.py:local_date_utc_bounds",
+      "type": "function",
+      "name": "local_date_utc_bounds",
+      "filePath": "app/time_utils.py",
+      "lineRange": [
+        25,
+        28
+      ],
+      "summary": "處理local date utc bounds 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "application"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:app/time_utils.py",
+      "target": "function:app/time_utils.py:local_today",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/time_utils.py",
+      "target": "function:app/time_utils.py:local_today",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/time_utils.py",
+      "target": "function:app/time_utils.py:local_now",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/time_utils.py",
+      "target": "function:app/time_utils.py:local_now",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/time_utils.py",
+      "target": "function:app/time_utils.py:format_local_datetime",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/time_utils.py",
+      "target": "function:app/time_utils.py:format_local_datetime",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/time_utils.py",
+      "target": "function:app/time_utils.py:local_date_utc_bounds",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/time_utils.py",
+      "target": "function:app/time_utils.py:local_date_utc_bounds",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

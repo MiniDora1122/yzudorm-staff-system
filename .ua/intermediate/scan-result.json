@@ -1,0 +1,1595 @@
+{
+  "name": "宿舍工讀生系統",
+  "description": "這是一套以 Flask 與 SQLAlchemy 建置的校園宿舍工讀生管理平台，整合排班、請假與換班、證件審核、效期提醒、薪資與勞健保成本試算，以及 Excel 報表等功能。注意：本專案超過 100 個來源檔案；若要加快後續分析，可考慮限定特定子目錄。",
+  "languages": [
+    "config",
+    "csharp",
+    "css",
+    "example",
+    "exe",
+    "html",
+    "javascript",
+    "json",
+    "mako",
+    "manifest",
+    "markdown",
+    "powershell",
+    "python",
+    "txt",
+    "unknown"
+  ],
+  "frameworks": [
+    "Flask",
+    "SQLAlchemy",
+    "Alembic"
+  ],
+  "files": [
+    {
+      "path": ".env.example",
+      "language": "config",
+      "sizeLines": 47,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".env.production.example",
+      "language": "config",
+      "sizeLines": 26,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".ua/.understandignore",
+      "language": "unknown",
+      "sizeLines": 84,
+      "fileCategory": "code"
+    },
+    {
+      "path": ".ua/config.json",
+      "language": "json",
+      "sizeLines": 3,
+      "fileCategory": "config"
+    },
+    {
+      "path": "AGENTS.md",
+      "language": "markdown",
+      "sizeLines": 681,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "CODEX_TASK.md",
+      "language": "markdown",
+      "sizeLines": 108,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "README.md",
+      "language": "markdown",
+      "sizeLines": 339,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "app/__init__.py",
+      "language": "python",
+      "sizeLines": 151,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/admin/__init__.py",
+      "language": "python",
+      "sizeLines": 7,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/admin/attendance.py",
+      "language": "python",
+      "sizeLines": 591,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/admin/operations.py",
+      "language": "python",
+      "sizeLines": 140,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/admin/routes.py",
+      "language": "python",
+      "sizeLines": 2252,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/admin/workforce.py",
+      "language": "python",
+      "sizeLines": 246,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/attendance_api/__init__.py",
+      "language": "python",
+      "sizeLines": 20,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/attendance_api/routes.py",
+      "language": "python",
+      "sizeLines": 138,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/auth/__init__.py",
+      "language": "python",
+      "sizeLines": 7,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/auth/forms.py",
+      "language": "python",
+      "sizeLines": 34,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/auth/routes.py",
+      "language": "python",
+      "sizeLines": 149,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/decorators.py",
+      "language": "python",
+      "sizeLines": 21,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/extensions.py",
+      "language": "python",
+      "sizeLines": 33,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/models.py",
+      "language": "python",
+      "sizeLines": 988,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/seed.py",
+      "language": "python",
+      "sizeLines": 264,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/services/__init__.py",
+      "language": "python",
+      "sizeLines": 2,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/services/accounts.py",
+      "language": "python",
+      "sizeLines": 213,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/services/attendance.py",
+      "language": "python",
+      "sizeLines": 826,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/services/audit.py",
+      "language": "python",
+      "sizeLines": 38,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/services/backups.py",
+      "language": "python",
+      "sizeLines": 215,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/services/compliance.py",
+      "language": "python",
+      "sizeLines": 96,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/services/document_keys.py",
+      "language": "python",
+      "sizeLines": 78,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/services/documents.py",
+      "language": "python",
+      "sizeLines": 467,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/services/health.py",
+      "language": "python",
+      "sizeLines": 74,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/services/maintenance.py",
+      "language": "python",
+      "sizeLines": 86,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/services/notifications.py",
+      "language": "python",
+      "sizeLines": 440,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/services/payroll.py",
+      "language": "python",
+      "sizeLines": 126,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/services/periods.py",
+      "language": "python",
+      "sizeLines": 227,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/services/reports.py",
+      "language": "python",
+      "sizeLines": 520,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/services/requests.py",
+      "language": "python",
+      "sizeLines": 314,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/services/retention.py",
+      "language": "python",
+      "sizeLines": 134,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/services/scheduling.py",
+      "language": "python",
+      "sizeLines": 395,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/services/storage_lock.py",
+      "language": "python",
+      "sizeLines": 15,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/services/workflow_calendar.py",
+      "language": "python",
+      "sizeLines": 97,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/services/workforce.py",
+      "language": "python",
+      "sizeLines": 227,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/static/css/app.css",
+      "language": "css",
+      "sizeLines": 330,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "app/static/js/admin_schedule.js",
+      "language": "javascript",
+      "sizeLines": 687,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/static/js/bilingual.js",
+      "language": "javascript",
+      "sizeLines": 258,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/static/js/documents.js",
+      "language": "javascript",
+      "sizeLines": 18,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/static/js/payroll.js",
+      "language": "javascript",
+      "sizeLines": 174,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/static/js/reports.js",
+      "language": "javascript",
+      "sizeLines": 12,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/static/js/requests.js",
+      "language": "javascript",
+      "sizeLines": 44,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/static/js/staff_accounts.js",
+      "language": "javascript",
+      "sizeLines": 36,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/static/js/student_calendar.js",
+      "language": "javascript",
+      "sizeLines": 273,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/student/__init__.py",
+      "language": "python",
+      "sizeLines": 7,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/student/attendance.py",
+      "language": "python",
+      "sizeLines": 61,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/student/routes.py",
+      "language": "python",
+      "sizeLines": 836,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/student/vacancies.py",
+      "language": "python",
+      "sizeLines": 109,
+      "fileCategory": "code"
+    },
+    {
+      "path": "app/templates/_notification_panel.html",
+      "language": "html",
+      "sizeLines": 32,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "app/templates/_status_badge.html",
+      "language": "html",
+      "sizeLines": 14,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "app/templates/admin/admin_accounts.html",
+      "language": "html",
+      "sizeLines": 75,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "app/templates/admin/attendance.html",
+      "language": "html",
+      "sizeLines": 32,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "app/templates/admin/attendance_settings.html",
+      "language": "html",
+      "sizeLines": 39,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "app/templates/admin/audit_logs.html",
+      "language": "html",
+      "sizeLines": 56,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "app/templates/admin/dashboard.html",
+      "language": "html",
+      "sizeLines": 101,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "app/templates/admin/documents.html",
+      "language": "html",
+      "sizeLines": 51,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "app/templates/admin/nationalities.html",
+      "language": "html",
+      "sizeLines": 11,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "app/templates/admin/operations.html",
+      "language": "html",
+      "sizeLines": 48,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "app/templates/admin/payroll.html",
+      "language": "html",
+      "sizeLines": 37,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "app/templates/admin/reports.html",
+      "language": "html",
+      "sizeLines": 15,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "app/templates/admin/requests.html",
+      "language": "html",
+      "sizeLines": 61,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "app/templates/admin/schedule.html",
+      "language": "html",
+      "sizeLines": 245,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "app/templates/admin/scheduling_settings.html",
+      "language": "html",
+      "sizeLines": 11,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "app/templates/admin/shift_import_preview.html",
+      "language": "html",
+      "sizeLines": 7,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "app/templates/admin/staff.html",
+      "language": "html",
+      "sizeLines": 99,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "app/templates/admin/workforce.html",
+      "language": "html",
+      "sizeLines": 35,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "app/templates/auth/change_password.html",
+      "language": "html",
+      "sizeLines": 28,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "app/templates/auth/login.html",
+      "language": "html",
+      "sizeLines": 38,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "app/templates/base.html",
+      "language": "html",
+      "sizeLines": 90,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "app/templates/errors/403.html",
+      "language": "html",
+      "sizeLines": 12,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "app/templates/notifications.html",
+      "language": "html",
+      "sizeLines": 29,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "app/templates/student/attendance.html",
+      "language": "html",
+      "sizeLines": 16,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "app/templates/student/availability.html",
+      "language": "html",
+      "sizeLines": 6,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "app/templates/student/dashboard.html",
+      "language": "html",
+      "sizeLines": 103,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "app/templates/student/profile.html",
+      "language": "html",
+      "sizeLines": 90,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "app/templates/student/requests.html",
+      "language": "html",
+      "sizeLines": 62,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "app/templates/student/vacancies.html",
+      "language": "html",
+      "sizeLines": 9,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "app/time_utils.py",
+      "language": "python",
+      "sizeLines": 28,
+      "fileCategory": "code"
+    },
+    {
+      "path": "attendance-terminal/DormAttendanceKiosk.exe",
+      "language": "exe",
+      "sizeLines": 47017,
+      "fileCategory": "code"
+    },
+    {
+      "path": "attendance-terminal/DormAttendanceTerminal.cs",
+      "language": "csharp",
+      "sizeLines": 317,
+      "fileCategory": "code"
+    },
+    {
+      "path": "attendance-terminal/DormAttendanceTerminal.exe",
+      "language": "exe",
+      "sizeLines": 616,
+      "fileCategory": "code"
+    },
+    {
+      "path": "attendance-terminal/README.md",
+      "language": "markdown",
+      "sizeLines": 55,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "attendance-terminal/attendance_terminal.py",
+      "language": "python",
+      "sizeLines": 459,
+      "fileCategory": "code"
+    },
+    {
+      "path": "attendance-terminal/build-terminal.ps1",
+      "language": "powershell",
+      "sizeLines": 23,
+      "fileCategory": "script"
+    },
+    {
+      "path": "attendance-terminal/configure-autostart.ps1",
+      "language": "powershell",
+      "sizeLines": 33,
+      "fileCategory": "script"
+    },
+    {
+      "path": "attendance-terminal/start-terminal.ps1",
+      "language": "powershell",
+      "sizeLines": 4,
+      "fileCategory": "script"
+    },
+    {
+      "path": "attendance-terminal/terminal-defaults.ini",
+      "language": "config",
+      "sizeLines": 2,
+      "fileCategory": "config"
+    },
+    {
+      "path": "attendance-terminal/terminal-self-update.ps1",
+      "language": "powershell",
+      "sizeLines": 126,
+      "fileCategory": "script"
+    },
+    {
+      "path": "config.py",
+      "language": "python",
+      "sizeLines": 93,
+      "fileCategory": "code"
+    },
+    {
+      "path": "deployment/DEPLOYMENT_WINDOWS_XAMPP.md",
+      "language": "markdown",
+      "sizeLines": 122,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "deployment/GIT_UPDATE_GUIDE.md",
+      "language": "markdown",
+      "sizeLines": 195,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "deployment/HTTP_MIGRATION_AND_SEED_RECOVERY_ZH_TW.md",
+      "language": "markdown",
+      "sizeLines": 847,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "deployment/apache/dorm-staff-vhost.conf.example",
+      "language": "example",
+      "sizeLines": 27,
+      "fileCategory": "code"
+    },
+    {
+      "path": "deployment/create-portable-backup.ps1",
+      "language": "powershell",
+      "sizeLines": 20,
+      "fileCategory": "script"
+    },
+    {
+      "path": "deployment/create_portable_backup.py",
+      "language": "python",
+      "sizeLines": 245,
+      "fileCategory": "code"
+    },
+    {
+      "path": "deployment/install-production.ps1",
+      "language": "powershell",
+      "sizeLines": 28,
+      "fileCategory": "script"
+    },
+    {
+      "path": "deployment/register-startup-task.ps1",
+      "language": "powershell",
+      "sizeLines": 25,
+      "fileCategory": "script"
+    },
+    {
+      "path": "deployment/restore-portable.ps1",
+      "language": "powershell",
+      "sizeLines": 29,
+      "fileCategory": "script"
+    },
+    {
+      "path": "deployment/start-production.ps1",
+      "language": "powershell",
+      "sizeLines": 30,
+      "fileCategory": "script"
+    },
+    {
+      "path": "deployment/unregister-startup-task.ps1",
+      "language": "powershell",
+      "sizeLines": 11,
+      "fileCategory": "script"
+    },
+    {
+      "path": "deployment/update-from-git.ps1",
+      "language": "powershell",
+      "sizeLines": 101,
+      "fileCategory": "script"
+    },
+    {
+      "path": "main.html",
+      "language": "html",
+      "sizeLines": 764,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "migrations/README",
+      "language": "unknown",
+      "sizeLines": 1,
+      "fileCategory": "code"
+    },
+    {
+      "path": "migrations/alembic.ini",
+      "language": "config",
+      "sizeLines": 50,
+      "fileCategory": "config"
+    },
+    {
+      "path": "migrations/env.py",
+      "language": "python",
+      "sizeLines": 113,
+      "fileCategory": "code"
+    },
+    {
+      "path": "migrations/script.py.mako",
+      "language": "mako",
+      "sizeLines": 24,
+      "fileCategory": "code"
+    },
+    {
+      "path": "migrations/versions/0f6d8a2c4b17_add_multi_page_document_sets.py",
+      "language": "python",
+      "sizeLines": 60,
+      "fileCategory": "code"
+    },
+    {
+      "path": "migrations/versions/39cb8e71d2a0_remove_ocr_legacy_columns.py",
+      "language": "python",
+      "sizeLines": 95,
+      "fileCategory": "code"
+    },
+    {
+      "path": "migrations/versions/3b1d47c8a91e_add_configurable_week_boundary.py",
+      "language": "python",
+      "sizeLines": 29,
+      "fileCategory": "code"
+    },
+    {
+      "path": "migrations/versions/48463e284ed5_add_security_operations_and_attendance_.py",
+      "language": "python",
+      "sizeLines": 170,
+      "fileCategory": "code"
+    },
+    {
+      "path": "migrations/versions/486c51e89d9e_add_dynamic_locations_and_payroll_.py",
+      "language": "python",
+      "sizeLines": 136,
+      "fileCategory": "code"
+    },
+    {
+      "path": "migrations/versions/7860ad8b1090_add_ocr_and_document_retention_policy.py",
+      "language": "python",
+      "sizeLines": 45,
+      "fileCategory": "code"
+    },
+    {
+      "path": "migrations/versions/79d4488d8faa_add_phase_3_leave_swap_and_audit_.py",
+      "language": "python",
+      "sizeLines": 109,
+      "fileCategory": "code"
+    },
+    {
+      "path": "migrations/versions/9d5cff5bba6e_add_recurring_shift_series.py",
+      "language": "python",
+      "sizeLines": 71,
+      "fileCategory": "code"
+    },
+    {
+      "path": "migrations/versions/a8142d35c901_add_admin_display_name.py",
+      "language": "python",
+      "sizeLines": 29,
+      "fileCategory": "code"
+    },
+    {
+      "path": "migrations/versions/aa16f55dd9f5_add_actionable_notification_center.py",
+      "language": "python",
+      "sizeLines": 61,
+      "fileCategory": "code"
+    },
+    {
+      "path": "migrations/versions/acce6927c641_add_nationalities_and_foreign_student_.py",
+      "language": "python",
+      "sizeLines": 130,
+      "fileCategory": "code"
+    },
+    {
+      "path": "migrations/versions/aece1306b930_add_security_audit_request_metadata.py",
+      "language": "python",
+      "sizeLines": 50,
+      "fileCategory": "code"
+    },
+    {
+      "path": "migrations/versions/b4852085ec6b_add_secure_staff_document_workflow.py",
+      "language": "python",
+      "sizeLines": 82,
+      "fileCategory": "code"
+    },
+    {
+      "path": "migrations/versions/b71c8e4d2a90_add_configurable_backup_policy.py",
+      "language": "python",
+      "sizeLines": 45,
+      "fileCategory": "code"
+    },
+    {
+      "path": "migrations/versions/b73d5c81a204_add_attendance_device_deletion.py",
+      "language": "python",
+      "sizeLines": 23,
+      "fileCategory": "code"
+    },
+    {
+      "path": "migrations/versions/bc7a80fd741c_create_phase_1_core_tables.py",
+      "language": "python",
+      "sizeLines": 108,
+      "fileCategory": "code"
+    },
+    {
+      "path": "migrations/versions/c4e208981061_add_document_admin_review.py",
+      "language": "python",
+      "sizeLines": 61,
+      "fileCategory": "code"
+    },
+    {
+      "path": "migrations/versions/c52f41a92b70_allow_multiple_staff_per_shift_type.py",
+      "language": "python",
+      "sizeLines": 42,
+      "fileCategory": "code"
+    },
+    {
+      "path": "migrations/versions/c92f41d17a86_add_per_device_offline_alerts.py",
+      "language": "python",
+      "sizeLines": 33,
+      "fileCategory": "code"
+    },
+    {
+      "path": "migrations/versions/c9f45a12d803_add_attendance_device_identity.py",
+      "language": "python",
+      "sizeLines": 37,
+      "fileCategory": "code"
+    },
+    {
+      "path": "migrations/versions/d81e04b637aa_add_english_location_shift_names.py",
+      "language": "python",
+      "sizeLines": 67,
+      "fileCategory": "code"
+    },
+    {
+      "path": "migrations/versions/e7c5a2b91d40_add_publication_settlement_workforce.py",
+      "language": "python",
+      "sizeLines": 190,
+      "fileCategory": "code"
+    },
+    {
+      "path": "migrations/versions/f9a13d72c4e1_add_attendance_clocking.py",
+      "language": "python",
+      "sizeLines": 131,
+      "fileCategory": "code"
+    },
+    {
+      "path": "portable-windows-launcher/DormStaffLauncher.cs",
+      "language": "csharp",
+      "sizeLines": 2172,
+      "fileCategory": "code"
+    },
+    {
+      "path": "portable-windows-launcher/DormStaffLauncher.exe",
+      "language": "exe",
+      "sizeLines": 2431,
+      "fileCategory": "code"
+    },
+    {
+      "path": "portable-windows-launcher/FIRST_USE.md",
+      "language": "markdown",
+      "sizeLines": 119,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "portable-windows-launcher/THIRD_PARTY_SOURCES.md",
+      "language": "markdown",
+      "sizeLines": 14,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "portable-windows-launcher/XAMPP_GUIDE.md",
+      "language": "markdown",
+      "sizeLines": 178,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "portable-windows-launcher/app.manifest",
+      "language": "manifest",
+      "sizeLines": 13,
+      "fileCategory": "code"
+    },
+    {
+      "path": "portable-windows-launcher/bootstrap_first_admin.py",
+      "language": "python",
+      "sizeLines": 66,
+      "fileCategory": "code"
+    },
+    {
+      "path": "portable-windows-launcher/build-launcher.ps1",
+      "language": "powershell",
+      "sizeLines": 30,
+      "fileCategory": "script"
+    },
+    {
+      "path": "portable-windows-launcher/configure-watchdog-task.ps1",
+      "language": "powershell",
+      "sizeLines": 53,
+      "fileCategory": "script"
+    },
+    {
+      "path": "portable-windows-launcher/migrate_portable_data.py",
+      "language": "python",
+      "sizeLines": 573,
+      "fileCategory": "code"
+    },
+    {
+      "path": "portable-windows-launcher/self-update.ps1",
+      "language": "powershell",
+      "sizeLines": 160,
+      "fileCategory": "script"
+    },
+    {
+      "path": "portable-windows-launcher/stop-server.ps1",
+      "language": "powershell",
+      "sizeLines": 31,
+      "fileCategory": "script"
+    },
+    {
+      "path": "portable-windows-launcher/watchdog-status.ps1",
+      "language": "powershell",
+      "sizeLines": 36,
+      "fileCategory": "script"
+    },
+    {
+      "path": "portable-windows-launcher/watchdog.ps1",
+      "language": "powershell",
+      "sizeLines": 145,
+      "fileCategory": "script"
+    },
+    {
+      "path": "requirements-dev.txt",
+      "language": "txt",
+      "sizeLines": 3,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "requirements.txt",
+      "language": "txt",
+      "sizeLines": 15,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "scripts/inspect_reference_workbook.mjs",
+      "language": "javascript",
+      "sizeLines": 66,
+      "fileCategory": "code"
+    },
+    {
+      "path": "scripts/verify_report_workbook.mjs",
+      "language": "javascript",
+      "sizeLines": 32,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/conftest.py",
+      "language": "python",
+      "sizeLines": 152,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_admin_accounts.py",
+      "language": "python",
+      "sizeLines": 143,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_admin_user_accounts.py",
+      "language": "python",
+      "sizeLines": 151,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_attendance.py",
+      "language": "python",
+      "sizeLines": 500,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_attendance_terminal.py",
+      "language": "python",
+      "sizeLines": 95,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_auth.py",
+      "language": "python",
+      "sizeLines": 101,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_backup_schedule.py",
+      "language": "python",
+      "sizeLines": 98,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_compliance_settings.py",
+      "language": "python",
+      "sizeLines": 319,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_deployment.py",
+      "language": "python",
+      "sizeLines": 225,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_documents.py",
+      "language": "python",
+      "sizeLines": 312,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_launcher_watchdog.py",
+      "language": "python",
+      "sizeLines": 99,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_locations_payroll.py",
+      "language": "python",
+      "sizeLines": 204,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_models.py",
+      "language": "python",
+      "sizeLines": 60,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_notifications.py",
+      "language": "python",
+      "sizeLines": 130,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_operations_workforce.py",
+      "language": "python",
+      "sizeLines": 188,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_phase3.py",
+      "language": "python",
+      "sizeLines": 337,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_phase5.py",
+      "language": "python",
+      "sizeLines": 116,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_portable_migration.py",
+      "language": "python",
+      "sizeLines": 287,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_recurring_and_deletion.py",
+      "language": "python",
+      "sizeLines": 167,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_reports.py",
+      "language": "python",
+      "sizeLines": 146,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_requested_hardening.py",
+      "language": "python",
+      "sizeLines": 247,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_schedule_management.py",
+      "language": "python",
+      "sizeLines": 160,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_scheduling.py",
+      "language": "python",
+      "sizeLines": 285,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_security_audit.py",
+      "language": "python",
+      "sizeLines": 73,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_security_operations_enhancements.py",
+      "language": "python",
+      "sizeLines": 186,
+      "fileCategory": "code"
+    },
+    {
+      "path": "wsgi.py",
+      "language": "python",
+      "sizeLines": 5,
+      "fileCategory": "code"
+    }
+  ],
+  "totalFiles": 181,
+  "filteredByIgnore": 0,
+  "estimatedComplexity": "large",
+  "importMap": {
+    ".env.example": [],
+    ".env.production.example": [],
+    ".ua/.understandignore": [],
+    ".ua/config.json": [],
+    "AGENTS.md": [],
+    "CODEX_TASK.md": [],
+    "README.md": [],
+    "app/__init__.py": [
+      "app/extensions.py",
+      "app/models.py",
+      "config.py"
+    ],
+    "app/admin/__init__.py": [
+      "app/admin/attendance.py",
+      "app/admin/operations.py",
+      "app/admin/routes.py",
+      "app/admin/workforce.py"
+    ],
+    "app/admin/attendance.py": [
+      "app/decorators.py",
+      "app/extensions.py",
+      "app/models.py",
+      "app/services/attendance.py",
+      "app/services/audit.py",
+      "app/services/scheduling.py",
+      "app/time_utils.py"
+    ],
+    "app/admin/operations.py": [
+      "app/decorators.py",
+      "app/extensions.py",
+      "app/models.py",
+      "app/services/backups.py",
+      "app/services/periods.py",
+      "app/services/scheduling.py",
+      "app/time_utils.py"
+    ],
+    "app/admin/routes.py": [
+      "app/decorators.py",
+      "app/extensions.py",
+      "app/models.py",
+      "app/services/accounts.py",
+      "app/services/attendance.py",
+      "app/services/audit.py",
+      "app/services/compliance.py",
+      "app/services/documents.py",
+      "app/services/health.py",
+      "app/services/notifications.py",
+      "app/services/payroll.py",
+      "app/services/reports.py",
+      "app/services/requests.py",
+      "app/services/retention.py",
+      "app/services/scheduling.py",
+      "app/services/workflow_calendar.py",
+      "app/time_utils.py"
+    ],
+    "app/admin/workforce.py": [
+      "app/decorators.py",
+      "app/extensions.py",
+      "app/models.py",
+      "app/services/audit.py",
+      "app/services/periods.py",
+      "app/services/workforce.py",
+      "app/time_utils.py"
+    ],
+    "app/attendance_api/__init__.py": [
+      "app/attendance_api/routes.py",
+      "app/extensions.py"
+    ],
+    "app/attendance_api/routes.py": [
+      "app/extensions.py",
+      "app/models.py",
+      "app/services/attendance.py"
+    ],
+    "app/auth/__init__.py": [
+      "app/auth/routes.py"
+    ],
+    "app/auth/forms.py": [],
+    "app/auth/routes.py": [
+      "app/auth/forms.py",
+      "app/extensions.py",
+      "app/models.py",
+      "app/services/audit.py"
+    ],
+    "app/decorators.py": [
+      "app/models.py"
+    ],
+    "app/extensions.py": [],
+    "app/models.py": [
+      "app/extensions.py"
+    ],
+    "app/seed.py": [
+      "app/extensions.py",
+      "app/models.py"
+    ],
+    "app/services/__init__.py": [],
+    "app/services/accounts.py": [
+      "app/extensions.py",
+      "app/models.py",
+      "app/services/audit.py"
+    ],
+    "app/services/attendance.py": [
+      "app/extensions.py",
+      "app/models.py",
+      "app/services/audit.py",
+      "app/services/notifications.py"
+    ],
+    "app/services/audit.py": [
+      "app/extensions.py",
+      "app/models.py"
+    ],
+    "app/services/backups.py": [
+      "app/extensions.py",
+      "app/models.py",
+      "app/services/audit.py",
+      "app/services/storage_lock.py",
+      "app/time_utils.py",
+      "deployment/create_portable_backup.py"
+    ],
+    "app/services/compliance.py": [
+      "app/extensions.py",
+      "app/models.py"
+    ],
+    "app/services/document_keys.py": [],
+    "app/services/documents.py": [
+      "app/extensions.py",
+      "app/models.py",
+      "app/services/audit.py",
+      "app/services/requests.py",
+      "app/services/retention.py",
+      "app/services/storage_lock.py",
+      "app/time_utils.py"
+    ],
+    "app/services/health.py": [
+      "app/extensions.py",
+      "app/models.py"
+    ],
+    "app/services/maintenance.py": [
+      "app/extensions.py",
+      "app/models.py",
+      "app/services/backups.py",
+      "app/services/notifications.py",
+      "app/services/retention.py"
+    ],
+    "app/services/notifications.py": [
+      "app/extensions.py",
+      "app/models.py",
+      "app/services/compliance.py",
+      "app/services/documents.py",
+      "app/time_utils.py"
+    ],
+    "app/services/payroll.py": [
+      "app/extensions.py",
+      "app/models.py"
+    ],
+    "app/services/periods.py": [
+      "app/extensions.py",
+      "app/models.py",
+      "app/services/audit.py",
+      "app/services/compliance.py",
+      "app/services/scheduling.py"
+    ],
+    "app/services/reports.py": [
+      "app/extensions.py",
+      "app/models.py",
+      "app/services/documents.py",
+      "app/services/payroll.py"
+    ],
+    "app/services/requests.py": [
+      "app/extensions.py",
+      "app/models.py",
+      "app/services/audit.py",
+      "app/services/scheduling.py"
+    ],
+    "app/services/retention.py": [
+      "app/extensions.py",
+      "app/models.py",
+      "app/services/storage_lock.py",
+      "app/time_utils.py"
+    ],
+    "app/services/scheduling.py": [
+      "app/extensions.py",
+      "app/models.py",
+      "app/services/compliance.py"
+    ],
+    "app/services/storage_lock.py": [],
+    "app/services/workflow_calendar.py": [
+      "app/extensions.py",
+      "app/models.py"
+    ],
+    "app/services/workforce.py": [
+      "app/extensions.py",
+      "app/models.py",
+      "app/services/audit.py",
+      "app/services/notifications.py",
+      "app/services/periods.py",
+      "app/services/scheduling.py"
+    ],
+    "app/static/css/app.css": [],
+    "app/static/js/admin_schedule.js": [],
+    "app/static/js/bilingual.js": [],
+    "app/static/js/documents.js": [],
+    "app/static/js/payroll.js": [],
+    "app/static/js/reports.js": [],
+    "app/static/js/requests.js": [],
+    "app/static/js/staff_accounts.js": [],
+    "app/static/js/student_calendar.js": [],
+    "app/student/__init__.py": [
+      "app/student/attendance.py",
+      "app/student/routes.py",
+      "app/student/vacancies.py"
+    ],
+    "app/student/attendance.py": [
+      "app/decorators.py",
+      "app/extensions.py",
+      "app/models.py",
+      "app/services/attendance.py"
+    ],
+    "app/student/routes.py": [
+      "app/decorators.py",
+      "app/extensions.py",
+      "app/models.py",
+      "app/services/attendance.py",
+      "app/services/audit.py",
+      "app/services/compliance.py",
+      "app/services/documents.py",
+      "app/services/notifications.py",
+      "app/services/payroll.py",
+      "app/services/requests.py",
+      "app/services/scheduling.py",
+      "app/services/workflow_calendar.py",
+      "app/time_utils.py"
+    ],
+    "app/student/vacancies.py": [
+      "app/decorators.py",
+      "app/extensions.py",
+      "app/models.py",
+      "app/services/periods.py",
+      "app/services/workforce.py",
+      "app/time_utils.py"
+    ],
+    "app/templates/_notification_panel.html": [],
+    "app/templates/_status_badge.html": [],
+    "app/templates/admin/admin_accounts.html": [],
+    "app/templates/admin/attendance.html": [],
+    "app/templates/admin/attendance_settings.html": [],
+    "app/templates/admin/audit_logs.html": [],
+    "app/templates/admin/dashboard.html": [],
+    "app/templates/admin/documents.html": [],
+    "app/templates/admin/nationalities.html": [],
+    "app/templates/admin/operations.html": [],
+    "app/templates/admin/payroll.html": [],
+    "app/templates/admin/reports.html": [],
+    "app/templates/admin/requests.html": [],
+    "app/templates/admin/schedule.html": [],
+    "app/templates/admin/scheduling_settings.html": [],
+    "app/templates/admin/shift_import_preview.html": [],
+    "app/templates/admin/staff.html": [],
+    "app/templates/admin/workforce.html": [],
+    "app/templates/auth/change_password.html": [],
+    "app/templates/auth/login.html": [],
+    "app/templates/base.html": [],
+    "app/templates/errors/403.html": [],
+    "app/templates/notifications.html": [],
+    "app/templates/student/attendance.html": [],
+    "app/templates/student/availability.html": [],
+    "app/templates/student/dashboard.html": [],
+    "app/templates/student/profile.html": [],
+    "app/templates/student/requests.html": [],
+    "app/templates/student/vacancies.html": [],
+    "app/time_utils.py": [],
+    "attendance-terminal/DormAttendanceKiosk.exe": [],
+    "attendance-terminal/DormAttendanceTerminal.cs": [],
+    "attendance-terminal/DormAttendanceTerminal.exe": [],
+    "attendance-terminal/README.md": [],
+    "attendance-terminal/attendance_terminal.py": [],
+    "attendance-terminal/build-terminal.ps1": [],
+    "attendance-terminal/configure-autostart.ps1": [],
+    "attendance-terminal/start-terminal.ps1": [],
+    "attendance-terminal/terminal-defaults.ini": [],
+    "attendance-terminal/terminal-self-update.ps1": [],
+    "config.py": [],
+    "deployment/DEPLOYMENT_WINDOWS_XAMPP.md": [],
+    "deployment/GIT_UPDATE_GUIDE.md": [],
+    "deployment/HTTP_MIGRATION_AND_SEED_RECOVERY_ZH_TW.md": [],
+    "deployment/apache/dorm-staff-vhost.conf.example": [],
+    "deployment/create-portable-backup.ps1": [],
+    "deployment/create_portable_backup.py": [],
+    "deployment/install-production.ps1": [],
+    "deployment/register-startup-task.ps1": [],
+    "deployment/restore-portable.ps1": [],
+    "deployment/start-production.ps1": [],
+    "deployment/unregister-startup-task.ps1": [],
+    "deployment/update-from-git.ps1": [],
+    "main.html": [],
+    "migrations/README": [],
+    "migrations/alembic.ini": [],
+    "migrations/env.py": [],
+    "migrations/script.py.mako": [],
+    "migrations/versions/0f6d8a2c4b17_add_multi_page_document_sets.py": [],
+    "migrations/versions/39cb8e71d2a0_remove_ocr_legacy_columns.py": [],
+    "migrations/versions/3b1d47c8a91e_add_configurable_week_boundary.py": [],
+    "migrations/versions/48463e284ed5_add_security_operations_and_attendance_.py": [],
+    "migrations/versions/486c51e89d9e_add_dynamic_locations_and_payroll_.py": [],
+    "migrations/versions/7860ad8b1090_add_ocr_and_document_retention_policy.py": [],
+    "migrations/versions/79d4488d8faa_add_phase_3_leave_swap_and_audit_.py": [],
+    "migrations/versions/9d5cff5bba6e_add_recurring_shift_series.py": [],
+    "migrations/versions/a8142d35c901_add_admin_display_name.py": [],
+    "migrations/versions/aa16f55dd9f5_add_actionable_notification_center.py": [],
+    "migrations/versions/acce6927c641_add_nationalities_and_foreign_student_.py": [],
+    "migrations/versions/aece1306b930_add_security_audit_request_metadata.py": [],
+    "migrations/versions/b4852085ec6b_add_secure_staff_document_workflow.py": [],
+    "migrations/versions/b71c8e4d2a90_add_configurable_backup_policy.py": [],
+    "migrations/versions/b73d5c81a204_add_attendance_device_deletion.py": [],
+    "migrations/versions/bc7a80fd741c_create_phase_1_core_tables.py": [],
+    "migrations/versions/c4e208981061_add_document_admin_review.py": [],
+    "migrations/versions/c52f41a92b70_allow_multiple_staff_per_shift_type.py": [],
+    "migrations/versions/c92f41d17a86_add_per_device_offline_alerts.py": [],
+    "migrations/versions/c9f45a12d803_add_attendance_device_identity.py": [],
+    "migrations/versions/d81e04b637aa_add_english_location_shift_names.py": [],
+    "migrations/versions/e7c5a2b91d40_add_publication_settlement_workforce.py": [],
+    "migrations/versions/f9a13d72c4e1_add_attendance_clocking.py": [],
+    "portable-windows-launcher/DormStaffLauncher.cs": [],
+    "portable-windows-launcher/DormStaffLauncher.exe": [],
+    "portable-windows-launcher/FIRST_USE.md": [],
+    "portable-windows-launcher/THIRD_PARTY_SOURCES.md": [],
+    "portable-windows-launcher/XAMPP_GUIDE.md": [],
+    "portable-windows-launcher/app.manifest": [],
+    "portable-windows-launcher/bootstrap_first_admin.py": [
+      "app/__init__.py",
+      "app/extensions.py",
+      "app/models.py",
+      "app/services/accounts.py"
+    ],
+    "portable-windows-launcher/build-launcher.ps1": [],
+    "portable-windows-launcher/configure-watchdog-task.ps1": [],
+    "portable-windows-launcher/migrate_portable_data.py": [],
+    "portable-windows-launcher/self-update.ps1": [],
+    "portable-windows-launcher/stop-server.ps1": [],
+    "portable-windows-launcher/watchdog-status.ps1": [],
+    "portable-windows-launcher/watchdog.ps1": [],
+    "requirements-dev.txt": [],
+    "requirements.txt": [],
+    "scripts/inspect_reference_workbook.mjs": [],
+    "scripts/verify_report_workbook.mjs": [],
+    "tests/__init__.py": [],
+    "tests/conftest.py": [
+      "app/__init__.py",
+      "app/extensions.py",
+      "app/models.py"
+    ],
+    "tests/test_admin_accounts.py": [
+      "app/extensions.py",
+      "app/models.py",
+      "tests/conftest.py"
+    ],
+    "tests/test_admin_user_accounts.py": [
+      "app/extensions.py",
+      "app/models.py",
+      "tests/conftest.py"
+    ],
+    "tests/test_attendance.py": [
+      "app/extensions.py",
+      "app/models.py",
+      "app/services/attendance.py",
+      "tests/conftest.py"
+    ],
+    "tests/test_attendance_terminal.py": [],
+    "tests/test_auth.py": [
+      "app/extensions.py",
+      "app/models.py",
+      "tests/conftest.py"
+    ],
+    "tests/test_backup_schedule.py": [
+      "app/extensions.py",
+      "app/models.py",
+      "app/services/__init__.py",
+      "app/services/backups.py",
+      "tests/conftest.py"
+    ],
+    "tests/test_compliance_settings.py": [
+      "app/extensions.py",
+      "app/models.py",
+      "tests/conftest.py",
+      "tests/test_documents.py",
+      "tests/test_scheduling.py"
+    ],
+    "tests/test_deployment.py": [
+      "app/__init__.py",
+      "deployment/create_portable_backup.py"
+    ],
+    "tests/test_documents.py": [
+      "app/extensions.py",
+      "app/models.py",
+      "tests/conftest.py"
+    ],
+    "tests/test_launcher_watchdog.py": [],
+    "tests/test_locations_payroll.py": [
+      "app/extensions.py",
+      "app/models.py",
+      "tests/conftest.py",
+      "tests/test_scheduling.py"
+    ],
+    "tests/test_models.py": [
+      "app/extensions.py",
+      "app/models.py"
+    ],
+    "tests/test_notifications.py": [
+      "app/extensions.py",
+      "app/models.py",
+      "tests/conftest.py",
+      "tests/test_documents.py"
+    ],
+    "tests/test_operations_workforce.py": [
+      "app/extensions.py",
+      "app/models.py",
+      "deployment/create_portable_backup.py",
+      "tests/conftest.py"
+    ],
+    "tests/test_phase3.py": [
+      "app/extensions.py",
+      "app/models.py",
+      "tests/conftest.py",
+      "tests/test_scheduling.py"
+    ],
+    "tests/test_phase5.py": [
+      "app/extensions.py",
+      "app/models.py",
+      "app/services/document_keys.py",
+      "app/services/retention.py",
+      "tests/conftest.py",
+      "tests/test_documents.py"
+    ],
+    "tests/test_portable_migration.py": [],
+    "tests/test_recurring_and_deletion.py": [
+      "app/extensions.py",
+      "app/models.py",
+      "tests/conftest.py"
+    ],
+    "tests/test_reports.py": [
+      "app/extensions.py",
+      "app/models.py",
+      "tests/conftest.py"
+    ],
+    "tests/test_requested_hardening.py": [
+      "app/extensions.py",
+      "app/models.py",
+      "app/services/attendance.py",
+      "tests/conftest.py",
+      "tests/test_attendance.py"
+    ],
+    "tests/test_schedule_management.py": [
+      "app/extensions.py",
+      "app/models.py",
+      "tests/conftest.py"
+    ],
+    "tests/test_scheduling.py": [
+      "app/extensions.py",
+      "app/models.py",
+      "tests/conftest.py"
+    ],
+    "tests/test_security_audit.py": [
+      "app/extensions.py",
+      "app/models.py",
+      "tests/conftest.py"
+    ],
+    "tests/test_security_operations_enhancements.py": [
+      "app/__init__.py",
+      "app/extensions.py",
+      "app/models.py",
+      "app/services/payroll.py",
+      "app/services/scheduling.py",
+      "deployment/create_portable_backup.py"
+    ],
+    "wsgi.py": [
+      "app/__init__.py"
+    ]
+  }
+}

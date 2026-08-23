@@ -18,7 +18,9 @@ def env_flag(name: str, default: bool = False) -> bool:
 
 
 class Config:
-    SECRET_KEY = os.getenv("SECRET_KEY", "dev-only-change-me")
+    # Deliberately no production fallback: a predictable signing key compromises
+    # every login session and CSRF token.
+    SECRET_KEY = os.getenv("SECRET_KEY")
     SQLALCHEMY_DATABASE_URI = os.getenv(
         "DATABASE_URL", f"sqlite:///{(BASE_DIR / 'instance' / 'dorm_staff.db').as_posix()}"
     )
@@ -61,16 +63,21 @@ class Config:
     AUTOMATIC_BACKUP_HOUR = int(os.getenv("AUTOMATIC_BACKUP_HOUR", "2"))
     AUTOMATIC_BACKUP_MINUTE = int(os.getenv("AUTOMATIC_BACKUP_MINUTE", "0"))
     AUTOMATIC_BACKUP_RETENTION_DAYS = int(os.getenv("AUTOMATIC_BACKUP_RETENTION_DAYS", "30"))
+    AUTOMATIC_BACKUP_RETRY_MINUTES = int(os.getenv("AUTOMATIC_BACKUP_RETRY_MINUTES", "30"))
     AUTOMATIC_BACKUP_DIR = os.getenv(
         "AUTOMATIC_BACKUP_DIR", str(BASE_DIR / "instance" / "automatic_backups")
     )
     DOCUMENT_ENCRYPTION_KEY = os.getenv("DOCUMENT_ENCRYPTION_KEY")
     EXPIRY_WARNING_DAYS = (60, 30)
     NOTIFICATION_SYNC_INTERVAL_SECONDS = int(os.getenv("NOTIFICATION_SYNC_INTERVAL_SECONDS", "120"))
+    LOGIN_RATE_WINDOW_MINUTES = int(os.getenv("LOGIN_RATE_WINDOW_MINUTES", "15"))
+    LOGIN_RATE_ACCOUNT_LIMIT = int(os.getenv("LOGIN_RATE_ACCOUNT_LIMIT", "5"))
+    LOGIN_RATE_IP_LIMIT = int(os.getenv("LOGIN_RATE_IP_LIMIT", "12"))
     ATTENDANCE_ENABLED = env_flag("ATTENDANCE_ENABLED", True)
     ATTENDANCE_TRANSPORT_MODE = os.getenv("ATTENDANCE_TRANSPORT_MODE", "HTTPS").strip().upper()
     # Kept for older .env files; HTTPS mode remains the safe default.
     ATTENDANCE_REQUIRE_HTTPS = env_flag("ATTENDANCE_REQUIRE_HTTPS", True)
+    WEB_TRANSPORT_MODE = os.getenv("WEB_TRANSPORT_MODE", "TRUSTED_HTTP").strip().upper()
 
 
 class TestConfig(Config):

@@ -1,0 +1,81 @@
+{
+  "nodes": [
+    {
+      "id": "file:migrations/versions/39cb8e71d2a0_remove_ocr_legacy_columns.py",
+      "type": "file",
+      "name": "39cb8e71d2a0_remove_ocr_legacy_columns.py",
+      "filePath": "migrations/versions/39cb8e71d2a0_remove_ocr_legacy_columns.py",
+      "summary": "移除停用 OCR 後遺留文件欄位並提供可逆 downgrade。",
+      "tags": [
+        "migration",
+        "database",
+        "alembic"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:migrations/versions/39cb8e71d2a0_remove_ocr_legacy_columns.py:upgrade",
+      "type": "function",
+      "name": "upgrade",
+      "filePath": "migrations/versions/39cb8e71d2a0_remove_ocr_legacy_columns.py",
+      "lineRange": [
+        32,
+        72
+      ],
+      "summary": "向前套用此 revision 的資料庫 schema 變更。",
+      "tags": [
+        "function",
+        "migration",
+        "database"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:migrations/versions/39cb8e71d2a0_remove_ocr_legacy_columns.py:downgrade",
+      "type": "function",
+      "name": "downgrade",
+      "filePath": "migrations/versions/39cb8e71d2a0_remove_ocr_legacy_columns.py",
+      "lineRange": [
+        75,
+        95
+      ],
+      "summary": "反向還原此 revision 的資料庫 schema 變更。",
+      "tags": [
+        "function",
+        "migration",
+        "database"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:migrations/versions/39cb8e71d2a0_remove_ocr_legacy_columns.py",
+      "target": "function:migrations/versions/39cb8e71d2a0_remove_ocr_legacy_columns.py:upgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/39cb8e71d2a0_remove_ocr_legacy_columns.py",
+      "target": "function:migrations/versions/39cb8e71d2a0_remove_ocr_legacy_columns.py:upgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/39cb8e71d2a0_remove_ocr_legacy_columns.py",
+      "target": "function:migrations/versions/39cb8e71d2a0_remove_ocr_legacy_columns.py:downgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/39cb8e71d2a0_remove_ocr_legacy_columns.py",
+      "target": "function:migrations/versions/39cb8e71d2a0_remove_ocr_legacy_columns.py:downgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, selectinload
 
 from . import bp
 from ..decorators import role_required
@@ -24,6 +24,7 @@ def attendance_page():
                 joinedload(AttendanceEvent.device).joinedload(AttendanceDevice.location),
                 joinedload(AttendanceEvent.shift).joinedload(Shift.shift_type),
                 joinedload(AttendanceEvent.reviewer),
+                selectinload(AttendanceEvent.review_history),
             )
             .where(AttendanceEvent.staff_id == profile.id)
             .order_by(AttendanceEvent.occurred_at.desc())
@@ -34,7 +35,7 @@ def attendance_page():
         ).all()
     return render_template(
         "student/attendance.html", events=events, cards=cards,
-        reason_required={AttendanceStatus.LATE_REASON_REQUIRED, AttendanceStatus.MISSING_CLOCK_IN},
+        reason_required={AttendanceStatus.LATE_REASON_REQUIRED, AttendanceStatus.MISSING_CLOCK_IN, AttendanceStatus.RETURNED},
         card_status=CardStatus,
     )
 

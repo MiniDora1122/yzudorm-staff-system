@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+
 from flask import has_request_context, request
 
 from ..extensions import db
@@ -12,6 +14,8 @@ def add_audit(
     entity_type: str,
     entity_id: int,
     summary: str,
+    *,
+    changes: dict | None = None,
 ) -> None:
     request_data = {}
     if has_request_context():
@@ -28,6 +32,7 @@ def add_audit(
             entity_type=entity_type,
             entity_id=entity_id,
             safe_summary=summary[:500],
+            changes_json=(json.dumps(changes, ensure_ascii=False, default=str)[:4000] if changes else None),
             **request_data,
         )
     )

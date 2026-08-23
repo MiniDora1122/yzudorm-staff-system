@@ -92,6 +92,11 @@ def test_git_update_closes_launcher_before_replacing_it():
     assert "LauncherDirectoryBase64" in updater
     assert "Already up to date." in launcher
     assert "oldCommit.Equals(targetCommit" in launcher
+    assert "TrustedUpdateCommit" in launcher
+    assert "targetCommit.Equals(trustedCommit" in launcher
+    assert "merge-base --is-ancestor" in launcher
+    assert "$config.TrustedUpdateCommit" in updater
+    assert "Update state no longer matches the configured trusted commit" in updater
     assert 'maintenanceOperation != "UPDATE_RECOVERY_REQUIRED"' in launcher
     assert '$previousErrorActionPreference = $ErrorActionPreference' in updater
     assert '$ErrorActionPreference = "Continue"' in updater

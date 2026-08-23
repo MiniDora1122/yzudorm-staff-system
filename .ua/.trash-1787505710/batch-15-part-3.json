@@ -1,0 +1,3349 @@
+{
+  "nodes": [
+    {
+      "id": "file:migrations/versions/d81e04b637aa_add_english_location_shift_names.py",
+      "type": "file",
+      "name": "d81e04b637aa_add_english_location_shift_names.py",
+      "filePath": "migrations/versions/d81e04b637aa_add_english_location_shift_names.py",
+      "summary": "負責 migrations/versions/d81e04b637aa_add_english_location_shift_names.py 對應的專案功能。",
+      "tags": [
+        "application",
+        "module",
+        "workflow"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:migrations/versions/d81e04b637aa_add_english_location_shift_names.py:upgrade",
+      "type": "function",
+      "name": "upgrade",
+      "filePath": "migrations/versions/d81e04b637aa_add_english_location_shift_names.py",
+      "lineRange": [
+        18,
+        52
+      ],
+      "summary": "套用 d81e04b637aa_add_english_location_shift_names.py 定義的資料庫變更。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:migrations/versions/d81e04b637aa_add_english_location_shift_names.py:downgrade",
+      "type": "function",
+      "name": "downgrade",
+      "filePath": "migrations/versions/d81e04b637aa_add_english_location_shift_names.py",
+      "lineRange": [
+        55,
+        67
+      ],
+      "summary": "反向移除 d81e04b637aa_add_english_location_shift_names.py 新增的 schema。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:migrations/versions/e7c5a2b91d40_add_publication_settlement_workforce.py",
+      "type": "file",
+      "name": "e7c5a2b91d40_add_publication_settlement_workforce.py",
+      "filePath": "migrations/versions/e7c5a2b91d40_add_publication_settlement_workforce.py",
+      "summary": "負責 migrations/versions/e7c5a2b91d40_add_publication_settlement_workforce.py 對應的專案功能。",
+      "tags": [
+        "application",
+        "module",
+        "workflow"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:migrations/versions/e7c5a2b91d40_add_publication_settlement_workforce.py:upgrade",
+      "type": "function",
+      "name": "upgrade",
+      "filePath": "migrations/versions/e7c5a2b91d40_add_publication_settlement_workforce.py",
+      "lineRange": [
+        18,
+        157
+      ],
+      "summary": "套用 e7c5a2b91d40_add_publication_settlement_workforce.py 定義的資料庫變更。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:migrations/versions/e7c5a2b91d40_add_publication_settlement_workforce.py:downgrade",
+      "type": "function",
+      "name": "downgrade",
+      "filePath": "migrations/versions/e7c5a2b91d40_add_publication_settlement_workforce.py",
+      "lineRange": [
+        160,
+        190
+      ],
+      "summary": "反向移除 e7c5a2b91d40_add_publication_settlement_workforce.py 新增的 schema。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:migrations/versions/f9a13d72c4e1_add_attendance_clocking.py",
+      "type": "file",
+      "name": "f9a13d72c4e1_add_attendance_clocking.py",
+      "filePath": "migrations/versions/f9a13d72c4e1_add_attendance_clocking.py",
+      "summary": "負責 migrations/versions/f9a13d72c4e1_add_attendance_clocking.py 對應的專案功能。",
+      "tags": [
+        "application",
+        "module",
+        "workflow"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:migrations/versions/f9a13d72c4e1_add_attendance_clocking.py:upgrade",
+      "type": "function",
+      "name": "upgrade",
+      "filePath": "migrations/versions/f9a13d72c4e1_add_attendance_clocking.py",
+      "lineRange": [
+        18,
+        122
+      ],
+      "summary": "套用 f9a13d72c4e1_add_attendance_clocking.py 定義的資料庫變更。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:migrations/versions/f9a13d72c4e1_add_attendance_clocking.py:downgrade",
+      "type": "function",
+      "name": "downgrade",
+      "filePath": "migrations/versions/f9a13d72c4e1_add_attendance_clocking.py",
+      "lineRange": [
+        125,
+        131
+      ],
+      "summary": "反向移除 f9a13d72c4e1_add_attendance_clocking.py 新增的 schema。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "type": "file",
+      "name": "DormStaffLauncher.cs",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "summary": "Windows Forms Launcher，負責 runtime 安裝、啟停服務、備份移轉、更新與診斷。",
+      "tags": [
+        "windows",
+        "launcher",
+        "deployment",
+        "operations"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:Main",
+      "type": "function",
+      "name": "Main",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        21,
+        96
+      ],
+      "summary": "解析啟動參數並協調主要流程，作為程式入口。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:Load",
+      "type": "function",
+      "name": "Load",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        122,
+        156
+      ],
+      "summary": "讀取並正規化 Load 設定或資料。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:Save",
+      "type": "function",
+      "name": "Save",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        158,
+        175
+      ],
+      "summary": "安全寫入 Save 資料或維護紀錄。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:PortableEnvironment",
+      "type": "function",
+      "name": "PortableEnvironment",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        189,
+        199
+      ],
+      "summary": "實作 Portable Environment 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:DiagnosticText",
+      "type": "function",
+      "name": "DiagnosticText",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        223,
+        238
+      ],
+      "summary": "實作 Diagnostic Text 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:MakePortableProjectPath",
+      "type": "function",
+      "name": "MakePortableProjectPath",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        240,
+        251
+      ],
+      "summary": "實作 Make Portable Project Path 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:PortableManager",
+      "type": "function",
+      "name": "PortableManager",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        301,
+        305
+      ],
+      "summary": "實作 Portable Manager 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:AcquireMaintenance",
+      "type": "function",
+      "name": "AcquireMaintenance",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        319,
+        349
+      ],
+      "summary": "實作 Acquire Maintenance 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:ReleaseMaintenance",
+      "type": "function",
+      "name": "ReleaseMaintenance",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        351,
+        360
+      ],
+      "summary": "實作 Release Maintenance 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:MaintenanceIsActive",
+      "type": "function",
+      "name": "MaintenanceIsActive",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        362,
+        405
+      ],
+      "summary": "實作 Maintenance Is Active 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:InstallOrRepair",
+      "type": "function",
+      "name": "InstallOrRepair",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        407,
+        410
+      ],
+      "summary": "實作 Install Or Repair 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:InstallTerminalRuntime",
+      "type": "function",
+      "name": "InstallTerminalRuntime",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        412,
+        424
+      ],
+      "summary": "實作 Install Terminal Runtime 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:InstallOrRepairCore",
+      "type": "function",
+      "name": "InstallOrRepairCore",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        426,
+        451
+      ],
+      "summary": "實作 Install Or Repair Core 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:ValidateProject",
+      "type": "function",
+      "name": "ValidateProject",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        461,
+        465
+      ],
+      "summary": "檢查 Validate Project 的輸入、安全條件與完整性。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:EnsurePython",
+      "type": "function",
+      "name": "EnsurePython",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        467,
+        489
+      ],
+      "summary": "處理 Ensure Python 設定或更新並驗證結果。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:EnsurePip",
+      "type": "function",
+      "name": "EnsurePip",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        491,
+        504
+      ],
+      "summary": "處理 Ensure Pip 設定或更新並驗證結果。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:ConfigureProjectImportPath",
+      "type": "function",
+      "name": "ConfigureProjectImportPath",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        506,
+        515
+      ],
+      "summary": "處理 Configure Project Import Path 設定或更新並驗證結果。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:EnsureGit",
+      "type": "function",
+      "name": "EnsureGit",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        517,
+        550
+      ],
+      "summary": "處理 Ensure Git 設定或更新並驗證結果。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:EnsureEnvironmentFile",
+      "type": "function",
+      "name": "EnsureEnvironmentFile",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        552,
+        587
+      ],
+      "summary": "處理 Ensure Environment File 設定或更新並驗證結果。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:BackupEnvironmentFile",
+      "type": "function",
+      "name": "BackupEnvironmentFile",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        589,
+        617
+      ],
+      "summary": "處理 Backup Environment File 的備份或匯出流程與完整性驗證。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:UpgradeDatabase",
+      "type": "function",
+      "name": "UpgradeDatabase",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        627,
+        630
+      ],
+      "summary": "實作 Upgrade Database 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:PrepareDatabaseForStart",
+      "type": "function",
+      "name": "PrepareDatabaseForStart",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        642,
+        654
+      ],
+      "summary": "控制 Prepare Database For Start 程序生命週期並驗證服務狀態。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:ResetDatabaseAndCreateFirstAdmin",
+      "type": "function",
+      "name": "ResetDatabaseAndCreateFirstAdmin",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        666,
+        669
+      ],
+      "summary": "實作 Reset Database And Create First Admin 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:ResetDatabaseAndCreateFirstAdminCore",
+      "type": "function",
+      "name": "ResetDatabaseAndCreateFirstAdminCore",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        671,
+        749
+      ],
+      "summary": "實作 Reset Database And Create First Admin Core 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:EnsureConfiguredServiceIsStopped",
+      "type": "function",
+      "name": "EnsureConfiguredServiceIsStopped",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        751,
+        765
+      ],
+      "summary": "控制 Ensure Configured Service Is Stopped 程序生命週期並驗證服務狀態。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:ValidatePortableSqliteDatabase",
+      "type": "function",
+      "name": "ValidatePortableSqliteDatabase",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        767,
+        788
+      ],
+      "summary": "檢查 Validate Portable Sqlite Database 的輸入、安全條件與完整性。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:RotateApplicationSecrets",
+      "type": "function",
+      "name": "RotateApplicationSecrets",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        790,
+        802
+      ],
+      "summary": "實作 Rotate Application Secrets 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:CloneProject@816",
+      "type": "function",
+      "name": "CloneProject",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        816,
+        828
+      ],
+      "summary": "實作 Clone Project 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:PrepareGitUpdate",
+      "type": "function",
+      "name": "PrepareGitUpdate",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        830,
+        876
+      ],
+      "summary": "處理 Prepare Git Update 設定或更新並驗證結果。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:InspectMigrationSource",
+      "type": "function",
+      "name": "InspectMigrationSource",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        886,
+        910
+      ],
+      "summary": "檢查 Inspect Migration Source 的輸入、安全條件與完整性。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:RestorePortableData",
+      "type": "function",
+      "name": "RestorePortableData",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        912,
+        915
+      ],
+      "summary": "執行 Restore Portable Data 回復流程並保護既有資料。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:RestorePortableDataCore",
+      "type": "function",
+      "name": "RestorePortableDataCore",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        917,
+        937
+      ],
+      "summary": "執行 Restore Portable Data Core 回復流程並保護既有資料。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:ExportPortableBackup",
+      "type": "function",
+      "name": "ExportPortableBackup",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        939,
+        942
+      ],
+      "summary": "處理 Export Portable Backup 的備份或匯出流程與完整性驗證。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:ExportPortableBackupCore",
+      "type": "function",
+      "name": "ExportPortableBackupCore",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        944,
+        958
+      ],
+      "summary": "處理 Export Portable Backup Core 的備份或匯出流程與完整性驗證。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:ConfigureWatchdog@960",
+      "type": "function",
+      "name": "ConfigureWatchdog",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        960,
+        988
+      ],
+      "summary": "處理 Configure Watchdog 設定或更新並驗證結果。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:GetWatchdogTaskStatus",
+      "type": "function",
+      "name": "GetWatchdogTaskStatus",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        990,
+        1004
+      ],
+      "summary": "實作 Get Watchdog Task Status 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:ExportSupportBundle",
+      "type": "function",
+      "name": "ExportSupportBundle",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        1006,
+        1047
+      ],
+      "summary": "處理 Export Support Bundle 的備份或匯出流程與完整性驗證。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:AddLogEntry",
+      "type": "function",
+      "name": "AddLogEntry",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        1055,
+        1064
+      ],
+      "summary": "安全寫入 Add Log Entry 資料或維護紀錄。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:StopConfiguredServer",
+      "type": "function",
+      "name": "StopConfiguredServer",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        1066,
+        1083
+      ],
+      "summary": "控制 Stop Configured Server 程序生命週期並驗證服務狀態。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:RunChecked",
+      "type": "function",
+      "name": "RunChecked",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        1085,
+        1090
+      ],
+      "summary": "實作 Run Checked 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:Run",
+      "type": "function",
+      "name": "Run",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        1110,
+        1143
+      ],
+      "summary": "實作 Run 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:Download",
+      "type": "function",
+      "name": "Download",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        1152,
+        1163
+      ],
+      "summary": "讀取並正規化 Download 設定或資料。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:VerifySha256",
+      "type": "function",
+      "name": "VerifySha256",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        1165,
+        1178
+      ],
+      "summary": "檢查 Verify Sha256 的輸入、安全條件與完整性。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:ExtractZipSafely",
+      "type": "function",
+      "name": "ExtractZipSafely",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        1180,
+        1197
+      ],
+      "summary": "實作 Extract Zip Safely 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:Quote",
+      "type": "function",
+      "name": "Quote",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        1217,
+        1217
+      ],
+      "summary": "實作 Quote 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:FreshSetupForm",
+      "type": "function",
+      "name": "FreshSetupForm",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        1231,
+        1280
+      ],
+      "summary": "實作 Fresh Setup Form 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:ValidateAndClose",
+      "type": "function",
+      "name": "ValidateAndClose",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        1290,
+        1303
+      ],
+      "summary": "檢查 Validate And Close 的輸入、安全條件與完整性。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:MigrationConfirmationForm",
+      "type": "function",
+      "name": "MigrationConfirmationForm",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        1315,
+        1365
+      ],
+      "summary": "實作 Migration Confirmation Form 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:LauncherForm",
+      "type": "function",
+      "name": "LauncherForm",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        1395,
+        1442
+      ],
+      "summary": "實作 Launcher Form 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:BuildUi",
+      "type": "function",
+      "name": "BuildUi",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        1444,
+        1507
+      ],
+      "summary": "實作 Build Ui 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:LoadSettingsIntoUi",
+      "type": "function",
+      "name": "LoadSettingsIntoUi",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        1527,
+        1539
+      ],
+      "summary": "讀取並正規化 Load Settings Into Ui 設定或資料。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:SaveSettings",
+      "type": "function",
+      "name": "SaveSettings",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        1541,
+        1569
+      ],
+      "summary": "安全寫入 Save Settings 資料或維護紀錄。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:WriteEnvironmentSetting",
+      "type": "function",
+      "name": "WriteEnvironmentSetting",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        1571,
+        1591
+      ],
+      "summary": "安全寫入 Write Environment Setting 資料或維護紀錄。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:CloneProject@1603",
+      "type": "function",
+      "name": "CloneProject",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        1603,
+        1615
+      ],
+      "summary": "實作 Clone Project 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:ExportSystemBackup",
+      "type": "function",
+      "name": "ExportSystemBackup",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        1617,
+        1637
+      ],
+      "summary": "處理 Export System Backup 的備份或匯出流程與完整性驗證。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:ExportDiagnosticBundle",
+      "type": "function",
+      "name": "ExportDiagnosticBundle",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        1639,
+        1653
+      ],
+      "summary": "處理 Export Diagnostic Bundle 的備份或匯出流程與完整性驗證。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:MigrateOrRestoreData",
+      "type": "function",
+      "name": "MigrateOrRestoreData",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        1655,
+        1692
+      ],
+      "summary": "執行 Migrate Or Restore Data 回復流程並保護既有資料。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:ConfigureWatchdog@1694",
+      "type": "function",
+      "name": "ConfigureWatchdog",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        1694,
+        1720
+      ],
+      "summary": "處理 Configure Watchdog 設定或更新並驗證結果。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:RunBackground",
+      "type": "function",
+      "name": "RunBackground",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        1722,
+        1733
+      ],
+      "summary": "實作 Run Background 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:RunMaintenanceBackground",
+      "type": "function",
+      "name": "RunMaintenanceBackground",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        1735,
+        1745
+      ],
+      "summary": "實作 Run Maintenance Background 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:BeginGitUpdate",
+      "type": "function",
+      "name": "BeginGitUpdate",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        1747,
+        1803
+      ],
+      "summary": "處理 Begin Git Update 設定或更新並驗證結果。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:StartExternalUpdaterAndClose",
+      "type": "function",
+      "name": "StartExternalUpdaterAndClose",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        1810,
+        1838
+      ],
+      "summary": "控制 Start External Updater And Close 程序生命週期並驗證服務狀態。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:PromptInterruptedUpdateRecovery",
+      "type": "function",
+      "name": "PromptInterruptedUpdateRecovery",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        1840,
+        1855
+      ],
+      "summary": "處理 Prompt Interrupted Update Recovery 設定或更新並驗證結果。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:FreshDatabaseSetup",
+      "type": "function",
+      "name": "FreshDatabaseSetup",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        1857,
+        1882
+      ],
+      "summary": "實作 Fresh Database Setup 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:StartServer",
+      "type": "function",
+      "name": "StartServer",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        1884,
+        1937
+      ],
+      "summary": "控制 Start Server 程序生命週期並驗證服務狀態。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:StopServer",
+      "type": "function",
+      "name": "StopServer",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        1940,
+        1960
+      ],
+      "summary": "控制 Stop Server 程序生命週期並驗證服務狀態。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:GetRunningServerProcess",
+      "type": "function",
+      "name": "GetRunningServerProcess",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        1962,
+        1976
+      ],
+      "summary": "實作 Get Running Server Process 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:AppIsHealthy",
+      "type": "function",
+      "name": "AppIsHealthy",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        1978,
+        1992
+      ],
+      "summary": "實作 App Is Healthy 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:CleanupOldLogs",
+      "type": "function",
+      "name": "CleanupOldLogs",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        2026,
+        2036
+      ],
+      "summary": "安全寫入 Cleanup Old Logs 資料或維護紀錄。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:WriteLog",
+      "type": "function",
+      "name": "WriteLog",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        2038,
+        2050
+      ],
+      "summary": "安全寫入 Write Log 資料或維護紀錄。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:ImportWatchdogLog",
+      "type": "function",
+      "name": "ImportWatchdogLog",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        2052,
+        2074
+      ],
+      "summary": "安全寫入 Import Watchdog Log 資料或維護紀錄。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:UpdateStatus",
+      "type": "function",
+      "name": "UpdateStatus",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        2091,
+        2127
+      ],
+      "summary": "處理 Update Status 設定或更新並驗證結果。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:ApplyStatus",
+      "type": "function",
+      "name": "ApplyStatus",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        2129,
+        2141
+      ],
+      "summary": "實作 Apply Status 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/DormStaffLauncher.cs:OnFormClosing",
+      "type": "function",
+      "name": "OnFormClosing",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        2151,
+        2170
+      ],
+      "summary": "實作 On Form Closing 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:portable-windows-launcher/DormStaffLauncher.cs:Program",
+      "type": "class",
+      "name": "Program",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        19,
+        106
+      ],
+      "summary": "Windows Launcher 程式入口與單例控制。",
+      "tags": [
+        "class",
+        "windows-forms",
+        "workflow"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:portable-windows-launcher/DormStaffLauncher.cs:LauncherConfig",
+      "type": "class",
+      "name": "LauncherConfig",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        108,
+        176
+      ],
+      "summary": "Launcher INI 設定模型。",
+      "tags": [
+        "class",
+        "windows-forms",
+        "workflow"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:portable-windows-launcher/DormStaffLauncher.cs:PortableEnvironment",
+      "type": "class",
+      "name": "PortableEnvironment",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        178,
+        252
+      ],
+      "summary": "解析 runtime、專案與日誌的絕對路徑。",
+      "tags": [
+        "class",
+        "windows-forms",
+        "workflow"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:portable-windows-launcher/DormStaffLauncher.cs:PortableManager",
+      "type": "class",
+      "name": "PortableManager",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        288,
+        1218
+      ],
+      "summary": "封裝安裝、資料庫、備份、更新及 Watchdog 維護操作。",
+      "tags": [
+        "class",
+        "windows-forms",
+        "workflow"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:portable-windows-launcher/DormStaffLauncher.cs:FreshSetupForm",
+      "type": "class",
+      "name": "FreshSetupForm",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        1220,
+        1309
+      ],
+      "summary": "收集首次管理員與重建資料庫選項。",
+      "tags": [
+        "class",
+        "windows-forms",
+        "workflow"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:portable-windows-launcher/DormStaffLauncher.cs:MigrationConfirmationForm",
+      "type": "class",
+      "name": "MigrationConfirmationForm",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        1311,
+        1366
+      ],
+      "summary": "顯示移轉來源與風險確認。",
+      "tags": [
+        "class",
+        "windows-forms",
+        "workflow"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:portable-windows-launcher/DormStaffLauncher.cs:LauncherForm",
+      "type": "class",
+      "name": "LauncherForm",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.cs",
+      "lineRange": [
+        1368,
+        2171
+      ],
+      "summary": "協調設定、背景維護與服務狀態的主視窗。",
+      "tags": [
+        "class",
+        "windows-forms",
+        "workflow"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:portable-windows-launcher/DormStaffLauncher.exe",
+      "type": "file",
+      "name": "DormStaffLauncher.exe",
+      "filePath": "portable-windows-launcher/DormStaffLauncher.exe",
+      "summary": "由 C# 原始檔編譯的 Portable Launcher 圖形化執行檔。",
+      "tags": [
+        "windows",
+        "launcher",
+        "deployment",
+        "operations"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:portable-windows-launcher/app.manifest",
+      "type": "file",
+      "name": "app.manifest",
+      "filePath": "portable-windows-launcher/app.manifest",
+      "summary": "宣告 Launcher 的 Windows 權限與相容作業系統。",
+      "tags": [
+        "application",
+        "module",
+        "workflow"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:portable-windows-launcher/migrate_portable_data.py",
+      "type": "file",
+      "name": "migrate_portable_data.py",
+      "filePath": "portable-windows-launcher/migrate_portable_data.py",
+      "summary": "安全檢查、備份及移轉 SQLite、環境密鑰與加密證件。",
+      "tags": [
+        "application",
+        "module",
+        "workflow"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:portable-windows-launcher/migrate_portable_data.py:b64",
+      "type": "function",
+      "name": "b64",
+      "filePath": "portable-windows-launcher/migrate_portable_data.py",
+      "lineRange": [
+        67,
+        68
+      ],
+      "summary": "實作 b64 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/migrate_portable_data.py:emit_info",
+      "type": "function",
+      "name": "emit_info",
+      "filePath": "portable-windows-launcher/migrate_portable_data.py",
+      "lineRange": [
+        71,
+        78
+      ],
+      "summary": "實作 emit info 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/migrate_portable_data.py:known_revisions",
+      "type": "function",
+      "name": "known_revisions",
+      "filePath": "portable-windows-launcher/migrate_portable_data.py",
+      "lineRange": [
+        81,
+        90
+      ],
+      "summary": "實作 known revisions 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/migrate_portable_data.py:sqlite_connection",
+      "type": "function",
+      "name": "sqlite_connection",
+      "filePath": "portable-windows-launcher/migrate_portable_data.py",
+      "lineRange": [
+        93,
+        97
+      ],
+      "summary": "實作 sqlite connection 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/migrate_portable_data.py:table_count",
+      "type": "function",
+      "name": "table_count",
+      "filePath": "portable-windows-launcher/migrate_portable_data.py",
+      "lineRange": [
+        100,
+        106
+      ],
+      "summary": "實作 table count 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/migrate_portable_data.py:inspect_database",
+      "type": "function",
+      "name": "inspect_database",
+      "filePath": "portable-windows-launcher/migrate_portable_data.py",
+      "lineRange": [
+        109,
+        157
+      ],
+      "summary": "檢查 inspect database 的輸入、安全條件與完整性。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/migrate_portable_data.py:safe_archive_name",
+      "type": "function",
+      "name": "safe_archive_name",
+      "filePath": "portable-windows-launcher/migrate_portable_data.py",
+      "lineRange": [
+        160,
+        165
+      ],
+      "summary": "實作 safe archive name 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/migrate_portable_data.py:archive_manifest",
+      "type": "function",
+      "name": "archive_manifest",
+      "filePath": "portable-windows-launcher/migrate_portable_data.py",
+      "lineRange": [
+        168,
+        195
+      ],
+      "summary": "實作 archive manifest 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/migrate_portable_data.py:verify_archive_entry",
+      "type": "function",
+      "name": "verify_archive_entry",
+      "filePath": "portable-windows-launcher/migrate_portable_data.py",
+      "lineRange": [
+        198,
+        206
+      ],
+      "summary": "檢查 verify archive entry 的輸入、安全條件與完整性。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/migrate_portable_data.py:validate_archive_environment",
+      "type": "function",
+      "name": "validate_archive_environment",
+      "filePath": "portable-windows-launcher/migrate_portable_data.py",
+      "lineRange": [
+        209,
+        216
+      ],
+      "summary": "檢查 validate archive environment 的輸入、安全條件與完整性。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/migrate_portable_data.py:inspect_zip",
+      "type": "function",
+      "name": "inspect_zip",
+      "filePath": "portable-windows-launcher/migrate_portable_data.py",
+      "lineRange": [
+        219,
+        239
+      ],
+      "summary": "檢查 inspect zip 的輸入、安全條件與完整性。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/migrate_portable_data.py:inspect_source",
+      "type": "function",
+      "name": "inspect_source",
+      "filePath": "portable-windows-launcher/migrate_portable_data.py",
+      "lineRange": [
+        242,
+        248
+      ],
+      "summary": "檢查 inspect source 的輸入、安全條件與完整性。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/migrate_portable_data.py:sqlite_snapshot",
+      "type": "function",
+      "name": "sqlite_snapshot",
+      "filePath": "portable-windows-launcher/migrate_portable_data.py",
+      "lineRange": [
+        251,
+        255
+      ],
+      "summary": "實作 sqlite snapshot 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/migrate_portable_data.py:extract_data_archive",
+      "type": "function",
+      "name": "extract_data_archive",
+      "filePath": "portable-windows-launcher/migrate_portable_data.py",
+      "lineRange": [
+        258,
+        279
+      ],
+      "summary": "實作 extract data archive 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/migrate_portable_data.py:normalize_portable_env",
+      "type": "function",
+      "name": "normalize_portable_env",
+      "filePath": "portable-windows-launcher/migrate_portable_data.py",
+      "lineRange": [
+        282,
+        303
+      ],
+      "summary": "實作 normalize portable env 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/migrate_portable_data.py:target_database",
+      "type": "function",
+      "name": "target_database",
+      "filePath": "portable-windows-launcher/migrate_portable_data.py",
+      "lineRange": [
+        306,
+        323
+      ],
+      "summary": "實作 target database 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/migrate_portable_data.py:create_target_backup",
+      "type": "function",
+      "name": "create_target_backup",
+      "filePath": "portable-windows-launcher/migrate_portable_data.py",
+      "lineRange": [
+        326,
+        347
+      ],
+      "summary": "處理 create target backup 的備份或匯出流程與完整性驗證。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/migrate_portable_data.py:project_environment",
+      "type": "function",
+      "name": "project_environment",
+      "filePath": "portable-windows-launcher/migrate_portable_data.py",
+      "lineRange": [
+        350,
+        356
+      ],
+      "summary": "實作 project environment 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/migrate_portable_data.py:run_migrations",
+      "type": "function",
+      "name": "run_migrations",
+      "filePath": "portable-windows-launcher/migrate_portable_data.py",
+      "lineRange": [
+        359,
+        371
+      ],
+      "summary": "實作 run migrations 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/migrate_portable_data.py:application_health_check",
+      "type": "function",
+      "name": "application_health_check",
+      "filePath": "portable-windows-launcher/migrate_portable_data.py",
+      "lineRange": [
+        374,
+        394
+      ],
+      "summary": "實作 application health check 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/migrate_portable_data.py:verify_full_documents",
+      "type": "function",
+      "name": "verify_full_documents",
+      "filePath": "portable-windows-launcher/migrate_portable_data.py",
+      "lineRange": [
+        397,
+        421
+      ],
+      "summary": "檢查 verify full documents 的輸入、安全條件與完整性。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/migrate_portable_data.py:append_migration_audit",
+      "type": "function",
+      "name": "append_migration_audit",
+      "filePath": "portable-windows-launcher/migrate_portable_data.py",
+      "lineRange": [
+        424,
+        436
+      ],
+      "summary": "實作 append migration audit 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/migrate_portable_data.py:refresh_environment_backup",
+      "type": "function",
+      "name": "refresh_environment_backup",
+      "filePath": "portable-windows-launcher/migrate_portable_data.py",
+      "lineRange": [
+        439,
+        450
+      ],
+      "summary": "處理 refresh environment backup 的備份或匯出流程與完整性驗證。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/migrate_portable_data.py:restore_source",
+      "type": "function",
+      "name": "restore_source",
+      "filePath": "portable-windows-launcher/migrate_portable_data.py",
+      "lineRange": [
+        453,
+        540
+      ],
+      "summary": "執行 restore source 回復流程並保護既有資料。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:portable-windows-launcher/migrate_portable_data.py:parse_args",
+      "type": "function",
+      "name": "parse_args",
+      "filePath": "portable-windows-launcher/migrate_portable_data.py",
+      "lineRange": [
+        543,
+        548
+      ],
+      "summary": "實作 parse args 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/migrate_portable_data.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "portable-windows-launcher/migrate_portable_data.py",
+      "lineRange": [
+        551,
+        569
+      ],
+      "summary": "解析啟動參數並協調主要流程，作為程式入口。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:portable-windows-launcher/migrate_portable_data.py:MigrationError",
+      "type": "class",
+      "name": "MigrationError",
+      "filePath": "portable-windows-launcher/migrate_portable_data.py",
+      "lineRange": [
+        40,
+        41
+      ],
+      "summary": "可攜資料移轉失敗的明確錯誤。",
+      "tags": [
+        "class",
+        "domain-error",
+        "workflow"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:portable-windows-launcher/migrate_portable_data.py:SourceInfo",
+      "type": "class",
+      "name": "SourceInfo",
+      "filePath": "portable-windows-launcher/migrate_portable_data.py",
+      "lineRange": [
+        45,
+        64
+      ],
+      "summary": "描述移轉來源版本與資料統計。",
+      "tags": [
+        "class",
+        "domain-error",
+        "workflow"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:migrations/versions/d81e04b637aa_add_english_location_shift_names.py",
+      "target": "function:migrations/versions/d81e04b637aa_add_english_location_shift_names.py:upgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/d81e04b637aa_add_english_location_shift_names.py",
+      "target": "function:migrations/versions/d81e04b637aa_add_english_location_shift_names.py:upgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/d81e04b637aa_add_english_location_shift_names.py",
+      "target": "function:migrations/versions/d81e04b637aa_add_english_location_shift_names.py:downgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/d81e04b637aa_add_english_location_shift_names.py",
+      "target": "function:migrations/versions/d81e04b637aa_add_english_location_shift_names.py:downgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/e7c5a2b91d40_add_publication_settlement_workforce.py",
+      "target": "function:migrations/versions/e7c5a2b91d40_add_publication_settlement_workforce.py:upgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/e7c5a2b91d40_add_publication_settlement_workforce.py",
+      "target": "function:migrations/versions/e7c5a2b91d40_add_publication_settlement_workforce.py:upgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/e7c5a2b91d40_add_publication_settlement_workforce.py",
+      "target": "function:migrations/versions/e7c5a2b91d40_add_publication_settlement_workforce.py:downgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/e7c5a2b91d40_add_publication_settlement_workforce.py",
+      "target": "function:migrations/versions/e7c5a2b91d40_add_publication_settlement_workforce.py:downgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/f9a13d72c4e1_add_attendance_clocking.py",
+      "target": "function:migrations/versions/f9a13d72c4e1_add_attendance_clocking.py:upgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/f9a13d72c4e1_add_attendance_clocking.py",
+      "target": "function:migrations/versions/f9a13d72c4e1_add_attendance_clocking.py:upgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/f9a13d72c4e1_add_attendance_clocking.py",
+      "target": "function:migrations/versions/f9a13d72c4e1_add_attendance_clocking.py:downgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/f9a13d72c4e1_add_attendance_clocking.py",
+      "target": "function:migrations/versions/f9a13d72c4e1_add_attendance_clocking.py:downgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:Main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:Load",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:Load",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:Save",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:Save",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:PortableEnvironment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:PortableEnvironment",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:DiagnosticText",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:DiagnosticText",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:MakePortableProjectPath",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:MakePortableProjectPath",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:PortableManager",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:PortableManager",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:AcquireMaintenance",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:AcquireMaintenance",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:ReleaseMaintenance",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:MaintenanceIsActive",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:MaintenanceIsActive",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:InstallOrRepair",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:InstallOrRepair",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:InstallTerminalRuntime",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:InstallTerminalRuntime",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:InstallOrRepairCore",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:ValidateProject",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:ValidateProject",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:EnsurePython",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:EnsurePip",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:ConfigureProjectImportPath",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:ConfigureProjectImportPath",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:EnsureGit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:EnsureEnvironmentFile",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:BackupEnvironmentFile",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:UpgradeDatabase",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:UpgradeDatabase",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:PrepareDatabaseForStart",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:PrepareDatabaseForStart",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:ResetDatabaseAndCreateFirstAdmin",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:ResetDatabaseAndCreateFirstAdmin",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:ResetDatabaseAndCreateFirstAdminCore",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:EnsureConfiguredServiceIsStopped",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:ValidatePortableSqliteDatabase",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:RotateApplicationSecrets",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:CloneProject@816",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:CloneProject@816",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:PrepareGitUpdate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:PrepareGitUpdate",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:InspectMigrationSource",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:InspectMigrationSource",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:RestorePortableData",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:RestorePortableData",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:RestorePortableDataCore",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:ExportPortableBackup",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:ExportPortableBackup",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:ExportPortableBackupCore",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:ConfigureWatchdog@960",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:ConfigureWatchdog@960",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:GetWatchdogTaskStatus",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:GetWatchdogTaskStatus",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:ExportSupportBundle",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:ExportSupportBundle",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:AddLogEntry",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:StopConfiguredServer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:StopConfiguredServer",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:RunChecked",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:RunChecked",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:Run",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:Download",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:VerifySha256",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:ExtractZipSafely",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:Quote",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:Quote",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:FreshSetupForm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:FreshSetupForm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:ValidateAndClose",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:MigrationConfirmationForm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:MigrationConfirmationForm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:LauncherForm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:LauncherForm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:BuildUi",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:LoadSettingsIntoUi",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:SaveSettings",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:WriteEnvironmentSetting",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:CloneProject@1603",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:CloneProject@1603",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:ExportSystemBackup",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:ExportDiagnosticBundle",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:MigrateOrRestoreData",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:ConfigureWatchdog@1694",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:ConfigureWatchdog@1694",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:RunBackground",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:RunMaintenanceBackground",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:BeginGitUpdate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:StartExternalUpdaterAndClose",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:PromptInterruptedUpdateRecovery",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:FreshDatabaseSetup",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:StartServer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:StopServer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:GetRunningServerProcess",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:AppIsHealthy",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:CleanupOldLogs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:WriteLog",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:ImportWatchdogLog",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:UpdateStatus",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:ApplyStatus",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "function:portable-windows-launcher/DormStaffLauncher.cs:OnFormClosing",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "class:portable-windows-launcher/DormStaffLauncher.cs:Program",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "class:portable-windows-launcher/DormStaffLauncher.cs:LauncherConfig",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "class:portable-windows-launcher/DormStaffLauncher.cs:PortableEnvironment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "class:portable-windows-launcher/DormStaffLauncher.cs:PortableEnvironment",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "class:portable-windows-launcher/DormStaffLauncher.cs:PortableManager",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "class:portable-windows-launcher/DormStaffLauncher.cs:PortableManager",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "class:portable-windows-launcher/DormStaffLauncher.cs:FreshSetupForm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "class:portable-windows-launcher/DormStaffLauncher.cs:FreshSetupForm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "class:portable-windows-launcher/DormStaffLauncher.cs:MigrationConfirmationForm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "class:portable-windows-launcher/DormStaffLauncher.cs:MigrationConfirmationForm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "class:portable-windows-launcher/DormStaffLauncher.cs:LauncherForm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "target": "class:portable-windows-launcher/DormStaffLauncher.cs:LauncherForm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:b64",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:b64",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:emit_info",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:emit_info",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:known_revisions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:known_revisions",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:sqlite_connection",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:sqlite_connection",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:table_count",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:table_count",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:inspect_database",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:inspect_database",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:safe_archive_name",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:safe_archive_name",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:archive_manifest",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:archive_manifest",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:verify_archive_entry",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:verify_archive_entry",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:validate_archive_environment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:validate_archive_environment",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:inspect_zip",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:inspect_zip",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:inspect_source",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:inspect_source",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:sqlite_snapshot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:sqlite_snapshot",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:extract_data_archive",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:extract_data_archive",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:normalize_portable_env",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:normalize_portable_env",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:target_database",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:target_database",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:create_target_backup",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:create_target_backup",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:project_environment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:project_environment",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:run_migrations",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:run_migrations",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:application_health_check",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:application_health_check",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:verify_full_documents",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:verify_full_documents",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:append_migration_audit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:append_migration_audit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:refresh_environment_backup",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:refresh_environment_backup",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:restore_source",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:restore_source",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:parse_args",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:parse_args",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "function:portable-windows-launcher/migrate_portable_data.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "class:portable-windows-launcher/migrate_portable_data.py:MigrationError",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "class:portable-windows-launcher/migrate_portable_data.py:MigrationError",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "class:portable-windows-launcher/migrate_portable_data.py:SourceInfo",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/migrate_portable_data.py",
+      "target": "class:portable-windows-launcher/migrate_portable_data.py:SourceInfo",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

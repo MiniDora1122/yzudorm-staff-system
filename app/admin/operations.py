@@ -14,6 +14,7 @@ from ..services.backups import (
     backup_policy,
     latest_backup_run,
     run_backup,
+    run_restore_drill,
     save_backup_policy,
 )
 from ..services.periods import PeriodError, close_month, period_summary, publish_month, unlock_month
@@ -99,6 +100,19 @@ def run_backup_now():
         flash("完整備份已建立，manifest 雜湊與 SQLite 完整性檢查均通過。 / Backup verified.", "success")
     else:
         flash(f"備份失敗：{run.validation_message}", "danger")
+    return redirect(url_for("admin.operations_page", month=request.form.get("month")))
+
+
+@bp.post("/operations/backup-drill/<int:run_id>")
+@role_required(Role.ADMIN)
+def backup_restore_drill(run_id: int):
+    run = db.get_or_404(BackupRun, run_id)
+    if run.status != "SUCCESS":
+        flash("只有成功的備份可以執行復原演練。 / Only successful backups can be tested.", "danger")
+    elif run_restore_drill(run, actor_user_id=current_user.id):
+        flash("復原演練成功：資料庫、文件與解密金鑰均可使用。 / Restore drill passed.", "success")
+    else:
+        flash(f"復原演練失敗：{run.last_drill_message}", "danger")
     return redirect(url_for("admin.operations_page", month=request.form.get("month")))
 
 

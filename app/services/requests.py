@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from datetime import date
 
+from sqlalchemy.exc import IntegrityError
+
 from ..extensions import db
 from ..models import (
     LeaveRequest,
@@ -16,7 +18,7 @@ from ..models import (
     utc_now,
 )
 from .audit import add_audit
-from .scheduling import SchedulingConflict, validate_shift_assignment
+from .scheduling import SchedulingConflict, schedule_serialized, validate_shift_assignment
 
 
 class WorkflowError(ValueError):
@@ -43,6 +45,7 @@ def validate_swap_assignments(
             staff=target_staff,
             exclude_shift_ids=involved,
             allow_location_overlap=True,
+            allow_availability_conflict=True,
         )
         if target_shift is not None:
             validate_shift_assignment(
@@ -51,6 +54,7 @@ def validate_swap_assignments(
                 staff=requester,
                 exclude_shift_ids=involved,
                 allow_location_overlap=True,
+                allow_availability_conflict=True,
             )
     except SchedulingConflict as exc:
         raise WorkflowError(
@@ -59,6 +63,7 @@ def validate_swap_assignments(
         ) from exc
 
 
+@schedule_serialized
 def create_leave_request(
     *, profile: StaffProfile, shift: Shift, reason: str, note: str | None, actor_user_id: int, today: date
 ) -> LeaveRequest:
@@ -92,12 +97,16 @@ def create_leave_request(
         status=LeaveStatus.PENDING,
     )
     db.session.add(request_item)
-    db.session.flush()
+    try:
+        db.session.flush()
+    except IntegrityError as exc:
+        raise WorkflowError("DUPLICATE_LEAVE", "此排班已有待處理的請假申請。") from exc
     add_audit(actor_user_id, "LEAVE_CREATED", "LeaveRequest", request_item.id, f"建立請假申請，排班 #{shift.id}")
     db.session.commit()
     return request_item
 
 
+@schedule_serialized
 def cancel_leave_request(*, request_item: LeaveRequest, profile: StaffProfile, actor_user_id: int) -> None:
     if request_item.staff_id != profile.id:
         raise WorkflowError("NOT_OWNER", "只能取消自己的請假申請。")
@@ -108,6 +117,7 @@ def cancel_leave_request(*, request_item: LeaveRequest, profile: StaffProfile, a
     db.session.commit()
 
 
+@schedule_serialized
 def review_leave_request(
     *, request_item: LeaveRequest, decision: str, review_note: str | None, actor_user_id: int
 ) -> None:
@@ -137,6 +147,7 @@ def review_leave_request(
     db.session.commit()
 
 
+@schedule_serialized
 def create_swap_request(
     *,
     requester: StaffProfile,
@@ -198,12 +209,16 @@ def create_swap_request(
         note=note,
     )
     db.session.add(request_item)
-    db.session.flush()
+    try:
+        db.session.flush()
+    except IntegrityError as exc:
+        raise WorkflowError("DUPLICATE_SWAP", "此排班已有進行中的換班申請。") from exc
     add_audit(actor_user_id, "SWAP_CREATED", "SwapRequest", request_item.id, f"建立換班申請 #{request_item.id}")
     db.session.commit()
     return request_item
 
 
+@schedule_serialized
 def cancel_swap_request(*, request_item: SwapRequest, profile: StaffProfile, actor_user_id: int) -> None:
     if request_item.requester_id != profile.id:
         raise WorkflowError("NOT_OWNER", "只能取消自己提出的換班申請。")
@@ -214,6 +229,7 @@ def cancel_swap_request(*, request_item: SwapRequest, profile: StaffProfile, act
     db.session.commit()
 
 
+@schedule_serialized
 def respond_swap_request(
     *, request_item: SwapRequest, profile: StaffProfile, decision: str, actor_user_id: int
 ) -> None:
@@ -241,6 +257,7 @@ def respond_swap_request(
     db.session.commit()
 
 
+@schedule_serialized
 def review_swap_request(
     *, request_item: SwapRequest, decision: str, review_note: str | None, actor_user_id: int
 ) -> None:
@@ -281,6 +298,7 @@ def review_swap_request(
             staff=request_item.target_staff,
             exclude_shift_ids=involved,
             allow_location_overlap=True,
+            allow_availability_conflict=True,
         )
         if target_shift is not None:
             validate_shift_assignment(
@@ -289,6 +307,7 @@ def review_swap_request(
                 staff=request_item.requester,
                 exclude_shift_ids=involved,
                 allow_location_overlap=True,
+                allow_availability_conflict=True,
             )
     except SchedulingConflict as exc:
         raise WorkflowError(exc.code, f"重新檢查排班時發現衝突：{exc.message}") from exc

@@ -233,6 +233,13 @@
     const sourceNode = textNodes.find((node) => translations.has(node.textContent.trim()));
     if (!sourceNode) return;
     const english = translations.get(sourceNode.textContent.trim());
+    const alreadyTranslated = Array.from(element.children).some((child) =>
+      child.classList.contains("bilingual-english") || child.textContent.trim() === english
+    );
+    if (alreadyTranslated) {
+      element.dataset.bilingualProcessed = "true";
+      return;
+    }
     const span = document.createElement("span");
     span.className = "bilingual-english";
     span.lang = "en";

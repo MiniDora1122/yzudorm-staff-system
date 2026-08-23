@@ -1,0 +1,305 @@
+{
+  "nodes": [
+    {
+      "id": "document:portable-windows-launcher/FIRST_USE.md",
+      "type": "document",
+      "name": "FIRST_USE.md",
+      "filePath": "portable-windows-launcher/FIRST_USE.md",
+      "summary": "Launcher 首次使用、備份、移轉、更新與 Watchdog 操作手冊。",
+      "tags": [
+        "documentation",
+        "operations",
+        "deployment"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:portable-windows-launcher/THIRD_PARTY_SOURCES.md",
+      "type": "document",
+      "name": "THIRD_PARTY_SOURCES.md",
+      "filePath": "portable-windows-launcher/THIRD_PARTY_SOURCES.md",
+      "summary": "記錄第三方元件下載來源與驗證原則。",
+      "tags": [
+        "documentation",
+        "operations",
+        "deployment"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:portable-windows-launcher/XAMPP_GUIDE.md",
+      "type": "document",
+      "name": "XAMPP_GUIDE.md",
+      "filePath": "portable-windows-launcher/XAMPP_GUIDE.md",
+      "summary": "XAMPP Apache 反向代理、HTTP／HTTPS 與可信代理設定指南。",
+      "tags": [
+        "documentation",
+        "operations",
+        "deployment"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:portable-windows-launcher/build-launcher.ps1",
+      "type": "file",
+      "name": "build-launcher.ps1",
+      "filePath": "portable-windows-launcher/build-launcher.ps1",
+      "summary": "編譯 Portable Launcher 並連帶建置打卡終端。",
+      "tags": [
+        "powershell",
+        "windows",
+        "automation",
+        "operations"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:portable-windows-launcher/configure-watchdog-task.ps1",
+      "type": "file",
+      "name": "configure-watchdog-task.ps1",
+      "filePath": "portable-windows-launcher/configure-watchdog-task.ps1",
+      "summary": "建立或移除 Launcher 自啟與巡檢工作排程。",
+      "tags": [
+        "powershell",
+        "windows",
+        "automation",
+        "operations"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:portable-windows-launcher/self-update.ps1",
+      "type": "file",
+      "name": "self-update.ps1",
+      "filePath": "portable-windows-launcher/self-update.ps1",
+      "summary": "套用 Git 更新、依賴與 migration，失敗時自動回復程式與資料。",
+      "tags": [
+        "powershell",
+        "windows",
+        "automation",
+        "operations"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:portable-windows-launcher/stop-server.ps1",
+      "type": "file",
+      "name": "stop-server.ps1",
+      "filePath": "portable-windows-launcher/stop-server.ps1",
+      "summary": "確認 Port 擁有者為可攜 Python 後才停止 Waitress。",
+      "tags": [
+        "powershell",
+        "windows",
+        "automation",
+        "operations"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:portable-windows-launcher/watchdog-status.ps1",
+      "type": "file",
+      "name": "watchdog-status.ps1",
+      "filePath": "portable-windows-launcher/watchdog-status.ps1",
+      "summary": "輸出 Launcher 與 Watchdog 工作排程狀態供 UI 診斷。",
+      "tags": [
+        "powershell",
+        "windows",
+        "automation",
+        "operations"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:portable-windows-launcher/watchdog.ps1",
+      "type": "file",
+      "name": "watchdog.ps1",
+      "filePath": "portable-windows-launcher/watchdog.ps1",
+      "summary": "檢查維護鎖與 health endpoint，必要時安全啟動 Waitress。",
+      "tags": [
+        "powershell",
+        "windows",
+        "automation",
+        "operations"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:portable-windows-launcher/self-update.ps1:Invoke-Checked",
+      "type": "function",
+      "name": "Invoke-Checked",
+      "filePath": "portable-windows-launcher/self-update.ps1",
+      "lineRange": [
+        40,
+        55
+      ],
+      "summary": "執行 native command、記錄輸出並以 exit code 判定成功。",
+      "tags": [
+        "powershell",
+        "function",
+        "operations"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/self-update.ps1:Restore-PreviousVersion",
+      "type": "function",
+      "name": "Restore-PreviousVersion",
+      "filePath": "portable-windows-launcher/self-update.ps1",
+      "lineRange": [
+        57,
+        78
+      ],
+      "summary": "回復舊 commit、依賴、可攜資料與 Launcher 並驗證應用程式。",
+      "tags": [
+        "powershell",
+        "function",
+        "operations"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/watchdog-status.ps1:Write-TaskStatus",
+      "type": "function",
+      "name": "Write-TaskStatus",
+      "filePath": "portable-windows-launcher/watchdog-status.ps1",
+      "lineRange": [
+        8,
+        33
+      ],
+      "summary": "輸出指定 Scheduled Task 的存在、啟用、路徑及執行時間。",
+      "tags": [
+        "powershell",
+        "function",
+        "operations"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/watchdog.ps1:Write-WatchdogLog",
+      "type": "function",
+      "name": "Write-WatchdogLog",
+      "filePath": "portable-windows-launcher/watchdog.ps1",
+      "lineRange": [
+        5,
+        15
+      ],
+      "summary": "輪替並追加 Watchdog 巡檢紀錄。",
+      "tags": [
+        "powershell",
+        "function",
+        "operations"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/watchdog.ps1:Test-ActiveMarker",
+      "type": "function",
+      "name": "Test-ActiveMarker",
+      "filePath": "portable-windows-launcher/watchdog.ps1",
+      "lineRange": [
+        17,
+        39
+      ],
+      "summary": "驗證維護鎖擁有者並清除過期標記。",
+      "tags": [
+        "powershell",
+        "function",
+        "operations"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:portable-windows-launcher/self-update.ps1",
+      "target": "function:portable-windows-launcher/self-update.ps1:Invoke-Checked",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/self-update.ps1",
+      "target": "function:portable-windows-launcher/self-update.ps1:Restore-PreviousVersion",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/watchdog-status.ps1",
+      "target": "function:portable-windows-launcher/watchdog-status.ps1:Write-TaskStatus",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/watchdog.ps1",
+      "target": "function:portable-windows-launcher/watchdog.ps1:Write-WatchdogLog",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/watchdog.ps1",
+      "target": "function:portable-windows-launcher/watchdog.ps1:Test-ActiveMarker",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "document:portable-windows-launcher/FIRST_USE.md",
+      "target": "file:portable-windows-launcher/build-launcher.ps1",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:portable-windows-launcher/FIRST_USE.md",
+      "target": "file:portable-windows-launcher/configure-watchdog-task.ps1",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:portable-windows-launcher/FIRST_USE.md",
+      "target": "file:portable-windows-launcher/self-update.ps1",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:portable-windows-launcher/FIRST_USE.md",
+      "target": "file:portable-windows-launcher/stop-server.ps1",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:portable-windows-launcher/FIRST_USE.md",
+      "target": "file:portable-windows-launcher/watchdog-status.ps1",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:portable-windows-launcher/FIRST_USE.md",
+      "target": "file:portable-windows-launcher/watchdog.ps1",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:portable-windows-launcher/XAMPP_GUIDE.md",
+      "target": "file:portable-windows-launcher/watchdog.ps1",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:portable-windows-launcher/watchdog-status.ps1",
+      "target": "file:portable-windows-launcher/watchdog.ps1",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

@@ -1,11 +1,17 @@
 from __future__ import annotations
 
 from datetime import date, datetime, time, timedelta
+from functools import wraps
+from threading import RLock
 
+from sqlalchemy import text
 from sqlalchemy.orm import joinedload
 
 from ..extensions import db
-from ..models import Shift, ShiftPublicationStatus, ShiftSeries, ShiftStatus, ShiftType, StaffProfile, utc_now
+from ..models import (
+    Shift, ShiftPublicationStatus, ShiftSeries, ShiftStatus, ShiftType,
+    StaffAvailability, StaffProfile, utc_now,
+)
 from .compliance import get_scheduling_policy, is_weekly_limit_exception_day, weekly_limit_applies
 
 
@@ -16,15 +22,44 @@ class SchedulingConflict(ValueError):
         self.message = message
 
 
+_schedule_write_lock = RLock()
+
+
+def _acquire_database_schedule_lock() -> None:
+    """Serialize schedule validation plus writes across application processes."""
+    dialect = db.session.get_bind().dialect.name
+    if dialect == "sqlite":
+        db.session.execute(text(
+            "INSERT OR IGNORE INTO schedule_write_locks (id, touched_at) VALUES (1, CURRENT_TIMESTAMP)"
+        ))
+        db.session.execute(text("UPDATE schedule_write_locks SET touched_at = CURRENT_TIMESTAMP WHERE id = 1"))
+    else:
+        db.session.execute(text("SELECT id FROM schedule_write_locks WHERE id = 1 FOR UPDATE"))
+
+
+def schedule_serialized(func):
+    """Serialize validation and writes in both threads and database processes."""
+    @wraps(func)
+    def wrapped(*args, **kwargs):
+        with _schedule_write_lock:
+            _acquire_database_schedule_lock()
+            db.session.expire_all()
+            try:
+                return func(*args, **kwargs)
+            except Exception:
+                db.session.rollback()
+                raise
+
+    return wrapped
+
+
 def times_overlap(start_a: time, end_a: time, start_b: time, end_b: time) -> bool:
     return start_a < end_b and start_b < end_a
 
 
 def shift_hours(shift_type: ShiftType) -> float:
-    """Return the actual clock hours represented by a same-day shift type."""
-    start = datetime.combine(date.min, shift_type.start_time)
-    end = datetime.combine(date.min, shift_type.end_time)
-    return (end - start).total_seconds() / 3600
+    """Return configured hours used consistently by weekly limits and payroll."""
+    return float(shift_type.default_hours)
 
 
 def validate_shift_assignment(
@@ -35,6 +70,7 @@ def validate_shift_assignment(
     exclude_shift_id: int | None = None,
     exclude_shift_ids: set[int] | None = None,
     allow_location_overlap: bool = False,
+    allow_availability_conflict: bool = False,
 ) -> None:
     from .periods import ensure_month_open
 
@@ -44,6 +80,28 @@ def validate_shift_assignment(
         raise SchedulingConflict(
             "SHIFT_EXCEEDS_DAILY_LIMIT",
             "單一排班不得超過 8 小時。 / A single shift cannot exceed 8 hours.",
+        )
+
+    availability = db.session.scalars(
+        db.select(StaffAvailability).where(
+            StaffAvailability.staff_id == staff.id,
+            StaffAvailability.availability_date == shift_date,
+        )
+    ).all()
+    overlapping_unavailable = any(
+        not item.is_available
+        and times_overlap(shift_type.start_time, shift_type.end_time, item.start_time, item.end_time)
+        for item in availability
+    )
+    available_blocks = [item for item in availability if item.is_available]
+    outside_available_blocks = bool(available_blocks) and not any(
+        item.start_time <= shift_type.start_time and item.end_time >= shift_type.end_time
+        for item in available_blocks
+    )
+    if not allow_availability_conflict and (overlapping_unavailable or outside_available_blocks):
+        raise SchedulingConflict(
+            "AVAILABILITY_CONFIRM_REQUIRED",
+            f"{staff.name} 回報此時段不可排班或不在可排班時段內；管理員確認後仍可排班。 / Availability conflict; an administrator may override it.",
         )
 
     statement = (
@@ -155,6 +213,7 @@ def validate_shift_assignment(
             )
 
 
+@schedule_serialized
 def create_shift(
     *,
     shift_date: date,
@@ -162,6 +221,7 @@ def create_shift(
     staff: StaffProfile,
     actor_id: int,
     allow_location_overlap: bool = False,
+    allow_availability_conflict: bool = False,
     series_id: int | None = None,
     publication_status: ShiftPublicationStatus = ShiftPublicationStatus.PUBLISHED,
     commit: bool = True,
@@ -171,6 +231,7 @@ def create_shift(
         shift_type=shift_type,
         staff=staff,
         allow_location_overlap=allow_location_overlap,
+        allow_availability_conflict=allow_availability_conflict,
     )
     shift = Shift(
         shift_date=shift_date,
@@ -191,6 +252,7 @@ def create_shift(
     return shift
 
 
+@schedule_serialized
 def create_weekly_shift_series(
     *,
     starts_on: date,
@@ -199,6 +261,7 @@ def create_weekly_shift_series(
     staff: StaffProfile,
     actor_id: int,
     allow_location_overlap: bool = False,
+    allow_availability_conflict: bool = False,
     publication_status: ShiftPublicationStatus = ShiftPublicationStatus.PUBLISHED,
 ) -> list[Shift]:
     if ends_on < starts_on:
@@ -230,6 +293,7 @@ def create_weekly_shift_series(
             staff=staff,
             actor_id=actor_id,
             allow_location_overlap=allow_location_overlap,
+            allow_availability_conflict=allow_availability_conflict,
             series_id=series.id,
             publication_status=publication_status,
             commit=False,
@@ -240,6 +304,7 @@ def create_weekly_shift_series(
     return created
 
 
+@schedule_serialized
 def update_shift(
     shift: Shift,
     *,
@@ -247,6 +312,7 @@ def update_shift(
     shift_type: ShiftType,
     staff: StaffProfile,
     allow_location_overlap: bool = False,
+    allow_availability_conflict: bool = False,
     publication_status: ShiftPublicationStatus | None = None,
     actor_id: int | None = None,
 ) -> Shift:
@@ -256,6 +322,7 @@ def update_shift(
         staff=staff,
         exclude_shift_id=shift.id,
         allow_location_overlap=allow_location_overlap,
+        allow_availability_conflict=allow_availability_conflict,
     )
     shift.shift_date = shift_date
     shift.shift_type = shift_type
@@ -280,13 +347,15 @@ def shift_to_event(shift: Shift, *, student_view: bool = False) -> dict:
         title = f"{shift.staff.name}｜{location_label} {shift_type.start_time:%H:%M}"
 
     is_vacancy = shift.status == ShiftStatus.ON_LEAVE
+    background = "#dc3545" if is_vacancy else location.color
     return {
         "id": str(shift.id),
         "title": title,
         "start": f"{shift.shift_date.isoformat()}T{shift_type.start_time:%H:%M:%S}",
         "end": f"{shift.shift_date.isoformat()}T{shift_type.end_time:%H:%M:%S}",
-        "backgroundColor": "#dc3545" if is_vacancy else location.color,
-        "borderColor": "#dc3545" if is_vacancy else location.color,
+        "backgroundColor": background,
+        "borderColor": background,
+        "textColor": contrast_text_color(background),
         "extendedProps": {
             "shiftDate": shift.shift_date.isoformat(),
             "shiftTypeId": shift_type.id,
@@ -313,6 +382,19 @@ def shift_to_event(shift: Shift, *, student_view: bool = False) -> dict:
             "seriesEndsOn": shift.series.ends_on.isoformat() if shift.series else None,
         },
     }
+
+
+def contrast_text_color(color: str) -> str:
+    """Choose readable black or white text for a six-digit calendar color."""
+    value = color.lstrip("#")
+    if len(value) != 6:
+        return "#ffffff"
+    try:
+        red, green, blue = (int(value[index:index + 2], 16) for index in (0, 2, 4))
+    except ValueError:
+        return "#ffffff"
+    luminance = (red * 299 + green * 587 + blue * 114) / 1000
+    return "#111827" if luminance >= 160 else "#ffffff"
 
 
 def month_bounds(month_value: str) -> tuple[date, date]:

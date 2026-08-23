@@ -1,0 +1,1080 @@
+{
+  "nodes": [
+    {
+      "id": "file:tests/test_attendance.py",
+      "type": "file",
+      "name": "test_attendance.py",
+      "filePath": "tests/test_attendance.py",
+      "summary": "以 pytest 驗證attendance相關流程的權限、業務規則與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:tests/test_attendance.py:setup_attendance",
+      "type": "function",
+      "name": "setup_attendance",
+      "filePath": "tests/test_attendance.py",
+      "lineRange": [
+        45,
+        70
+      ],
+      "summary": "setup_attendance 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_attendance.py:signed_post",
+      "type": "function",
+      "name": "signed_post",
+      "filePath": "tests/test_attendance.py",
+      "lineRange": [
+        73,
+        84
+      ],
+      "summary": "signed_post 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_attendance.py:encrypted_post",
+      "type": "function",
+      "name": "encrypted_post",
+      "filePath": "tests/test_attendance.py",
+      "lineRange": [
+        87,
+        107
+      ],
+      "summary": "encrypted_post 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_attendance.py:test_only_signed_registered_device_can_punch_and_duplicate_is_idempotent",
+      "type": "function",
+      "name": "test_only_signed_registered_device_can_punch_and_duplicate_is_idempotent",
+      "filePath": "tests/test_attendance.py",
+      "lineRange": [
+        110,
+        127
+      ],
+      "summary": "驗證「only signed registered device can punch and duplicate is idempotent」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_attendance.py:test_late_account_punch_requires_reason_and_admin_can_review",
+      "type": "function",
+      "name": "test_late_account_punch_requires_reason_and_admin_can_review",
+      "filePath": "tests/test_attendance.py",
+      "lineRange": [
+        130,
+        155
+      ],
+      "summary": "驗證「late account punch requires reason and admin can review」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_attendance.py:test_first_punch_near_end_is_missing_clock_in_and_creates_adjustment_after_review",
+      "type": "function",
+      "name": "test_first_punch_near_end_is_missing_clock_in_and_creates_adjustment_after_review",
+      "filePath": "tests/test_attendance.py",
+      "lineRange": [
+        158,
+        182
+      ],
+      "summary": "驗證「first punch near end is missing clock in and creates adjustment after review」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_attendance.py:test_admin_can_register_card_and_student_can_view_attendance_page",
+      "type": "function",
+      "name": "test_admin_can_register_card_and_student_can_view_attendance_page",
+      "filePath": "tests/test_attendance.py",
+      "lineRange": [
+        185,
+        198
+      ],
+      "summary": "驗證「admin can register card and student can view attendance page」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_attendance.py:test_encrypted_http_hides_payload_and_encrypts_response",
+      "type": "function",
+      "name": "test_encrypted_http_hides_payload_and_encrypts_response",
+      "filePath": "tests/test_attendance.py",
+      "lineRange": [
+        201,
+        214
+      ],
+      "summary": "驗證「encrypted http hides payload and encrypts response」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_attendance.py:test_encrypted_http_rejects_tampering",
+      "type": "function",
+      "name": "test_encrypted_http_rejects_tampering",
+      "filePath": "tests/test_attendance.py",
+      "lineRange": [
+        217,
+        229
+      ],
+      "summary": "驗證「encrypted http rejects tampering」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_attendance.py:test_attendance_can_be_disabled",
+      "type": "function",
+      "name": "test_attendance_can_be_disabled",
+      "filePath": "tests/test_attendance.py",
+      "lineRange": [
+        232,
+        236
+      ],
+      "summary": "驗證「attendance can be disabled」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_attendance.py:test_provisioning_package_sets_unique_device_secret",
+      "type": "function",
+      "name": "test_provisioning_package_sets_unique_device_secret",
+      "filePath": "tests/test_attendance.py",
+      "lineRange": [
+        239,
+        254
+      ],
+      "summary": "驗證「provisioning package sets unique device secret」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_attendance.py:test_admin_creates_dynamic_device_and_downloads_encrypted_package",
+      "type": "function",
+      "name": "test_admin_creates_dynamic_device_and_downloads_encrypted_package",
+      "filePath": "tests/test_attendance.py",
+      "lineRange": [
+        257,
+        277
+      ],
+      "summary": "驗證「admin creates dynamic device and downloads encrypted package」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_attendance.py:test_server_package_is_compatible_with_terminal_importer",
+      "type": "function",
+      "name": "test_server_package_is_compatible_with_terminal_importer",
+      "filePath": "tests/test_attendance.py",
+      "lineRange": [
+        280,
+        306
+      ],
+      "summary": "驗證「server package is compatible with terminal importer」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_attendance.py:test_encrypted_package_activation_is_one_time_and_binds_identity",
+      "type": "function",
+      "name": "test_encrypted_package_activation_is_one_time_and_binds_identity",
+      "filePath": "tests/test_attendance.py",
+      "lineRange": [
+        309,
+        340
+      ],
+      "summary": "驗證「encrypted package activation is one time and binds identity」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_attendance.py:test_expired_activation_package_is_rejected",
+      "type": "function",
+      "name": "test_expired_activation_package_is_rejected",
+      "filePath": "tests/test_attendance.py",
+      "lineRange": [
+        343,
+        360
+      ],
+      "summary": "驗證「expired activation package is rejected」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_attendance.py:test_mac_change_waits_for_admin_confirmation",
+      "type": "function",
+      "name": "test_mac_change_waits_for_admin_confirmation",
+      "filePath": "tests/test_attendance.py",
+      "lineRange": [
+        363,
+        398
+      ],
+      "summary": "驗證「mac change waits for admin confirmation」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_attendance.py:test_attendance_review_note_and_shift_link_are_visible_to_admin_and_student",
+      "type": "function",
+      "name": "test_attendance_review_note_and_shift_link_are_visible_to_admin_and_student",
+      "filePath": "tests/test_attendance.py",
+      "lineRange": [
+        401,
+        431
+      ],
+      "summary": "驗證「attendance review note and shift link are visible to admin and student」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_attendance.py:test_admin_can_link_unmatched_punch_to_new_shift",
+      "type": "function",
+      "name": "test_admin_can_link_unmatched_punch_to_new_shift",
+      "filePath": "tests/test_attendance.py",
+      "lineRange": [
+        434,
+        462
+      ],
+      "summary": "驗證「admin can link unmatched punch to new shift」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_attendance.py:test_attendance_status_appears_on_admin_and_student_calendars",
+      "type": "function",
+      "name": "test_attendance_status_appears_on_admin_and_student_calendars",
+      "filePath": "tests/test_attendance.py",
+      "lineRange": [
+        465,
+        486
+      ],
+      "summary": "驗證「attendance status appears on admin and student calendars」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_attendance.py:test_attendance_settings_are_separate_and_cards_also_appear_on_staff_page",
+      "type": "function",
+      "name": "test_attendance_settings_are_separate_and_cards_also_appear_on_staff_page",
+      "filePath": "tests/test_attendance.py",
+      "lineRange": [
+        489,
+        500
+      ],
+      "summary": "驗證「attendance settings are separate and cards also appear on staff page」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/test_requested_hardening.py",
+      "type": "file",
+      "name": "test_requested_hardening.py",
+      "filePath": "tests/test_requested_hardening.py",
+      "summary": "以 pytest 驗證requested、hardening相關流程的權限、業務規則與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:tests/test_requested_hardening.py:_attendance_event",
+      "type": "function",
+      "name": "_attendance_event",
+      "filePath": "tests/test_requested_hardening.py",
+      "lineRange": [
+        23,
+        40
+      ],
+      "summary": "_attendance_event 實作 test_requested_hardening.py 所屬模組的一項可重用流程。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_requested_hardening.py:test_returned_attendance_can_be_resubmitted_with_history",
+      "type": "function",
+      "name": "test_returned_attendance_can_be_resubmitted_with_history",
+      "filePath": "tests/test_requested_hardening.py",
+      "lineRange": [
+        43,
+        52
+      ],
+      "summary": "驗證「returned attendance can be resubmitted with history」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_requested_hardening.py:test_replacement_package_keeps_active_secret_until_activation",
+      "type": "function",
+      "name": "test_replacement_package_keeps_active_secret_until_activation",
+      "filePath": "tests/test_requested_hardening.py",
+      "lineRange": [
+        55,
+        65
+      ],
+      "summary": "驗證「replacement package keeps active secret until activation」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_requested_hardening.py:test_adjusted_clock_in_is_used_for_hours_and_calendar",
+      "type": "function",
+      "name": "test_adjusted_clock_in_is_used_for_hours_and_calendar",
+      "filePath": "tests/test_requested_hardening.py",
+      "lineRange": [
+        68,
+        79
+      ],
+      "summary": "驗證「adjusted clock in is used for hours and calendar」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_requested_hardening.py:test_csv_preview_confirm_and_undo",
+      "type": "function",
+      "name": "test_csv_preview_confirm_and_undo",
+      "filePath": "tests/test_requested_hardening.py",
+      "lineRange": [
+        82,
+        105
+      ],
+      "summary": "驗證「csv preview confirm and undo」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_requested_hardening.py:test_admin_can_query_attendance_by_exact_time_range",
+      "type": "function",
+      "name": "test_admin_can_query_attendance_by_exact_time_range",
+      "filePath": "tests/test_requested_hardening.py",
+      "lineRange": [
+        108,
+        116
+      ],
+      "summary": "驗證「admin can query attendance by exact time range」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_requested_hardening.py:test_dashboard_health_is_after_primary_content",
+      "type": "function",
+      "name": "test_dashboard_health_is_after_primary_content",
+      "filePath": "tests/test_requested_hardening.py",
+      "lineRange": [
+        119,
+        123
+      ],
+      "summary": "驗證「dashboard health is after primary content」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_requested_hardening.py:test_device_offline_alert_has_its_own_schedule",
+      "type": "function",
+      "name": "test_device_offline_alert_has_its_own_schedule",
+      "filePath": "tests/test_requested_hardening.py",
+      "lineRange": [
+        126,
+        159
+      ],
+      "summary": "驗證「device offline alert has its own schedule」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_requested_hardening.py:test_offline_notification_uses_taipei_time_on_every_page",
+      "type": "function",
+      "name": "test_offline_notification_uses_taipei_time_on_every_page",
+      "filePath": "tests/test_requested_hardening.py",
+      "lineRange": [
+        162,
+        177
+      ],
+      "summary": "驗證「offline notification uses taipei time on every page」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_requested_hardening.py:test_archived_device_is_rejected_and_can_be_restored",
+      "type": "function",
+      "name": "test_archived_device_is_rejected_and_can_be_restored",
+      "filePath": "tests/test_requested_hardening.py",
+      "lineRange": [
+        180,
+        196
+      ],
+      "summary": "驗證「archived device is rejected and can be restored」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_requested_hardening.py:test_deleted_device_disappears_but_attendance_history_remains",
+      "type": "function",
+      "name": "test_deleted_device_disappears_but_attendance_history_remains",
+      "filePath": "tests/test_requested_hardening.py",
+      "lineRange": [
+        199,
+        222
+      ],
+      "summary": "驗證「deleted device disappears but attendance history remains」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_requested_hardening.py:test_encrypted_terminal_recognizes_plain_device_revocation",
+      "type": "function",
+      "name": "test_encrypted_terminal_recognizes_plain_device_revocation",
+      "filePath": "tests/test_requested_hardening.py",
+      "lineRange": [
+        225,
+        247
+      ],
+      "summary": "驗證「encrypted terminal recognizes plain device revocation」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "function:tests/test_attendance.py:setup_attendance",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "function:tests/test_attendance.py:setup_attendance",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "function:tests/test_attendance.py:signed_post",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "function:tests/test_attendance.py:signed_post",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "function:tests/test_attendance.py:encrypted_post",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "function:tests/test_attendance.py:encrypted_post",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "function:tests/test_attendance.py:test_only_signed_registered_device_can_punch_and_duplicate_is_idempotent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "function:tests/test_attendance.py:test_only_signed_registered_device_can_punch_and_duplicate_is_idempotent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "function:tests/test_attendance.py:test_late_account_punch_requires_reason_and_admin_can_review",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "function:tests/test_attendance.py:test_late_account_punch_requires_reason_and_admin_can_review",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "function:tests/test_attendance.py:test_first_punch_near_end_is_missing_clock_in_and_creates_adjustment_after_review",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "function:tests/test_attendance.py:test_first_punch_near_end_is_missing_clock_in_and_creates_adjustment_after_review",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "function:tests/test_attendance.py:test_admin_can_register_card_and_student_can_view_attendance_page",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "function:tests/test_attendance.py:test_admin_can_register_card_and_student_can_view_attendance_page",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "function:tests/test_attendance.py:test_encrypted_http_hides_payload_and_encrypts_response",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "function:tests/test_attendance.py:test_encrypted_http_hides_payload_and_encrypts_response",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "function:tests/test_attendance.py:test_encrypted_http_rejects_tampering",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "function:tests/test_attendance.py:test_encrypted_http_rejects_tampering",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "function:tests/test_attendance.py:test_attendance_can_be_disabled",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "function:tests/test_attendance.py:test_attendance_can_be_disabled",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "function:tests/test_attendance.py:test_provisioning_package_sets_unique_device_secret",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "function:tests/test_attendance.py:test_provisioning_package_sets_unique_device_secret",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "function:tests/test_attendance.py:test_admin_creates_dynamic_device_and_downloads_encrypted_package",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "function:tests/test_attendance.py:test_admin_creates_dynamic_device_and_downloads_encrypted_package",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "function:tests/test_attendance.py:test_server_package_is_compatible_with_terminal_importer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "function:tests/test_attendance.py:test_server_package_is_compatible_with_terminal_importer",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "function:tests/test_attendance.py:test_encrypted_package_activation_is_one_time_and_binds_identity",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "function:tests/test_attendance.py:test_encrypted_package_activation_is_one_time_and_binds_identity",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "function:tests/test_attendance.py:test_expired_activation_package_is_rejected",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "function:tests/test_attendance.py:test_expired_activation_package_is_rejected",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "function:tests/test_attendance.py:test_mac_change_waits_for_admin_confirmation",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "function:tests/test_attendance.py:test_mac_change_waits_for_admin_confirmation",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "function:tests/test_attendance.py:test_attendance_review_note_and_shift_link_are_visible_to_admin_and_student",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "function:tests/test_attendance.py:test_attendance_review_note_and_shift_link_are_visible_to_admin_and_student",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "function:tests/test_attendance.py:test_admin_can_link_unmatched_punch_to_new_shift",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "function:tests/test_attendance.py:test_admin_can_link_unmatched_punch_to_new_shift",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "function:tests/test_attendance.py:test_attendance_status_appears_on_admin_and_student_calendars",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "function:tests/test_attendance.py:test_attendance_status_appears_on_admin_and_student_calendars",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "function:tests/test_attendance.py:test_attendance_settings_are_separate_and_cards_also_appear_on_staff_page",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "function:tests/test_attendance.py:test_attendance_settings_are_separate_and_cards_also_appear_on_staff_page",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_requested_hardening.py",
+      "target": "function:tests/test_requested_hardening.py:_attendance_event",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_requested_hardening.py",
+      "target": "function:tests/test_requested_hardening.py:test_returned_attendance_can_be_resubmitted_with_history",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_requested_hardening.py",
+      "target": "function:tests/test_requested_hardening.py:test_returned_attendance_can_be_resubmitted_with_history",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_requested_hardening.py",
+      "target": "function:tests/test_requested_hardening.py:test_replacement_package_keeps_active_secret_until_activation",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_requested_hardening.py",
+      "target": "function:tests/test_requested_hardening.py:test_replacement_package_keeps_active_secret_until_activation",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_requested_hardening.py",
+      "target": "function:tests/test_requested_hardening.py:test_adjusted_clock_in_is_used_for_hours_and_calendar",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_requested_hardening.py",
+      "target": "function:tests/test_requested_hardening.py:test_adjusted_clock_in_is_used_for_hours_and_calendar",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_requested_hardening.py",
+      "target": "function:tests/test_requested_hardening.py:test_csv_preview_confirm_and_undo",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_requested_hardening.py",
+      "target": "function:tests/test_requested_hardening.py:test_csv_preview_confirm_and_undo",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_requested_hardening.py",
+      "target": "function:tests/test_requested_hardening.py:test_admin_can_query_attendance_by_exact_time_range",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_requested_hardening.py",
+      "target": "function:tests/test_requested_hardening.py:test_admin_can_query_attendance_by_exact_time_range",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_requested_hardening.py",
+      "target": "function:tests/test_requested_hardening.py:test_dashboard_health_is_after_primary_content",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_requested_hardening.py",
+      "target": "function:tests/test_requested_hardening.py:test_dashboard_health_is_after_primary_content",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_requested_hardening.py",
+      "target": "function:tests/test_requested_hardening.py:test_device_offline_alert_has_its_own_schedule",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_requested_hardening.py",
+      "target": "function:tests/test_requested_hardening.py:test_device_offline_alert_has_its_own_schedule",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_requested_hardening.py",
+      "target": "function:tests/test_requested_hardening.py:test_offline_notification_uses_taipei_time_on_every_page",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_requested_hardening.py",
+      "target": "function:tests/test_requested_hardening.py:test_offline_notification_uses_taipei_time_on_every_page",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_requested_hardening.py",
+      "target": "function:tests/test_requested_hardening.py:test_archived_device_is_rejected_and_can_be_restored",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_requested_hardening.py",
+      "target": "function:tests/test_requested_hardening.py:test_archived_device_is_rejected_and_can_be_restored",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_requested_hardening.py",
+      "target": "function:tests/test_requested_hardening.py:test_deleted_device_disappears_but_attendance_history_remains",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_requested_hardening.py",
+      "target": "function:tests/test_requested_hardening.py:test_deleted_device_disappears_but_attendance_history_remains",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_requested_hardening.py",
+      "target": "function:tests/test_requested_hardening.py:test_encrypted_terminal_recognizes_plain_device_revocation",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_requested_hardening.py",
+      "target": "function:tests/test_requested_hardening.py:test_encrypted_terminal_recognizes_plain_device_revocation",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "file:app/services/attendance.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_attendance.py",
+      "target": "file:tests/conftest.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_requested_hardening.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_requested_hardening.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_requested_hardening.py",
+      "target": "file:app/services/attendance.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_requested_hardening.py",
+      "target": "file:tests/conftest.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_requested_hardening.py",
+      "target": "file:tests/test_attendance.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    }
+  ]
+}

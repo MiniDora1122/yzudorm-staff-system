@@ -127,6 +127,26 @@ def test_only_signed_registered_device_can_punch_and_duplicate_is_idempotent(cli
         assert db.session.scalar(db.select(db.func.count()).select_from(AttendanceEvent)) == 1
 
 
+def test_event_id_and_device_sequence_cannot_be_reused_for_different_punches(client, app, monkeypatch):
+    import app.services.attendance as attendance
+    monkeypatch.setattr(attendance, "utc_now", lambda: FIXED_NOW)
+    setup_attendance(app)
+    event_id = str(uuid4())
+    first = {
+        "event_id": event_id, "sequence": 1, "occurred_at": "2026-08-19T08:55:00+08:00",
+        "method": "CARD", "card_uid": "CARD0001", "offline": False,
+    }
+    assert signed_post(client, "/attendance-api/punch", first).status_code == 200
+
+    changed_event = signed_post(client, "/attendance-api/punch", {**first, "sequence": 2})
+    assert changed_event.status_code == 409
+    assert changed_event.json["error"]["code"] == "EVENT_ID_REUSED"
+
+    reused_sequence = signed_post(client, "/attendance-api/punch", {**first, "event_id": str(uuid4())})
+    assert reused_sequence.status_code == 409
+    assert reused_sequence.json["error"]["code"] == "SEQUENCE_REUSED"
+
+
 def test_late_account_punch_requires_reason_and_admin_can_review(client, app, monkeypatch):
     import app.services.attendance as attendance
     monkeypatch.setattr(attendance, "utc_now", lambda: FIXED_NOW)

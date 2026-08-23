@@ -1,0 +1,155 @@
+[
+  {
+    "order": 1,
+    "title": "專案全貌",
+    "description": "先從 README 掌握這套宿舍工讀生系統要解決的問題：它把排班、出勤、請假換班、證件、薪資報表與安全稽核整合在同一平台。這份總覽也交代管理員、工讀生與打卡終端三種使用面向，為後續閱讀建立共同語彙。",
+    "nodeIds": [
+      "document:README.md"
+    ]
+  },
+  {
+    "order": 2,
+    "title": "啟動與設定",
+    "description": "從 wsgi.py 進入 Flask application factory，可看見系統如何載入環境設定、初始化共用擴充套件、註冊 Blueprint 與維護排程。config.py 與環境變數範本把資料庫、Session、Cookie、可信代理、檔案保存及時區等部署差異留在程式外。這一站建立整個應用程式的 runtime 骨架。",
+    "nodeIds": [
+      "file:wsgi.py",
+      "file:app/__init__.py",
+      "file:app/extensions.py",
+      "file:config.py",
+      "config:.env.example"
+    ],
+    "languageLesson": "Flask application factory 會在函式內建立 app，使測試與不同環境能各自套用設定；擴充套件則先建立、再以 init_app 綁定，避免模組匯入時就固定全域狀態。"
+  },
+  {
+    "order": 3,
+    "title": "領域資料基礎",
+    "description": "上一站完成啟動後，models.py 定義所有長期狀態的共同資料語言，包括帳號、排班、申請、通知、證件、備份、人力需求與出勤。Alembic 設定與 migration 環境把這些 SQLAlchemy 模型連到可追蹤、可演進的資料庫版本。理解這一層後，後續服務為何需要交易、狀態列舉與關聯約束會更清楚。",
+    "nodeIds": [
+      "file:app/models.py",
+      "file:migrations/env.py",
+      "config:migrations/alembic.ini"
+    ],
+    "languageLesson": "SQLAlchemy model 描述物件與資料表關係；Alembic migration 則保存結構變更的時間順序。兩者分工讓程式模型可以演進，同時確保既有資料庫能逐版升級。"
+  },
+  {
+    "order": 4,
+    "title": "路由與角色權限",
+    "description": "管理員與工讀生路由把前述資料模型和服務暴露為頁面及 JSON API，但兩者的能力邊界不同。decorators.py 在伺服器端強制 ADMIN／STUDENT 授權，因此權限不是只靠畫面隱藏按鈕。admin/routes.py 與 student/routes.py 也是理解主要使用流程的兩個入口。",
+    "nodeIds": [
+      "file:app/admin/routes.py",
+      "file:app/student/routes.py",
+      "file:app/decorators.py"
+    ],
+    "languageLesson": "Python decorator（裝飾器）可在不改動每個 route 主體的情況下包住共通授權檢查；Flask Blueprint 則把大型應用依角色與功能拆成可註冊的路由模組。"
+  },
+  {
+    "order": 5,
+    "title": "排班申請核心",
+    "description": "建立在模型與權限之上，scheduling.py 是排班交易、時數規則、衝突檢查與重複系列的核心。compliance.py 補上可設定的外籍生文件與每週時數政策，requests.py 處理請假換班的同儕及管理員流程，periods.py 管理發布與月份鎖定。workflow_calendar.py 最後把流程狀態轉成月曆註記，讓業務狀態能在班表上被看見。",
+    "nodeIds": [
+      "file:app/services/scheduling.py",
+      "file:app/services/compliance.py",
+      "file:app/services/requests.py",
+      "file:app/services/periods.py",
+      "file:app/services/workflow_calendar.py"
+    ]
+  },
+  {
+    "order": 6,
+    "title": "缺員與人力配置",
+    "description": "排班建立後若產生缺員，workforce service 會計算開放資格、名額與申請結果，核准時再建立正式排班。管理員路由負責群組、受眾和審核，學生路由只提供本人可見的缺員瀏覽、申請與取消。這個分層讓『對誰開放』與『誰可承接』同時受到後端約束。",
+    "nodeIds": [
+      "file:app/services/workforce.py",
+      "file:app/admin/workforce.py",
+      "file:app/student/vacancies.py",
+      "file:app/templates/admin/workforce.html",
+      "file:app/templates/student/vacancies.html"
+    ]
+  },
+  {
+    "order": 7,
+    "title": "雙語月曆介面",
+    "description": "base.html 提供依角色切換的雙語導覽與共用資源，後續頁面都建立在這個 Jinja 骨架上。管理員排班模板與 admin_schedule.js 實作 FullCalendar、地點分列、重複與批量操作；student_calendar.js 則限制學生端只呈現自己或所有已發布班表。bilingual.js 統一補上較小的英文副標，使動態元件也遵循相同語言規則。",
+    "nodeIds": [
+      "file:app/templates/base.html",
+      "file:app/templates/admin/schedule.html",
+      "file:app/static/js/admin_schedule.js",
+      "file:app/static/js/student_calendar.js",
+      "file:app/static/js/bilingual.js"
+    ],
+    "languageLesson": "Jinja2 在伺服器端組合 HTML 與角色資料，Vanilla JavaScript 再處理月曆互動與尺寸更新；這種漸進增強方式不需大型前端框架，也能保留後端權限作為最終權威。"
+  },
+  {
+    "order": 8,
+    "title": "證件安全生命週期",
+    "description": "documents.py 統一處理證件驗證、正規化、加密、版本、審核與授權下載，避免敏感影像散落在 route 或公開 static 目錄。document_keys.py 管理主金鑰及備份，storage_lock.py 序列化跨執行緒與跨程序的檔案操作，retention.py 則依保存期限刪除實體檔案並留下稽核。學生 profile 頁是這套安全流程的主要使用入口。",
+    "nodeIds": [
+      "file:app/services/documents.py",
+      "file:app/services/document_keys.py",
+      "file:app/services/storage_lock.py",
+      "file:app/services/retention.py",
+      "file:app/templates/student/profile.html"
+    ]
+  },
+  {
+    "order": 9,
+    "title": "通知維運稽核",
+    "description": "notifications.py 把證件、效期、申請和裝置異常同步成可完成的待辦，而 audit.py 以不含敏感資料的摘要記錄重要動作與設定差異。maintenance.py 使用程序鎖週期執行通知同步、文件清理與備份，backups.py 再處理備份政策、輪替與復原演練。管理員 operations 路由把這些營運控制安全地提供給介面。",
+    "nodeIds": [
+      "file:app/services/notifications.py",
+      "file:app/services/audit.py",
+      "file:app/services/maintenance.py",
+      "file:app/services/backups.py",
+      "file:app/admin/operations.py"
+    ]
+  },
+  {
+    "order": 10,
+    "title": "出勤端到端",
+    "description": "attendance service 將裝置佈建、加密請求、卡片識別、上下班判定、異常審核與計薪時數串成單一領域流程。attendance API 是外部打卡終端的受保護邊界，管理員 attendance 路由則提供裝置與出勤核對功能。本機 kiosk 保存受 DPAPI 保護的設定與離線佇列；終端 README 說明安裝、安全邊界及故障處理。",
+    "nodeIds": [
+      "file:app/services/attendance.py",
+      "file:app/attendance_api/routes.py",
+      "file:app/admin/attendance.py",
+      "file:attendance-terminal/attendance_terminal.py",
+      "document:attendance-terminal/README.md"
+    ]
+  },
+  {
+    "order": 11,
+    "title": "薪資報表鏈路",
+    "description": "payroll.py 依生效日設定與可計薪時數試算薪資、保費和雇主成本，reports.py 再把月工時、每日矩陣及各類營運資料輸出為 XLSX 或 CSV。管理員報表模板提供下載入口，payroll.js 與 reports.js 讓年月及報表類型切換後的畫面與連結保持一致。這一站把排班與出勤資料轉成實際行政產物。",
+    "nodeIds": [
+      "file:app/services/payroll.py",
+      "file:app/services/reports.py",
+      "file:app/templates/admin/reports.html",
+      "file:app/static/js/payroll.js",
+      "file:app/static/js/reports.js"
+    ]
+  },
+  {
+    "order": 12,
+    "title": "Windows 部署維運",
+    "description": "DormStaffLauncher.cs 負責可攜 runtime、服務啟停、備份移轉、更新與診斷，watchdog.ps1 則在維護鎖與 health check 的保護下巡檢 Waitress。FIRST_USE.md 說明首次使用及日常操作，XAMPP 與部署指南補上 Apache 反向代理、可信代理、HTTP／HTTPS 和環境設定。這些非 Web 程式檔共同構成現場 Windows 部署的生命週期。",
+    "nodeIds": [
+      "file:portable-windows-launcher/DormStaffLauncher.cs",
+      "file:portable-windows-launcher/watchdog.ps1",
+      "document:portable-windows-launcher/FIRST_USE.md",
+      "document:portable-windows-launcher/XAMPP_GUIDE.md",
+      "document:deployment/DEPLOYMENT_WINDOWS_XAMPP.md"
+    ],
+    "languageLesson": "PowerShell 排程與 watchdog 適合處理 Windows 程序生命週期；C# Windows Forms 則提供桌面操作介面。兩者把 Python Web 應用包裝成不需使用者直接操作命令列的現場部署工具。"
+  },
+  {
+    "order": 13,
+    "title": "自動化測試保護網",
+    "description": "最後回到 tests/conftest.py，了解測試如何建立隔離資料庫、Flask client 與登入 helper，讓每個案例擁有可重現環境。Phase 3、出勤與安全強化測試分別覆蓋請假換班、打卡流程、權限與資料一致性。這些測試是修改前述核心服務、部署安全與邊界條件時的主要回歸防線。",
+    "nodeIds": [
+      "file:tests/conftest.py",
+      "file:tests/test_phase3.py",
+      "file:tests/test_attendance.py",
+      "file:tests/test_requested_hardening.py"
+    ],
+    "languageLesson": "pytest fixture 可集中建立測試資料與登入狀態，並讓案例只宣告所需依賴；搭配隔離資料庫，可避免測試順序互相污染。"
+  }
+]

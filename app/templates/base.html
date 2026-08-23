@@ -33,7 +33,8 @@
           <li class="nav-item"><a class="nav-link" href="{{ url_for('student.dashboard') }}" data-en="Home">我的首頁</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ url_for('student.attendance_page') }}" data-en="Attendance">我的出勤</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ url_for('student.requests_page') }}" data-en="Leave / Swap">請假／換班</a></li>
-          <li class="nav-item"><a class="nav-link" href="{{ url_for('student.vacancies_page') }}" data-en="Open vacancies">開放缺員</a></li>
+           <li class="nav-item"><a class="nav-link" href="{{ url_for('student.vacancies_page') }}" data-en="Open vacancies">開放缺員</a></li>
+           <li class="nav-item"><a class="nav-link" href="{{ url_for('student.availability_page') }}" data-en="Availability">可排班時段</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ url_for('student.profile') }}" data-en="My profile">我的資料</a></li>
           {% endif %}
           {% set notification_url = url_for('admin.notifications_page') if current_user.role.value == 'ADMIN' else url_for('student.notifications_page') %}

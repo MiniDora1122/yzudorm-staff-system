@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, time, timedelta
 from decimal import Decimal
 from io import BytesIO
 from zipfile import ZIP_DEFLATED, ZipFile
@@ -23,11 +23,14 @@ from ..models import (
     ShiftType,
     StaffProfile,
     StaffDocument,
+    StaffAvailability,
+    AttendanceReconciliation,
     SwapAdminStatus,
     SwapRequest,
     WorkLocation,
 )
-from ..services.payroll import calculate_staff_cost, get_payroll_setting
+from ..services.payroll import calculate_staff_cost, get_payroll_setting, payable_hours_expression
+from ..services.audit import add_audit
 from ..services.notifications import notification_page_for_user, notifications_for_user
 from ..services.compliance import (
     active_countries,
@@ -124,9 +127,10 @@ def dashboard():
             .limit(5)
         ).all()
         month_hours = db.session.scalar(
-            db.select(db.func.coalesce(db.func.sum(ShiftType.default_hours), 0))
+            db.select(db.func.coalesce(db.func.sum(payable_hours_expression()), 0))
             .select_from(Shift)
             .join(ShiftType, Shift.shift_type_id == ShiftType.id)
+            .outerjoin(AttendanceReconciliation, AttendanceReconciliation.shift_id == Shift.id)
             .where(
                 Shift.staff_id == profile.id,
                 Shift.status == ShiftStatus.SCHEDULED,
@@ -138,7 +142,7 @@ def dashboard():
         setting = get_payroll_setting(month_start)
         if setting is not None:
             cost = calculate_staff_cost(
-                profile=profile, hours=Decimal(str(month_hours or 0)), setting=setting
+                profile=profile, hours=Decimal(str(month_hours or 0)), setting=setting, on_date=month_start
             )
             month_wage = cost["gross_wage"]
             hourly_wage = cost["hourly_wage"]
@@ -203,6 +207,62 @@ def notifications_page():
     )
 
 
+@bp.get("/availability")
+@role_required(Role.STUDENT)
+def availability_page():
+    profile = current_user.staff_profile
+    entries = db.session.scalars(
+        db.select(StaffAvailability)
+        .where(
+            StaffAvailability.staff_id == profile.id,
+            StaffAvailability.availability_date >= local_today(),
+        )
+        .order_by(StaffAvailability.availability_date, StaffAvailability.start_time)
+        .limit(200)
+    ).all()
+    return render_template("student/availability.html", entries=entries, today=local_today())
+
+
+@bp.post("/availability")
+@role_required(Role.STUDENT)
+def create_availability():
+    profile = current_user.staff_profile
+    try:
+        availability_date = date.fromisoformat(request.form.get("availability_date", ""))
+        start_time = time.fromisoformat(request.form.get("start_time", ""))
+        end_time = time.fromisoformat(request.form.get("end_time", ""))
+        if availability_date < local_today() or end_time <= start_time:
+            raise ValueError
+    except ValueError:
+        flash("日期或時間範圍錯誤。 / Invalid date or time range.", "danger")
+        return redirect(url_for("student.availability_page"))
+    entry = StaffAvailability(
+        staff_id=profile.id,
+        availability_date=availability_date,
+        start_time=start_time,
+        end_time=end_time,
+        is_available=request.form.get("is_available") == "yes",
+        note=request.form.get("note", "").strip()[:300] or None,
+    )
+    db.session.add(entry)
+    db.session.flush()
+    add_audit(current_user.id, "AVAILABILITY_CREATED", "StaffAvailability", entry.id, "新增個人可排班時段")
+    db.session.commit()
+    flash("時段已新增；管理員仍可確認後略過提醒。 / Availability saved.", "success")
+    return redirect(url_for("student.availability_page"))
+
+
+@bp.post("/availability/<int:entry_id>/delete")
+@role_required(Role.STUDENT)
+def delete_availability(entry_id: int):
+    entry = db.get_or_404(StaffAvailability, entry_id)
+    if entry.staff_id != current_user.staff_profile.id:
+        return "Forbidden", 403
+    add_audit(current_user.id, "AVAILABILITY_DELETED", "StaffAvailability", entry.id, "刪除個人可排班時段")
+    db.session.delete(entry)
+    db.session.commit()
+    flash("時段已刪除。 / Availability deleted.", "success")
+    return redirect(url_for("student.availability_page"))
 @bp.get("/profile")
 @role_required(Role.STUDENT)
 def profile():
@@ -688,6 +748,8 @@ def shift_events():
     try:
         start = parse_calendar_date(request.args.get("start"))
         end = parse_calendar_date(request.args.get("end"))
+        if end <= start or end - start > timedelta(days=93):
+            raise ValueError("日期範圍須為 1 至 93 天。 / Date range must be between 1 and 93 days.")
     except ValueError as exc:
         return jsonify({"error": {"code": "VALIDATION_ERROR", "message": str(exc)}}), 400
 
@@ -747,9 +809,10 @@ def monthly_hours_api():
     hourly_wage = 0
     if profile is not None:
         total = db.session.scalar(
-            db.select(db.func.coalesce(db.func.sum(ShiftType.default_hours), 0))
+            db.select(db.func.coalesce(db.func.sum(payable_hours_expression()), 0))
             .select_from(Shift)
             .join(ShiftType)
+            .outerjoin(AttendanceReconciliation, AttendanceReconciliation.shift_id == Shift.id)
             .where(
                 Shift.staff_id == profile.id,
                 Shift.status == ShiftStatus.SCHEDULED,
@@ -761,7 +824,7 @@ def monthly_hours_api():
         setting = get_payroll_setting(start)
         if setting is not None:
             cost = calculate_staff_cost(
-                profile=profile, hours=Decimal(str(total or 0)), setting=setting
+                profile=profile, hours=Decimal(str(total or 0)), setting=setting, on_date=start
             )
             gross_wage = cost["gross_wage"]
             hourly_wage = cost["hourly_wage"]

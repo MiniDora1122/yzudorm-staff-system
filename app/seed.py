@@ -6,6 +6,7 @@ import click
 from .extensions import db
 from .models import (
     Country,
+    MinimumWageRate,
     PayrollSetting,
     Role,
     SchedulingPolicy,
@@ -209,6 +210,18 @@ def seed_database() -> None:
                 average_dependents=Decimal("0.56"),
                 supplementary_health_rate=Decimal("0.0211"),
                 employer_pension_rate=Decimal("0.06"),
+            )
+        )
+
+    minimum_wage = db.session.scalar(
+        db.select(MinimumWageRate).where(MinimumWageRate.effective_date == date(2026, 1, 1))
+    )
+    if minimum_wage is None:
+        db.session.add(
+            MinimumWageRate(
+                effective_date=date(2026, 1, 1),
+                hourly_wage=Decimal("196"),
+                created_by=users["admin"].id,
             )
         )
 

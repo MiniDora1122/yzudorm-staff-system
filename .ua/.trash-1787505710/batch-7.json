@@ -1,0 +1,110 @@
+{
+  "nodes": [
+    {
+      "id": "config:.env.example",
+      "type": "config",
+      "name": ".env.example",
+      "filePath": ".env.example",
+      "summary": "開發環境變數範本，列出 Flask、資料庫、Session、文件與代理選項。",
+      "tags": [
+        "configuration",
+        "security",
+        "deployment"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:.env.production.example",
+      "type": "config",
+      "name": ".env.production.example",
+      "filePath": ".env.production.example",
+      "summary": "生產環境範本，要求安全秘密與 Cookie，並提供 Apache 代理設定。",
+      "tags": [
+        "configuration",
+        "security",
+        "deployment"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:AGENTS.md",
+      "type": "document",
+      "name": "AGENTS.md",
+      "filePath": "AGENTS.md",
+      "summary": "專案協作規範，說明功能、權限、安全、資料模型、測試與交付要求。",
+      "tags": [
+        "documentation",
+        "application",
+        "operations"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:CODEX_TASK.md",
+      "type": "document",
+      "name": "CODEX_TASK.md",
+      "filePath": "CODEX_TASK.md",
+      "summary": "基礎階段任務規格，定義 Flask 架構、核心模型、認證、seed 與驗收。",
+      "tags": [
+        "documentation",
+        "application",
+        "operations"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "README.md",
+      "summary": "專案總覽與操作指南，涵蓋建置、資料庫、測試、備份及部署。",
+      "tags": [
+        "documentation",
+        "application",
+        "operations"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:main.html",
+      "type": "file",
+      "name": "main.html",
+      "filePath": "main.html",
+      "summary": "最初單頁排班原型，保存 FullCalendar、地點、衝突與統計的 UX 來源。",
+      "tags": [
+        "component",
+        "jinja-template",
+        "application"
+      ],
+      "complexity": "complex",
+      "languageNotes": "使用 Jinja2、Bootstrap 與中英雙語標記。"
+    },
+    {
+      "id": "document:requirements-dev.txt",
+      "type": "document",
+      "name": "requirements-dev.txt",
+      "filePath": "requirements-dev.txt",
+      "summary": "開發依賴，在正式依賴上加入 pytest 與 PyInstaller。",
+      "tags": [
+        "documentation",
+        "application",
+        "operations"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:requirements.txt",
+      "type": "document",
+      "name": "requirements.txt",
+      "filePath": "requirements.txt",
+      "summary": "Flask 應用正式依賴，涵蓋 ORM、驗證、密碼、排程、加密、XLSX 與 Waitress。",
+      "tags": [
+        "documentation",
+        "application",
+        "operations"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": []
+}

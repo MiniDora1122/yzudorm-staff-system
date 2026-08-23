@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% block title %}薪資與雇主成本試算 Payroll Estimate｜宿舍工讀生系統{% endblock %}
 {% block content %}
-<div id="payrollApp" data-report-url="{{ url_for('admin.payroll_report_api') }}" data-settings-url="{{ url_for('admin.save_payroll_setting_api') }}" data-staff-url-template="{{ url_for('admin.update_staff_payroll_api', staff_id=999999) }}">
+<div id="payrollApp" data-report-url="{{ url_for('admin.payroll_report_api') }}" data-settings-url="{{ url_for('admin.save_payroll_setting_api') }}" data-staff-url-template="{{ url_for('admin.update_staff_payroll_api', staff_id=999999) }}" data-minimum-wage="{{ current_minimum_wage }}">
   <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-end gap-3 mb-4">
     <div>
       <span class="eyebrow" data-en="ADMIN ONLY">僅限管理員</span>
       <h1 class="h2 fw-bold mt-2 mb-1" data-en="Payroll and employer cost estimate">薪資與雇主成本試算</h1>
-      <p class="text-secondary mb-0" data-en="Wages use scheduled hours. Insurance and pension costs are visible only to administrators.">工資依排班時數計算；勞保、就保、災保、健保與勞退只在管理端顯示。</p>
+      <p class="text-secondary mb-0" data-en="Wages use reconciled payable hours, falling back to configured shift hours. Insurance and pension costs are admin-only.">工資優先採核對後計薪時數，未核對則採班別設定時數；保險與勞退成本只在管理端顯示。</p>
     </div>
     <button class="btn btn-outline-primary" id="payrollSettingsButton" type="button" data-en="Rate settings"><i class="bi bi-sliders me-2"></i>費率設定</button>
   </div>
@@ -15,6 +15,8 @@
     <i class="bi bi-exclamation-triangle me-2"></i>本頁為預估工具。投保薪資級距、是否由本單位投保、職災行業別費率及非全月加退保日數，仍須以勞保局／健保署核定資料為準。
   </div>
   <div id="payrollAlert" class="alert d-none" role="alert"></div>
+
+  <div class="card app-card border-0 shadow-sm mb-4"><div class="card-body p-4"><div class="row g-3 align-items-end"><div class="col-lg-5"><h2 class="h5 fw-bold mb-1" data-en="Statutory minimum wage history">法規最低工資生效紀錄</h2><div class="small text-secondary">{% for rate in wage_rates %}<span class="badge text-bg-light border me-1">{{ rate.effective_date }}｜${{ '%g'|format(rate.hourly_wage) }}</span>{% endfor %}</div></div><form class="col-lg-7 row g-2 align-items-end" method="post" action="{{ url_for('admin.save_minimum_wage') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><div class="col-sm-5"><label class="form-label" data-en="Effective date">生效日</label><input class="form-control" name="effective_date" type="date" required></div><div class="col-sm-4"><label class="form-label" data-en="Hourly minimum">最低時薪</label><input class="form-control" name="hourly_wage" type="number" min="1" step="1" required></div><div class="col-sm-3"><button class="btn btn-outline-primary w-100" data-en="Save">儲存</button></div></form></div></div></div>
 
   <div class="card app-card border-0 shadow-sm mb-4"><div class="card-body p-4"><div class="row align-items-end g-3"><div class="col-sm-6 col-lg-3"><label class="form-label" for="payrollMonth">計算月份</label><input class="form-control" id="payrollMonth" type="month"></div><div class="col-sm-6 col-lg-3"><button class="btn btn-primary w-100" id="loadPayrollButton" type="button"><i class="bi bi-calculator me-2"></i>重新計算</button></div><div class="col-lg-6 text-lg-end text-secondary small">套用費率日：<strong id="effectiveDateLabel">—</strong></div></div></div></div>
 

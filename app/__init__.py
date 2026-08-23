@@ -1,8 +1,7 @@
 from pathlib import Path
-import time
 
 from flask import Flask, redirect, render_template, request, session, url_for
-from flask_login import current_user
+from flask_login import current_user, logout_user
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 from config import Config
@@ -19,6 +18,22 @@ def create_app(config_object=Config):
         app.config.from_mapping(config_object)
     elif config_object is not Config:
         app.config.from_object(config_object)
+
+    secret = str(app.config.get("SECRET_KEY") or "")
+    unsafe_secrets = {"dev-only-change-me", "change-me", "secret", "請替換成隨機密鑰"}
+    if not app.config.get("TESTING") and (len(secret) < 32 or secret.lower() in unsafe_secrets):
+        raise RuntimeError(
+            "SECRET_KEY is missing or unsafe. Generate a unique value with "
+            "`python -c \"import secrets; print(secrets.token_hex(32))\"` and save it in .env."
+        )
+    if app.config.get("WEB_TRANSPORT_MODE") not in {"HTTPS", "TRUSTED_HTTP"}:
+        raise RuntimeError("WEB_TRANSPORT_MODE must be HTTPS or TRUSTED_HTTP.")
+    if (
+        not app.config.get("TESTING")
+        and app.config.get("WEB_TRANSPORT_MODE") == "HTTPS"
+        and not app.config.get("SESSION_COOKIE_SECURE")
+    ):
+        raise RuntimeError("HTTPS mode requires SESSION_COOKIE_SECURE=1.")
 
     if app.config.get("TRUST_PROXY"):
         app.wsgi_app = ProxyFix(
@@ -63,24 +78,49 @@ def create_app(config_object=Config):
     init_maintenance_scheduler(app)
 
     @app.before_request
-    def refresh_action_notifications():
-        if current_user.is_authenticated and request.endpoint != "static":
-            now = int(time.time())
-            last_sync = int(session.get("notification_sync_at", 0))
-            if now - last_sync < int(app.config["NOTIFICATION_SYNC_INTERVAL_SECONDS"]):
-                return
-            from .services.notifications import sync_admin_notifications, sync_student_notifications
+    def reject_invalidated_session():
+        user_id = session.get("_user_id")
+        if user_id is None:
+            return None
+        try:
+            user_id = int(user_id)
+        except (TypeError, ValueError):
+            user_id = -1
+        user = db.session.scalar(db.select(User).where(User.id == user_id).execution_options(populate_existing=True))
+        if user is not None and user.is_active and session.get("session_version") == user.session_version:
+            return None
+        logout_user()
+        session.clear()
+        if request.endpoint == "auth.login":
+            return None
+        return redirect(url_for("auth.login"))
 
-            if current_user.role == Role.ADMIN:
-                sync_admin_notifications()
-            else:
-                sync_student_notifications(current_user)
-            session["notification_sync_at"] = now
+    @app.before_request
+    def refresh_notifications_on_page_request():
+        if current_user.is_authenticated and request.method == "GET" and request.blueprint in {"admin", "student"}:
+            from .services.notifications import refresh_notifications_for_user
+
+            refresh_notifications_for_user(current_user)
 
     @app.after_request
-    def invalidate_notifications_after_mutation(response):
-        if current_user.is_authenticated and request.method not in {"GET", "HEAD", "OPTIONS"}:
-            session.pop("notification_sync_at", None)
+    def set_security_headers(response):
+        response.headers.setdefault("X-Content-Type-Options", "nosniff")
+        response.headers.setdefault("X-Frame-Options", "DENY")
+        response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+        response.headers.setdefault(
+            "Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+        )
+        response.headers.setdefault("Cross-Origin-Opener-Policy", "same-origin")
+        response.headers.setdefault(
+            "Content-Security-Policy",
+            "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+            "img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; object-src 'none'; "
+            "base-uri 'self'; frame-ancestors 'none'; form-action 'self'",
+        )
+        if current_user.is_authenticated or request.endpoint in {"auth.login", "auth.change_password"}:
+            response.headers.setdefault("Cache-Control", "no-store")
+        if request.is_secure:
+            response.headers.setdefault("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
         return response
 
     @app.context_processor
@@ -93,13 +133,9 @@ def create_app(config_object=Config):
 
     @app.template_filter("localdt")
     def local_datetime_filter(value, pattern="%Y-%m-%d %H:%M"):
-        if value is None:
-            return "—"
-        from datetime import timezone
-        from zoneinfo import ZoneInfo
-        if value.tzinfo is None:
-            value = value.replace(tzinfo=timezone.utc)
-        return value.astimezone(ZoneInfo(app.config["APP_TIMEZONE"])).strftime(pattern)
+        from .time_utils import format_local_datetime
+
+        return format_local_datetime(value, pattern)
 
     @app.get("/")
     def index():
@@ -130,4 +166,9 @@ def create_app(config_object=Config):
 def load_user(user_id: str):
     if not user_id.isdigit():
         return None
-    return db.session.get(User, int(user_id))
+    user = db.session.get(User, int(user_id))
+    if user is None or not user.is_active:
+        return None
+    if session.get("session_version") != user.session_version:
+        return None
+    return user

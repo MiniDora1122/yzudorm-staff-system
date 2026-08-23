@@ -2,11 +2,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from flask import url_for
+from flask import current_app, url_for
 from sqlalchemy.orm import joinedload
 
 from ..extensions import db
 from ..models import (
+    AttendanceDevice,
     DocumentStatus,
     DocumentType,
     LeaveRequest,
@@ -24,6 +25,7 @@ from ..models import (
 )
 from .documents import expiry_state, group_document_sets
 from .compliance import missing_required_document_types
+from ..time_utils import format_local_datetime
 
 
 MANAGED_CATEGORIES = {
@@ -34,6 +36,7 @@ MANAGED_CATEGORIES = {
     "LEAVE_REVIEW",
     "SWAP_REVIEW",
     "SWAP_RESPONSE",
+    "ATTENDANCE_DEVICE",
 }
 SEVERITY_ORDER = {"DANGER": 0, "WARNING": 1, "INFO": 2, "SUCCESS": 3}
 
@@ -117,6 +120,28 @@ def _sync_specs(
 
 def sync_admin_notifications() -> None:
     specs: list[NotificationSpec] = []
+    from .health import offline_attendance_devices
+    for device in offline_attendance_devices():
+        specs.append(NotificationSpec(
+            key=f"ADMIN:ATTENDANCE_DEVICE:OFFLINE:{device.id}", category="ATTENDANCE_DEVICE",
+            severity="DANGER", title_zh=f"打卡裝置離線：{device.name}",
+            title_en=f"Attendance device offline: {device.name}",
+            message_zh=f"最後連線：{format_local_datetime(device.last_seen_at or device.enrolled_at, '%Y-%m-%d %H:%M:%S')}。請檢查終端、網路與同步程式。",
+            message_en="Check the terminal, network and synchronization service.",
+            target_url=url_for("admin.attendance_settings") + "#devices",
+        ))
+    changed_devices = db.session.scalars(
+        db.select(AttendanceDevice).where(AttendanceDevice.identity_changed_at.is_not(None))
+    ).all()
+    for device in changed_devices:
+        specs.append(NotificationSpec(
+            key=f"ADMIN:ATTENDANCE_DEVICE:IDENTITY:{device.id}", category="ATTENDANCE_DEVICE",
+            severity="WARNING", title_zh=f"打卡裝置資訊異動：{device.name}",
+            title_en=f"Attendance device identity changed: {device.name}",
+            message_zh="請確認電腦名稱與實體網路卡 MAC 是否為預期變更。",
+            message_en="Confirm the computer name and physical adapter MAC change.",
+            target_url=url_for("admin.attendance_settings") + "#devices",
+        ))
     pending_documents = db.session.scalars(
         db.select(StaffDocument)
         .options(joinedload(StaffDocument.staff))
@@ -295,6 +320,19 @@ def sync_student_notifications(user: User) -> None:
                 )
             )
     _sync_specs(specs, user_id=user.id)
+
+
+def refresh_notifications_for_user(user: User) -> bool:
+    try:
+        if user.role == Role.ADMIN:
+            sync_admin_notifications()
+        else:
+            sync_student_notifications(user)
+        return True
+    except Exception:
+        db.session.rollback()
+        current_app.logger.exception("Notification refresh failed for user %s", user.id)
+        return False
 
 
 def notifications_for_user(user: User) -> tuple[list[Notification], list[Notification]]:

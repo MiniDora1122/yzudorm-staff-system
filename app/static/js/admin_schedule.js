@@ -565,6 +565,7 @@ document.addEventListener("DOMContentLoaded", () => {
       staff_id: document.getElementById("shiftStaff").value,
       shift_type_id: typeRadio.value,
       allow_location_overlap: false,
+      allow_availability_conflict: false,
       repeat_weekly: repeatWeekly,
       recurrence_end: repeatWeekly ? document.getElementById("recurrenceEnd").value : null,
       publication_status: document.getElementById("shiftPublication").value,
@@ -578,20 +579,26 @@ document.addEventListener("DOMContentLoaded", () => {
           headers: { "Content-Type": "application/json", "X-CSRFToken": csrfToken },
           body: JSON.stringify(payload),
         });
-      let response = await saveRequest();
-      if (!response.ok) {
+      let response;
+      while (true) {
+        response = await saveRequest();
+        if (response.ok) break;
         const errorPayload = await response.json().catch(() => ({}));
         const code = errorPayload.error?.code;
         const message = errorPayload.error?.message || "操作失敗，請稍後再試。";
-        if (response.status === 409 && code === "LOCATION_CONFIRM_REQUIRED") {
+        if (response.status === 409 && code === "LOCATION_CONFIRM_REQUIRED" && !payload.allow_location_overlap) {
           const confirmed = window.confirm(`${message}\n\n仍要安排多人於同一地點的重疊時段嗎？\nContinue with multiple staff at this location and time?`);
           if (!confirmed) throw new Error("已取消儲存，未變更排班。 / Save cancelled; no schedule was changed.");
           payload.allow_location_overlap = true;
-          response = await saveRequest();
-          if (!response.ok) throw new Error(await readError(response));
-        } else {
-          throw new Error(message);
+          continue;
         }
+        if (response.status === 409 && code === "AVAILABILITY_CONFIRM_REQUIRED" && !payload.allow_availability_conflict) {
+          const confirmed = window.confirm(`${message}\n\n仍要排班嗎？\nSchedule anyway?`);
+          if (!confirmed) throw new Error("已取消儲存，未變更排班。 / Save cancelled; no schedule was changed.");
+          payload.allow_availability_conflict = true;
+          continue;
+        }
+        throw new Error(message);
       }
       if (!keepAdding) modal.hide();
       else {

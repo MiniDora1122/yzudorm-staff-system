@@ -1,0 +1,681 @@
+{
+  "nodes": [
+    {
+      "id": "file:migrations/versions/aece1306b930_add_security_audit_request_metadata.py",
+      "type": "file",
+      "name": "aece1306b930_add_security_audit_request_metadata.py",
+      "filePath": "migrations/versions/aece1306b930_add_security_audit_request_metadata.py",
+      "summary": "負責 migrations/versions/aece1306b930_add_security_audit_request_metadata.py 對應的專案功能。",
+      "tags": [
+        "application",
+        "module",
+        "workflow"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:migrations/versions/aece1306b930_add_security_audit_request_metadata.py:upgrade",
+      "type": "function",
+      "name": "upgrade",
+      "filePath": "migrations/versions/aece1306b930_add_security_audit_request_metadata.py",
+      "lineRange": [
+        19,
+        32
+      ],
+      "summary": "套用 aece1306b930_add_security_audit_request_metadata.py 定義的資料庫變更。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:migrations/versions/aece1306b930_add_security_audit_request_metadata.py:downgrade",
+      "type": "function",
+      "name": "downgrade",
+      "filePath": "migrations/versions/aece1306b930_add_security_audit_request_metadata.py",
+      "lineRange": [
+        35,
+        50
+      ],
+      "summary": "反向移除 aece1306b930_add_security_audit_request_metadata.py 新增的 schema。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:migrations/versions/b4852085ec6b_add_secure_staff_document_workflow.py",
+      "type": "file",
+      "name": "b4852085ec6b_add_secure_staff_document_workflow.py",
+      "filePath": "migrations/versions/b4852085ec6b_add_secure_staff_document_workflow.py",
+      "summary": "負責 migrations/versions/b4852085ec6b_add_secure_staff_document_workflow.py 對應的專案功能。",
+      "tags": [
+        "application",
+        "module",
+        "workflow"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:migrations/versions/b4852085ec6b_add_secure_staff_document_workflow.py:upgrade",
+      "type": "function",
+      "name": "upgrade",
+      "filePath": "migrations/versions/b4852085ec6b_add_secure_staff_document_workflow.py",
+      "lineRange": [
+        19,
+        69
+      ],
+      "summary": "套用 b4852085ec6b_add_secure_staff_document_workflow.py 定義的資料庫變更。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:migrations/versions/b4852085ec6b_add_secure_staff_document_workflow.py:downgrade",
+      "type": "function",
+      "name": "downgrade",
+      "filePath": "migrations/versions/b4852085ec6b_add_secure_staff_document_workflow.py",
+      "lineRange": [
+        72,
+        82
+      ],
+      "summary": "反向移除 b4852085ec6b_add_secure_staff_document_workflow.py 新增的 schema。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:migrations/versions/b71c8e4d2a90_add_configurable_backup_policy.py",
+      "type": "file",
+      "name": "b71c8e4d2a90_add_configurable_backup_policy.py",
+      "filePath": "migrations/versions/b71c8e4d2a90_add_configurable_backup_policy.py",
+      "summary": "負責 migrations/versions/b71c8e4d2a90_add_configurable_backup_policy.py 對應的專案功能。",
+      "tags": [
+        "application",
+        "module",
+        "workflow"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:migrations/versions/b71c8e4d2a90_add_configurable_backup_policy.py:upgrade",
+      "type": "function",
+      "name": "upgrade",
+      "filePath": "migrations/versions/b71c8e4d2a90_add_configurable_backup_policy.py",
+      "lineRange": [
+        18,
+        41
+      ],
+      "summary": "套用 b71c8e4d2a90_add_configurable_backup_policy.py 定義的資料庫變更。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:migrations/versions/b71c8e4d2a90_add_configurable_backup_policy.py:downgrade",
+      "type": "function",
+      "name": "downgrade",
+      "filePath": "migrations/versions/b71c8e4d2a90_add_configurable_backup_policy.py",
+      "lineRange": [
+        44,
+        45
+      ],
+      "summary": "反向移除 b71c8e4d2a90_add_configurable_backup_policy.py 新增的 schema。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:migrations/versions/b73d5c81a204_add_attendance_device_deletion.py",
+      "type": "file",
+      "name": "b73d5c81a204_add_attendance_device_deletion.py",
+      "filePath": "migrations/versions/b73d5c81a204_add_attendance_device_deletion.py",
+      "summary": "負責 migrations/versions/b73d5c81a204_add_attendance_device_deletion.py 對應的專案功能。",
+      "tags": [
+        "application",
+        "module",
+        "workflow"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:migrations/versions/b73d5c81a204_add_attendance_device_deletion.py:upgrade",
+      "type": "function",
+      "name": "upgrade",
+      "filePath": "migrations/versions/b73d5c81a204_add_attendance_device_deletion.py",
+      "lineRange": [
+        16,
+        18
+      ],
+      "summary": "套用 b73d5c81a204_add_attendance_device_deletion.py 定義的資料庫變更。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:migrations/versions/b73d5c81a204_add_attendance_device_deletion.py:downgrade",
+      "type": "function",
+      "name": "downgrade",
+      "filePath": "migrations/versions/b73d5c81a204_add_attendance_device_deletion.py",
+      "lineRange": [
+        21,
+        23
+      ],
+      "summary": "反向移除 b73d5c81a204_add_attendance_device_deletion.py 新增的 schema。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:migrations/versions/bc7a80fd741c_create_phase_1_core_tables.py",
+      "type": "file",
+      "name": "bc7a80fd741c_create_phase_1_core_tables.py",
+      "filePath": "migrations/versions/bc7a80fd741c_create_phase_1_core_tables.py",
+      "summary": "負責 migrations/versions/bc7a80fd741c_create_phase_1_core_tables.py 對應的專案功能。",
+      "tags": [
+        "application",
+        "module",
+        "workflow"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:migrations/versions/bc7a80fd741c_create_phase_1_core_tables.py:upgrade",
+      "type": "function",
+      "name": "upgrade",
+      "filePath": "migrations/versions/bc7a80fd741c_create_phase_1_core_tables.py",
+      "lineRange": [
+        19,
+        90
+      ],
+      "summary": "套用 bc7a80fd741c_create_phase_1_core_tables.py 定義的資料庫變更。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:migrations/versions/bc7a80fd741c_create_phase_1_core_tables.py:downgrade",
+      "type": "function",
+      "name": "downgrade",
+      "filePath": "migrations/versions/bc7a80fd741c_create_phase_1_core_tables.py",
+      "lineRange": [
+        93,
+        108
+      ],
+      "summary": "反向移除 bc7a80fd741c_create_phase_1_core_tables.py 新增的 schema。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:migrations/versions/c4e208981061_add_document_admin_review.py",
+      "type": "file",
+      "name": "c4e208981061_add_document_admin_review.py",
+      "filePath": "migrations/versions/c4e208981061_add_document_admin_review.py",
+      "summary": "負責 migrations/versions/c4e208981061_add_document_admin_review.py 對應的專案功能。",
+      "tags": [
+        "application",
+        "module",
+        "workflow"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:migrations/versions/c4e208981061_add_document_admin_review.py:upgrade",
+      "type": "function",
+      "name": "upgrade",
+      "filePath": "migrations/versions/c4e208981061_add_document_admin_review.py",
+      "lineRange": [
+        19,
+        38
+      ],
+      "summary": "套用 c4e208981061_add_document_admin_review.py 定義的資料庫變更。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:migrations/versions/c4e208981061_add_document_admin_review.py:downgrade",
+      "type": "function",
+      "name": "downgrade",
+      "filePath": "migrations/versions/c4e208981061_add_document_admin_review.py",
+      "lineRange": [
+        41,
+        61
+      ],
+      "summary": "反向移除 c4e208981061_add_document_admin_review.py 新增的 schema。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:migrations/versions/c52f41a92b70_allow_multiple_staff_per_shift_type.py",
+      "type": "file",
+      "name": "c52f41a92b70_allow_multiple_staff_per_shift_type.py",
+      "filePath": "migrations/versions/c52f41a92b70_allow_multiple_staff_per_shift_type.py",
+      "summary": "負責 migrations/versions/c52f41a92b70_allow_multiple_staff_per_shift_type.py 對應的專案功能。",
+      "tags": [
+        "application",
+        "module",
+        "workflow"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:migrations/versions/c52f41a92b70_allow_multiple_staff_per_shift_type.py:upgrade",
+      "type": "function",
+      "name": "upgrade",
+      "filePath": "migrations/versions/c52f41a92b70_allow_multiple_staff_per_shift_type.py",
+      "lineRange": [
+        17,
+        28
+      ],
+      "summary": "套用 c52f41a92b70_allow_multiple_staff_per_shift_type.py 定義的資料庫變更。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:migrations/versions/c52f41a92b70_allow_multiple_staff_per_shift_type.py:downgrade",
+      "type": "function",
+      "name": "downgrade",
+      "filePath": "migrations/versions/c52f41a92b70_allow_multiple_staff_per_shift_type.py",
+      "lineRange": [
+        31,
+        42
+      ],
+      "summary": "反向移除 c52f41a92b70_allow_multiple_staff_per_shift_type.py 新增的 schema。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:migrations/versions/c92f41d17a86_add_per_device_offline_alerts.py",
+      "type": "file",
+      "name": "c92f41d17a86_add_per_device_offline_alerts.py",
+      "filePath": "migrations/versions/c92f41d17a86_add_per_device_offline_alerts.py",
+      "summary": "負責 migrations/versions/c92f41d17a86_add_per_device_offline_alerts.py 對應的專案功能。",
+      "tags": [
+        "application",
+        "module",
+        "workflow"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:migrations/versions/c92f41d17a86_add_per_device_offline_alerts.py:upgrade",
+      "type": "function",
+      "name": "upgrade",
+      "filePath": "migrations/versions/c92f41d17a86_add_per_device_offline_alerts.py",
+      "lineRange": [
+        16,
+        25
+      ],
+      "summary": "套用 c92f41d17a86_add_per_device_offline_alerts.py 定義的資料庫變更。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:migrations/versions/c92f41d17a86_add_per_device_offline_alerts.py:downgrade",
+      "type": "function",
+      "name": "downgrade",
+      "filePath": "migrations/versions/c92f41d17a86_add_per_device_offline_alerts.py",
+      "lineRange": [
+        28,
+        33
+      ],
+      "summary": "反向移除 c92f41d17a86_add_per_device_offline_alerts.py 新增的 schema。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:migrations/versions/c9f45a12d803_add_attendance_device_identity.py",
+      "type": "file",
+      "name": "c9f45a12d803_add_attendance_device_identity.py",
+      "filePath": "migrations/versions/c9f45a12d803_add_attendance_device_identity.py",
+      "summary": "負責 migrations/versions/c9f45a12d803_add_attendance_device_identity.py 對應的專案功能。",
+      "tags": [
+        "application",
+        "module",
+        "workflow"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:migrations/versions/c9f45a12d803_add_attendance_device_identity.py:upgrade",
+      "type": "function",
+      "name": "upgrade",
+      "filePath": "migrations/versions/c9f45a12d803_add_attendance_device_identity.py",
+      "lineRange": [
+        18,
+        27
+      ],
+      "summary": "套用 c9f45a12d803_add_attendance_device_identity.py 定義的資料庫變更。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:migrations/versions/c9f45a12d803_add_attendance_device_identity.py:downgrade",
+      "type": "function",
+      "name": "downgrade",
+      "filePath": "migrations/versions/c9f45a12d803_add_attendance_device_identity.py",
+      "lineRange": [
+        30,
+        37
+      ],
+      "summary": "反向移除 c9f45a12d803_add_attendance_device_identity.py 新增的 schema。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:migrations/versions/aece1306b930_add_security_audit_request_metadata.py",
+      "target": "function:migrations/versions/aece1306b930_add_security_audit_request_metadata.py:upgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/aece1306b930_add_security_audit_request_metadata.py",
+      "target": "function:migrations/versions/aece1306b930_add_security_audit_request_metadata.py:upgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/aece1306b930_add_security_audit_request_metadata.py",
+      "target": "function:migrations/versions/aece1306b930_add_security_audit_request_metadata.py:downgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/aece1306b930_add_security_audit_request_metadata.py",
+      "target": "function:migrations/versions/aece1306b930_add_security_audit_request_metadata.py:downgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/b4852085ec6b_add_secure_staff_document_workflow.py",
+      "target": "function:migrations/versions/b4852085ec6b_add_secure_staff_document_workflow.py:upgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/b4852085ec6b_add_secure_staff_document_workflow.py",
+      "target": "function:migrations/versions/b4852085ec6b_add_secure_staff_document_workflow.py:upgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/b4852085ec6b_add_secure_staff_document_workflow.py",
+      "target": "function:migrations/versions/b4852085ec6b_add_secure_staff_document_workflow.py:downgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/b4852085ec6b_add_secure_staff_document_workflow.py",
+      "target": "function:migrations/versions/b4852085ec6b_add_secure_staff_document_workflow.py:downgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/b71c8e4d2a90_add_configurable_backup_policy.py",
+      "target": "function:migrations/versions/b71c8e4d2a90_add_configurable_backup_policy.py:upgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/b71c8e4d2a90_add_configurable_backup_policy.py",
+      "target": "function:migrations/versions/b71c8e4d2a90_add_configurable_backup_policy.py:upgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/b71c8e4d2a90_add_configurable_backup_policy.py",
+      "target": "function:migrations/versions/b71c8e4d2a90_add_configurable_backup_policy.py:downgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/b71c8e4d2a90_add_configurable_backup_policy.py",
+      "target": "function:migrations/versions/b71c8e4d2a90_add_configurable_backup_policy.py:downgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/b73d5c81a204_add_attendance_device_deletion.py",
+      "target": "function:migrations/versions/b73d5c81a204_add_attendance_device_deletion.py:upgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/b73d5c81a204_add_attendance_device_deletion.py",
+      "target": "function:migrations/versions/b73d5c81a204_add_attendance_device_deletion.py:upgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/b73d5c81a204_add_attendance_device_deletion.py",
+      "target": "function:migrations/versions/b73d5c81a204_add_attendance_device_deletion.py:downgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/b73d5c81a204_add_attendance_device_deletion.py",
+      "target": "function:migrations/versions/b73d5c81a204_add_attendance_device_deletion.py:downgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/bc7a80fd741c_create_phase_1_core_tables.py",
+      "target": "function:migrations/versions/bc7a80fd741c_create_phase_1_core_tables.py:upgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/bc7a80fd741c_create_phase_1_core_tables.py",
+      "target": "function:migrations/versions/bc7a80fd741c_create_phase_1_core_tables.py:upgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/bc7a80fd741c_create_phase_1_core_tables.py",
+      "target": "function:migrations/versions/bc7a80fd741c_create_phase_1_core_tables.py:downgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/bc7a80fd741c_create_phase_1_core_tables.py",
+      "target": "function:migrations/versions/bc7a80fd741c_create_phase_1_core_tables.py:downgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/c4e208981061_add_document_admin_review.py",
+      "target": "function:migrations/versions/c4e208981061_add_document_admin_review.py:upgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/c4e208981061_add_document_admin_review.py",
+      "target": "function:migrations/versions/c4e208981061_add_document_admin_review.py:upgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/c4e208981061_add_document_admin_review.py",
+      "target": "function:migrations/versions/c4e208981061_add_document_admin_review.py:downgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/c4e208981061_add_document_admin_review.py",
+      "target": "function:migrations/versions/c4e208981061_add_document_admin_review.py:downgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/c52f41a92b70_allow_multiple_staff_per_shift_type.py",
+      "target": "function:migrations/versions/c52f41a92b70_allow_multiple_staff_per_shift_type.py:upgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/c52f41a92b70_allow_multiple_staff_per_shift_type.py",
+      "target": "function:migrations/versions/c52f41a92b70_allow_multiple_staff_per_shift_type.py:upgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/c52f41a92b70_allow_multiple_staff_per_shift_type.py",
+      "target": "function:migrations/versions/c52f41a92b70_allow_multiple_staff_per_shift_type.py:downgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/c52f41a92b70_allow_multiple_staff_per_shift_type.py",
+      "target": "function:migrations/versions/c52f41a92b70_allow_multiple_staff_per_shift_type.py:downgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/c92f41d17a86_add_per_device_offline_alerts.py",
+      "target": "function:migrations/versions/c92f41d17a86_add_per_device_offline_alerts.py:upgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/c92f41d17a86_add_per_device_offline_alerts.py",
+      "target": "function:migrations/versions/c92f41d17a86_add_per_device_offline_alerts.py:upgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/c92f41d17a86_add_per_device_offline_alerts.py",
+      "target": "function:migrations/versions/c92f41d17a86_add_per_device_offline_alerts.py:downgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/c92f41d17a86_add_per_device_offline_alerts.py",
+      "target": "function:migrations/versions/c92f41d17a86_add_per_device_offline_alerts.py:downgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/c9f45a12d803_add_attendance_device_identity.py",
+      "target": "function:migrations/versions/c9f45a12d803_add_attendance_device_identity.py:upgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/c9f45a12d803_add_attendance_device_identity.py",
+      "target": "function:migrations/versions/c9f45a12d803_add_attendance_device_identity.py:upgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/c9f45a12d803_add_attendance_device_identity.py",
+      "target": "function:migrations/versions/c9f45a12d803_add_attendance_device_identity.py:downgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/c9f45a12d803_add_attendance_device_identity.py",
+      "target": "function:migrations/versions/c9f45a12d803_add_attendance_device_identity.py:downgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

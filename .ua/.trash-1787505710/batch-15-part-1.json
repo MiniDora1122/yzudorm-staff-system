@@ -1,0 +1,681 @@
+{
+  "nodes": [
+    {
+      "id": "file:migrations/versions/3b1d47c8a91e_add_configurable_week_boundary.py",
+      "type": "file",
+      "name": "3b1d47c8a91e_add_configurable_week_boundary.py",
+      "filePath": "migrations/versions/3b1d47c8a91e_add_configurable_week_boundary.py",
+      "summary": "負責 migrations/versions/3b1d47c8a91e_add_configurable_week_boundary.py 對應的專案功能。",
+      "tags": [
+        "application",
+        "module",
+        "workflow"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:migrations/versions/3b1d47c8a91e_add_configurable_week_boundary.py:upgrade",
+      "type": "function",
+      "name": "upgrade",
+      "filePath": "migrations/versions/3b1d47c8a91e_add_configurable_week_boundary.py",
+      "lineRange": [
+        18,
+        23
+      ],
+      "summary": "套用 3b1d47c8a91e_add_configurable_week_boundary.py 定義的資料庫變更。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:migrations/versions/3b1d47c8a91e_add_configurable_week_boundary.py:downgrade",
+      "type": "function",
+      "name": "downgrade",
+      "filePath": "migrations/versions/3b1d47c8a91e_add_configurable_week_boundary.py",
+      "lineRange": [
+        26,
+        29
+      ],
+      "summary": "反向移除 3b1d47c8a91e_add_configurable_week_boundary.py 新增的 schema。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:migrations/versions/48463e284ed5_add_security_operations_and_attendance_.py",
+      "type": "file",
+      "name": "48463e284ed5_add_security_operations_and_attendance_.py",
+      "filePath": "migrations/versions/48463e284ed5_add_security_operations_and_attendance_.py",
+      "summary": "負責 migrations/versions/48463e284ed5_add_security_operations_and_attendance_.py 對應的專案功能。",
+      "tags": [
+        "application",
+        "module",
+        "workflow"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:migrations/versions/48463e284ed5_add_security_operations_and_attendance_.py:upgrade",
+      "type": "function",
+      "name": "upgrade",
+      "filePath": "migrations/versions/48463e284ed5_add_security_operations_and_attendance_.py",
+      "lineRange": [
+        19,
+        127
+      ],
+      "summary": "套用 48463e284ed5_add_security_operations_and_attendance_.py 定義的資料庫變更。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:migrations/versions/48463e284ed5_add_security_operations_and_attendance_.py:downgrade",
+      "type": "function",
+      "name": "downgrade",
+      "filePath": "migrations/versions/48463e284ed5_add_security_operations_and_attendance_.py",
+      "lineRange": [
+        130,
+        170
+      ],
+      "summary": "反向移除 48463e284ed5_add_security_operations_and_attendance_.py 新增的 schema。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:migrations/versions/486c51e89d9e_add_dynamic_locations_and_payroll_.py",
+      "type": "file",
+      "name": "486c51e89d9e_add_dynamic_locations_and_payroll_.py",
+      "filePath": "migrations/versions/486c51e89d9e_add_dynamic_locations_and_payroll_.py",
+      "summary": "負責 migrations/versions/486c51e89d9e_add_dynamic_locations_and_payroll_.py 對應的專案功能。",
+      "tags": [
+        "application",
+        "module",
+        "workflow"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:migrations/versions/486c51e89d9e_add_dynamic_locations_and_payroll_.py:upgrade",
+      "type": "function",
+      "name": "upgrade",
+      "filePath": "migrations/versions/486c51e89d9e_add_dynamic_locations_and_payroll_.py",
+      "lineRange": [
+        20,
+        100
+      ],
+      "summary": "套用 486c51e89d9e_add_dynamic_locations_and_payroll_.py 定義的資料庫變更。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:migrations/versions/486c51e89d9e_add_dynamic_locations_and_payroll_.py:downgrade",
+      "type": "function",
+      "name": "downgrade",
+      "filePath": "migrations/versions/486c51e89d9e_add_dynamic_locations_and_payroll_.py",
+      "lineRange": [
+        103,
+        136
+      ],
+      "summary": "反向移除 486c51e89d9e_add_dynamic_locations_and_payroll_.py 新增的 schema。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:migrations/versions/7860ad8b1090_add_ocr_and_document_retention_policy.py",
+      "type": "file",
+      "name": "7860ad8b1090_add_ocr_and_document_retention_policy.py",
+      "filePath": "migrations/versions/7860ad8b1090_add_ocr_and_document_retention_policy.py",
+      "summary": "負責 migrations/versions/7860ad8b1090_add_ocr_and_document_retention_policy.py 對應的專案功能。",
+      "tags": [
+        "application",
+        "module",
+        "workflow"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:migrations/versions/7860ad8b1090_add_ocr_and_document_retention_policy.py:upgrade",
+      "type": "function",
+      "name": "upgrade",
+      "filePath": "migrations/versions/7860ad8b1090_add_ocr_and_document_retention_policy.py",
+      "lineRange": [
+        19,
+        39
+      ],
+      "summary": "套用 7860ad8b1090_add_ocr_and_document_retention_policy.py 定義的資料庫變更。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:migrations/versions/7860ad8b1090_add_ocr_and_document_retention_policy.py:downgrade",
+      "type": "function",
+      "name": "downgrade",
+      "filePath": "migrations/versions/7860ad8b1090_add_ocr_and_document_retention_policy.py",
+      "lineRange": [
+        42,
+        45
+      ],
+      "summary": "反向移除 7860ad8b1090_add_ocr_and_document_retention_policy.py 新增的 schema。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:migrations/versions/79d4488d8faa_add_phase_3_leave_swap_and_audit_.py",
+      "type": "file",
+      "name": "79d4488d8faa_add_phase_3_leave_swap_and_audit_.py",
+      "filePath": "migrations/versions/79d4488d8faa_add_phase_3_leave_swap_and_audit_.py",
+      "summary": "負責 migrations/versions/79d4488d8faa_add_phase_3_leave_swap_and_audit_.py 對應的專案功能。",
+      "tags": [
+        "application",
+        "module",
+        "workflow"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:migrations/versions/79d4488d8faa_add_phase_3_leave_swap_and_audit_.py:upgrade",
+      "type": "function",
+      "name": "upgrade",
+      "filePath": "migrations/versions/79d4488d8faa_add_phase_3_leave_swap_and_audit_.py",
+      "lineRange": [
+        19,
+        86
+      ],
+      "summary": "套用 79d4488d8faa_add_phase_3_leave_swap_and_audit_.py 定義的資料庫變更。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:migrations/versions/79d4488d8faa_add_phase_3_leave_swap_and_audit_.py:downgrade",
+      "type": "function",
+      "name": "downgrade",
+      "filePath": "migrations/versions/79d4488d8faa_add_phase_3_leave_swap_and_audit_.py",
+      "lineRange": [
+        89,
+        109
+      ],
+      "summary": "反向移除 79d4488d8faa_add_phase_3_leave_swap_and_audit_.py 新增的 schema。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:migrations/versions/9d5cff5bba6e_add_recurring_shift_series.py",
+      "type": "file",
+      "name": "9d5cff5bba6e_add_recurring_shift_series.py",
+      "filePath": "migrations/versions/9d5cff5bba6e_add_recurring_shift_series.py",
+      "summary": "負責 migrations/versions/9d5cff5bba6e_add_recurring_shift_series.py 對應的專案功能。",
+      "tags": [
+        "application",
+        "module",
+        "workflow"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:migrations/versions/9d5cff5bba6e_add_recurring_shift_series.py:upgrade",
+      "type": "function",
+      "name": "upgrade",
+      "filePath": "migrations/versions/9d5cff5bba6e_add_recurring_shift_series.py",
+      "lineRange": [
+        19,
+        51
+      ],
+      "summary": "套用 9d5cff5bba6e_add_recurring_shift_series.py 定義的資料庫變更。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:migrations/versions/9d5cff5bba6e_add_recurring_shift_series.py:downgrade",
+      "type": "function",
+      "name": "downgrade",
+      "filePath": "migrations/versions/9d5cff5bba6e_add_recurring_shift_series.py",
+      "lineRange": [
+        54,
+        71
+      ],
+      "summary": "反向移除 9d5cff5bba6e_add_recurring_shift_series.py 新增的 schema。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:migrations/versions/a8142d35c901_add_admin_display_name.py",
+      "type": "file",
+      "name": "a8142d35c901_add_admin_display_name.py",
+      "filePath": "migrations/versions/a8142d35c901_add_admin_display_name.py",
+      "summary": "負責 migrations/versions/a8142d35c901_add_admin_display_name.py 對應的專案功能。",
+      "tags": [
+        "application",
+        "module",
+        "workflow"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:migrations/versions/a8142d35c901_add_admin_display_name.py:upgrade",
+      "type": "function",
+      "name": "upgrade",
+      "filePath": "migrations/versions/a8142d35c901_add_admin_display_name.py",
+      "lineRange": [
+        18,
+        24
+      ],
+      "summary": "套用 a8142d35c901_add_admin_display_name.py 定義的資料庫變更。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:migrations/versions/a8142d35c901_add_admin_display_name.py:downgrade",
+      "type": "function",
+      "name": "downgrade",
+      "filePath": "migrations/versions/a8142d35c901_add_admin_display_name.py",
+      "lineRange": [
+        27,
+        29
+      ],
+      "summary": "反向移除 a8142d35c901_add_admin_display_name.py 新增的 schema。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:migrations/versions/aa16f55dd9f5_add_actionable_notification_center.py",
+      "type": "file",
+      "name": "aa16f55dd9f5_add_actionable_notification_center.py",
+      "filePath": "migrations/versions/aa16f55dd9f5_add_actionable_notification_center.py",
+      "summary": "負責 migrations/versions/aa16f55dd9f5_add_actionable_notification_center.py 對應的專案功能。",
+      "tags": [
+        "application",
+        "module",
+        "workflow"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:migrations/versions/aa16f55dd9f5_add_actionable_notification_center.py:upgrade",
+      "type": "function",
+      "name": "upgrade",
+      "filePath": "migrations/versions/aa16f55dd9f5_add_actionable_notification_center.py",
+      "lineRange": [
+        19,
+        48
+      ],
+      "summary": "套用 aa16f55dd9f5_add_actionable_notification_center.py 定義的資料庫變更。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:migrations/versions/aa16f55dd9f5_add_actionable_notification_center.py:downgrade",
+      "type": "function",
+      "name": "downgrade",
+      "filePath": "migrations/versions/aa16f55dd9f5_add_actionable_notification_center.py",
+      "lineRange": [
+        51,
+        61
+      ],
+      "summary": "反向移除 aa16f55dd9f5_add_actionable_notification_center.py 新增的 schema。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:migrations/versions/acce6927c641_add_nationalities_and_foreign_student_.py",
+      "type": "file",
+      "name": "acce6927c641_add_nationalities_and_foreign_student_.py",
+      "filePath": "migrations/versions/acce6927c641_add_nationalities_and_foreign_student_.py",
+      "summary": "負責 migrations/versions/acce6927c641_add_nationalities_and_foreign_student_.py 對應的專案功能。",
+      "tags": [
+        "application",
+        "module",
+        "workflow"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:migrations/versions/acce6927c641_add_nationalities_and_foreign_student_.py:upgrade",
+      "type": "function",
+      "name": "upgrade",
+      "filePath": "migrations/versions/acce6927c641_add_nationalities_and_foreign_student_.py",
+      "lineRange": [
+        20,
+        115
+      ],
+      "summary": "套用 acce6927c641_add_nationalities_and_foreign_student_.py 定義的資料庫變更。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:migrations/versions/acce6927c641_add_nationalities_and_foreign_student_.py:downgrade",
+      "type": "function",
+      "name": "downgrade",
+      "filePath": "migrations/versions/acce6927c641_add_nationalities_and_foreign_student_.py",
+      "lineRange": [
+        118,
+        130
+      ],
+      "summary": "反向移除 acce6927c641_add_nationalities_and_foreign_student_.py 新增的 schema。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:migrations/versions/3b1d47c8a91e_add_configurable_week_boundary.py",
+      "target": "function:migrations/versions/3b1d47c8a91e_add_configurable_week_boundary.py:upgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/3b1d47c8a91e_add_configurable_week_boundary.py",
+      "target": "function:migrations/versions/3b1d47c8a91e_add_configurable_week_boundary.py:upgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/3b1d47c8a91e_add_configurable_week_boundary.py",
+      "target": "function:migrations/versions/3b1d47c8a91e_add_configurable_week_boundary.py:downgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/3b1d47c8a91e_add_configurable_week_boundary.py",
+      "target": "function:migrations/versions/3b1d47c8a91e_add_configurable_week_boundary.py:downgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/48463e284ed5_add_security_operations_and_attendance_.py",
+      "target": "function:migrations/versions/48463e284ed5_add_security_operations_and_attendance_.py:upgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/48463e284ed5_add_security_operations_and_attendance_.py",
+      "target": "function:migrations/versions/48463e284ed5_add_security_operations_and_attendance_.py:upgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/48463e284ed5_add_security_operations_and_attendance_.py",
+      "target": "function:migrations/versions/48463e284ed5_add_security_operations_and_attendance_.py:downgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/48463e284ed5_add_security_operations_and_attendance_.py",
+      "target": "function:migrations/versions/48463e284ed5_add_security_operations_and_attendance_.py:downgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/486c51e89d9e_add_dynamic_locations_and_payroll_.py",
+      "target": "function:migrations/versions/486c51e89d9e_add_dynamic_locations_and_payroll_.py:upgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/486c51e89d9e_add_dynamic_locations_and_payroll_.py",
+      "target": "function:migrations/versions/486c51e89d9e_add_dynamic_locations_and_payroll_.py:upgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/486c51e89d9e_add_dynamic_locations_and_payroll_.py",
+      "target": "function:migrations/versions/486c51e89d9e_add_dynamic_locations_and_payroll_.py:downgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/486c51e89d9e_add_dynamic_locations_and_payroll_.py",
+      "target": "function:migrations/versions/486c51e89d9e_add_dynamic_locations_and_payroll_.py:downgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/7860ad8b1090_add_ocr_and_document_retention_policy.py",
+      "target": "function:migrations/versions/7860ad8b1090_add_ocr_and_document_retention_policy.py:upgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/7860ad8b1090_add_ocr_and_document_retention_policy.py",
+      "target": "function:migrations/versions/7860ad8b1090_add_ocr_and_document_retention_policy.py:upgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/7860ad8b1090_add_ocr_and_document_retention_policy.py",
+      "target": "function:migrations/versions/7860ad8b1090_add_ocr_and_document_retention_policy.py:downgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/7860ad8b1090_add_ocr_and_document_retention_policy.py",
+      "target": "function:migrations/versions/7860ad8b1090_add_ocr_and_document_retention_policy.py:downgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/79d4488d8faa_add_phase_3_leave_swap_and_audit_.py",
+      "target": "function:migrations/versions/79d4488d8faa_add_phase_3_leave_swap_and_audit_.py:upgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/79d4488d8faa_add_phase_3_leave_swap_and_audit_.py",
+      "target": "function:migrations/versions/79d4488d8faa_add_phase_3_leave_swap_and_audit_.py:upgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/79d4488d8faa_add_phase_3_leave_swap_and_audit_.py",
+      "target": "function:migrations/versions/79d4488d8faa_add_phase_3_leave_swap_and_audit_.py:downgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/79d4488d8faa_add_phase_3_leave_swap_and_audit_.py",
+      "target": "function:migrations/versions/79d4488d8faa_add_phase_3_leave_swap_and_audit_.py:downgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/9d5cff5bba6e_add_recurring_shift_series.py",
+      "target": "function:migrations/versions/9d5cff5bba6e_add_recurring_shift_series.py:upgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/9d5cff5bba6e_add_recurring_shift_series.py",
+      "target": "function:migrations/versions/9d5cff5bba6e_add_recurring_shift_series.py:upgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/9d5cff5bba6e_add_recurring_shift_series.py",
+      "target": "function:migrations/versions/9d5cff5bba6e_add_recurring_shift_series.py:downgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/9d5cff5bba6e_add_recurring_shift_series.py",
+      "target": "function:migrations/versions/9d5cff5bba6e_add_recurring_shift_series.py:downgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/a8142d35c901_add_admin_display_name.py",
+      "target": "function:migrations/versions/a8142d35c901_add_admin_display_name.py:upgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/a8142d35c901_add_admin_display_name.py",
+      "target": "function:migrations/versions/a8142d35c901_add_admin_display_name.py:upgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/a8142d35c901_add_admin_display_name.py",
+      "target": "function:migrations/versions/a8142d35c901_add_admin_display_name.py:downgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/a8142d35c901_add_admin_display_name.py",
+      "target": "function:migrations/versions/a8142d35c901_add_admin_display_name.py:downgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/aa16f55dd9f5_add_actionable_notification_center.py",
+      "target": "function:migrations/versions/aa16f55dd9f5_add_actionable_notification_center.py:upgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/aa16f55dd9f5_add_actionable_notification_center.py",
+      "target": "function:migrations/versions/aa16f55dd9f5_add_actionable_notification_center.py:upgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/aa16f55dd9f5_add_actionable_notification_center.py",
+      "target": "function:migrations/versions/aa16f55dd9f5_add_actionable_notification_center.py:downgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/aa16f55dd9f5_add_actionable_notification_center.py",
+      "target": "function:migrations/versions/aa16f55dd9f5_add_actionable_notification_center.py:downgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/acce6927c641_add_nationalities_and_foreign_student_.py",
+      "target": "function:migrations/versions/acce6927c641_add_nationalities_and_foreign_student_.py:upgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/acce6927c641_add_nationalities_and_foreign_student_.py",
+      "target": "function:migrations/versions/acce6927c641_add_nationalities_and_foreign_student_.py:upgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/acce6927c641_add_nationalities_and_foreign_student_.py",
+      "target": "function:migrations/versions/acce6927c641_add_nationalities_and_foreign_student_.py:downgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/acce6927c641_add_nationalities_and_foreign_student_.py",
+      "target": "function:migrations/versions/acce6927c641_add_nationalities_and_foreign_student_.py:downgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

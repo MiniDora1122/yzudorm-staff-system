@@ -7,7 +7,6 @@ ENCRYPTED_HTTP additionally protects every API payload with AES-256-GCM.
 from __future__ import annotations
 
 import base64
-import csv
 import ctypes
 import hashlib
 import hmac
@@ -26,7 +25,7 @@ import urllib.request
 import uuid
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from ctypes import wintypes
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 from cryptography.hazmat.primitives import hashes
@@ -42,9 +41,10 @@ _IDENTITY_CACHE: tuple[float, dict] | None = None
 
 
 class ApiError(RuntimeError):
-    def __init__(self, message: str, status: int):
+    def __init__(self, message: str, status: int, code: str = ""):
         super().__init__(message)
         self.status = status
+        self.code = code
 
 
 class DATA_BLOB(ctypes.Structure):
@@ -115,16 +115,17 @@ def device_identity() -> dict:
     macs = []
     try:
         completed = subprocess.run(
-            ["getmac.exe", "/fo", "csv", "/nh"], capture_output=True, text=True,
+            ["powershell.exe", "-NoProfile", "-Command",
+             "Get-NetAdapter -Physical | Where-Object {$_.Status -eq 'Up'} | ForEach-Object {$_.MacAddress}"],
+            capture_output=True, text=True,
             timeout=5, creationflags=0x08000000 if os.name == "nt" else 0,
         )
-        for row in csv.reader(completed.stdout.splitlines()):
-            for value in row:
-                compact = "".join(re.findall(r"[0-9A-Fa-f]", value))
-                if len(compact) == 12:
-                    mac = ":".join(compact[index:index + 2] for index in range(0, 12, 2)).upper()
-                    if mac not in macs:
-                        macs.append(mac)
+        for value in completed.stdout.splitlines():
+            compact = "".join(re.findall(r"[0-9A-Fa-f]", value))
+            if len(compact) == 12:
+                mac = ":".join(compact[index:index + 2] for index in range(0, 12, 2)).upper()
+                if mac not in macs:
+                    macs.append(mac)
     except (OSError, subprocess.SubprocessError):
         pass
     if not macs:
@@ -187,6 +188,14 @@ class Queue:
         self.db.execute("CREATE TABLE IF NOT EXISTS queue (sequence INTEGER PRIMARY KEY AUTOINCREMENT, event_id TEXT UNIQUE, payload BLOB NOT NULL, synced_at TEXT, response TEXT)")
         self.db.commit()
         self.lock = threading.Lock()
+        self.prune()
+
+    def prune(self, retention_days: int = 90):
+        """Keep every unsent punch and only the recent synchronized history."""
+        cutoff = (datetime.now().astimezone() - timedelta(days=retention_days)).isoformat()
+        with getattr(self, "lock", threading.Lock()):
+            self.db.execute("DELETE FROM queue WHERE synced_at IS NOT NULL AND synced_at < ?", (cutoff,))
+            self.db.commit()
 
     def add_card(self, uid: str) -> dict:
         event_id = str(uuid.uuid4())
@@ -211,11 +220,24 @@ class Queue:
         with self.lock:
             protected = base64.b64encode(dpapi(json.dumps(response, ensure_ascii=False).encode())).decode()
             self.db.execute("UPDATE queue SET synced_at=?,response=? WHERE sequence=?", (datetime.now().astimezone().isoformat(), protected, sequence))
+            cutoff = (datetime.now().astimezone() - timedelta(days=90)).isoformat()
+            self.db.execute("DELETE FROM queue WHERE synced_at IS NOT NULL AND synced_at < ?", (cutoff,))
             self.db.commit()
 
-    def next_sequence(self) -> int:
+    def reserve_online(self, payload: dict) -> dict:
+        """Reserve a sequence in the same durable counter used by offline card punches."""
         with self.lock:
-            return int(self.db.execute("SELECT COALESCE(MAX(sequence),0)+1 FROM queue").fetchone()[0])
+            cursor = self.db.execute(
+                "INSERT INTO queue(event_id,payload,synced_at,response) VALUES(?,?,?,?)",
+                (payload["event_id"], b"", datetime.now().astimezone().isoformat(), "ONLINE_PENDING"),
+            )
+            payload["sequence"] = cursor.lastrowid
+            self.db.execute(
+                "UPDATE queue SET payload=? WHERE sequence=?",
+                (dpapi(json.dumps(payload).encode()), payload["sequence"]),
+            )
+            self.db.commit()
+        return payload
 
 
 def unsigned_json(url: str, path: str, payload: dict) -> dict:
@@ -245,12 +267,13 @@ def signed_json(config: dict, path: str, payload: dict) -> dict:
         with urllib.request.urlopen(request, timeout=10) as response:
             return json.loads(response.read())
     except urllib.error.HTTPError as exc:
+        problem = {}
         try:
             problem = json.loads(exc.read())["error"]
             message = problem["message"]
         except Exception:
             message = f"伺服器錯誤 HTTP {exc.code}"
-        raise ApiError(message, exc.code) from exc
+        raise ApiError(message, exc.code, problem.get("code", "") if isinstance(problem, dict) else "") from exc
 
 
 def encrypted_json(config: dict, path: str, payload: dict) -> dict:
@@ -279,6 +302,15 @@ def encrypted_json(config: dict, path: str, payload: dict) -> dict:
         response_status, response_body = exc.code, exc.read()
     try:
         response_envelope = json.loads(response_body)
+    except Exception as exc:
+        raise RuntimeError(f"伺服器回應無法驗證（HTTP {response_status}）。") from exc
+    plain_error = response_envelope.get("error")
+    if response_status >= 400 and isinstance(plain_error, dict) and "ciphertext" not in response_envelope:
+        raise ApiError(
+            plain_error.get("message", f"伺服器錯誤 HTTP {response_status}"),
+            response_status, plain_error.get("code", ""),
+        )
+    try:
         if response_envelope.get("request_id") != request_id or int(response_envelope["status"]) != response_status:
             raise ValueError
         response_nonce = _unb64(response_envelope["nonce"])
@@ -297,25 +329,32 @@ def encrypted_json(config: dict, path: str, payload: dict) -> dict:
 
 KIOSK_HTML = """<!doctype html><html lang="zh-Hant"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>宿舍工讀生上下班打卡</title><style>
-*{box-sizing:border-box}body{margin:0;font-family:"Microsoft JhengHei UI",sans-serif;background:#f3f6fb;color:#102a43}.top{background:#0e3768;color:#fff;padding:18px 28px}.top small{color:#bdd7f2}.wrap{max-width:980px;margin:34px auto;padding:0 22px}.card{background:#fff;border-radius:18px;box-shadow:0 10px 30px #17324d18;padding:42px;text-align:center}.eyebrow{color:#1556a3;font-size:13px;font-weight:800;letter-spacing:.12em}.status{font-size:34px;font-weight:800;margin:18px 0 8px}.detail{color:#61758a;min-height:28px}.scan-box{max-width:520px;margin:26px auto 0;text-align:left}.scan-box label{font-weight:700}.scan{font-size:20px;letter-spacing:.08em;text-align:center;border:2px solid #8fb5df}.scan:focus{border-color:#1556a3;box-shadow:0 0 0 4px #1556a322;outline:0}.actions{display:flex;gap:12px;justify-content:center;margin-top:28px;flex-wrap:wrap}button{border:0;border-radius:10px;padding:13px 22px;font:600 16px inherit;cursor:pointer}.primary{background:#1556a3;color:#fff}.muted{background:#e8eef7;color:#12355b}.warning{color:#b54708}.error{color:#b42318}.success{color:#198754}dialog{border:0;border-radius:16px;padding:26px;box-shadow:0 20px 60px #0004;min-width:min(440px,90vw)}label{display:block;text-align:left;margin:12px 0 5px}input{width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:8px;font:inherit}.hint{font-size:13px;color:#708090;margin-top:16px}@media(max-width:600px){.card{padding:28px 18px}.status{font-size:26px}}
+*{box-sizing:border-box}body{margin:0;font-family:"Microsoft JhengHei UI",sans-serif;background:#f3f6fb;color:#102a43}.top{background:#0e3768;color:#fff;padding:18px 28px}.top small{color:#bdd7f2}.wrap{max-width:980px;margin:34px auto;padding:0 22px}.card{background:#fff;border-radius:18px;box-shadow:0 10px 30px #17324d18;padding:42px;text-align:center}.eyebrow{color:#1556a3;font-size:13px;font-weight:800;letter-spacing:.12em}.status{font-size:34px;font-weight:800;margin:18px 0 8px}.detail{color:#61758a;min-height:28px}.scan-box{max-width:520px;margin:26px auto 0;text-align:left}.scan-box label{font-weight:700}.scan{font-size:20px;letter-spacing:.08em;text-align:center;border:2px solid #8fb5df}.scan:focus{border-color:#1556a3;box-shadow:0 0 0 4px #1556a322;outline:0}.actions{display:flex;gap:12px;justify-content:center;margin-top:28px;flex-wrap:wrap}button{border:0;border-radius:10px;padding:13px 22px;font:600 16px inherit;cursor:pointer}.primary{background:#1556a3;color:#fff}.muted{background:#e8eef7;color:#12355b}.warning{color:#b54708}.error{color:#b42318}.success{color:#198754}dialog{border:0;border-radius:16px;padding:26px;box-shadow:0 20px 60px #0004;min-width:min(440px,90vw)}label{display:block;text-align:left;margin:12px 0 5px}input,select,textarea{width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:8px;font:inherit}textarea{min-height:110px;resize:vertical}.hint{font-size:13px;color:#708090;margin-top:16px}@media(max-width:600px){.card{padding:28px 18px}.status{font-size:26px}}
 </style><body><header class="top"><b>宿舍工讀生上下班打卡</b><br><small>Dorm Attendance Terminal</small></header><main class="wrap"><section class="card"><div class="eyebrow" id="device">ATTENDANCE</div><div class="status" id="status">請刷學生證或使用帳號打卡</div><div class="detail" id="detail">Scan student card or use your account</div><div class="scan-box"><label for="card">學生證刷卡區 <small>Student card scanner</small></label><input class="scan" id="card" autocomplete="off" inputmode="none" placeholder="請刷學生證，讀卡機輸入 UID 後按 Enter" autofocus><div class="hint">請先點一下此欄位再刷卡；一般 USB 讀卡機會像鍵盤一樣輸入卡片 UID 並送出 Enter。</div></div><div class="actions"><button class="primary" onclick="account.showModal()">使用帳號打卡 <small>Account</small></button><button class="muted" onclick="setup.showModal()">裝置註冊 <small>Device setup</small></button></div><p class="hint">刷卡後請勿重複操作；離線刷卡會安全保存並自動同步。</p></section></main>
 <dialog id="account"><form method="dialog" onsubmit="accountPunch(event)"><h2>帳號打卡 <small>Account punch</small></h2><label>帳號 Username</label><input id="username" required><label>密碼 Password</label><input id="password" type="password" required><div class="actions"><button class="muted" type="button" onclick="account.close()">取消</button><button class="primary">打卡</button></div></form></dialog>
-<dialog id="setup"><form method="dialog" onsubmit="register(event)"><h2>匯入加密註冊包</h2><label>.dormclock 檔案</label><input id="package" type="file" accept=".dormclock" required><label>註冊包密碼</label><input id="packagePassword" type="password" required><div class="actions"><button class="muted" type="button" onclick="setup.close()">取消</button><button class="primary">匯入</button></div></form></dialog>
+<dialog id="setup"><h2>裝置註冊 <small>Device setup</small></h2><form method="dialog" onsubmit="enroll(event)"><label>HTTPS 中央系統網址 <small>Server URL</small></label><input id="serverUrl" type="url" placeholder="https://example.edu.tw" required><label>一次性註冊碼 <small>One-time token</small></label><input id="enrollToken" required><div class="actions"><button class="primary">HTTPS 註冊</button></div></form><hr><form method="dialog" onsubmit="register(event)"><h3>加密 HTTP 註冊包 <small>Encrypted package</small></h3><label>.dormclock 檔案</label><input id="package" type="file" accept=".dormclock" required><label>註冊包密碼 <small>Package password</small></label><input id="packagePassword" type="password" required><div class="actions"><button class="muted" type="button" onclick="setup.close()">取消 Cancel</button><button class="primary">匯入 Import</button></div></form></dialog>
+<dialog id="reasonDialog"><form method="dialog" onsubmit="submitReason(event)"><h2>填寫異常事由 <small>Attendance reason</small></h2><label>原因分類 <small>Category</small></label><select id="reasonCategory"><option>交通延誤</option><option>忘記刷卡</option><option selected>其他</option></select><label>事由 <small>Reason</small></label><textarea id="reasonText" maxlength="1000" required></textarea><div id="arrivalWrap" hidden><label>實際到班時間 <small>Actual arrival</small></label><input id="arrivalTime" type="datetime-local"></div><div class="actions"><button class="muted" type="button" onclick="reasonDialog.close()">稍後填寫 Later</button><button class="primary">送出 Submit</button></div></form></dialog>
 <script>const token='__TOKEN__',card=document.querySelector('#card'),statusEl=document.querySelector('#status'),detail=document.querySelector('#detail');
 async function api(path,data){let r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json','X-Kiosk-Token':token},body:JSON.stringify(data)}),j=await r.json();if(!r.ok)throw Error(j.error||'操作失敗');return j}function show(t,d='',kind=''){statusEl.textContent=t;statusEl.className='status '+kind;detail.textContent=d;setTimeout(()=>{statusEl.textContent='請刷學生證或使用帳號打卡';statusEl.className='status';detail.textContent='Scan student card or use your account'},6000)}
-function handle(r){let direction={IN:'上班',OUT:'下班',UNKNOWN:'待確認'}[r.direction]||r.direction;show(`${r.student}｜${direction}打卡成功`,`${r.location}｜${r.shift||'未對應排班'}`,r.status==='NORMAL'?'success':'warning');if(r.requires_reason)setTimeout(()=>reason(r),200)}
-async function reason(r){let category=prompt('原因分類（例如交通延誤、忘記刷卡）','其他'),text=prompt('請說明原因；取消可稍後至學生系統填寫');if(!text)return;let arrival=r.requires_arrival_time?prompt('實際到班時間，例如 2026-08-19T09:03'):null;try{await api('/reason',{event_id:r.event_id,category:category||'其他',reason:text,claimed_arrival_at:arrival});show('事由已送交管理員','打卡紀錄已保留。','success')}catch(e){show('事由尚未送出',e.message,'error')}}
+let pendingReason=null;function handle(r){let direction={IN:'上班',OUT:'下班',UNKNOWN:'待確認'}[r.direction]||r.direction;show(`${r.student}｜${direction}打卡成功`,`${r.location}｜${r.shift||'未對應排班'}`,r.status==='NORMAL'?'success':'warning');if(r.requires_reason)setTimeout(()=>openReason(r),200)}
+function openReason(r){pendingReason=r;reasonText.value='';arrivalTime.value='';arrivalWrap.hidden=!r.requires_arrival_time;arrivalTime.required=!!r.requires_arrival_time;reasonDialog.showModal()}async function submitReason(e){e.preventDefault();if(!pendingReason)return;try{await api('/reason',{event_id:pendingReason.event_id,category:reasonCategory.value,reason:reasonText.value,claimed_arrival_at:arrivalTime.value||null});reasonDialog.close();pendingReason=null;show('事由已送交管理員','打卡紀錄已保留。','success')}catch(x){show('事由尚未送出',x.message,'error')}}
 card.addEventListener('keydown',async e=>{if(e.key!=='Enter')return;let uid=card.value.trim();card.value='';if(!uid)return;try{handle(await api('/card',{uid}))}catch(e){show('刷卡未受理',e.message,'error')}});async function accountPunch(e){e.preventDefault();let u=username.value,p=password.value;password.value='';account.close();try{handle(await api('/account',{username:u,password:p}))}catch(x){show('帳號打卡失敗',x.message,'error')}}
-async function register(e){e.preventDefault();let f=document.querySelector('#package').files[0],p=packagePassword.value;if(!f)return;setup.close();try{let r=await api('/register',{package:await f.text(),password:p});show('裝置註冊成功',`${r.device_name}｜${r.location}`,'success');load()}catch(x){show('註冊失敗',x.message,'error')}}async function load(){try{let r=await api('/status',{});document.querySelector('#device').textContent=r.registered?`${r.device_name}｜${r.location}`:'尚未註冊｜Not registered'}catch{}}setInterval(()=>{if(!document.querySelector('dialog[open]')&&document.activeElement!==card)card.focus()},500);load();card.focus();</script></body></html>"""
+async function enroll(e){e.preventDefault();setup.close();try{let r=await api('/enroll',{server_url:serverUrl.value,token:enrollToken.value});enrollToken.value='';show('裝置註冊成功',`${r.device_name}｜${r.location}`,'success');load()}catch(x){show('註冊失敗',x.message,'error')}}async function register(e){e.preventDefault();let f=document.querySelector('#package').files[0],p=packagePassword.value;if(!f)return;setup.close();try{let r=await api('/register',{package:await f.text(),password:p});show('裝置註冊成功',`${r.device_name}｜${r.location}`,'success');load()}catch(x){show('註冊失敗',x.message,'error')}}async function load(){try{let r=await api('/status',{});document.querySelector('#device').textContent=r.registered?`${r.device_name}｜${r.location}`:(r.error||'尚未註冊｜Not registered')}catch{}}setInterval(()=>{if(!document.querySelector('dialog[open]')&&document.activeElement!==card)card.focus()},500);load();card.focus();</script></body></html>"""
 
 
 class Kiosk:
     def __init__(self, control_token: str = ""):
         self.queue = Queue()
         self.config_data = load_config()
+        self.registration_error = ""
         self.token = secrets.token_urlsafe(32)
         self.control_token = control_token
         self.lock = threading.Lock()
+
+    def invalidate_registration(self, reason: str):
+        self.registration_error = reason
+        self.config_data = None
+        CONFIG_PATH.unlink(missing_ok=True)
 
     def punch_card(self, uid: str) -> dict:
         if not self.config_data:
@@ -327,6 +366,8 @@ class Kiosk:
             return result
         except ApiError as exc:
             self.queue.synced(payload["sequence"], {"error": str(exc), "status": exc.status})
+            if exc.status in {401, 403, 410}:
+                self.invalidate_registration(str(exc))
             raise
         except Exception:
             return {"student": "刷卡已保存", "direction": "UNKNOWN", "location": self.config_data["location"], "shift": "中央離線，恢復後自動同步", "status": "OFFLINE", "requires_reason": False}
@@ -334,8 +375,37 @@ class Kiosk:
     def punch_account(self, username: str, password: str) -> dict:
         if not self.config_data:
             raise RuntimeError("裝置尚未完成註冊。")
-        payload = {"event_id": str(uuid.uuid4()), "sequence": self.queue.next_sequence(), "occurred_at": datetime.now().astimezone().isoformat(), "method": "ACCOUNT", "username": username, "password": password, "offline": False}
-        return signed_json(self.config_data, "/attendance-api/punch", payload)
+        payload = self.queue.reserve_online({"event_id": str(uuid.uuid4()), "occurred_at": datetime.now().astimezone().isoformat(), "method": "ACCOUNT", "username": username, "password": password, "offline": False})
+        try:
+            result = signed_json(self.config_data, "/attendance-api/punch", payload)
+            self.queue.synced(payload["sequence"], result)
+            return result
+        except ApiError as exc:
+            self.queue.synced(payload["sequence"], {"error": str(exc), "status": exc.status})
+            if exc.status in {401, 403, 410}:
+                self.invalidate_registration(str(exc))
+            raise
+        except Exception:
+            self.queue.synced(payload["sequence"], {"error": "ACCOUNT_PUNCH_FAILED"})
+            raise
+
+    def enroll(self, server_url: str, token: str) -> dict:
+        if not server_url.lower().startswith("https://"):
+            raise ValueError("HTTPS 註冊只接受 https:// 中央系統網址。")
+        result = unsigned_json(server_url, "/attendance-api/enroll", {"token": token.strip()})
+        config = {
+            "format": "dorm-attendance-device-v1",
+            "server": server_url.rstrip("/"),
+            "device_id": result["device_id"],
+            "device_name": result["device_name"],
+            "location": result["location"],
+            "secret": result["secret"],
+            "transport_mode": "HTTPS",
+        }
+        save_config(config)
+        self.config_data = config
+        self.registration_error = ""
+        return result
 
     def sync(self):
         next_health = 0.0
@@ -347,6 +417,9 @@ class Kiosk:
                         if health.get("device_name") and health["device_name"] != self.config_data.get("device_name"):
                             self.config_data["device_name"] = health["device_name"]
                             save_config(self.config_data)
+                    except ApiError as exc:
+                        if exc.status in {401, 403, 410}:
+                            self.invalidate_registration(str(exc))
                     except Exception:
                         pass
                     next_health = time.time() + 300
@@ -357,6 +430,9 @@ class Kiosk:
                     except ApiError as exc:
                         if exc.status < 500 and exc.status not in {408, 429}:
                             self.queue.synced(sequence, {"error": str(exc), "status": exc.status})
+                            if exc.status in {401, 403, 410}:
+                                self.invalidate_registration(str(exc))
+                                break
                             continue
                         break
                     except Exception:
@@ -394,12 +470,15 @@ def handler_for(kiosk: Kiosk):
                 elif self.path == "/account": result = kiosk.punch_account(str(data.get("username", "")), str(data.get("password", "")))
                 elif self.path == "/register":
                     kiosk.config_data = import_package_data(str(data.get("package", "")), str(data.get("password", "")))
+                    kiosk.registration_error = ""
                     result = {"device_name": kiosk.config_data["device_name"], "location": kiosk.config_data["location"]}
+                elif self.path == "/enroll":
+                    result = kiosk.enroll(str(data.get("server_url", "")), str(data.get("token", "")))
                 elif self.path == "/reason":
                     if not kiosk.config_data: raise RuntimeError("裝置尚未註冊。")
                     result = signed_json(kiosk.config_data, f"/attendance-api/events/{data.get('event_id', '')}/reason", {"category": data.get("category", "其他"), "reason": data.get("reason", ""), "claimed_arrival_at": data.get("claimed_arrival_at")})
                 elif self.path == "/status":
-                    result = {"registered": bool(kiosk.config_data), "device_name": kiosk.config_data.get("device_name") if kiosk.config_data else None, "location": kiosk.config_data.get("location") if kiosk.config_data else None}
+                    result = {"registered": bool(kiosk.config_data), "device_name": kiosk.config_data.get("device_name") if kiosk.config_data else None, "location": kiosk.config_data.get("location") if kiosk.config_data else None, "error": kiosk.registration_error}
                 else: self._send(404, b'{"error":"Not found"}'); return
                 self._send(200, json.dumps(result, ensure_ascii=False).encode())
             except Exception as exc:

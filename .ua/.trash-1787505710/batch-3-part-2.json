@@ -1,0 +1,1005 @@
+{
+  "nodes": [
+    {
+      "id": "file:app/services/scheduling.py",
+      "type": "file",
+      "name": "scheduling.py",
+      "filePath": "app/services/scheduling.py",
+      "summary": "排班交易與衝突驗證核心，處理法規時數、重複系列及月曆事件。",
+      "tags": [
+        "service",
+        "business-logic",
+        "validation",
+        "transaction"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:app/services/scheduling.py:_acquire_database_schedule_lock",
+      "type": "function",
+      "name": "_acquire_database_schedule_lock",
+      "filePath": "app/services/scheduling.py",
+      "lineRange": [
+        28,
+        37
+      ],
+      "summary": "實作 acquire database schedule lock 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/scheduling.py:schedule_serialized",
+      "type": "function",
+      "name": "schedule_serialized",
+      "filePath": "app/services/scheduling.py",
+      "lineRange": [
+        40,
+        52
+      ],
+      "summary": "以資料庫鎖序列化排班寫入，並處理必要的驗證、狀態更新與錯誤。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/scheduling.py:times_overlap",
+      "type": "function",
+      "name": "times_overlap",
+      "filePath": "app/services/scheduling.py",
+      "lineRange": [
+        55,
+        56
+      ],
+      "summary": "實作 times overlap 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/scheduling.py:shift_hours",
+      "type": "function",
+      "name": "shift_hours",
+      "filePath": "app/services/scheduling.py",
+      "lineRange": [
+        59,
+        61
+      ],
+      "summary": "實作 shift hours 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/scheduling.py:validate_shift_assignment",
+      "type": "function",
+      "name": "validate_shift_assignment",
+      "filePath": "app/services/scheduling.py",
+      "lineRange": [
+        64,
+        212
+      ],
+      "summary": "檢查重疊、法規時數及可排班衝突，並處理必要的驗證、狀態更新與錯誤。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/services/scheduling.py:create_shift",
+      "type": "function",
+      "name": "create_shift",
+      "filePath": "app/services/scheduling.py",
+      "lineRange": [
+        216,
+        251
+      ],
+      "summary": "驗證並建立單筆排班，並處理必要的驗證、狀態更新與錯誤。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/scheduling.py:create_weekly_shift_series",
+      "type": "function",
+      "name": "create_weekly_shift_series",
+      "filePath": "app/services/scheduling.py",
+      "lineRange": [
+        255,
+        303
+      ],
+      "summary": "建立有限期限的每週重複班表，並處理必要的驗證、狀態更新與錯誤。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/scheduling.py:update_shift",
+      "type": "function",
+      "name": "update_shift",
+      "filePath": "app/services/scheduling.py",
+      "lineRange": [
+        307,
+        335
+      ],
+      "summary": "重新驗證並更新排班，並處理必要的驗證、狀態更新與錯誤。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/scheduling.py:shift_to_event",
+      "type": "function",
+      "name": "shift_to_event",
+      "filePath": "app/services/scheduling.py",
+      "lineRange": [
+        338,
+        381
+      ],
+      "summary": "序列化含狀態與出勤註記的月曆事件，並處理必要的驗證、狀態更新與錯誤。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/scheduling.py:month_bounds",
+      "type": "function",
+      "name": "month_bounds",
+      "filePath": "app/services/scheduling.py",
+      "lineRange": [
+        384,
+        395
+      ],
+      "summary": "實作 month bounds 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/services/scheduling.py:SchedulingConflict",
+      "type": "class",
+      "name": "SchedulingConflict",
+      "filePath": "app/services/scheduling.py",
+      "lineRange": [
+        18,
+        22
+      ],
+      "summary": "攜帶排班衝突與可覆寫警告的例外。",
+      "tags": [
+        "class",
+        "domain-error",
+        "workflow"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/services/workforce.py",
+      "type": "file",
+      "name": "workforce.py",
+      "filePath": "app/services/workforce.py",
+      "summary": "計算缺員資格與名額，處理通知、申請及核准後建立排班。",
+      "tags": [
+        "service",
+        "business-logic",
+        "validation",
+        "transaction"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:app/services/workforce.py:assigned_count",
+      "type": "function",
+      "name": "assigned_count",
+      "filePath": "app/services/workforce.py",
+      "lineRange": [
+        32,
+        42
+      ],
+      "summary": "實作 assigned count 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/workforce.py:vacancies",
+      "type": "function",
+      "name": "vacancies",
+      "filePath": "app/services/workforce.py",
+      "lineRange": [
+        45,
+        46
+      ],
+      "summary": "實作 vacancies 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/workforce.py:eligible_staff_ids",
+      "type": "function",
+      "name": "eligible_staff_ids",
+      "filePath": "app/services/workforce.py",
+      "lineRange": [
+        49,
+        66
+      ],
+      "summary": "計算缺員可申請學生集合，並處理必要的驗證、狀態更新與錯誤。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/workforce.py:publish_requirement_notifications",
+      "type": "function",
+      "name": "publish_requirement_notifications",
+      "filePath": "app/services/workforce.py",
+      "lineRange": [
+        69,
+        85
+      ],
+      "summary": "發布缺員通知，並處理必要的驗證、狀態更新與錯誤。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/workforce.py:complete_requirement_notifications",
+      "type": "function",
+      "name": "complete_requirement_notifications",
+      "filePath": "app/services/workforce.py",
+      "lineRange": [
+        88,
+        92
+      ],
+      "summary": "實作 complete requirement notifications 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/workforce.py:submit_application",
+      "type": "function",
+      "name": "submit_application",
+      "filePath": "app/services/workforce.py",
+      "lineRange": [
+        95,
+        152
+      ],
+      "summary": "驗證並建立缺員申請，並處理必要的驗證、狀態更新與錯誤。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/services/workforce.py:cancel_application",
+      "type": "function",
+      "name": "cancel_application",
+      "filePath": "app/services/workforce.py",
+      "lineRange": [
+        155,
+        178
+      ],
+      "summary": "實作 cancel application 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/workforce.py:review_application",
+      "type": "function",
+      "name": "review_application",
+      "filePath": "app/services/workforce.py",
+      "lineRange": [
+        182,
+        227
+      ],
+      "summary": "核准或拒絕缺員申請，並處理必要的驗證、狀態更新與錯誤。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/services/workforce.py:WorkforceError",
+      "type": "class",
+      "name": "WorkforceError",
+      "filePath": "app/services/workforce.py",
+      "lineRange": [
+        28,
+        29
+      ],
+      "summary": "缺員流程不合法時使用的領域錯誤。",
+      "tags": [
+        "class",
+        "domain-error",
+        "workflow"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/student/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "app/student/__init__.py",
+      "summary": "建立學生 Blueprint 並載入首頁、出勤與缺員路由。",
+      "tags": [
+        "student",
+        "api-handler",
+        "authorization",
+        "workflow"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/student/attendance.py",
+      "type": "file",
+      "name": "attendance.py",
+      "filePath": "app/student/attendance.py",
+      "summary": "提供學生查看打卡與補填異常原因的路由。",
+      "tags": [
+        "student",
+        "api-handler",
+        "authorization",
+        "workflow"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/student/attendance.py:attendance_page",
+      "type": "function",
+      "name": "attendance_page",
+      "filePath": "app/student/attendance.py",
+      "lineRange": [
+        16,
+        40
+      ],
+      "summary": "彙整並呈現出勤資料，並處理必要的驗證、狀態更新與錯誤。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/student/attendance.py:submit_attendance_reason",
+      "type": "function",
+      "name": "submit_attendance_reason",
+      "filePath": "app/student/attendance.py",
+      "lineRange": [
+        45,
+        61
+      ],
+      "summary": "提交打卡異常原因，並處理必要的驗證、狀態更新與錯誤。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/student/vacancies.py",
+      "type": "file",
+      "name": "vacancies.py",
+      "filePath": "app/student/vacancies.py",
+      "summary": "提供學生瀏覽、申請及取消可承接缺員的路由。",
+      "tags": [
+        "student",
+        "api-handler",
+        "authorization",
+        "workflow"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/student/vacancies.py:vacancies_page",
+      "type": "function",
+      "name": "vacancies_page",
+      "filePath": "app/student/vacancies.py",
+      "lineRange": [
+        30,
+        67
+      ],
+      "summary": "查詢對學生開放的缺員，並處理必要的驗證、狀態更新與錯誤。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/student/vacancies.py:apply_for_vacancy",
+      "type": "function",
+      "name": "apply_for_vacancy",
+      "filePath": "app/student/vacancies.py",
+      "lineRange": [
+        72,
+        89
+      ],
+      "summary": "提交缺員承接申請，並處理必要的驗證、狀態更新與錯誤。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/student/vacancies.py:cancel_vacancy_application",
+      "type": "function",
+      "name": "cancel_vacancy_application",
+      "filePath": "app/student/vacancies.py",
+      "lineRange": [
+        94,
+        109
+      ],
+      "summary": "實作 cancel vacancy application 的主要流程、驗證與錯誤處理。",
+      "tags": [
+        "function",
+        "workflow",
+        "validation"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:app/services/scheduling.py",
+      "target": "function:app/services/scheduling.py:_acquire_database_schedule_lock",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/scheduling.py",
+      "target": "function:app/services/scheduling.py:_acquire_database_schedule_lock",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/scheduling.py",
+      "target": "function:app/services/scheduling.py:schedule_serialized",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/scheduling.py",
+      "target": "function:app/services/scheduling.py:schedule_serialized",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/scheduling.py",
+      "target": "function:app/services/scheduling.py:times_overlap",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/scheduling.py",
+      "target": "function:app/services/scheduling.py:times_overlap",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/scheduling.py",
+      "target": "function:app/services/scheduling.py:shift_hours",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/scheduling.py",
+      "target": "function:app/services/scheduling.py:shift_hours",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/scheduling.py",
+      "target": "function:app/services/scheduling.py:validate_shift_assignment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/scheduling.py",
+      "target": "function:app/services/scheduling.py:validate_shift_assignment",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/scheduling.py",
+      "target": "function:app/services/scheduling.py:create_shift",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/scheduling.py",
+      "target": "function:app/services/scheduling.py:create_shift",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/scheduling.py",
+      "target": "function:app/services/scheduling.py:create_weekly_shift_series",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/scheduling.py",
+      "target": "function:app/services/scheduling.py:create_weekly_shift_series",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/scheduling.py",
+      "target": "function:app/services/scheduling.py:update_shift",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/scheduling.py",
+      "target": "function:app/services/scheduling.py:update_shift",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/scheduling.py",
+      "target": "function:app/services/scheduling.py:shift_to_event",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/scheduling.py",
+      "target": "function:app/services/scheduling.py:shift_to_event",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/scheduling.py",
+      "target": "function:app/services/scheduling.py:month_bounds",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/scheduling.py",
+      "target": "function:app/services/scheduling.py:month_bounds",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/scheduling.py",
+      "target": "class:app/services/scheduling.py:SchedulingConflict",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/scheduling.py",
+      "target": "class:app/services/scheduling.py:SchedulingConflict",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/workforce.py",
+      "target": "function:app/services/workforce.py:assigned_count",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/workforce.py",
+      "target": "function:app/services/workforce.py:assigned_count",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/workforce.py",
+      "target": "function:app/services/workforce.py:vacancies",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/workforce.py",
+      "target": "function:app/services/workforce.py:vacancies",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/workforce.py",
+      "target": "function:app/services/workforce.py:eligible_staff_ids",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/workforce.py",
+      "target": "function:app/services/workforce.py:eligible_staff_ids",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/workforce.py",
+      "target": "function:app/services/workforce.py:publish_requirement_notifications",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/workforce.py",
+      "target": "function:app/services/workforce.py:publish_requirement_notifications",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/workforce.py",
+      "target": "function:app/services/workforce.py:complete_requirement_notifications",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/workforce.py",
+      "target": "function:app/services/workforce.py:complete_requirement_notifications",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/workforce.py",
+      "target": "function:app/services/workforce.py:submit_application",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/workforce.py",
+      "target": "function:app/services/workforce.py:submit_application",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/workforce.py",
+      "target": "function:app/services/workforce.py:cancel_application",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/workforce.py",
+      "target": "function:app/services/workforce.py:cancel_application",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/workforce.py",
+      "target": "function:app/services/workforce.py:review_application",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/workforce.py",
+      "target": "function:app/services/workforce.py:review_application",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/workforce.py",
+      "target": "class:app/services/workforce.py:WorkforceError",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/workforce.py",
+      "target": "class:app/services/workforce.py:WorkforceError",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/student/attendance.py",
+      "target": "function:app/student/attendance.py:attendance_page",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/student/attendance.py",
+      "target": "function:app/student/attendance.py:attendance_page",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/student/attendance.py",
+      "target": "function:app/student/attendance.py:submit_attendance_reason",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/student/attendance.py",
+      "target": "function:app/student/attendance.py:submit_attendance_reason",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/student/vacancies.py",
+      "target": "function:app/student/vacancies.py:vacancies_page",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/student/vacancies.py",
+      "target": "function:app/student/vacancies.py:vacancies_page",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/student/vacancies.py",
+      "target": "function:app/student/vacancies.py:apply_for_vacancy",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/student/vacancies.py",
+      "target": "function:app/student/vacancies.py:apply_for_vacancy",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/student/vacancies.py",
+      "target": "function:app/student/vacancies.py:cancel_vacancy_application",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/student/vacancies.py",
+      "target": "function:app/student/vacancies.py:cancel_vacancy_application",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/scheduling.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/scheduling.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/scheduling.py",
+      "target": "file:app/services/compliance.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/workforce.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/workforce.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/workforce.py",
+      "target": "file:app/services/audit.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/workforce.py",
+      "target": "file:app/services/notifications.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/workforce.py",
+      "target": "file:app/services/periods.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/workforce.py",
+      "target": "file:app/services/scheduling.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/student/__init__.py",
+      "target": "file:app/student/attendance.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/student/__init__.py",
+      "target": "file:app/student/routes.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/student/__init__.py",
+      "target": "file:app/student/vacancies.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/student/attendance.py",
+      "target": "file:app/decorators.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/student/attendance.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/student/attendance.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/student/attendance.py",
+      "target": "file:app/services/attendance.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/student/vacancies.py",
+      "target": "file:app/decorators.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/student/vacancies.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/student/vacancies.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/student/vacancies.py",
+      "target": "file:app/services/periods.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/student/vacancies.py",
+      "target": "file:app/services/workforce.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/student/vacancies.py",
+      "target": "file:app/time_utils.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    }
+  ]
+}

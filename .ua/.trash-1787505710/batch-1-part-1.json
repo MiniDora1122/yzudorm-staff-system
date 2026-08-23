@@ -1,0 +1,1837 @@
+{
+  "nodes": [
+    {
+      "id": "file:app/extensions.py",
+      "type": "file",
+      "name": "extensions.py",
+      "filePath": "app/extensions.py",
+      "summary": "集中建立 SQLAlchemy、Flask-Login、CSRF 與 migration 等 Flask 擴充元件，供 application factory 與各模組共用。",
+      "tags": [
+        "python",
+        "application",
+        "business-logic"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/extensions.py:enable_sqlite_foreign_keys",
+      "type": "function",
+      "name": "enable_sqlite_foreign_keys",
+      "filePath": "app/extensions.py",
+      "lineRange": [
+        25,
+        33
+      ],
+      "summary": "enable_sqlite_foreign_keys 實作 extensions.py 所屬模組的一項可重用流程。",
+      "tags": [
+        "function",
+        "business-logic",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/extensions.py:Base",
+      "type": "class",
+      "name": "Base",
+      "filePath": "app/extensions.py",
+      "lineRange": [
+        13,
+        14
+      ],
+      "summary": "Base 封裝 extensions.py 中相關狀態與操作。",
+      "tags": [
+        "class",
+        "business-logic",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/models.py",
+      "type": "file",
+      "name": "models.py",
+      "filePath": "app/models.py",
+      "summary": "定義系統完整的 SQLAlchemy 領域模型與狀態列舉，涵蓋帳號、排班、申請、通知、證件、備份、人力需求與出勤資料。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "domain"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:app/models.py:utc_now",
+      "type": "function",
+      "name": "utc_now",
+      "filePath": "app/models.py",
+      "lineRange": [
+        20,
+        21
+      ],
+      "summary": "utc_now 實作 models.py 所屬模組的一項可重用流程。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:Role",
+      "type": "class",
+      "name": "Role",
+      "filePath": "app/models.py",
+      "lineRange": [
+        24,
+        26
+      ],
+      "summary": "定義 Role 狀態列舉，統一模型與業務流程可接受的狀態值。",
+      "tags": [
+        "enum",
+        "domain",
+        "status"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:ShiftStatus",
+      "type": "class",
+      "name": "ShiftStatus",
+      "filePath": "app/models.py",
+      "lineRange": [
+        29,
+        32
+      ],
+      "summary": "定義 ShiftStatus 狀態列舉，統一模型與業務流程可接受的狀態值。",
+      "tags": [
+        "enum",
+        "domain",
+        "status"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:ShiftPublicationStatus",
+      "type": "class",
+      "name": "ShiftPublicationStatus",
+      "filePath": "app/models.py",
+      "lineRange": [
+        35,
+        37
+      ],
+      "summary": "定義 ShiftPublicationStatus 狀態列舉，統一模型與業務流程可接受的狀態值。",
+      "tags": [
+        "enum",
+        "domain",
+        "status"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:BackupScheduleMode",
+      "type": "class",
+      "name": "BackupScheduleMode",
+      "filePath": "app/models.py",
+      "lineRange": [
+        40,
+        42
+      ],
+      "summary": "定義 BackupScheduleMode 狀態列舉，統一模型與業務流程可接受的狀態值。",
+      "tags": [
+        "enum",
+        "domain",
+        "status"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:LeaveStatus",
+      "type": "class",
+      "name": "LeaveStatus",
+      "filePath": "app/models.py",
+      "lineRange": [
+        45,
+        49
+      ],
+      "summary": "定義 LeaveStatus 狀態列舉，統一模型與業務流程可接受的狀態值。",
+      "tags": [
+        "enum",
+        "domain",
+        "status"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:SwapPeerStatus",
+      "type": "class",
+      "name": "SwapPeerStatus",
+      "filePath": "app/models.py",
+      "lineRange": [
+        52,
+        55
+      ],
+      "summary": "定義 SwapPeerStatus 狀態列舉，統一模型與業務流程可接受的狀態值。",
+      "tags": [
+        "enum",
+        "domain",
+        "status"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:SwapAdminStatus",
+      "type": "class",
+      "name": "SwapAdminStatus",
+      "filePath": "app/models.py",
+      "lineRange": [
+        58,
+        63
+      ],
+      "summary": "定義 SwapAdminStatus 狀態列舉，統一模型與業務流程可接受的狀態值。",
+      "tags": [
+        "enum",
+        "domain",
+        "status"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:DocumentType",
+      "type": "class",
+      "name": "DocumentType",
+      "filePath": "app/models.py",
+      "lineRange": [
+        66,
+        68
+      ],
+      "summary": "定義 DocumentType 狀態列舉，統一模型與業務流程可接受的狀態值。",
+      "tags": [
+        "enum",
+        "domain",
+        "status"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:DocumentPageKind",
+      "type": "class",
+      "name": "DocumentPageKind",
+      "filePath": "app/models.py",
+      "lineRange": [
+        71,
+        75
+      ],
+      "summary": "定義 DocumentPageKind 狀態列舉，統一模型與業務流程可接受的狀態值。",
+      "tags": [
+        "enum",
+        "domain",
+        "status"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:DocumentStatus",
+      "type": "class",
+      "name": "DocumentStatus",
+      "filePath": "app/models.py",
+      "lineRange": [
+        78,
+        86
+      ],
+      "summary": "定義 DocumentStatus 狀態列舉，統一模型與業務流程可接受的狀態值。",
+      "tags": [
+        "enum",
+        "domain",
+        "status"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:NotificationStatus",
+      "type": "class",
+      "name": "NotificationStatus",
+      "filePath": "app/models.py",
+      "lineRange": [
+        89,
+        91
+      ],
+      "summary": "定義 NotificationStatus 狀態列舉，統一模型與業務流程可接受的狀態值。",
+      "tags": [
+        "enum",
+        "domain",
+        "status"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:RequirementStatus",
+      "type": "class",
+      "name": "RequirementStatus",
+      "filePath": "app/models.py",
+      "lineRange": [
+        94,
+        97
+      ],
+      "summary": "定義 RequirementStatus 狀態列舉，統一模型與業務流程可接受的狀態值。",
+      "tags": [
+        "enum",
+        "domain",
+        "status"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:VacancyApplicationStatus",
+      "type": "class",
+      "name": "VacancyApplicationStatus",
+      "filePath": "app/models.py",
+      "lineRange": [
+        100,
+        104
+      ],
+      "summary": "定義 VacancyApplicationStatus 狀態列舉，統一模型與業務流程可接受的狀態值。",
+      "tags": [
+        "enum",
+        "domain",
+        "status"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:AttendanceMethod",
+      "type": "class",
+      "name": "AttendanceMethod",
+      "filePath": "app/models.py",
+      "lineRange": [
+        107,
+        110
+      ],
+      "summary": "定義 AttendanceMethod 狀態列舉，統一模型與業務流程可接受的狀態值。",
+      "tags": [
+        "enum",
+        "domain",
+        "status"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:AttendanceDirection",
+      "type": "class",
+      "name": "AttendanceDirection",
+      "filePath": "app/models.py",
+      "lineRange": [
+        113,
+        116
+      ],
+      "summary": "定義 AttendanceDirection 狀態列舉，統一模型與業務流程可接受的狀態值。",
+      "tags": [
+        "enum",
+        "domain",
+        "status"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:AttendanceStatus",
+      "type": "class",
+      "name": "AttendanceStatus",
+      "filePath": "app/models.py",
+      "lineRange": [
+        119,
+        128
+      ],
+      "summary": "定義 AttendanceStatus 狀態列舉，統一模型與業務流程可接受的狀態值。",
+      "tags": [
+        "enum",
+        "domain",
+        "status"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:CardStatus",
+      "type": "class",
+      "name": "CardStatus",
+      "filePath": "app/models.py",
+      "lineRange": [
+        131,
+        135
+      ],
+      "summary": "定義 CardStatus 狀態列舉，統一模型與業務流程可接受的狀態值。",
+      "tags": [
+        "enum",
+        "domain",
+        "status"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:User",
+      "type": "class",
+      "name": "User",
+      "filePath": "app/models.py",
+      "lineRange": [
+        138,
+        176
+      ],
+      "summary": "代表登入帳號與角色，封裝密碼雜湊驗證及角色檢查。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:StaffProfile",
+      "type": "class",
+      "name": "StaffProfile",
+      "filePath": "app/models.py",
+      "lineRange": [
+        179,
+        210
+      ],
+      "summary": "保存工讀生學號、聯絡、國籍與證件效期等個人資料。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:Country",
+      "type": "class",
+      "name": "Country",
+      "filePath": "app/models.py",
+      "lineRange": [
+        213,
+        227
+      ],
+      "summary": "Country 是 SQLAlchemy 領域模型，保存對應業務資料與關聯。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:SchedulingPolicy",
+      "type": "class",
+      "name": "SchedulingPolicy",
+      "filePath": "app/models.py",
+      "lineRange": [
+        230,
+        244
+      ],
+      "summary": "SchedulingPolicy 是 SQLAlchemy 領域模型，保存對應業務資料與關聯。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:SchedulingExceptionPeriod",
+      "type": "class",
+      "name": "SchedulingExceptionPeriod",
+      "filePath": "app/models.py",
+      "lineRange": [
+        247,
+        259
+      ],
+      "summary": "SchedulingExceptionPeriod 是 SQLAlchemy 領域模型，保存對應業務資料與關聯。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:WorkLocation",
+      "type": "class",
+      "name": "WorkLocation",
+      "filePath": "app/models.py",
+      "lineRange": [
+        262,
+        277
+      ],
+      "summary": "WorkLocation 是 SQLAlchemy 領域模型，保存對應業務資料與關聯。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:ShiftType",
+      "type": "class",
+      "name": "ShiftType",
+      "filePath": "app/models.py",
+      "lineRange": [
+        280,
+        300
+      ],
+      "summary": "ShiftType 是 SQLAlchemy 領域模型，保存對應業務資料與關聯。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:PayrollSetting",
+      "type": "class",
+      "name": "PayrollSetting",
+      "filePath": "app/models.py",
+      "lineRange": [
+        303,
+        321
+      ],
+      "summary": "PayrollSetting 是 SQLAlchemy 領域模型，保存對應業務資料與關聯。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:MinimumWageRate",
+      "type": "class",
+      "name": "MinimumWageRate",
+      "filePath": "app/models.py",
+      "lineRange": [
+        324,
+        331
+      ],
+      "summary": "MinimumWageRate 是 SQLAlchemy 領域模型，保存對應業務資料與關聯。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:ScheduleWriteLock",
+      "type": "class",
+      "name": "ScheduleWriteLock",
+      "filePath": "app/models.py",
+      "lineRange": [
+        334,
+        339
+      ],
+      "summary": "ScheduleWriteLock 是 SQLAlchemy 領域模型，保存對應業務資料與關聯。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:Shift",
+      "type": "class",
+      "name": "Shift",
+      "filePath": "app/models.py",
+      "lineRange": [
+        343,
+        376
+      ],
+      "summary": "Shift 是 SQLAlchemy 領域模型，保存對應業務資料與關聯。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:ShiftImportBatch",
+      "type": "class",
+      "name": "ShiftImportBatch",
+      "filePath": "app/models.py",
+      "lineRange": [
+        379,
+        390
+      ],
+      "summary": "ShiftImportBatch 是 SQLAlchemy 領域模型，保存對應業務資料與關聯。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:ShiftSeries",
+      "type": "class",
+      "name": "ShiftSeries",
+      "filePath": "app/models.py",
+      "lineRange": [
+        393,
+        408
+      ],
+      "summary": "ShiftSeries 是 SQLAlchemy 領域模型，保存對應業務資料與關聯。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:StaffAvailability",
+      "type": "class",
+      "name": "StaffAvailability",
+      "filePath": "app/models.py",
+      "lineRange": [
+        411,
+        427
+      ],
+      "summary": "StaffAvailability 是 SQLAlchemy 領域模型，保存對應業務資料與關聯。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:LeaveRequest",
+      "type": "class",
+      "name": "LeaveRequest",
+      "filePath": "app/models.py",
+      "lineRange": [
+        430,
+        452
+      ],
+      "summary": "LeaveRequest 是 SQLAlchemy 領域模型，保存對應業務資料與關聯。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:SwapRequest",
+      "type": "class",
+      "name": "SwapRequest",
+      "filePath": "app/models.py",
+      "lineRange": [
+        455,
+        498
+      ],
+      "summary": "SwapRequest 是 SQLAlchemy 領域模型，保存對應業務資料與關聯。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:AuditLog",
+      "type": "class",
+      "name": "AuditLog",
+      "filePath": "app/models.py",
+      "lineRange": [
+        501,
+        517
+      ],
+      "summary": "AuditLog 是 SQLAlchemy 領域模型，保存對應業務資料與關聯。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:Notification",
+      "type": "class",
+      "name": "Notification",
+      "filePath": "app/models.py",
+      "lineRange": [
+        520,
+        555
+      ],
+      "summary": "Notification 是 SQLAlchemy 領域模型，保存對應業務資料與關聯。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:StaffDocument",
+      "type": "class",
+      "name": "StaffDocument",
+      "filePath": "app/models.py",
+      "lineRange": [
+        558,
+        598
+      ],
+      "summary": "StaffDocument 是 SQLAlchemy 領域模型，保存對應業務資料與關聯。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:DocumentRetentionPolicy",
+      "type": "class",
+      "name": "DocumentRetentionPolicy",
+      "filePath": "app/models.py",
+      "lineRange": [
+        601,
+        615
+      ],
+      "summary": "DocumentRetentionPolicy 是 SQLAlchemy 領域模型，保存對應業務資料與關聯。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:DocumentDraft",
+      "type": "class",
+      "name": "DocumentDraft",
+      "filePath": "app/models.py",
+      "lineRange": [
+        618,
+        635
+      ],
+      "summary": "DocumentDraft 是 SQLAlchemy 領域模型，保存對應業務資料與關聯。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:MonthlySettlement",
+      "type": "class",
+      "name": "MonthlySettlement",
+      "filePath": "app/models.py",
+      "lineRange": [
+        638,
+        655
+      ],
+      "summary": "MonthlySettlement 是 SQLAlchemy 領域模型，保存對應業務資料與關聯。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:BackupRun",
+      "type": "class",
+      "name": "BackupRun",
+      "filePath": "app/models.py",
+      "lineRange": [
+        658,
+        671
+      ],
+      "summary": "BackupRun 是 SQLAlchemy 領域模型，保存對應業務資料與關聯。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:BackupPolicy",
+      "type": "class",
+      "name": "BackupPolicy",
+      "filePath": "app/models.py",
+      "lineRange": [
+        674,
+        695
+      ],
+      "summary": "BackupPolicy 是 SQLAlchemy 領域模型，保存對應業務資料與關聯。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:StaffGroup",
+      "type": "class",
+      "name": "StaffGroup",
+      "filePath": "app/models.py",
+      "lineRange": [
+        698,
+        713
+      ],
+      "summary": "StaffGroup 是 SQLAlchemy 領域模型，保存對應業務資料與關聯。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:StaffGroupMember",
+      "type": "class",
+      "name": "StaffGroupMember",
+      "filePath": "app/models.py",
+      "lineRange": [
+        716,
+        724
+      ],
+      "summary": "StaffGroupMember 是 SQLAlchemy 領域模型，保存對應業務資料與關聯。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:StaffingRequirement",
+      "type": "class",
+      "name": "StaffingRequirement",
+      "filePath": "app/models.py",
+      "lineRange": [
+        727,
+        758
+      ],
+      "summary": "StaffingRequirement 是 SQLAlchemy 領域模型，保存對應業務資料與關聯。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:RequirementAudienceGroup",
+      "type": "class",
+      "name": "RequirementAudienceGroup",
+      "filePath": "app/models.py",
+      "lineRange": [
+        761,
+        768
+      ],
+      "summary": "RequirementAudienceGroup 是 SQLAlchemy 領域模型，保存對應業務資料與關聯。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:RequirementAudienceStaff",
+      "type": "class",
+      "name": "RequirementAudienceStaff",
+      "filePath": "app/models.py",
+      "lineRange": [
+        771,
+        778
+      ],
+      "summary": "RequirementAudienceStaff 是 SQLAlchemy 領域模型，保存對應業務資料與關聯。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:VacancyApplication",
+      "type": "class",
+      "name": "VacancyApplication",
+      "filePath": "app/models.py",
+      "lineRange": [
+        781,
+        804
+      ],
+      "summary": "VacancyApplication 是 SQLAlchemy 領域模型，保存對應業務資料與關聯。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:AttendancePolicy",
+      "type": "class",
+      "name": "AttendancePolicy",
+      "filePath": "app/models.py",
+      "lineRange": [
+        807,
+        817
+      ],
+      "summary": "AttendancePolicy 是 SQLAlchemy 領域模型，保存對應業務資料與關聯。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:AttendanceDevice",
+      "type": "class",
+      "name": "AttendanceDevice",
+      "filePath": "app/models.py",
+      "lineRange": [
+        820,
+        872
+      ],
+      "summary": "AttendanceDevice 是 SQLAlchemy 領域模型，保存對應業務資料與關聯。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "domain"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:app/models.py:AttendanceDeviceNonce",
+      "type": "class",
+      "name": "AttendanceDeviceNonce",
+      "filePath": "app/models.py",
+      "lineRange": [
+        875,
+        882
+      ],
+      "summary": "AttendanceDeviceNonce 是 SQLAlchemy 領域模型，保存對應業務資料與關聯。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:StaffCard",
+      "type": "class",
+      "name": "StaffCard",
+      "filePath": "app/models.py",
+      "lineRange": [
+        885,
+        903
+      ],
+      "summary": "StaffCard 是 SQLAlchemy 領域模型，保存對應業務資料與關聯。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:AttendanceEvent",
+      "type": "class",
+      "name": "AttendanceEvent",
+      "filePath": "app/models.py",
+      "lineRange": [
+        906,
+        943
+      ],
+      "summary": "AttendanceEvent 是 SQLAlchemy 領域模型，保存對應業務資料與關聯。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:AttendanceReviewHistory",
+      "type": "class",
+      "name": "AttendanceReviewHistory",
+      "filePath": "app/models.py",
+      "lineRange": [
+        946,
+        959
+      ],
+      "summary": "AttendanceReviewHistory 是 SQLAlchemy 領域模型，保存對應業務資料與關聯。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:AttendanceAdjustment",
+      "type": "class",
+      "name": "AttendanceAdjustment",
+      "filePath": "app/models.py",
+      "lineRange": [
+        962,
+        973
+      ],
+      "summary": "AttendanceAdjustment 是 SQLAlchemy 領域模型，保存對應業務資料與關聯。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "domain"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/models.py:AttendanceReconciliation",
+      "type": "class",
+      "name": "AttendanceReconciliation",
+      "filePath": "app/models.py",
+      "lineRange": [
+        976,
+        988
+      ],
+      "summary": "AttendanceReconciliation 是 SQLAlchemy 領域模型，保存對應業務資料與關聯。",
+      "tags": [
+        "data-model",
+        "sqlalchemy",
+        "domain"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:app/extensions.py",
+      "target": "function:app/extensions.py:enable_sqlite_foreign_keys",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/extensions.py",
+      "target": "function:app/extensions.py:enable_sqlite_foreign_keys",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/extensions.py",
+      "target": "class:app/extensions.py:Base",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/extensions.py",
+      "target": "class:app/extensions.py:Base",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "function:app/models.py:utc_now",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "function:app/models.py:utc_now",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:Role",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:Role",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:ShiftStatus",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:ShiftStatus",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:ShiftPublicationStatus",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:ShiftPublicationStatus",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:BackupScheduleMode",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:BackupScheduleMode",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:LeaveStatus",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:LeaveStatus",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:SwapPeerStatus",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:SwapPeerStatus",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:SwapAdminStatus",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:SwapAdminStatus",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:DocumentType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:DocumentType",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:DocumentPageKind",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:DocumentPageKind",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:DocumentStatus",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:DocumentStatus",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:NotificationStatus",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:NotificationStatus",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:RequirementStatus",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:RequirementStatus",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:VacancyApplicationStatus",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:VacancyApplicationStatus",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:AttendanceMethod",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:AttendanceMethod",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:AttendanceDirection",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:AttendanceDirection",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:AttendanceStatus",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:AttendanceStatus",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:CardStatus",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:CardStatus",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:User",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:User",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:StaffProfile",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:StaffProfile",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:Country",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:Country",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:SchedulingPolicy",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:SchedulingPolicy",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:SchedulingExceptionPeriod",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:SchedulingExceptionPeriod",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:WorkLocation",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:WorkLocation",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:ShiftType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:ShiftType",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:PayrollSetting",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:PayrollSetting",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:MinimumWageRate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:MinimumWageRate",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:ScheduleWriteLock",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:ScheduleWriteLock",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:Shift",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:Shift",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:ShiftImportBatch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:ShiftImportBatch",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:ShiftSeries",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:ShiftSeries",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:StaffAvailability",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:StaffAvailability",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:LeaveRequest",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:LeaveRequest",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:SwapRequest",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:SwapRequest",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:AuditLog",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:AuditLog",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:Notification",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:Notification",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:StaffDocument",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:StaffDocument",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:DocumentRetentionPolicy",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:DocumentRetentionPolicy",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:DocumentDraft",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:DocumentDraft",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:MonthlySettlement",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:MonthlySettlement",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:BackupRun",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:BackupRun",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:BackupPolicy",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:BackupPolicy",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:StaffGroup",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:StaffGroup",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:StaffGroupMember",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:StaffGroupMember",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:StaffingRequirement",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:StaffingRequirement",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:RequirementAudienceGroup",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:RequirementAudienceGroup",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:RequirementAudienceStaff",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:RequirementAudienceStaff",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:VacancyApplication",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:VacancyApplication",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:AttendancePolicy",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:AttendancePolicy",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:AttendanceDevice",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:AttendanceDevice",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:AttendanceDeviceNonce",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:AttendanceDeviceNonce",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:StaffCard",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:StaffCard",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:AttendanceEvent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:AttendanceEvent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:AttendanceReviewHistory",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:AttendanceReviewHistory",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:AttendanceAdjustment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:AttendanceAdjustment",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:AttendanceReconciliation",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "class:app/models.py:AttendanceReconciliation",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/models.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    }
+  ]
+}

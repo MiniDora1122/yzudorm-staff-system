@@ -14,6 +14,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from dotenv import dotenv_values
+from cryptography.fernet import Fernet, InvalidToken
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -124,10 +125,37 @@ def verify_backup(archive_path: Path) -> dict[str, object]:
             connection = sqlite3.connect(database)
             try:
                 result = connection.execute("PRAGMA integrity_check").fetchone()[0]
+                has_documents_table = connection.execute(
+                    "SELECT 1 FROM sqlite_master WHERE type='table' AND name='staff_documents'"
+                ).fetchone()
+                documents = (
+                    connection.execute(
+                        "SELECT storage_key, sha256 FROM staff_documents WHERE storage_key IS NOT NULL"
+                    ).fetchall()
+                    if has_documents_table else []
+                )
             finally:
                 connection.close()
             if result != "ok":
                 raise RuntimeError(f"SQLite integrity_check failed: {result}")
+            fernet = None
+            if documents:
+                key_name = "instance/private_keys/document-fernet.key"
+                backup_key_name = "instance/private_keys/backup/document-fernet.key"
+                try:
+                    key = archive.read(key_name if key_name in archive.namelist() else backup_key_name).strip()
+                    fernet = Fernet(key)
+                except (KeyError, TypeError, ValueError) as exc:
+                    raise RuntimeError("Backup document encryption key is missing or invalid.") from exc
+            for storage_key, expected_sha256 in documents:
+                archive_name = f"instance/private_documents/{str(storage_key).replace(chr(92), '/')}"
+                try:
+                    plaintext = fernet.decrypt(archive.read(archive_name))
+                except (KeyError, InvalidToken) as exc:
+                    raise RuntimeError(f"Backup document is missing or cannot be decrypted: {storage_key}") from exc
+                if expected_sha256 and sha256_bytes(plaintext) != expected_sha256:
+                    raise RuntimeError(f"Backup document plaintext checksum failed: {storage_key}")
+            manifest["verified_document_count"] = len(documents)
     return manifest
 
 

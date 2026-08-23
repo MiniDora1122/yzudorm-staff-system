@@ -1,189 +1,339 @@
-# 大專校院工讀生系統
-工讀生管理系統是一套專為校園宿舍行政需求打造的智慧管理平台，整合工讀生排班、請假與換班、個人資料、證件審核、效期提醒、薪資與勞健保成本試算，以及 Excel 報表輸出等功能。管理員可透過依工作地點分類的視覺化月曆，快速掌握每天各時段的人力配置，並使用單筆、每週重複及批量匯入等方式安排班表。系統也會自動檢查排班重疊、每日工時與連續工作天數，協助降低誤排、超時及人力配置不當的風險。
-系統採用中英文同頁設計，讓本地及外籍工讀生都能直覺使用，並提供完善的角色權限、密碼保護、文件加密及操作紀錄。學生可透過電腦或手機查看個人班表、提出請假或換班申請、更新證件及追蹤處理進度；管理員則能在統一平台完成審核、證件效期追蹤、工時統計與報表產出。重要事項會持續顯示在通知中心，直到實際完成才移入歷史紀錄，有效避免漏審或遺忘，讓原本分散在紙本、Excel 與通訊軟體中的繁瑣流程更加安全、高效且專業。
+# 大專校院宿舍工讀生系統
 
-# 宿舍工讀生系統（Phase 6）
+> Dormitory Student Worker Management System — 整合排班、出勤、請假換班、證件、薪資試算、報表與安全稽核的校務管理平台。
 
-Flask + SQLAlchemy 的多人登入基礎架構，登入狀態使用有逾時設定的伺服器端 session。開發資料庫預設使用 SQLite，也可用 `DATABASE_URL` 切換至 PostgreSQL 等 SQLAlchemy 支援的資料庫。
+![Python](https://img.shields.io/badge/Python-3.x-3776AB?logo=python&logoColor=white)
+![Flask](https://img.shields.io/badge/Flask-3.1-000000?logo=flask&logoColor=white)
+![SQLAlchemy](https://img.shields.io/badge/ORM-SQLAlchemy-D71F00)
+![Database](https://img.shields.io/badge/Database-SQLite%20%7C%20PostgreSQL-336791)
+![UI](https://img.shields.io/badge/UI-繁體中文%20%2B%20English-0B5ED7)
+![Platform](https://img.shields.io/badge/Deployment-Windows%20%2F%20XAMPP-7D4CDB)
 
-## 現有 prototype 分析
+本專案將宿舍工讀生管理原本分散於紙本、Excel 與通訊軟體的流程，整理為一套具備角色權限、資料庫交易、操作稽核與安全文件保存機制的 Flask 系統。管理員可在同一平台完成排班、出勤核對、人力需求、證件審核、薪資試算與月報匯出；工讀生則可透過電腦或手機查看班表、申請請假或換班、回報出勤異常及維護個人文件。
 
-根目錄的 `main.html` 保留原始 prototype，供 Phase 2 拆分與移植：
+介面以繁體中文為主、英文為輔；排班核心延續原始 `main.html` prototype 的 FullCalendar 操作概念，並將帳號、權限、驗證與資料一致性移至後端處理。
 
-- FullCalendar 月曆及 `listMonth` 檢視。
-- 地點篩選與分區顯示（初始為 OFFICE／MC，現在可由管理員新增）。
-- 點日期新增、點事件確認刪除。
-- 同一工讀生的時間不可重疊；同地點重疊時段可安排多人，但管理員必須再次確認。
-- 同一人不可被排入時間重疊的班別。
-- 依工讀生及地點加總時數與預估薪資。
-- 工讀生名冊及外籍生證件效期欄位。
+## 目錄
 
-原 prototype 以 JavaScript array 保存人員與排班，重新整理即遺失；也沒有登入、後端權限、CSRF、資料庫交易或後端衝突驗證，因此不能作為正式多人系統。現在帳號、人員、班別與排班皆由資料庫提供，管理端 FullCalendar 使用後端 CRUD 與衝突驗證；學生首頁的 FullCalendar 僅讀取登入者本人的排班。
+- [系統特色](#系統特色)
+- [角色與功能](#角色與功能)
+- [核心業務規則](#核心業務規則)
+- [系統架構](#系統架構)
+- [快速開始](#快速開始)
+- [正式部署](#正式部署)
+- [安全與隱私](#安全與隱私)
+- [備份與復原](#備份與復原)
+- [測試](#測試)
+- [專案結構](#專案結構)
+- [主要更新沿革](#主要更新沿革)
+- [文件索引](#文件索引)
+- [授權與使用責任](#授權與使用責任)
 
-## Phase 2 排班功能
+## 系統特色
 
-- 管理員月曆／清單檢視、地點與工讀生篩選。
-- 新增每週重複排班系列：指定第一天與截止日後，每七天建立一筆實際排班；任一日期衝突時整個系列回滾。
-- 重複系列可刪除單筆、本筆及後續，或整個系列；月曆也支援跨人員與班別多選批量刪除。
-- 點日期新增，點事件編輯或經確認後刪除。
-- 後端對同地點重疊時段回傳二次確認要求，確認後才允許多人排班；同一工讀生時間重疊仍一律拒絕。
-- 支援 UTF-8 CSV 批量匯入排班，採全有或全無交易並保留稽核紀錄。
-- 後端拒絕同一工讀生的時間重疊排班。
-- 單筆班別與每日排班合計皆不得超過 8 小時；新增、編輯、批量匯入及重複系列皆由後端檢查。同一工讀生最多連續工作 5 天，第 6 個連續工作日會被拒絕。
-- 依月份、動態地點與工讀生統計各地點及總時數。
-- 工讀生首頁以月曆顯示本人每筆排班的日期、時間、地點與班別。
-- 月曆依地點建立左側標示與每日泳道，完整顯示時間及人員；新增地點後自動帶入篩選與月曆。
-- 管理員可建立及編輯工作地點與班別；中文與英文名稱皆存於資料庫，排班表單以地點分組選班，並可連續新增。
-- 管理員儀表板直接列出今天與明天的值班人員、地點、班別及起訖時間。
-- 管理員可設定時薪、投保級距與費率，查看工資及雇主勞保、就保、職災、健保、勞退成本試算。
-- 工讀生只能看到自己的時數、時薪與預估稅前工資，不會收到雇主保險費明細。
+| 模組 | 已實作能力 |
+| --- | --- |
+| 排班管理 | FullCalendar 月曆／清單、動態地點泳道、地點與班別 CRUD、單筆與每週重複排班、CSV 批量匯入、批量刪除、草稿與正式發布、月份排班鎖定 |
+| 排班檢核 | 人員時段重疊、同地點多人二次確認、每日工時、連續工作天數、可設定週界線與每週時數限制、例外國籍與不限時數期間、可排／不可排時段提醒 |
+| 請假與換班 | 申請人原因必填、同儕回覆、管理員最終審核、衝突預檢、交易式核准、狀態歷程與月曆標示 |
+| 出勤管理 | 固定地點打卡終端、學生證 UID／帳號打卡、離線佇列、漏刷與遲到事由、管理員核對、確認計薪時數 |
+| 人力配置 | 學生群組、缺員／人力需求、指定全部學生／群組／個別學生開放、申請與核准 |
+| 帳號與名冊 | 多管理員、工讀生帳號、臨時密碼、首次登入強制改密碼、名冊多欄排序、帳號封存與復原 |
+| 證件管理 | 外籍生居留證正反面、工作證 1–2 頁、加密私有保存、管理員欄位與影像併同審核、退回補件、效期提醒、保存期限與排程清理 |
+| 薪資與報表 | 即時工時／薪資試算、有效日最低工資、勞健保與雇主成本設定、月報、每日時數矩陣、排班／薪資／流程／證件報表 CSV 或 XLSX |
+| 通知中心 | 以「未完成／已完成」管理，不以已讀取代完成；儀表板刷新即時核對，背景維護補充定期同步 |
+| 維運與稽核 | 來源 IP、User-Agent、route、動作與安全摘要、設定前後差異、自動驗證備份、隔離式復原演練、Windows Launcher 與 Watchdog |
 
-薪資頁是依管理員輸入的投保級距與費率進行的管理試算，不能取代勞保局、健保署申報結果或薪資專業判斷。職災費率會依行業別與實績不同，正式使用前務必以單位核定資料覆核。
+> OCR 已依實際使用需求移除。證件資料由工讀生對照完整影像填寫，再由管理員人工核對，系統不會以辨識結果自動覆寫正式資料。
 
-## Phase 3 請假與換班
+## 角色與功能
 
-- 工讀生只能對自己的未過期有效排班提出請假，待處理申請可自行取消。
-- 工讀生進入申請頁後須先選擇「請假」或「換班」，系統才顯示相應表單，避免同頁兩套欄位造成誤填。
-- 管理員可核准或拒絕請假；核准後保留原排班與申請歷史，月曆以「缺員」顯示。
-- 工讀生可邀請另一位工讀生直接承接自己的班，或指定雙方班表互換。
-- 換班必須先由受邀者接受，再送管理員進行最終審核。
-- 學生送出換班申請時即檢查雙方交換後的時間衝突；受邀者接受及管理員核准時仍會再次檢查，避免等待審核後才發現原始衝突。
-- 管理員核准前會重新確認班表所有權與時間衝突，核准時以單一交易更新排班。
-- 建立、取消、接受、拒絕及核准操作會寫入不含敏感資料的 `audit_logs`。
-- 管理員與工讀生月曆都使用動態地點泳道；左側地點列會依日期列及當週事件高度同步調整。
-- 管理員與工讀生可切換「全部」或指定排班月份查看請假、換班紀錄。
-- 月曆事件會標示請假待審、請假缺員、換班待回覆、換班待管理員與換班已核准；受邀直接承接的工讀生也會在自己的月曆看到邀請。
+### 管理員 Admin
 
-## Phase 4.5 基本資料與安全證件流程
+- 從儀表板優先查看待辦通知、證件效期、今日與明日值班資訊。
+- 建立、編輯、發布、匯入、重複安排或批量刪除排班。
+- 管理動態工作地點、班別、國籍、排班政策與最低工資生效資料。
+- 審核請假、換班、缺員申請、證件與出勤異常。
+- 維護學生群組、工讀生及其他管理員帳號，並封存或復原帳號。
+- 核對排班時數、出勤結果與計薪時數，匯出管理報表。
+- 查詢安全事件、操作稽核、設定變更差異、備份及復原演練結果。
 
-- 工讀生可維護聯絡方式及國籍；學號由管理員維護，並自動帶入所有月報與明細報表。
-- 居留證需同時上傳正反面；工作證第 1 頁必填、第 2 頁選填。每頁接受 JPG、PNG、WEBP，會檢查副檔名、MIME、圖片內容、解析度、像素數及 8MB 上限。
-- 圖片會移除 EXIF、統一重新編碼，再以 Fernet 加密保存於非 `static` 私有目錄。
-- 工讀生只能預覽及下載自己的文件；管理員可逐頁預覽、下載，或將整份證件下載為 ZIP。
-- 上傳後先由工讀生逐欄人工核對並送審，正式基本資料此時不會變更；管理員審核時須將影像與送審欄位一併核對（居留證號及截止日，或工作證開始／截止日），勾選確認後才能核准並以交易更新正式欄位。管理員退回時必須填寫原因，學生可依原因修正後重新送審。
-- 新文件確認後，舊文件標示為已取代，供管理員在保存期限內下載；學生不可自行刪除已確認文件。
-- 管理員儀表板、工讀生首頁與名冊顯示 60／30 天及逾期提醒；一般畫面遮罩證號。
-- 學生證件被退回時，首頁會顯示退回原因與直接修正入口；學生重新送審後，管理員儀表板會顯示待審件數與直接審核入口。
-- 工作證只保存開始日與截止日，不保存工作證號。
-- 文件金鑰首次啟動自動產生於 `instance/private_keys/document-fernet.key`，並自動備份至 `instance/private_keys/backup/`；缺少其中一份時會從另一份復原，不一致時拒絕啟動。
-- 管理員可設定 0–3650 天保存期限與每日清理時間；排程清除已取代、上傳失敗及逾期未確認的影像，並保留安全 metadata 與 audit log。
+### 工讀生 Student
 
-## Phase 6 報表與介面整理
+- 首頁查看近期 5 筆排班、本月時數、薪資試算與未完成提醒。
+- 月曆預設顯示「我的班表」，也可查看其他工讀生已發布的公開班表；草稿不會曝光。
+- 提出請假、承接或互換班別，並追蹤同儕與管理員處理進度。
+- 填寫可排班／不可排班時段；若管理員排入衝突時段，系統提醒但允許管理員確認後繼續。
+- 查看可申請的缺員需求、送出或取消申請。
+- 維護聯絡資料、修改密碼、上傳個人證件及查看退回原因。
+- 登錄學生證、查看個人出勤、填寫遲到或漏刷原因。
 
-- OCR 功能已依需求移除；證件欄位完全由使用者對照整份影像人工確認。
-- 報表中心提供參考附件樣式的「工讀生約用時數月報」XLSX：每人一個月曆區塊，顯示每日時數、每週小計、月總計、學號與姓名。
-- 報表中心另提供「全體工讀生每日時數表」XLSX：A 欄序號、B 欄學號、C 欄姓名，其後為當月每日時數、個人小計與每日合計；即使帳號之後停用，當月已有正式排班的人員仍會保留在歷史報表中。
-- 可匯出排班明細、薪資與雇主成本、請假／換班紀錄，以及不含完整居留證號的證件效期與文件完整性清單。
-- 報表下載僅限管理員，且留下不含敏感內容的稽核紀錄。
-- 可直接查看已渲染驗證的範例：[outputs/phase6/115年8月工讀生約用時數表-系統產出.xlsx](outputs/phase6/115年8月工讀生約用時數表-系統產出.xlsx)。
+### 打卡終端 Attendance Terminal
 
-## 管理員建立工讀生帳號
+- 以獨立 Windows 程式連接鍵盤模擬讀卡機，支援學生證與在線帳號打卡。
+- 使用 Windows DPAPI 保護本機設定與離線佇列；帳號密碼不落地。
+- HTTPS 模式支援短效註冊碼；隔離內網的 `ENCRYPTED_HTTP` 模式使用一次性、限時且受密碼保護的 `.dormclock` 註冊包。
+- 每台裝置採獨立密鑰與 AES-256-GCM 請求／回應保護，並驗證時間、request ID、裝置狀態與選配 CIDR。
+- 回報電腦名稱與網路介面識別資料供管理員核對；MAC 位址僅作輔助識別，不能視為不可偽造的身分憑證。
 
-- 管理員可在「工讀生名冊」直接建立工讀生基本資料、學號與登入帳號。
-- 新增及重設密碼時由管理員輸入臨時密碼，或使用畫面上的安全密碼產生器。
-- 臨時密碼以 Argon2 雜湊保存，不會出現在稽核紀錄，也無法由系統還原查看。
-- 使用臨時密碼登入後，系統會阻擋其他內頁並要求先設定個人新密碼。
-- 管理員可重設工讀生密碼；儲存後原密碼立即失效，既有登入工作階段下次操作也會被導向修改密碼。
-- 地點、班別、工讀生與其他管理員均可由管理員刪除。為保留歷史報表與稽核，刪除採安全停用；工讀生仍有未來排班或進行中申請時會拒絕刪除。
+詳細安裝方式請見 [打卡終端說明](attendance-terminal/README.md)。
 
-## 多管理員與同頁雙語
+## 核心業務規則
 
-- 管理員導覽列的「管理員」頁面可建立多個 ADMIN 帳號；該頁及所有新增、重設操作皆由後端 ADMIN 權限保護。
-- 新管理員使用臨時密碼，首次登入後必須修改；密碼以 Argon2 儲存，建立與重設事件只記錄不含密碼的 audit log。
-- 管理員及工讀生介面採同頁中英雙語：繁體中文為主文，英文以較小字級顯示；共用雙語層也會處理 JavaScript 動態產生的介面標籤。
-- 所有新密碼與臨時密碼至少 8 個字元；系統仍建議使用較長且不重複的密碼。
+### 排班
 
-## 統一通知中心
+- 同一工讀生不可出現在重疊時段。
+- 同一地點、同一時段可安排多人，但管理員必須明確二次確認。
+- 單一班別及每日合計不得超過 8 小時；連續工作不得超過 5 天。
+- 每週工時限制可完全開關，週起始日、上限、適用國籍、例外國籍與寒暑假等不限時數期間均可由管理員設定。
+- 「法規每週限制」與「薪資」皆以班別實際設定時數為準，不以畫面文字推算。
+- 每週重複系列採全有或全無交易；可刪除單筆、本筆及後續，或整個系列。
+- 新排班可先保存為草稿；學生端及正式班表只顯示已發布排班。
+- 月份鎖定只限制該月排班異動，不與薪資結算綁定；薪資會依已發布排班與已確認計薪時數即時更新。
+- 所有關鍵驗證由後端執行；前端提示只用於改善操作體驗。
 
-- 通知以「未完成／已完成」區分，不使用容易誤解的已讀狀態；查看通知或開啟處理頁不會讓提醒消失。
-- 未完成事項會在每次登入及頁面操作時重新核對，並持續顯示在導覽列數量與儀表板最上方，直到實際完成審核、補件、更新或回覆。
-- 管理員的重要通知會合併顯示證件待審、證件到期、請假待審與換班待審；工讀生則顯示證件退回、證件到期及待回覆換班。
-- 底層流程完成後，通知自動轉入「已完成紀錄」，保留處理歷史；通知文字及稽核內容不包含完整敏感證號。
+### 請假與換班
 
-## 安全事件與操作稽核
+- 申請者必須填寫請假或換班原因；被邀請承接／交換的對象不需另填原因。
+- 學生送出換班、受邀者接受及管理員核准時都會重新檢查班表所有權與衝突。
+- 核准請假不會靜默刪除歷史排班，而是保留申請與缺員狀態。
+- 換班核准以單一資料庫交易更新，任何步驟失敗都不留下半套資料。
 
-- 管理員可依日期、帳號、IP 與動作類型查詢登入及重要操作紀錄；學生無權存取稽核頁。
-- 稽核資料包含來源 IP、User-Agent、HTTP method、route、操作者、動作、對象、安全摘要及時間。
-- 記錄登入成功、登入失敗、登出、本人修改密碼及管理員重設密碼；登入失敗只保存遮罩帳號提示，不保存密碼。
-- 既有排班、請假、換班、證件、帳號、報表及清理操作會透過共用稽核函式自動附加請求來源資料。
-- 正式環境只有在 Waitress 無法被外部直連且 Apache 正確覆寫 forwarded headers 時才可啟用 `TRUST_PROXY`；設定方式見 `portable-windows-launcher/XAMPP_GUIDE.md`。
+### 外籍生文件
 
-## 國籍、外籍生證件與排班限制
+- 需要文件的國籍由管理員維護，不預設任何國籍一定適用或一定例外。
+- 居留證需上傳正面及反面；工作證第 1 頁必填、第 2 頁選填。
+- 工讀生完成必要文件上傳後即可使用系統，不需等待管理員核准；審核狀態與補件要求仍會持續顯示於通知中心。
+- 管理員審核居留證時須核對證號與截止日；審核工作證時須核對開始日與截止日。
+- 退回必須填寫原因，工讀生修正後可重新送審。
 
-- 國籍改由管理員維護精簡清單，新增工讀生、管理員編輯及學生資料頁均使用同一選單；不需要預先匯入所有國家。
-- 工讀生名冊可直接點姓名、學號／帳號、聯絡方式或國籍欄位進行升冪／降冪排序。
-- 非台灣國籍工讀生必須完成居留證與工作證整份上傳、本人核對及管理員核准；未完成時登入會導向證件頁，通知中心持續保留未完成提醒，其他學生功能暫停使用。
-- 外籍生不可自行把國籍改成台灣以略過證件要求，須由管理員核對後修改。
-- 管理員可在「設定 → 排班設定」完全開關每週時數限制、調整上限與每週起始日，並建立寒暑假等不限時數期間；各國籍是否列為例外均由管理員設定。
-- 管理員可在國籍設定將特定國籍列為每週限制例外。無論是否例外，單日最多 8 小時及最多連續工作 5 天仍會檢查。
-- 管理員的排班設定、國籍設定、管理員帳號、稽核紀錄及修改密碼已集中至導覽列「設定」選單；學生的修改密碼也位於相同選單。
-- 管理員與學生月曆使用容器寬度監測，在視窗縮放後重新計算 FullCalendar 尺寸、事件泳道及左側地點列高度，不需重新整理頁面。
+### 工時與薪資
 
-正式部署前仍須由校方確定文件保存年限、刪除／調閱程序及承辦人權限。管理員設定 0 天代表不自動清理；目前有效文件不會被排程清除。
+- 預設以班別設定時數計算；已有管理員確認的出勤計薪時數時，以確認值為準。
+- 最低工資使用具生效日的資料表，讓跨年度排班依當時有效標準計算。
+- 管理員可設定時薪、投保級距及雇主負擔費率；工讀生只看到個人預估稅前工資。
+- 學生端金額明確標示為「尚未扣除勞健保之試算參考」，不得取代正式薪資單或主管機關申報結果。
 
-## 本機啟動
+## 系統架構
 
-PowerShell：
+```mermaid
+flowchart LR
+    A[管理員／工讀生瀏覽器] --> B[Apache HTTPS Reverse Proxy]
+    T[Windows 打卡終端] -->|HTTPS 或隔離內網加密 API| B
+    B --> C[Waitress + Flask]
+    C --> D[RBAC / CSRF / Server-side Session]
+    C --> E[SQLAlchemy]
+    E --> F[(SQLite 開發／單機部署)]
+    E -. DATABASE_URL .-> G[(PostgreSQL 可切換)]
+    C --> H[加密私有文件儲存]
+    I[APScheduler 維護工作] --> C
+    I --> J[通知同步／文件清理／驗證備份]
+```
+
+| 層級 | 技術與設計 |
+| --- | --- |
+| Backend | Python、Flask、Blueprint、Jinja2、service modules |
+| Authentication | Flask-Login、伺服器端 session、Argon2 密碼雜湊 |
+| Data | SQLAlchemy、Flask-Migrate／Alembic、SQLite；可由 `DATABASE_URL` 切換 PostgreSQL |
+| Frontend | Bootstrap 5、Bootstrap Icons、FullCalendar、Vanilla JavaScript；第三方靜態檔已置於本機 |
+| Scheduling | APScheduler 執行通知、文件清理與備份維護工作 |
+| Production | Windows、Waitress、XAMPP Apache reverse proxy、Launcher、Watchdog |
+| Testing | pytest，涵蓋權限、排班、工作流程、文件、報表、打卡、安全及部署 |
+
+## 快速開始
+
+### 開發環境需求
+
+- Windows PowerShell
+- Python 3
+- Git
 
 ```powershell
+git clone https://github.com/MiniDora1122/yzudorm-staff-system.git
+Set-Location yzudorm-staff-system
+
 py -3 -m venv .venv
 .\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
 python -m pip install -r requirements-dev.txt
+
 Copy-Item .env.example .env
-flask --app wsgi.py db upgrade
-flask --app wsgi.py seed
-flask --app wsgi.py run --debug
+# 開啟 .env，至少替換 SECRET_KEY；正式環境另須檢查所有安全設定。
+
+python -m flask --app wsgi.py db upgrade
+python -m flask --app wsgi.py seed
+python -m flask --app wsgi.py run --debug
 ```
 
-開啟 `http://127.0.0.1:5000`。
+瀏覽器開啟 <http://127.0.0.1:5000>。
 
-## Demo 帳號（僅限開發）
+### Demo 帳號（僅限開發）
 
-- 管理員：`admin` / `AdminDemo!2026`
-- 工讀生：`student1` / `StudentDemo!2026`
-- 工讀生：`student2` / `StudentDemo!2026`
+| 角色 | 帳號 | 密碼 |
+| --- | --- | --- |
+| 管理員 | `admin` | `AdminDemo!2026` |
+| 工讀生 | `student1` | `StudentDemo!2026` |
+| 工讀生 | `student2` | `StudentDemo!2026` |
 
-正式環境不可執行 demo seed，並應提供真實的 `SECRET_KEY`、`DATABASE_URL` 與 `SESSION_COOKIE_SECURE=1`。系統會自動建立文件主金鑰與備份，但正式環境仍應把備份目錄放在另一個受保護的磁碟或備份系統；同一磁碟的副本不能取代異地備份。
+正式環境不得執行 demo seed，也不得沿用上述帳號或密碼。
 
-也可由系統排程以外的工作排程器執行相同清理程序：
+### Windows 圖形化啟動
+
+不熟悉命令列的部署者可使用 `portable-windows-launcher/DormStaffLauncher.exe` 完成環境檢查、資料庫 migration、首次管理員建立、啟停服務、安全更新及備份。第一次使用前請閱讀 [Launcher 首次使用說明](portable-windows-launcher/FIRST_USE.md)。
+
+## 正式部署
+
+正式環境建議使用：
+
+```text
+Client ──HTTPS──> XAMPP Apache ──loopback──> Waitress ──> Flask
+```
+
+- 不要使用 Flask development server 對外服務。
+- Waitress 應只監聽 loopback，由 Apache 提供 HTTPS、反向代理及 forwarded headers。
+- 只有在代理無法被繞過、且 Apache 會覆寫外部 forwarded headers 時，才能啟用 `TRUST_PROXY`。
+- 純 HTTP 無法防止帳密或 Cookie 被同網段攔截；若暫時沒有憑證，只能在隔離且受信任的內網使用，並依指南套用最嚴格的可行限制。
+- `instance/`、資料庫、文件、密鑰、備份與 `.env` 不得提交至 Git。
+
+完整步驟：
+
+- [Windows／XAMPP 正式部署](deployment/DEPLOYMENT_WINDOWS_XAMPP.md)
+- [XAMPP、X-Forwarded-For 與 HTTP 安全設定](portable-windows-launcher/XAMPP_GUIDE.md)
+- [Private Git 安全更新與失敗復原](deployment/GIT_UPDATE_GUIDE.md)
+- [HTTP 搬移與 seed 復原](deployment/HTTP_MIGRATION_AND_SEED_RECOVERY_ZH_TW.md)
+
+## 安全與隱私
+
+- 密碼使用 Argon2 雜湊，不儲存或記錄明文密碼。
+- 登入成功後更換 server-side Session ID；Cookie 使用 `HttpOnly`、`SameSite`，正式 HTTPS 環境啟用 `Secure`。
+- 登入失敗依帳號與來源 IP 套用時間窗限流。
+- 所有狀態變更請求均有 CSRF 防護；ADMIN／STUDENT 權限由後端強制驗證。
+- 回應包含 CSP 與其他安全標頭；正式部署仍須由 HTTPS 提供傳輸層保護。
+- 稽核記錄保存時間、操作者、IP、User-Agent、HTTP method、route、動作、安全摘要及設定前後差異。
+- 完整證號、密碼、OCR 原文與證件影像不寫入 application log 或 audit log。
+- 證件移除 EXIF、重新編碼後以 Fernet 加密，保存於非 `static` 私有路徑；下載時重新驗證登入者與權限。
+- 文件主金鑰與備份不一致時拒絕啟動，避免使用錯誤金鑰造成不可逆資料損失。
+- 打卡裝置的 IP、電腦名稱及 MAC 僅作裝置核對線索；任何單一網路識別值都不能取代密鑰驗證。
+
+安全相關環境變數與建議值請以 [.env.example](.env.example) 及 [.env.production.example](.env.production.example) 為準。
+
+## 備份與復原
+
+- 管理員可選擇「每隔 1–168 小時」或「每天固定時間」自動備份。
+- SQLite 使用 online backup API 產生一致性快照，並與應用程式內文件異動協調，降低資料庫與文件跨時間點不一致的風險。
+- 備份完成後驗證 manifest、每個檔案的 SHA-256、SQLite `PRAGMA integrity_check`。
+- 額外逐筆確認 `StaffDocument.storage_key` 的檔案存在、可解密，且解密內容雜湊符合 metadata。
+- 復原演練會在隔離暫存目錄解壓、驗證 migration／資料庫與加密文件，不覆寫正式資料。
+- 備份結果、驗證錯誤與演練結果可由管理員查詢並留存稽核。
+
+手動執行備份：
 
 ```powershell
-flask --app wsgi.py documents-cleanup --actor-user-id 1
+python -m flask --app wsgi.py backup-run --actor-user-id 1
 ```
 
-## 自動驗證備份、排班鎖定與缺員
-
-- 系統首次使用預設每天 `02:00` 建立一次完整 portable ZIP；管理員可改成每隔 1–168 小時，或每天固定時間。備份會先驗證 manifest 內每個檔案的 SHA-256，再對 SQLite 快照執行 `PRAGMA integrity_check`，全部成功才保留。
-- 管理員可由「設定 → 排班鎖定與備份」調整自動備份排程、查看最近結果、手動執行、發布整月草稿、鎖定排班及填寫原因解鎖。薪資試算依正式排班即時計算，不與月份鎖定綁定。
-- 正式環境請把 `AUTOMATIC_BACKUP_DIR` 改到另一顆受 BitLocker 保護的磁碟。預設同機資料夾只提供誤刪復原能力，不能防止整顆硬碟故障。
-- CLI 可手動執行：
-
-```powershell
-flask --app wsgi.py backup-run --actor-user-id 1
-```
-
-- 「群組／缺員」可建立學生群組，將需求發布給指定群組、指定學生或全部有效學生；學生申請與管理員核准時都會重新檢查排班限制。
-- 新增排班預設為草稿；學生端、薪資與正式報表只計算已發布班表。
-
-## 上下班打卡
-
-- 管理員由「設定 → 打卡設定」登錄學生證 UID、建立／撤銷固定地點打卡裝置與設定遲到寬限；「出勤管理」只顯示當日紀錄與待審核異常。工讀生頁面也可直接登錄學生證。
-- 終端支援鍵盤模擬讀卡機及在線帳號打卡。刷卡先以 Windows DPAPI 加密寫入本機 SQLite，斷線後自動補傳；帳號密碼永不落地，離線時不可使用帳號打卡。
-- 裝置可依需求不限數量新增並綁定動態工作地點；未使用裝置可刪除，已有歷史者會封存以保留稽核關聯。
-- HTTPS 模式可使用 10 分鐘一次性註冊碼；`ENCRYPTED_HTTP` 改用密碼保護的 `.dormclock` 註冊包。管理員設定 1–168 小時啟用期限，首次匯入必須在線且只能成功一次。每台裝置使用獨立密鑰，API 請求與回應均以 AES-256-GCM 加密並驗證時間、request id、裝置狀態及選配 CIDR。
-- 終端會回報 Windows 電腦名稱與 MAC 位址；異動只會進入待確認狀態，管理員可在「設定 → 打卡設定」核對後接受。
-- `ENCRYPTED_HTTP` 只適合封閉內網的打卡 API；網頁登入、管理端與證件仍應使用 HTTPS。主機 Launcher 可直接啟／停打卡服務及切換 `HTTPS`／`ENCRYPTED_HTTP`，變更於下次啟動服務生效。
-- 系統依正式排班、固定地點、時間與既有紀錄自動判斷上／下班。遲到必須填事由；接近下班但沒有上班紀錄時，建立漏刷異常，由學生申報到班時間、管理員核准後才建立補登調整。
-- Windows 終端使用獨立 `attendance-terminal/DormAttendanceTerminal.exe`，包含首次註冊引導、環境修復與 Git 安全更新；安裝及故障處理請見 `attendance-terminal/README.md`。
+正式環境應將 `AUTOMATIC_BACKUP_DIR` 設於另一顆受保護磁碟或外部備份系統。同一硬碟內的副本只能處理誤刪，無法防範磁碟故障、勒索軟體或整機遺失。
 
 ## 測試
 
 ```powershell
-pytest -q
+python -m pytest -q
 ```
 
-## Windows / XAMPP 正式上線
+測試套件涵蓋：
 
-正式環境使用 Waitress，由 XAMPP Apache 以 HTTPS 反向代理；Bootstrap、Bootstrap Icons 與 FullCalendar 皆已固定於 `app/static/vendor`，運作時不依賴 CDN。完整安裝、自動啟動、備份與搬移流程請見 [deployment/DEPLOYMENT_WINDOWS_XAMPP.md](deployment/DEPLOYMENT_WINDOWS_XAMPP.md)。
+- 登入、Session、限流、RBAC、CSRF 與稽核。
+- 單筆／重複／匯入排班及各類工時、衝突與併發保護。
+- 請假、換班、通知、學生群組、缺員與月份鎖定。
+- 證件權限、加密、清理、備份完整性及復原演練。
+- 出勤終端、離線事件、裝置管理、核對與計薪時數。
+- 月報、每日時數表、薪資與其他匯出內容。
+- Windows 部署、Launcher、Watchdog 與資料搬移腳本。
 
-長期程式更新建議使用 Private Git repository；正式資料、證件與金鑰不進 Git。首次設定、新電腦 clone、安全更新與失敗復原流程請見 [deployment/GIT_UPDATE_GUIDE.md](deployment/GIT_UPDATE_GUIDE.md)。
+每次更新建議至少執行：
+
+```powershell
+python -m pip install -r requirements-dev.txt
+python -m flask --app wsgi.py db upgrade
+python -m pytest -q
+```
+
+正式環境更新請優先使用 Launcher 或 [安全更新流程](deployment/GIT_UPDATE_GUIDE.md)，讓更新前備份、migration、測試及失敗回復依固定順序執行。
+
+## 專案結構
+
+```text
+.
+├─ app/
+│  ├─ admin/              # 管理員路由：排班、出勤、報表、設定與維運
+│  ├─ attendance_api/     # 打卡裝置 API
+│  ├─ auth/               # 登入、登出與密碼流程
+│  ├─ services/           # 排班、通知、備份、文件、薪資等業務服務
+│  ├─ student/            # 工讀生功能
+│  ├─ templates/          # Jinja2 中英雙語介面
+│  └─ static/             # CSS、JavaScript 與本機 vendor assets
+├─ attendance-terminal/   # Windows 打卡終端與建置／更新腳本
+├─ deployment/            # XAMPP、Waitress、備份、復原與更新工具
+├─ migrations/            # Alembic database migrations
+├─ portable-windows-launcher/
+│                         # 圖形化安裝、啟動、維護與 watchdog
+├─ tests/                 # pytest 測試套件
+├─ main.html              # 原始排班 prototype，保留作 UX 與規則參考
+├─ config.py              # 環境設定
+├─ requirements*.txt      # 正式／開發相依套件
+└─ wsgi.py                # WSGI entry point
+```
+
+業務邏輯集中於 `app/services/`，route 主要負責 HTTP 輸入、權限與回應；新增資料結構須透過 Alembic migration，避免以啟動時臨時改表的方式維護 schema。
+
+## 主要更新沿革
+
+以下整理 repository 中的重要開發節點；完整逐筆內容、檔案差異與 commit 作者仍以 [GitHub commit history](https://github.com/MiniDora1122/yzudorm-staff-system/commits/main/) 為準。
+
+| 日期 | 版本節點 | 主要內容 |
+| --- | --- | --- |
+| 2026-08-24 | 目前版本 | Session 固定攻擊防護、登入限流、安全回應標頭、時區篩選修正、通知同步分流、SQLite 寫入協調、一致性備份與文件可解密驗證、復原演練、有效日最低工資、可排班時段、出勤核對與計薪時數、月份結束檢查清單 |
+| 2026-08-23 | [`3e5b41b`](https://github.com/MiniDora1122/yzudorm-staff-system/commit/3e5b41b) | 修正自動備份；新增一次性限時打卡註冊包、裝置網路介面識別與打卡流程調整 |
+| 2026-08-20 | [`99f45f4`](https://github.com/MiniDora1122/yzudorm-staff-system/commit/99f45f4) | 修正代理來源 IP 判定並加入上下班打卡功能 |
+| 2026-08-18 | [`5fd039b`](https://github.com/MiniDora1122/yzudorm-staff-system/commit/5fd039b) | 改善管理員與學生班表顯示、日期資訊及已發布班表瀏覽 |
+| 2026-08-17 | [`c83272f`](https://github.com/MiniDora1122/yzudorm-staff-system/commit/c83272f) | 將請假與換班申請者原因設為必填 |
+| 2026-08-14 | [`77f13a5`](https://github.com/MiniDora1122/yzudorm-staff-system/commit/77f13a5) | 改善每週重複排班連續新增體驗並修正稽核時間顯示 |
+| 2026-08-13 | [`2b28771`](https://github.com/MiniDora1122/yzudorm-staff-system/commit/2b28771) | 修正已刪除地點仍殘留月曆及無法重新建立的問題 |
+| 2026-08-13 | [`8ff41f7`](https://github.com/MiniDora1122/yzudorm-staff-system/commit/8ff41f7) | 修正既有功能與介面問題 |
+| 2026-08-13 | [`eaf7db1`](https://github.com/MiniDora1122/yzudorm-staff-system/commit/eaf7db1) | 調整薪資即時計算及外籍生必要文件上傳後的系統使用規則 |
+| 2026-08-13 | [`112f945`](https://github.com/MiniDora1122/yzudorm-staff-system/commit/112f945) | 修正功能整合後的已知問題 |
+| 2026-08-13 | [`3762fa4`](https://github.com/MiniDora1122/yzudorm-staff-system/commit/3762fa4) | 新增草稿／發布排班、帳號封存復原、自動備份、學生群組、缺員需求、月份排班鎖定及 Git 更新保護 |
+| 2026-08-13 | [`9b3efba`](https://github.com/MiniDora1122/yzudorm-staff-system/commit/9b3efba) | 改善 Windows Launcher 安裝、啟動與更新操作 |
+| 2026-08-13 | [`0853d06`](https://github.com/MiniDora1122/yzudorm-staff-system/commit/0853d06) | 新增名冊欄位排序、可設定每週時數限制與 Launcher 自動啟動 |
+| 2026-08-12 | [`5c74b09`](https://github.com/MiniDora1122/yzudorm-staff-system/commit/5c74b09) | 新增系統搬移工具並修復既有問題 |
+| 2026-08-12 | [`8f477d2`](https://github.com/MiniDora1122/yzudorm-staff-system/commit/8f477d2) | 新增管理員安全事件與操作稽核查詢 |
+| 2026-08-12 | [`65543ef`](https://github.com/MiniDora1122/yzudorm-staff-system/commit/65543ef) | 補充系統總覽、功能及部署說明 |
+| 2026-08-11 | [`032da95`](https://github.com/MiniDora1122/yzudorm-staff-system/commit/032da95) | 新增未完成／已完成通知中心、證件管理員審核與每日時數矩陣報表 |
+| 2026-08-11 | [`9afa640`](https://github.com/MiniDora1122/yzudorm-staff-system/commit/9afa640) | 建立可部署的 Flask／SQLAlchemy 基礎系統與核心排班、工作流程、文件及報表功能 |
+
+### 版本管理原則
+
+- README 記錄目前能力與重要里程碑；逐筆程式差異以 Git commit 為準。
+- Database schema 變更必須附 migration。
+- 功能提交前應執行測試，commit message 應說明「改了什麼」及必要的相容性注意事項。
+- 正式資料、機密、備份、輸出報表與執行檔建置暫存不得進入版本控制。
+- 建議後續發布穩定版本時建立 Git tag／GitHub Release，並將面向部署者的破壞性變更整理於 release notes。
+
+## 文件索引
+
+| 文件 | 適用情境 |
+| --- | --- |
+| [AGENTS.md](AGENTS.md) | 專案規則、角色權限、資料安全與開發原則 |
+| [CODEX_TASK.md](CODEX_TASK.md) | 原始分階段功能規格與驗收方向 |
+| [Launcher 首次使用](portable-windows-launcher/FIRST_USE.md) | Windows 圖形化安裝、首次管理員與基本操作 |
+| [Windows／XAMPP 正式部署](deployment/DEPLOYMENT_WINDOWS_XAMPP.md) | Waitress、Apache、排程、備份及搬移 |
+| [XAMPP 安全與代理設定](portable-windows-launcher/XAMPP_GUIDE.md) | HTTPS／HTTP 邊界、X-Forwarded-For、來源 IP 與網路配置 |
+| [Private Git 更新指南](deployment/GIT_UPDATE_GUIDE.md) | clone、pull、更新前備份、migration、測試與失敗復原 |
+| [打卡終端](attendance-terminal/README.md) | 終端安裝、註冊、離線佇列、加密模式與故障排除 |
+| [第三方來源與授權](portable-windows-launcher/THIRD_PARTY_SOURCES.md) | Launcher 使用的第三方元件來源與授權資訊 |
+
+## 授權與使用責任
+
+本 repository 目前未提供獨立的開源授權檔案。除非專案擁有者另行書面授權，不應假設可自由重製、散布或商業使用。
+
+薪資、勞健保、工時及外籍生工作規則屬管理輔助與試算功能。正式使用前，校方仍須依最新法規、主管機關資料、校內人事規章與個資保存政策完成覆核；系統輸出不能取代正式薪資單、投保申報或法律意見。

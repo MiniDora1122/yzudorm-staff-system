@@ -314,6 +314,11 @@ th[data-en]::after,
 .navbar-notification-link { position: relative; font-weight: 700; }
 .navbar-notification-count { min-width: 1.35rem; }
 
+/* FullCalendar's bundled icon font is intentionally blocked by the strict CSP. */
+.fc .fc-icon { font-family: inherit !important; }
+.fc .fc-icon-chevron-left::before { content: "‹"; }
+.fc .fc-icon-chevron-right::before { content: "›"; }
+
 @media (max-width: 575.98px) {
   .display-6 { font-size: 2rem; }
   .profile-list dt { padding-bottom: .1rem; border-bottom: 0; }

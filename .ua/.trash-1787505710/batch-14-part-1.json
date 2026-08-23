@@ -1,0 +1,1323 @@
+{
+  "nodes": [
+    {
+      "id": "file:.ua/.understandignore",
+      "type": "file",
+      "name": ".understandignore",
+      "filePath": ".ua/.understandignore",
+      "summary": "Understand Anything 的掃描排除規則範本；建議規則保留註解，因此測試與 migration 仍納入分析。",
+      "tags": [
+        "configuration",
+        "knowledge-graph",
+        "analysis"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "config:.ua/config.json",
+      "type": "config",
+      "name": "config.json",
+      "filePath": ".ua/config.json",
+      "summary": "設定 Understand Anything 知識圖譜輸出語言為繁體中文（zh-TW）。",
+      "tags": [
+        "configuration",
+        "knowledge-graph",
+        "analysis"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/static/css/app.css",
+      "type": "file",
+      "name": "app.css",
+      "filePath": "app/static/css/app.css",
+      "summary": "定義全站深藍校務風格、雙語標籤、管理員導覽列、卡片、表單、FullCalendar 與響應式樣式。",
+      "tags": [
+        "stylesheet",
+        "responsive-ui",
+        "bilingual"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:app/static/js/admin_schedule.js",
+      "type": "file",
+      "name": "admin_schedule.js",
+      "filePath": "app/static/js/admin_schedule.js",
+      "summary": "管理員排班頁主要互動程式，處理月曆／清單、地點列同步、表單、重複排班、批量操作與發布狀態。",
+      "tags": [
+        "frontend",
+        "javascript",
+        "ui"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:app/static/js/bilingual.js",
+      "type": "file",
+      "name": "bilingual.js",
+      "filePath": "app/static/js/bilingual.js",
+      "summary": "將頁面中文標籤補上較小英文副標，並處理動態產生的介面元件。",
+      "tags": [
+        "frontend",
+        "javascript",
+        "ui"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:app/static/js/documents.js",
+      "type": "file",
+      "name": "documents.js",
+      "filePath": "app/static/js/documents.js",
+      "summary": "處理證件上傳欄位與送出狀態提示，降低重複提交風險。",
+      "tags": [
+        "frontend",
+        "javascript",
+        "ui"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/static/js/payroll.js",
+      "type": "file",
+      "name": "payroll.js",
+      "filePath": "app/static/js/payroll.js",
+      "summary": "驅動薪資試算頁的月份選擇、資料載入與時數、工資及保險成本表格更新。",
+      "tags": [
+        "frontend",
+        "javascript",
+        "ui"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/static/js/reports.js",
+      "type": "file",
+      "name": "reports.js",
+      "filePath": "app/static/js/reports.js",
+      "summary": "在報表頁切換年月或報表類型時同步更新下載連結參數。",
+      "tags": [
+        "frontend",
+        "javascript",
+        "ui"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/static/js/requests.js",
+      "type": "file",
+      "name": "requests.js",
+      "filePath": "app/static/js/requests.js",
+      "summary": "控制學生請假／換班申請類型切換與相應表單欄位。",
+      "tags": [
+        "frontend",
+        "javascript",
+        "ui"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/static/js/staff_accounts.js",
+      "type": "file",
+      "name": "staff_accounts.js",
+      "filePath": "app/static/js/staff_accounts.js",
+      "summary": "處理新增工讀生帳號表單的國籍選擇與外籍證件提示。",
+      "tags": [
+        "frontend",
+        "javascript",
+        "ui"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/static/js/student_calendar.js",
+      "type": "file",
+      "name": "student_calendar.js",
+      "filePath": "app/static/js/student_calendar.js",
+      "summary": "建立學生端依地點分列的月曆與清單，支援我的班表／所有已發布班表切換及尺寸重算。",
+      "tags": [
+        "frontend",
+        "javascript",
+        "ui"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:app/templates/auth/change_password.html",
+      "type": "file",
+      "name": "change_password.html",
+      "filePath": "app/templates/auth/change_password.html",
+      "summary": "提供已登入使用者修改密碼的雙語 CSRF 表單。",
+      "tags": [
+        "template",
+        "jinja2",
+        "bilingual"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/templates/auth/login.html",
+      "type": "file",
+      "name": "login.html",
+      "filePath": "app/templates/auth/login.html",
+      "summary": "提供管理員與工讀生共用的響應式雙語登入頁。",
+      "tags": [
+        "template",
+        "jinja2",
+        "bilingual"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/templates/errors/403.html",
+      "type": "file",
+      "name": "403.html",
+      "filePath": "app/templates/errors/403.html",
+      "summary": "顯示後端角色授權拒絕的雙語 403 頁面。",
+      "tags": [
+        "template",
+        "jinja2",
+        "bilingual"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:attendance-terminal/DormAttendanceKiosk.exe",
+      "type": "file",
+      "name": "DormAttendanceKiosk.exe",
+      "filePath": "attendance-terminal/DormAttendanceKiosk.exe",
+      "summary": "Windows 打卡 kiosk 的封裝執行檔，提供終端啟動入口。",
+      "tags": [
+        "attendance",
+        "security",
+        "service"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:attendance-terminal/DormAttendanceTerminal.cs",
+      "type": "file",
+      "name": "DormAttendanceTerminal.cs",
+      "filePath": "attendance-terminal/DormAttendanceTerminal.cs",
+      "summary": "Windows Forms 啟動器負責準備 Python runtime、啟動 kiosk 服務並顯示打卡介面。",
+      "tags": [
+        "attendance",
+        "security",
+        "service"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:attendance-terminal/DormAttendanceTerminal.cs:Main",
+      "type": "function",
+      "name": "Main",
+      "filePath": "attendance-terminal/DormAttendanceTerminal.cs",
+      "lineRange": [
+        17,
+        48
+      ],
+      "summary": "Main 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:attendance-terminal/DormAttendanceTerminal.cs:TerminalLauncherForm",
+      "type": "function",
+      "name": "TerminalLauncherForm",
+      "filePath": "attendance-terminal/DormAttendanceTerminal.cs",
+      "lineRange": [
+        66,
+        87
+      ],
+      "summary": "TerminalLauncherForm 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:attendance-terminal/DormAttendanceTerminal.cs:BuildUi",
+      "type": "function",
+      "name": "BuildUi",
+      "filePath": "attendance-terminal/DormAttendanceTerminal.cs",
+      "lineRange": [
+        89,
+        126
+      ],
+      "summary": "BuildUi 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:attendance-terminal/DormAttendanceTerminal.cs:RunInstall",
+      "type": "function",
+      "name": "RunInstall",
+      "filePath": "attendance-terminal/DormAttendanceTerminal.cs",
+      "lineRange": [
+        135,
+        149
+      ],
+      "summary": "RunInstall 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:attendance-terminal/DormAttendanceTerminal.cs:StartTerminal",
+      "type": "function",
+      "name": "StartTerminal",
+      "filePath": "attendance-terminal/DormAttendanceTerminal.cs",
+      "lineRange": [
+        151,
+        166
+      ],
+      "summary": "StartTerminal 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:attendance-terminal/DormAttendanceTerminal.cs:StopTerminal",
+      "type": "function",
+      "name": "StopTerminal",
+      "filePath": "attendance-terminal/DormAttendanceTerminal.cs",
+      "lineRange": [
+        168,
+        191
+      ],
+      "summary": "StopTerminal 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:attendance-terminal/DormAttendanceTerminal.cs:IsKioskRunning",
+      "type": "function",
+      "name": "IsKioskRunning",
+      "filePath": "attendance-terminal/DormAttendanceTerminal.cs",
+      "lineRange": [
+        200,
+        209
+      ],
+      "summary": "IsKioskRunning 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:attendance-terminal/DormAttendanceTerminal.cs:BeginUpdate",
+      "type": "function",
+      "name": "BeginUpdate",
+      "filePath": "attendance-terminal/DormAttendanceTerminal.cs",
+      "lineRange": [
+        211,
+        224
+      ],
+      "summary": "BeginUpdate 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:attendance-terminal/DormAttendanceTerminal.cs:ConfigureAutoStart",
+      "type": "function",
+      "name": "ConfigureAutoStart",
+      "filePath": "attendance-terminal/DormAttendanceTerminal.cs",
+      "lineRange": [
+        226,
+        252
+      ],
+      "summary": "ConfigureAutoStart 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:attendance-terminal/DormAttendanceTerminal.cs:LoadRepositoryUrl",
+      "type": "function",
+      "name": "LoadRepositoryUrl",
+      "filePath": "attendance-terminal/DormAttendanceTerminal.cs",
+      "lineRange": [
+        264,
+        273
+      ],
+      "summary": "LoadRepositoryUrl 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:attendance-terminal/DormAttendanceTerminal.cs:SaveRepositoryUrl",
+      "type": "function",
+      "name": "SaveRepositoryUrl",
+      "filePath": "attendance-terminal/DormAttendanceTerminal.cs",
+      "lineRange": [
+        275,
+        303
+      ],
+      "summary": "SaveRepositoryUrl 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:attendance-terminal/DormAttendanceTerminal.cs:Program",
+      "type": "class",
+      "name": "Program",
+      "filePath": "attendance-terminal/DormAttendanceTerminal.cs",
+      "lineRange": [
+        13,
+        49
+      ],
+      "summary": "Program 封裝打卡通訊、資料保護或終端狀態與行為。",
+      "tags": [
+        "class",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:attendance-terminal/DormAttendanceTerminal.cs:TerminalLauncherForm",
+      "type": "class",
+      "name": "TerminalLauncherForm",
+      "filePath": "attendance-terminal/DormAttendanceTerminal.cs",
+      "lineRange": [
+        51,
+        316
+      ],
+      "summary": "TerminalLauncherForm 封裝打卡通訊、資料保護或終端狀態與行為。",
+      "tags": [
+        "class",
+        "attendance",
+        "security"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:attendance-terminal/DormAttendanceTerminal.exe",
+      "type": "file",
+      "name": "DormAttendanceTerminal.exe",
+      "filePath": "attendance-terminal/DormAttendanceTerminal.exe",
+      "summary": "編譯後的 Windows 打卡終端啟動器。",
+      "tags": [
+        "attendance",
+        "security",
+        "service"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:attendance-terminal/attendance_terminal.py",
+      "type": "file",
+      "name": "attendance_terminal.py",
+      "filePath": "attendance-terminal/attendance_terminal.py",
+      "summary": "本機打卡 kiosk，管理 DPAPI 設定、裝置佈建、離線佇列、簽章與加密 API 通訊及刷卡介面。",
+      "tags": [
+        "attendance",
+        "security",
+        "service"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:attendance-terminal/attendance_terminal.py:dpapi",
+      "type": "function",
+      "name": "dpapi",
+      "filePath": "attendance-terminal/attendance_terminal.py",
+      "lineRange": [
+        59,
+        88
+      ],
+      "summary": "dpapi 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:attendance-terminal/attendance_terminal.py:load_config",
+      "type": "function",
+      "name": "load_config",
+      "filePath": "attendance-terminal/attendance_terminal.py",
+      "lineRange": [
+        91,
+        96
+      ],
+      "summary": "load_config 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:attendance-terminal/attendance_terminal.py:save_config",
+      "type": "function",
+      "name": "save_config",
+      "filePath": "attendance-terminal/attendance_terminal.py",
+      "lineRange": [
+        99,
+        105
+      ],
+      "summary": "save_config 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:attendance-terminal/attendance_terminal.py:device_identity",
+      "type": "function",
+      "name": "device_identity",
+      "filePath": "attendance-terminal/attendance_terminal.py",
+      "lineRange": [
+        108,
+        140
+      ],
+      "summary": "device_identity 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:attendance-terminal/attendance_terminal.py:import_package",
+      "type": "function",
+      "name": "import_package",
+      "filePath": "attendance-terminal/attendance_terminal.py",
+      "lineRange": [
+        155,
+        156
+      ],
+      "summary": "import_package 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:attendance-terminal/attendance_terminal.py:import_package_data",
+      "type": "function",
+      "name": "import_package_data",
+      "filePath": "attendance-terminal/attendance_terminal.py",
+      "lineRange": [
+        159,
+        180
+      ],
+      "summary": "import_package_data 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:attendance-terminal/attendance_terminal.py:unsigned_json",
+      "type": "function",
+      "name": "unsigned_json",
+      "filePath": "attendance-terminal/attendance_terminal.py",
+      "lineRange": [
+        232,
+        236
+      ],
+      "summary": "unsigned_json 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:attendance-terminal/attendance_terminal.py:signed_json",
+      "type": "function",
+      "name": "signed_json",
+      "filePath": "attendance-terminal/attendance_terminal.py",
+      "lineRange": [
+        239,
+        265
+      ],
+      "summary": "signed_json 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:attendance-terminal/attendance_terminal.py:encrypted_json",
+      "type": "function",
+      "name": "encrypted_json",
+      "filePath": "attendance-terminal/attendance_terminal.py",
+      "lineRange": [
+        268,
+        316
+      ],
+      "summary": "encrypted_json 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:attendance-terminal/attendance_terminal.py:handler_for",
+      "type": "function",
+      "name": "handler_for",
+      "filePath": "attendance-terminal/attendance_terminal.py",
+      "lineRange": [
+        407,
+        452
+      ],
+      "summary": "handler_for 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:attendance-terminal/attendance_terminal.py:ApiError",
+      "type": "class",
+      "name": "ApiError",
+      "filePath": "attendance-terminal/attendance_terminal.py",
+      "lineRange": [
+        43,
+        47
+      ],
+      "summary": "ApiError 封裝打卡通訊、資料保護或終端狀態與行為。",
+      "tags": [
+        "class",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:attendance-terminal/attendance_terminal.py:DATA_BLOB",
+      "type": "class",
+      "name": "DATA_BLOB",
+      "filePath": "attendance-terminal/attendance_terminal.py",
+      "lineRange": [
+        50,
+        51
+      ],
+      "summary": "DATA_BLOB 封裝打卡通訊、資料保護或終端狀態與行為。",
+      "tags": [
+        "class",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:attendance-terminal/attendance_terminal.py:Queue",
+      "type": "class",
+      "name": "Queue",
+      "filePath": "attendance-terminal/attendance_terminal.py",
+      "lineRange": [
+        183,
+        229
+      ],
+      "summary": "Queue 封裝打卡通訊、資料保護或終端狀態與行為。",
+      "tags": [
+        "class",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:attendance-terminal/attendance_terminal.py:Kiosk",
+      "type": "class",
+      "name": "Kiosk",
+      "filePath": "attendance-terminal/attendance_terminal.py",
+      "lineRange": [
+        333,
+        404
+      ],
+      "summary": "Kiosk 封裝打卡通訊、資料保護或終端狀態與行為。",
+      "tags": [
+        "class",
+        "attendance",
+        "security"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:deployment/apache/dorm-staff-vhost.conf.example",
+      "type": "file",
+      "name": "dorm-staff-vhost.conf.example",
+      "filePath": "deployment/apache/dorm-staff-vhost.conf.example",
+      "summary": "XAMPP Apache reverse proxy 與 TLS VirtualHost 範例。",
+      "tags": [
+        "deployment",
+        "apache",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:migrations/README",
+      "type": "file",
+      "name": "README",
+      "filePath": "migrations/README",
+      "summary": "說明此 Alembic 目錄採用 Flask-Migrate 單一資料庫配置。",
+      "tags": [
+        "migration",
+        "database",
+        "alembic"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:migrations/alembic.ini",
+      "type": "config",
+      "name": "alembic.ini",
+      "filePath": "migrations/alembic.ini",
+      "summary": "設定 Alembic、SQLAlchemy 與 Flask-Migrate 的 migration 日誌。",
+      "tags": [
+        "migration",
+        "database",
+        "alembic"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:migrations/env.py",
+      "type": "file",
+      "name": "env.py",
+      "filePath": "migrations/env.py",
+      "summary": "連接 Flask application context 與 Alembic，提供線上及離線 migration 執行。",
+      "tags": [
+        "migration",
+        "database",
+        "alembic"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:migrations/env.py:get_engine",
+      "type": "function",
+      "name": "get_engine",
+      "filePath": "migrations/env.py",
+      "lineRange": [
+        18,
+        24
+      ],
+      "summary": "get_engine 實作 env.py 所屬模組的一項可重用流程。",
+      "tags": [
+        "function",
+        "migration",
+        "database"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:migrations/env.py:get_engine_url",
+      "type": "function",
+      "name": "get_engine_url",
+      "filePath": "migrations/env.py",
+      "lineRange": [
+        27,
+        32
+      ],
+      "summary": "get_engine_url 實作 env.py 所屬模組的一項可重用流程。",
+      "tags": [
+        "function",
+        "migration",
+        "database"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:migrations/env.py:get_metadata",
+      "type": "function",
+      "name": "get_metadata",
+      "filePath": "migrations/env.py",
+      "lineRange": [
+        48,
+        51
+      ],
+      "summary": "get_metadata 實作 env.py 所屬模組的一項可重用流程。",
+      "tags": [
+        "function",
+        "migration",
+        "database"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:migrations/env.py:run_migrations_offline",
+      "type": "function",
+      "name": "run_migrations_offline",
+      "filePath": "migrations/env.py",
+      "lineRange": [
+        54,
+        72
+      ],
+      "summary": "run_migrations_offline 實作 env.py 所屬模組的一項可重用流程。",
+      "tags": [
+        "function",
+        "migration",
+        "database"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:migrations/env.py:run_migrations_online",
+      "type": "function",
+      "name": "run_migrations_online",
+      "filePath": "migrations/env.py",
+      "lineRange": [
+        75,
+        107
+      ],
+      "summary": "run_migrations_online 實作 env.py 所屬模組的一項可重用流程。",
+      "tags": [
+        "function",
+        "migration",
+        "database"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:migrations/script.py.mako",
+      "type": "file",
+      "name": "script.py.mako",
+      "filePath": "migrations/script.py.mako",
+      "summary": "Alembic revision 程式碼模板。",
+      "tags": [
+        "migration",
+        "database",
+        "alembic"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:migrations/versions/0f6d8a2c4b17_add_multi_page_document_sets.py",
+      "type": "file",
+      "name": "0f6d8a2c4b17_add_multi_page_document_sets.py",
+      "filePath": "migrations/versions/0f6d8a2c4b17_add_multi_page_document_sets.py",
+      "summary": "新增證件多頁集合與頁面種類欄位的 migration。",
+      "tags": [
+        "migration",
+        "database",
+        "alembic"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:migrations/versions/0f6d8a2c4b17_add_multi_page_document_sets.py:upgrade",
+      "type": "function",
+      "name": "upgrade",
+      "filePath": "migrations/versions/0f6d8a2c4b17_add_multi_page_document_sets.py",
+      "lineRange": [
+        18,
+        47
+      ],
+      "summary": "向前套用此 revision 的資料庫 schema 變更。",
+      "tags": [
+        "function",
+        "migration",
+        "database"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:migrations/versions/0f6d8a2c4b17_add_multi_page_document_sets.py:downgrade",
+      "type": "function",
+      "name": "downgrade",
+      "filePath": "migrations/versions/0f6d8a2c4b17_add_multi_page_document_sets.py",
+      "lineRange": [
+        50,
+        60
+      ],
+      "summary": "反向還原此 revision 的資料庫 schema 變更。",
+      "tags": [
+        "function",
+        "migration",
+        "database"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:attendance-terminal/DormAttendanceTerminal.cs",
+      "target": "function:attendance-terminal/DormAttendanceTerminal.cs:Main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:attendance-terminal/DormAttendanceTerminal.cs",
+      "target": "function:attendance-terminal/DormAttendanceTerminal.cs:TerminalLauncherForm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:attendance-terminal/DormAttendanceTerminal.cs",
+      "target": "function:attendance-terminal/DormAttendanceTerminal.cs:TerminalLauncherForm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:attendance-terminal/DormAttendanceTerminal.cs",
+      "target": "function:attendance-terminal/DormAttendanceTerminal.cs:BuildUi",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:attendance-terminal/DormAttendanceTerminal.cs",
+      "target": "function:attendance-terminal/DormAttendanceTerminal.cs:RunInstall",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:attendance-terminal/DormAttendanceTerminal.cs",
+      "target": "function:attendance-terminal/DormAttendanceTerminal.cs:StartTerminal",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:attendance-terminal/DormAttendanceTerminal.cs",
+      "target": "function:attendance-terminal/DormAttendanceTerminal.cs:StopTerminal",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:attendance-terminal/DormAttendanceTerminal.cs",
+      "target": "function:attendance-terminal/DormAttendanceTerminal.cs:IsKioskRunning",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:attendance-terminal/DormAttendanceTerminal.cs",
+      "target": "function:attendance-terminal/DormAttendanceTerminal.cs:BeginUpdate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:attendance-terminal/DormAttendanceTerminal.cs",
+      "target": "function:attendance-terminal/DormAttendanceTerminal.cs:ConfigureAutoStart",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:attendance-terminal/DormAttendanceTerminal.cs",
+      "target": "function:attendance-terminal/DormAttendanceTerminal.cs:LoadRepositoryUrl",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:attendance-terminal/DormAttendanceTerminal.cs",
+      "target": "function:attendance-terminal/DormAttendanceTerminal.cs:SaveRepositoryUrl",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:attendance-terminal/DormAttendanceTerminal.cs",
+      "target": "class:attendance-terminal/DormAttendanceTerminal.cs:Program",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:attendance-terminal/DormAttendanceTerminal.cs",
+      "target": "class:attendance-terminal/DormAttendanceTerminal.cs:TerminalLauncherForm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:attendance-terminal/DormAttendanceTerminal.cs",
+      "target": "class:attendance-terminal/DormAttendanceTerminal.cs:TerminalLauncherForm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:attendance-terminal/attendance_terminal.py",
+      "target": "function:attendance-terminal/attendance_terminal.py:dpapi",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:attendance-terminal/attendance_terminal.py",
+      "target": "function:attendance-terminal/attendance_terminal.py:dpapi",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:attendance-terminal/attendance_terminal.py",
+      "target": "function:attendance-terminal/attendance_terminal.py:load_config",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:attendance-terminal/attendance_terminal.py",
+      "target": "function:attendance-terminal/attendance_terminal.py:load_config",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:attendance-terminal/attendance_terminal.py",
+      "target": "function:attendance-terminal/attendance_terminal.py:save_config",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:attendance-terminal/attendance_terminal.py",
+      "target": "function:attendance-terminal/attendance_terminal.py:save_config",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:attendance-terminal/attendance_terminal.py",
+      "target": "function:attendance-terminal/attendance_terminal.py:device_identity",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:attendance-terminal/attendance_terminal.py",
+      "target": "function:attendance-terminal/attendance_terminal.py:device_identity",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:attendance-terminal/attendance_terminal.py",
+      "target": "function:attendance-terminal/attendance_terminal.py:import_package",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:attendance-terminal/attendance_terminal.py",
+      "target": "function:attendance-terminal/attendance_terminal.py:import_package",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:attendance-terminal/attendance_terminal.py",
+      "target": "function:attendance-terminal/attendance_terminal.py:import_package_data",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:attendance-terminal/attendance_terminal.py",
+      "target": "function:attendance-terminal/attendance_terminal.py:import_package_data",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:attendance-terminal/attendance_terminal.py",
+      "target": "function:attendance-terminal/attendance_terminal.py:unsigned_json",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:attendance-terminal/attendance_terminal.py",
+      "target": "function:attendance-terminal/attendance_terminal.py:unsigned_json",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:attendance-terminal/attendance_terminal.py",
+      "target": "function:attendance-terminal/attendance_terminal.py:signed_json",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:attendance-terminal/attendance_terminal.py",
+      "target": "function:attendance-terminal/attendance_terminal.py:signed_json",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:attendance-terminal/attendance_terminal.py",
+      "target": "function:attendance-terminal/attendance_terminal.py:encrypted_json",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:attendance-terminal/attendance_terminal.py",
+      "target": "function:attendance-terminal/attendance_terminal.py:encrypted_json",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:attendance-terminal/attendance_terminal.py",
+      "target": "function:attendance-terminal/attendance_terminal.py:handler_for",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:attendance-terminal/attendance_terminal.py",
+      "target": "function:attendance-terminal/attendance_terminal.py:handler_for",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:attendance-terminal/attendance_terminal.py",
+      "target": "class:attendance-terminal/attendance_terminal.py:ApiError",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:attendance-terminal/attendance_terminal.py",
+      "target": "class:attendance-terminal/attendance_terminal.py:ApiError",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:attendance-terminal/attendance_terminal.py",
+      "target": "class:attendance-terminal/attendance_terminal.py:DATA_BLOB",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:attendance-terminal/attendance_terminal.py",
+      "target": "class:attendance-terminal/attendance_terminal.py:DATA_BLOB",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:attendance-terminal/attendance_terminal.py",
+      "target": "class:attendance-terminal/attendance_terminal.py:Queue",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:attendance-terminal/attendance_terminal.py",
+      "target": "class:attendance-terminal/attendance_terminal.py:Queue",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:attendance-terminal/attendance_terminal.py",
+      "target": "class:attendance-terminal/attendance_terminal.py:Kiosk",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:attendance-terminal/attendance_terminal.py",
+      "target": "class:attendance-terminal/attendance_terminal.py:Kiosk",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/env.py",
+      "target": "function:migrations/env.py:get_engine",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/env.py",
+      "target": "function:migrations/env.py:get_engine",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/env.py",
+      "target": "function:migrations/env.py:get_engine_url",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/env.py",
+      "target": "function:migrations/env.py:get_engine_url",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/env.py",
+      "target": "function:migrations/env.py:get_metadata",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/env.py",
+      "target": "function:migrations/env.py:get_metadata",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/env.py",
+      "target": "function:migrations/env.py:run_migrations_offline",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/env.py",
+      "target": "function:migrations/env.py:run_migrations_offline",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/env.py",
+      "target": "function:migrations/env.py:run_migrations_online",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/env.py",
+      "target": "function:migrations/env.py:run_migrations_online",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/0f6d8a2c4b17_add_multi_page_document_sets.py",
+      "target": "function:migrations/versions/0f6d8a2c4b17_add_multi_page_document_sets.py:upgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/0f6d8a2c4b17_add_multi_page_document_sets.py",
+      "target": "function:migrations/versions/0f6d8a2c4b17_add_multi_page_document_sets.py:upgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/0f6d8a2c4b17_add_multi_page_document_sets.py",
+      "target": "function:migrations/versions/0f6d8a2c4b17_add_multi_page_document_sets.py:downgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:migrations/versions/0f6d8a2c4b17_add_multi_page_document_sets.py",
+      "target": "function:migrations/versions/0f6d8a2c4b17_add_multi_page_document_sets.py:downgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:attendance-terminal/DormAttendanceTerminal.cs",
+      "target": "file:attendance-terminal/attendance_terminal.py",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:attendance-terminal/DormAttendanceTerminal.exe",
+      "target": "file:attendance-terminal/DormAttendanceTerminal.cs",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:attendance-terminal/DormAttendanceKiosk.exe",
+      "target": "file:attendance-terminal/attendance_terminal.py",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:migrations/script.py.mako",
+      "target": "file:migrations/env.py",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

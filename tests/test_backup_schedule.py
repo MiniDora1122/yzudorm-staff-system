@@ -37,7 +37,7 @@ def test_admin_can_choose_interval_or_daily_backup_schedule(client, app):
     assert "每隔 6 小時".encode("utf-8") in page.data
 
 
-def test_backup_failure_waits_until_next_configured_interval(app, monkeypatch):
+def test_backup_failure_retries_after_short_retry_interval(app, monkeypatch):
     taipei = ZoneInfo("Asia/Taipei")
     now = datetime(2026, 8, 23, 12, 0, tzinfo=taipei)
     with app.app_context():
@@ -56,8 +56,8 @@ def test_backup_failure_waits_until_next_configured_interval(app, monkeypatch):
         db.session.add(
             BackupRun(
                 status="FAILED",
-                started_at=(now - timedelta(hours=1)).astimezone(timezone.utc),
-                finished_at=(now - timedelta(hours=1)).astimezone(timezone.utc),
+                started_at=(now - timedelta(minutes=20)).astimezone(timezone.utc),
+                finished_at=(now - timedelta(minutes=20)).astimezone(timezone.utc),
             )
         )
         db.session.commit()
@@ -65,7 +65,7 @@ def test_backup_failure_waits_until_next_configured_interval(app, monkeypatch):
         assert backups.run_backup_if_due() is None
 
         expected = object()
-        monkeypatch.setattr(backups, "local_now", lambda: now + timedelta(hours=5, minutes=1))
+        monkeypatch.setattr(backups, "local_now", lambda: now + timedelta(minutes=11))
         monkeypatch.setattr(backups, "run_backup", lambda: expected)
         assert backups.run_backup_if_due() is expected
 

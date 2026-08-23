@@ -9,6 +9,8 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from ..extensions import db
 from .backups import run_backup_if_due
 from .retention import run_cleanup_if_due
+from .notifications import refresh_notifications_for_user
+from ..models import Role, User
 
 
 _scheduler: BackgroundScheduler | None = None
@@ -44,6 +46,13 @@ def _maintenance_tick(app) -> None:
             if app.config.get("DOCUMENT_CLEANUP_SCHEDULER_ENABLED"):
                 run_cleanup_if_due()
             run_backup_if_due()
+            admin_refreshed = False
+            for user in db.session.scalars(db.select(User).where(User.is_active.is_(True))).all():
+                # Administrator notifications are role-wide, so one refresh covers all admins.
+                if user.role == Role.ADMIN and admin_refreshed:
+                    continue
+                refresh_notifications_for_user(user)
+                admin_refreshed = admin_refreshed or user.role == Role.ADMIN
         except Exception:
             # Individual backup failures are recorded by run_backup; this guard keeps
             # an unexpected maintenance error from terminating the scheduler thread.

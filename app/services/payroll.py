@@ -4,7 +4,7 @@ from datetime import date
 from decimal import Decimal, ROUND_HALF_UP
 
 from ..extensions import db
-from ..models import PayrollSetting, StaffProfile
+from ..models import AttendanceReconciliation, MinimumWageRate, PayrollSetting, Shift, ShiftType, StaffProfile
 
 
 ZERO = Decimal("0")
@@ -24,10 +24,28 @@ def get_payroll_setting(on_date: date) -> PayrollSetting | None:
     )
 
 
+def minimum_wage_on(on_date: date) -> Decimal:
+    rate = db.session.scalar(
+        db.select(MinimumWageRate)
+        .where(MinimumWageRate.effective_date <= on_date)
+        .order_by(MinimumWageRate.effective_date.desc())
+        .limit(1)
+    )
+    return rate.hourly_wage if rate else ZERO
+
+
+def payable_hours_expression():
+    return db.func.coalesce(AttendanceReconciliation.payable_hours, ShiftType.default_hours)
+
+
+def payable_hours_for_shift(shift: Shift) -> Decimal:
+    return shift.reconciliation.payable_hours if shift.reconciliation else shift.shift_type.default_hours
+
+
 def calculate_staff_cost(
-    *, profile: StaffProfile, hours: Decimal, setting: PayrollSetting
+    *, profile: StaffProfile, hours: Decimal, setting: PayrollSetting, on_date: date
 ) -> dict:
-    hourly_wage = profile.hourly_wage or setting.default_hourly_wage
+    hourly_wage = max(profile.hourly_wage or setting.default_hourly_wage, minimum_wage_on(on_date))
     gross_wage = money(hours * hourly_wage)
 
     labor_salary = profile.labor_insured_salary or ZERO

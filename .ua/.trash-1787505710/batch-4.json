@@ -1,0 +1,1624 @@
+{
+  "nodes": [
+    {
+      "id": "file:app/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "app/__init__.py",
+      "summary": "Flask application factory，初始化設定、擴充套件、藍圖、安全標頭、CLI 與維護排程。",
+      "tags": [
+        "configuration",
+        "flask",
+        "application"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "採用 Python 與 SQLAlchemy service 分層。"
+    },
+    {
+      "id": "function:app/__init__.py:create_app",
+      "type": "function",
+      "name": "create_app",
+      "filePath": "app/__init__.py",
+      "lineRange": [
+        13,
+        144
+      ],
+      "summary": "建立create app 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "application"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/__init__.py:load_user",
+      "type": "function",
+      "name": "load_user",
+      "filePath": "app/__init__.py",
+      "lineRange": [
+        148,
+        151
+      ],
+      "summary": "處理load user 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:config.py",
+      "type": "file",
+      "name": "config.py",
+      "filePath": "config.py",
+      "summary": "從環境變數定義資料庫、Session、Cookie、代理、上傳、私有文件與時區設定。",
+      "tags": [
+        "configuration",
+        "flask",
+        "application"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "採用 Python 與 SQLAlchemy service 分層。"
+    },
+    {
+      "id": "function:config.py:env_flag",
+      "type": "function",
+      "name": "env_flag",
+      "filePath": "config.py",
+      "lineRange": [
+        13,
+        17
+      ],
+      "summary": "處理env flag 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:config.py:Config",
+      "type": "class",
+      "name": "Config",
+      "filePath": "config.py",
+      "lineRange": [
+        20,
+        80
+      ],
+      "summary": "Config 封裝 config.py 的相關設定、狀態與行為。",
+      "tags": [
+        "data-model",
+        "service",
+        "application"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:config.py:TestConfig",
+      "type": "class",
+      "name": "TestConfig",
+      "filePath": "config.py",
+      "lineRange": [
+        83,
+        93
+      ],
+      "summary": "TestConfig 封裝 config.py 的相關設定、狀態與行為。",
+      "tags": [
+        "data-model",
+        "service",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:deployment/create_portable_backup.py",
+      "type": "file",
+      "name": "create_portable_backup.py",
+      "filePath": "deployment/create_portable_backup.py",
+      "summary": "建立並驗證含 SQLite 快照、加密文件、金鑰與環境設定的可攜 ZIP 備份。",
+      "tags": [
+        "configuration",
+        "flask",
+        "backup"
+      ],
+      "complexity": "complex",
+      "languageNotes": "採用 Python 與 SQLAlchemy service 分層。"
+    },
+    {
+      "id": "function:deployment/create_portable_backup.py:parse_args",
+      "type": "function",
+      "name": "parse_args",
+      "filePath": "deployment/create_portable_backup.py",
+      "lineRange": [
+        21,
+        30
+      ],
+      "summary": "解析parse args 的部署或備份步驟，並提供明確失敗結果。",
+      "tags": [
+        "service",
+        "business-logic",
+        "backup"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:deployment/create_portable_backup.py:service_is_running",
+      "type": "function",
+      "name": "service_is_running",
+      "filePath": "deployment/create_portable_backup.py",
+      "lineRange": [
+        33,
+        38
+      ],
+      "summary": "處理service is running 的部署或備份步驟，並提供明確失敗結果。",
+      "tags": [
+        "service",
+        "business-logic",
+        "backup"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:deployment/create_portable_backup.py:resolve_path",
+      "type": "function",
+      "name": "resolve_path",
+      "filePath": "deployment/create_portable_backup.py",
+      "lineRange": [
+        41,
+        47
+      ],
+      "summary": "處理resolve path 的部署或備份步驟，並提供明確失敗結果。",
+      "tags": [
+        "service",
+        "business-logic",
+        "backup"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:deployment/create_portable_backup.py:sqlite_path",
+      "type": "function",
+      "name": "sqlite_path",
+      "filePath": "deployment/create_portable_backup.py",
+      "lineRange": [
+        50,
+        66
+      ],
+      "summary": "處理sqlite path 的部署或備份步驟，並提供明確失敗結果。",
+      "tags": [
+        "service",
+        "business-logic",
+        "backup"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:deployment/create_portable_backup.py:portable_env",
+      "type": "function",
+      "name": "portable_env",
+      "filePath": "deployment/create_portable_backup.py",
+      "lineRange": [
+        69,
+        80
+      ],
+      "summary": "處理portable env 的部署或備份步驟，並提供明確失敗結果。",
+      "tags": [
+        "service",
+        "business-logic",
+        "backup"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:deployment/create_portable_backup.py:sha256_bytes",
+      "type": "function",
+      "name": "sha256_bytes",
+      "filePath": "deployment/create_portable_backup.py",
+      "lineRange": [
+        83,
+        84
+      ],
+      "summary": "處理sha256 bytes 的部署或備份步驟，並提供明確失敗結果。",
+      "tags": [
+        "service",
+        "business-logic",
+        "backup"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:deployment/create_portable_backup.py:add_file",
+      "type": "function",
+      "name": "add_file",
+      "filePath": "deployment/create_portable_backup.py",
+      "lineRange": [
+        87,
+        95
+      ],
+      "summary": "處理add file 的部署或備份步驟，並提供明確失敗結果。",
+      "tags": [
+        "service",
+        "business-logic",
+        "backup"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:deployment/create_portable_backup.py:add_tree",
+      "type": "function",
+      "name": "add_tree",
+      "filePath": "deployment/create_portable_backup.py",
+      "lineRange": [
+        98,
+        109
+      ],
+      "summary": "處理add tree 的部署或備份步驟，並提供明確失敗結果。",
+      "tags": [
+        "service",
+        "business-logic",
+        "backup"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:deployment/create_portable_backup.py:verify_backup",
+      "type": "function",
+      "name": "verify_backup",
+      "filePath": "deployment/create_portable_backup.py",
+      "lineRange": [
+        112,
+        159
+      ],
+      "summary": "處理verify backup 的部署或備份步驟，並提供明確失敗結果。",
+      "tags": [
+        "service",
+        "business-logic",
+        "backup"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:deployment/create_portable_backup.py:create_backup",
+      "type": "function",
+      "name": "create_backup",
+      "filePath": "deployment/create_portable_backup.py",
+      "lineRange": [
+        162,
+        229
+      ],
+      "summary": "建立create backup 的部署或備份步驟，並提供明確失敗結果。",
+      "tags": [
+        "service",
+        "business-logic",
+        "backup"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:deployment/create_portable_backup.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "deployment/create_portable_backup.py",
+      "lineRange": [
+        232,
+        241
+      ],
+      "summary": "處理main 的部署或備份步驟，並提供明確失敗結果。",
+      "tags": [
+        "service",
+        "business-logic",
+        "backup"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:portable-windows-launcher/bootstrap_first_admin.py",
+      "type": "file",
+      "name": "bootstrap_first_admin.py",
+      "filePath": "portable-windows-launcher/bootstrap_first_admin.py",
+      "summary": "由 Launcher 解密啟動憑證並在空資料庫建立第一個管理員。",
+      "tags": [
+        "configuration",
+        "flask",
+        "application"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "採用 Python 與 SQLAlchemy service 分層。"
+    },
+    {
+      "id": "function:portable-windows-launcher/bootstrap_first_admin.py:decode",
+      "type": "function",
+      "name": "decode",
+      "filePath": "portable-windows-launcher/bootstrap_first_admin.py",
+      "lineRange": [
+        23,
+        25
+      ],
+      "summary": "處理decode 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:portable-windows-launcher/bootstrap_first_admin.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "portable-windows-launcher/bootstrap_first_admin.py",
+      "lineRange": [
+        28,
+        62
+      ],
+      "summary": "處理main 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/test_deployment.py",
+      "type": "file",
+      "name": "test_deployment.py",
+      "filePath": "tests/test_deployment.py",
+      "summary": "驗證 application factory、代理信任、本機資產、部署檔與可攜備份。",
+      "tags": [
+        "test",
+        "regression",
+        "application"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "採用 Python 與 SQLAlchemy service 分層。"
+    },
+    {
+      "id": "function:tests/test_deployment.py:test_app_factory_creates_missing_instance_directory",
+      "type": "function",
+      "name": "test_app_factory_creates_missing_instance_directory",
+      "filePath": "tests/test_deployment.py",
+      "lineRange": [
+        15,
+        38
+      ],
+      "summary": "驗證test app factory creates missing instance directory 情境，防止安全性或部署行為回歸。",
+      "tags": [
+        "test",
+        "regression",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_deployment.py:make_proxy_app",
+      "type": "function",
+      "name": "make_proxy_app",
+      "filePath": "tests/test_deployment.py",
+      "lineRange": [
+        41,
+        68
+      ],
+      "summary": "處理make proxy app 情境，防止安全性或部署行為回歸。",
+      "tags": [
+        "test",
+        "regression",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_deployment.py:test_proxy_headers_are_trusted_only_when_enabled",
+      "type": "function",
+      "name": "test_proxy_headers_are_trusted_only_when_enabled",
+      "filePath": "tests/test_deployment.py",
+      "lineRange": [
+        71,
+        90
+      ],
+      "summary": "驗證test proxy headers are trusted only when enabled 情境，防止安全性或部署行為回歸。",
+      "tags": [
+        "test",
+        "regression",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_deployment.py:test_runtime_templates_do_not_depend_on_external_cdn",
+      "type": "function",
+      "name": "test_runtime_templates_do_not_depend_on_external_cdn",
+      "filePath": "tests/test_deployment.py",
+      "lineRange": [
+        93,
+        100
+      ],
+      "summary": "驗證test runtime templates do not depend on external cdn 情境，防止安全性或部署行為回歸。",
+      "tags": [
+        "test",
+        "regression",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_deployment.py:test_vendored_frontend_assets_are_present",
+      "type": "function",
+      "name": "test_vendored_frontend_assets_are_present",
+      "filePath": "tests/test_deployment.py",
+      "lineRange": [
+        103,
+        122
+      ],
+      "summary": "驗證test vendored frontend assets are present 情境，防止安全性或部署行為回歸。",
+      "tags": [
+        "test",
+        "regression",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_deployment.py:test_deployment_files_are_available",
+      "type": "function",
+      "name": "test_deployment_files_are_available",
+      "filePath": "tests/test_deployment.py",
+      "lineRange": [
+        125,
+        140
+      ],
+      "summary": "驗證test deployment files are available 情境，防止安全性或部署行為回歸。",
+      "tags": [
+        "test",
+        "regression",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_deployment.py:test_production_waitress_trusts_only_local_apache_proxy",
+      "type": "function",
+      "name": "test_production_waitress_trusts_only_local_apache_proxy",
+      "filePath": "tests/test_deployment.py",
+      "lineRange": [
+        143,
+        149
+      ],
+      "summary": "驗證test production waitress trusts only local apache proxy 情境，防止安全性或部署行為回歸。",
+      "tags": [
+        "test",
+        "regression",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_deployment.py:test_launcher_persists_secret_key_recovery_backup",
+      "type": "function",
+      "name": "test_launcher_persists_secret_key_recovery_backup",
+      "filePath": "tests/test_deployment.py",
+      "lineRange": [
+        152,
+        160
+      ],
+      "summary": "驗證test launcher persists secret key recovery backup 情境，防止安全性或部署行為回歸。",
+      "tags": [
+        "test",
+        "regression",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_deployment.py:test_launcher_includes_safe_data_migration_controls",
+      "type": "function",
+      "name": "test_launcher_includes_safe_data_migration_controls",
+      "filePath": "tests/test_deployment.py",
+      "lineRange": [
+        163,
+        170
+      ],
+      "summary": "驗證test launcher includes safe data migration controls 情境，防止安全性或部署行為回歸。",
+      "tags": [
+        "test",
+        "regression",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_deployment.py:test_health_endpoint_is_public_and_checks_database",
+      "type": "function",
+      "name": "test_health_endpoint_is_public_and_checks_database",
+      "filePath": "tests/test_deployment.py",
+      "lineRange": [
+        173,
+        177
+      ],
+      "summary": "驗證test health endpoint is public and checks database 情境，防止安全性或部署行為回歸。",
+      "tags": [
+        "test",
+        "regression",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_deployment.py:test_gitignore_protects_production_data",
+      "type": "function",
+      "name": "test_gitignore_protects_production_data",
+      "filePath": "tests/test_deployment.py",
+      "lineRange": [
+        180,
+        186
+      ],
+      "summary": "驗證test gitignore protects production data 情境，防止安全性或部署行為回歸。",
+      "tags": [
+        "test",
+        "regression",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_deployment.py:test_portable_backup_uses_flask_instance_database_location",
+      "type": "function",
+      "name": "test_portable_backup_uses_flask_instance_database_location",
+      "filePath": "tests/test_deployment.py",
+      "lineRange": [
+        189,
+        195
+      ],
+      "summary": "驗證test portable backup uses flask instance database location 情境，防止安全性或部署行為回歸。",
+      "tags": [
+        "test",
+        "regression",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_deployment.py:test_portable_backup_service_check_accepts_configured_port",
+      "type": "function",
+      "name": "test_portable_backup_service_check_accepts_configured_port",
+      "filePath": "tests/test_deployment.py",
+      "lineRange": [
+        198,
+        216
+      ],
+      "summary": "驗證test portable backup service check accepts configured port 情境，防止安全性或部署行為回歸。",
+      "tags": [
+        "test",
+        "regression",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_deployment.py:test_production_requirements_exclude_test_runner",
+      "type": "function",
+      "name": "test_production_requirements_exclude_test_runner",
+      "filePath": "tests/test_deployment.py",
+      "lineRange": [
+        219,
+        225
+      ],
+      "summary": "驗證test production requirements exclude test runner 情境，防止安全性或部署行為回歸。",
+      "tags": [
+        "test",
+        "regression",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/test_security_operations_enhancements.py",
+      "type": "file",
+      "name": "test_security_operations_enhancements.py",
+      "filePath": "tests/test_security_operations_enhancements.py",
+      "summary": "驗證 Session、登入限速、安全標頭、工時、最低工資及完整備份。",
+      "tags": [
+        "test",
+        "regression",
+        "application"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "採用 Python 與 SQLAlchemy service 分層。"
+    },
+    {
+      "id": "function:tests/test_security_operations_enhancements.py:login",
+      "type": "function",
+      "name": "login",
+      "filePath": "tests/test_security_operations_enhancements.py",
+      "lineRange": [
+        31,
+        35
+      ],
+      "summary": "處理login 情境，防止安全性或部署行為回歸。",
+      "tags": [
+        "test",
+        "regression",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_security_operations_enhancements.py:test_login_regenerates_server_side_session_and_rate_limits",
+      "type": "function",
+      "name": "test_login_regenerates_server_side_session_and_rate_limits",
+      "filePath": "tests/test_security_operations_enhancements.py",
+      "lineRange": [
+        38,
+        55
+      ],
+      "summary": "驗證test login regenerates server side session and rate limits 情境，防止安全性或部署行為回歸。",
+      "tags": [
+        "test",
+        "regression",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_security_operations_enhancements.py:test_security_headers_are_present_without_incorrect_http_hsts",
+      "type": "function",
+      "name": "test_security_headers_are_present_without_incorrect_http_hsts",
+      "filePath": "tests/test_security_operations_enhancements.py",
+      "lineRange": [
+        58,
+        64
+      ],
+      "summary": "驗證test security headers are present without incorrect http hsts 情境，防止安全性或部署行為回歸。",
+      "tags": [
+        "test",
+        "regression",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_security_operations_enhancements.py:test_non_test_app_rejects_missing_or_fixed_secret",
+      "type": "function",
+      "name": "test_non_test_app_rejects_missing_or_fixed_secret",
+      "filePath": "tests/test_security_operations_enhancements.py",
+      "lineRange": [
+        67,
+        69
+      ],
+      "summary": "驗證test non test app rejects missing or fixed secret 情境，防止安全性或部署行為回歸。",
+      "tags": [
+        "test",
+        "regression",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_security_operations_enhancements.py:test_configured_hours_drive_weekly_and_payroll_aggregation",
+      "type": "function",
+      "name": "test_configured_hours_drive_weekly_and_payroll_aggregation",
+      "filePath": "tests/test_security_operations_enhancements.py",
+      "lineRange": [
+        72,
+        95
+      ],
+      "summary": "驗證test configured hours drive weekly and payroll aggregation 情境，防止安全性或部署行為回歸。",
+      "tags": [
+        "test",
+        "regression",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_security_operations_enhancements.py:test_student_availability_warns_but_admin_can_override",
+      "type": "function",
+      "name": "test_student_availability_warns_but_admin_can_override",
+      "filePath": "tests/test_security_operations_enhancements.py",
+      "lineRange": [
+        98,
+        121
+      ],
+      "summary": "驗證test student availability warns but admin can override 情境，防止安全性或部署行為回歸。",
+      "tags": [
+        "test",
+        "regression",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_security_operations_enhancements.py:test_effective_dated_minimum_wage_and_audit_timezone_filter",
+      "type": "function",
+      "name": "test_effective_dated_minimum_wage_and_audit_timezone_filter",
+      "filePath": "tests/test_security_operations_enhancements.py",
+      "lineRange": [
+        124,
+        143
+      ],
+      "summary": "驗證test effective dated minimum wage and audit timezone filter 情境，防止安全性或部署行為回歸。",
+      "tags": [
+        "test",
+        "regression",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_security_operations_enhancements.py:test_backup_verification_requires_every_document_and_decrypts_it",
+      "type": "function",
+      "name": "test_backup_verification_requires_every_document_and_decrypts_it",
+      "filePath": "tests/test_security_operations_enhancements.py",
+      "lineRange": [
+        146,
+        186
+      ],
+      "summary": "驗證test backup verification requires every document and decrypts it 情境，防止安全性或部署行為回歸。",
+      "tags": [
+        "test",
+        "regression",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:wsgi.py",
+      "type": "file",
+      "name": "wsgi.py",
+      "filePath": "wsgi.py",
+      "summary": "生產與開發伺服器載入的 WSGI 入口。",
+      "tags": [
+        "entry-point",
+        "wsgi",
+        "application-factory"
+      ],
+      "complexity": "simple",
+      "languageNotes": "採用 Python 與 SQLAlchemy service 分層。"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:app/__init__.py",
+      "target": "function:app/__init__.py:create_app",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/__init__.py",
+      "target": "function:app/__init__.py:create_app",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/__init__.py",
+      "target": "function:app/__init__.py:load_user",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/__init__.py",
+      "target": "function:app/__init__.py:load_user",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:config.py",
+      "target": "function:config.py:env_flag",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:config.py",
+      "target": "function:config.py:env_flag",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:config.py",
+      "target": "class:config.py:Config",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:config.py",
+      "target": "class:config.py:Config",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:config.py",
+      "target": "class:config.py:TestConfig",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:config.py",
+      "target": "class:config.py:TestConfig",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:deployment/create_portable_backup.py",
+      "target": "function:deployment/create_portable_backup.py:parse_args",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:deployment/create_portable_backup.py",
+      "target": "function:deployment/create_portable_backup.py:parse_args",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:deployment/create_portable_backup.py",
+      "target": "function:deployment/create_portable_backup.py:service_is_running",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:deployment/create_portable_backup.py",
+      "target": "function:deployment/create_portable_backup.py:service_is_running",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:deployment/create_portable_backup.py",
+      "target": "function:deployment/create_portable_backup.py:resolve_path",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:deployment/create_portable_backup.py",
+      "target": "function:deployment/create_portable_backup.py:resolve_path",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:deployment/create_portable_backup.py",
+      "target": "function:deployment/create_portable_backup.py:sqlite_path",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:deployment/create_portable_backup.py",
+      "target": "function:deployment/create_portable_backup.py:sqlite_path",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:deployment/create_portable_backup.py",
+      "target": "function:deployment/create_portable_backup.py:portable_env",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:deployment/create_portable_backup.py",
+      "target": "function:deployment/create_portable_backup.py:portable_env",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:deployment/create_portable_backup.py",
+      "target": "function:deployment/create_portable_backup.py:sha256_bytes",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:deployment/create_portable_backup.py",
+      "target": "function:deployment/create_portable_backup.py:sha256_bytes",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:deployment/create_portable_backup.py",
+      "target": "function:deployment/create_portable_backup.py:add_file",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:deployment/create_portable_backup.py",
+      "target": "function:deployment/create_portable_backup.py:add_file",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:deployment/create_portable_backup.py",
+      "target": "function:deployment/create_portable_backup.py:add_tree",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:deployment/create_portable_backup.py",
+      "target": "function:deployment/create_portable_backup.py:add_tree",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:deployment/create_portable_backup.py",
+      "target": "function:deployment/create_portable_backup.py:verify_backup",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:deployment/create_portable_backup.py",
+      "target": "function:deployment/create_portable_backup.py:verify_backup",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:deployment/create_portable_backup.py",
+      "target": "function:deployment/create_portable_backup.py:create_backup",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:deployment/create_portable_backup.py",
+      "target": "function:deployment/create_portable_backup.py:create_backup",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:deployment/create_portable_backup.py",
+      "target": "function:deployment/create_portable_backup.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:deployment/create_portable_backup.py",
+      "target": "function:deployment/create_portable_backup.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/bootstrap_first_admin.py",
+      "target": "function:portable-windows-launcher/bootstrap_first_admin.py:decode",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/bootstrap_first_admin.py",
+      "target": "function:portable-windows-launcher/bootstrap_first_admin.py:decode",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:portable-windows-launcher/bootstrap_first_admin.py",
+      "target": "function:portable-windows-launcher/bootstrap_first_admin.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:portable-windows-launcher/bootstrap_first_admin.py",
+      "target": "function:portable-windows-launcher/bootstrap_first_admin.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_deployment.py",
+      "target": "function:tests/test_deployment.py:test_app_factory_creates_missing_instance_directory",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_deployment.py",
+      "target": "function:tests/test_deployment.py:test_app_factory_creates_missing_instance_directory",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_deployment.py",
+      "target": "function:tests/test_deployment.py:make_proxy_app",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_deployment.py",
+      "target": "function:tests/test_deployment.py:make_proxy_app",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_deployment.py",
+      "target": "function:tests/test_deployment.py:test_proxy_headers_are_trusted_only_when_enabled",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_deployment.py",
+      "target": "function:tests/test_deployment.py:test_proxy_headers_are_trusted_only_when_enabled",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_deployment.py",
+      "target": "function:tests/test_deployment.py:test_runtime_templates_do_not_depend_on_external_cdn",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_deployment.py",
+      "target": "function:tests/test_deployment.py:test_runtime_templates_do_not_depend_on_external_cdn",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_deployment.py",
+      "target": "function:tests/test_deployment.py:test_vendored_frontend_assets_are_present",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_deployment.py",
+      "target": "function:tests/test_deployment.py:test_vendored_frontend_assets_are_present",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_deployment.py",
+      "target": "function:tests/test_deployment.py:test_deployment_files_are_available",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_deployment.py",
+      "target": "function:tests/test_deployment.py:test_deployment_files_are_available",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_deployment.py",
+      "target": "function:tests/test_deployment.py:test_production_waitress_trusts_only_local_apache_proxy",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_deployment.py",
+      "target": "function:tests/test_deployment.py:test_production_waitress_trusts_only_local_apache_proxy",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_deployment.py",
+      "target": "function:tests/test_deployment.py:test_launcher_persists_secret_key_recovery_backup",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_deployment.py",
+      "target": "function:tests/test_deployment.py:test_launcher_persists_secret_key_recovery_backup",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_deployment.py",
+      "target": "function:tests/test_deployment.py:test_launcher_includes_safe_data_migration_controls",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_deployment.py",
+      "target": "function:tests/test_deployment.py:test_launcher_includes_safe_data_migration_controls",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_deployment.py",
+      "target": "function:tests/test_deployment.py:test_health_endpoint_is_public_and_checks_database",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_deployment.py",
+      "target": "function:tests/test_deployment.py:test_health_endpoint_is_public_and_checks_database",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_deployment.py",
+      "target": "function:tests/test_deployment.py:test_gitignore_protects_production_data",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_deployment.py",
+      "target": "function:tests/test_deployment.py:test_gitignore_protects_production_data",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_deployment.py",
+      "target": "function:tests/test_deployment.py:test_portable_backup_uses_flask_instance_database_location",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_deployment.py",
+      "target": "function:tests/test_deployment.py:test_portable_backup_uses_flask_instance_database_location",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_deployment.py",
+      "target": "function:tests/test_deployment.py:test_portable_backup_service_check_accepts_configured_port",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_deployment.py",
+      "target": "function:tests/test_deployment.py:test_portable_backup_service_check_accepts_configured_port",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_deployment.py",
+      "target": "function:tests/test_deployment.py:test_production_requirements_exclude_test_runner",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_deployment.py",
+      "target": "function:tests/test_deployment.py:test_production_requirements_exclude_test_runner",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_security_operations_enhancements.py",
+      "target": "function:tests/test_security_operations_enhancements.py:login",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_security_operations_enhancements.py",
+      "target": "function:tests/test_security_operations_enhancements.py:login",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_security_operations_enhancements.py",
+      "target": "function:tests/test_security_operations_enhancements.py:test_login_regenerates_server_side_session_and_rate_limits",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_security_operations_enhancements.py",
+      "target": "function:tests/test_security_operations_enhancements.py:test_login_regenerates_server_side_session_and_rate_limits",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_security_operations_enhancements.py",
+      "target": "function:tests/test_security_operations_enhancements.py:test_security_headers_are_present_without_incorrect_http_hsts",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_security_operations_enhancements.py",
+      "target": "function:tests/test_security_operations_enhancements.py:test_security_headers_are_present_without_incorrect_http_hsts",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_security_operations_enhancements.py",
+      "target": "function:tests/test_security_operations_enhancements.py:test_non_test_app_rejects_missing_or_fixed_secret",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_security_operations_enhancements.py",
+      "target": "function:tests/test_security_operations_enhancements.py:test_non_test_app_rejects_missing_or_fixed_secret",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_security_operations_enhancements.py",
+      "target": "function:tests/test_security_operations_enhancements.py:test_configured_hours_drive_weekly_and_payroll_aggregation",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_security_operations_enhancements.py",
+      "target": "function:tests/test_security_operations_enhancements.py:test_configured_hours_drive_weekly_and_payroll_aggregation",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_security_operations_enhancements.py",
+      "target": "function:tests/test_security_operations_enhancements.py:test_student_availability_warns_but_admin_can_override",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_security_operations_enhancements.py",
+      "target": "function:tests/test_security_operations_enhancements.py:test_student_availability_warns_but_admin_can_override",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_security_operations_enhancements.py",
+      "target": "function:tests/test_security_operations_enhancements.py:test_effective_dated_minimum_wage_and_audit_timezone_filter",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_security_operations_enhancements.py",
+      "target": "function:tests/test_security_operations_enhancements.py:test_effective_dated_minimum_wage_and_audit_timezone_filter",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_security_operations_enhancements.py",
+      "target": "function:tests/test_security_operations_enhancements.py:test_backup_verification_requires_every_document_and_decrypts_it",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_security_operations_enhancements.py",
+      "target": "function:tests/test_security_operations_enhancements.py:test_backup_verification_requires_every_document_and_decrypts_it",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/__init__.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/__init__.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/__init__.py",
+      "target": "file:config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:portable-windows-launcher/bootstrap_first_admin.py",
+      "target": "file:app/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:portable-windows-launcher/bootstrap_first_admin.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:portable-windows-launcher/bootstrap_first_admin.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:portable-windows-launcher/bootstrap_first_admin.py",
+      "target": "file:app/services/accounts.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_deployment.py",
+      "target": "file:app/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_deployment.py",
+      "target": "file:deployment/create_portable_backup.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_security_operations_enhancements.py",
+      "target": "file:app/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_security_operations_enhancements.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_security_operations_enhancements.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_security_operations_enhancements.py",
+      "target": "file:app/services/payroll.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_security_operations_enhancements.py",
+      "target": "file:app/services/scheduling.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_security_operations_enhancements.py",
+      "target": "file:deployment/create_portable_backup.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:wsgi.py",
+      "target": "file:app/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:deployment/create_portable_backup.py:add_file",
+      "target": "function:deployment/create_portable_backup.py:sha256_bytes",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:deployment/create_portable_backup.py:add_tree",
+      "target": "function:deployment/create_portable_backup.py:add_file",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:deployment/create_portable_backup.py:verify_backup",
+      "target": "function:deployment/create_portable_backup.py:sha256_bytes",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:deployment/create_portable_backup.py:create_backup",
+      "target": "function:deployment/create_portable_backup.py:service_is_running",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:deployment/create_portable_backup.py:create_backup",
+      "target": "function:deployment/create_portable_backup.py:sqlite_path",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:deployment/create_portable_backup.py:create_backup",
+      "target": "function:deployment/create_portable_backup.py:resolve_path",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:deployment/create_portable_backup.py:create_backup",
+      "target": "function:deployment/create_portable_backup.py:add_file",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:deployment/create_portable_backup.py:create_backup",
+      "target": "function:deployment/create_portable_backup.py:add_tree",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:deployment/create_portable_backup.py:create_backup",
+      "target": "function:deployment/create_portable_backup.py:portable_env",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:deployment/create_portable_backup.py:create_backup",
+      "target": "function:deployment/create_portable_backup.py:sha256_bytes",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:deployment/create_portable_backup.py:create_backup",
+      "target": "function:deployment/create_portable_backup.py:verify_backup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:deployment/create_portable_backup.py:main",
+      "target": "function:deployment/create_portable_backup.py:parse_args",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:deployment/create_portable_backup.py:main",
+      "target": "function:deployment/create_portable_backup.py:create_backup",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:portable-windows-launcher/bootstrap_first_admin.py:main",
+      "target": "function:app/services/accounts.py:normalize_username",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:portable-windows-launcher/bootstrap_first_admin.py:main",
+      "target": "function:portable-windows-launcher/bootstrap_first_admin.py:decode",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:portable-windows-launcher/bootstrap_first_admin.py:main",
+      "target": "function:app/services/accounts.py:validate_display_name",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:portable-windows-launcher/bootstrap_first_admin.py:main",
+      "target": "function:app/services/accounts.py:validate_temporary_password",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_deployment.py:test_proxy_headers_are_trusted_only_when_enabled",
+      "target": "function:tests/test_deployment.py:make_proxy_app",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_security_operations_enhancements.py:test_login_regenerates_server_side_session_and_rate_limits",
+      "target": "function:tests/test_security_operations_enhancements.py:login",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_security_operations_enhancements.py:test_configured_hours_drive_weekly_and_payroll_aggregation",
+      "target": "function:app/services/scheduling.py:shift_hours",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_security_operations_enhancements.py:test_configured_hours_drive_weekly_and_payroll_aggregation",
+      "target": "function:tests/test_security_operations_enhancements.py:login",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_security_operations_enhancements.py:test_student_availability_warns_but_admin_can_override",
+      "target": "function:app/services/scheduling.py:create_shift",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_security_operations_enhancements.py:test_effective_dated_minimum_wage_and_audit_timezone_filter",
+      "target": "function:app/services/payroll.py:minimum_wage_on",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_security_operations_enhancements.py:test_effective_dated_minimum_wage_and_audit_timezone_filter",
+      "target": "function:tests/test_security_operations_enhancements.py:login",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

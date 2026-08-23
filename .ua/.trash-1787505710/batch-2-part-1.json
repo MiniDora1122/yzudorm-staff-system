@@ -1,0 +1,3262 @@
+{
+  "nodes": [
+    {
+      "id": "file:app/admin/routes.py",
+      "type": "file",
+      "name": "routes.py",
+      "filePath": "app/admin/routes.py",
+      "summary": "管理員後台的 Flask 頁面與 JSON API，涵蓋儀表板、帳號、國籍、排班、證件、薪資、報表及申請審核。",
+      "tags": [
+        "api-handler",
+        "flask-route",
+        "application"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Flask Blueprint 組合 Jinja 頁面與 JSON API，權限由後端驗證。"
+    },
+    {
+      "id": "function:app/admin/routes.py:dashboard",
+      "type": "function",
+      "name": "dashboard",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        90,
+        156
+      ],
+      "summary": "處理dashboard 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/admin/routes.py:notifications_page",
+      "type": "function",
+      "name": "notifications_page",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        161,
+        171
+      ],
+      "summary": "處理notifications page 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:audit_logs_page",
+      "type": "function",
+      "name": "audit_logs_page",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        176,
+        214
+      ],
+      "summary": "處理audit logs page 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:nationalities_settings",
+      "type": "function",
+      "name": "nationalities_settings",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        219,
+        229
+      ],
+      "summary": "處理nationalities settings 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:create_country",
+      "type": "function",
+      "name": "create_country",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        234,
+        262
+      ],
+      "summary": "建立create country 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:update_country",
+      "type": "function",
+      "name": "update_country",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        267,
+        299
+      ],
+      "summary": "更新update country 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:delete_country",
+      "type": "function",
+      "name": "delete_country",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        304,
+        319
+      ],
+      "summary": "刪除或封存delete country 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:scheduling_settings",
+      "type": "function",
+      "name": "scheduling_settings",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        324,
+        349
+      ],
+      "summary": "處理scheduling settings 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:update_scheduling_policy",
+      "type": "function",
+      "name": "update_scheduling_policy",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        354,
+        392
+      ],
+      "summary": "更新update scheduling policy 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:_period_form_values",
+      "type": "function",
+      "name": "_period_form_values",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        395,
+        405
+      ],
+      "summary": "處理period form values 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:create_scheduling_exception",
+      "type": "function",
+      "name": "create_scheduling_exception",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        410,
+        422
+      ],
+      "summary": "建立create scheduling exception 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:update_scheduling_exception",
+      "type": "function",
+      "name": "update_scheduling_exception",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        427,
+        441
+      ],
+      "summary": "更新update scheduling exception 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:delete_scheduling_exception",
+      "type": "function",
+      "name": "delete_scheduling_exception",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        446,
+        455
+      ],
+      "summary": "刪除或封存delete scheduling exception 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:schedule",
+      "type": "function",
+      "name": "schedule",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        460,
+        498
+      ],
+      "summary": "處理schedule 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:shift_import_template",
+      "type": "function",
+      "name": "shift_import_template",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        503,
+        510
+      ],
+      "summary": "處理shift import template 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:import_shifts",
+      "type": "function",
+      "name": "import_shifts",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        516,
+        646
+      ],
+      "summary": "處理import shifts 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/admin/routes.py:shift_import_errors",
+      "type": "function",
+      "name": "shift_import_errors",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        651,
+        664
+      ],
+      "summary": "處理shift import errors 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:undo_shift_import",
+      "type": "function",
+      "name": "undo_shift_import",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        670,
+        690
+      ],
+      "summary": "處理undo shift import 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:staff",
+      "type": "function",
+      "name": "staff",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        695,
+        775
+      ],
+      "summary": "處理staff 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/admin/routes.py:admin_accounts",
+      "type": "function",
+      "name": "admin_accounts",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        780,
+        791
+      ],
+      "summary": "處理admin accounts 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:create_administrator",
+      "type": "function",
+      "name": "create_administrator",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        796,
+        812
+      ],
+      "summary": "建立create administrator 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:reset_administrator_password",
+      "type": "function",
+      "name": "reset_administrator_password",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        817,
+        836
+      ],
+      "summary": "處理reset administrator password 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:delete_administrator",
+      "type": "function",
+      "name": "delete_administrator",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        841,
+        861
+      ],
+      "summary": "刪除或封存delete administrator 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:restore_administrator",
+      "type": "function",
+      "name": "restore_administrator",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        866,
+        877
+      ],
+      "summary": "處理restore administrator 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:create_staff",
+      "type": "function",
+      "name": "create_staff",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        882,
+        903
+      ],
+      "summary": "建立create staff 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:reset_staff_password",
+      "type": "function",
+      "name": "reset_staff_password",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        908,
+        927
+      ],
+      "summary": "處理reset staff password 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:delete_staff",
+      "type": "function",
+      "name": "delete_staff",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        932,
+        971
+      ],
+      "summary": "刪除或封存delete staff 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:restore_staff",
+      "type": "function",
+      "name": "restore_staff",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        976,
+        987
+      ],
+      "summary": "處理restore staff 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:documents_page",
+      "type": "function",
+      "name": "documents_page",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        992,
+        1032
+      ],
+      "summary": "處理documents page 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:review_staff_document",
+      "type": "function",
+      "name": "review_staff_document",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        1037,
+        1057
+      ],
+      "summary": "審核review staff document 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:update_document_retention",
+      "type": "function",
+      "name": "update_document_retention",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        1062,
+        1079
+      ],
+      "summary": "更新update document retention 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:run_document_cleanup",
+      "type": "function",
+      "name": "run_document_cleanup",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        1084,
+        1087
+      ],
+      "summary": "執行run document cleanup 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:view_staff_document",
+      "type": "function",
+      "name": "view_staff_document",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        1092,
+        1104
+      ],
+      "summary": "處理view staff document 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:download_staff_document",
+      "type": "function",
+      "name": "download_staff_document",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        1109,
+        1126
+      ],
+      "summary": "授權下載download staff document 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:download_staff_document_set",
+      "type": "function",
+      "name": "download_staff_document_set",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        1131,
+        1170
+      ],
+      "summary": "授權下載download staff document set 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:payroll",
+      "type": "function",
+      "name": "payroll",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        1175,
+        1184
+      ],
+      "summary": "處理payroll 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:update_staff",
+      "type": "function",
+      "name": "update_staff",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        1189,
+        1238
+      ],
+      "summary": "更新update staff 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/admin/routes.py:reports_page",
+      "type": "function",
+      "name": "reports_page",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        1243,
+        1244
+      ],
+      "summary": "處理reports page 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:_report_month",
+      "type": "function",
+      "name": "_report_month",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        1247,
+        1248
+      ],
+      "summary": "處理report month 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:_download_report",
+      "type": "function",
+      "name": "_download_report",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        1251,
+        1260
+      ],
+      "summary": "處理download report 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:monthly_hours_xlsx",
+      "type": "function",
+      "name": "monthly_hours_xlsx",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        1265,
+        1278
+      ],
+      "summary": "處理monthly hours xlsx 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:daily_hours_matrix_xlsx",
+      "type": "function",
+      "name": "daily_hours_matrix_xlsx",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        1283,
+        1296
+      ],
+      "summary": "處理daily hours matrix xlsx 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:shift_detail_report",
+      "type": "function",
+      "name": "shift_detail_report",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        1301,
+        1307
+      ],
+      "summary": "處理shift detail report 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:payroll_cost_report",
+      "type": "function",
+      "name": "payroll_cost_report",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        1312,
+        1319
+      ],
+      "summary": "處理payroll cost report 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:workflow_history_report",
+      "type": "function",
+      "name": "workflow_history_report",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        1324,
+        1330
+      ],
+      "summary": "處理workflow history report 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:document_expiry_report",
+      "type": "function",
+      "name": "document_expiry_report",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        1335,
+        1337
+      ],
+      "summary": "處理document expiry report 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:requests_page",
+      "type": "function",
+      "name": "requests_page",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        1342,
+        1392
+      ],
+      "summary": "處理requests page 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/admin/routes.py:review_leave",
+      "type": "function",
+      "name": "review_leave",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        1397,
+        1418
+      ],
+      "summary": "審核review leave 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:review_swap",
+      "type": "function",
+      "name": "review_swap",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        1423,
+        1444
+      ],
+      "summary": "審核review swap 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:parse_calendar_date",
+      "type": "function",
+      "name": "parse_calendar_date",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        1447,
+        1453
+      ],
+      "summary": "解析parse calendar date 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:get_assignment",
+      "type": "function",
+      "name": "get_assignment",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        1456,
+        1470
+      ],
+      "summary": "處理get assignment 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:api_error",
+      "type": "function",
+      "name": "api_error",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        1473,
+        1474
+      ],
+      "summary": "處理api error 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:create_location_api",
+      "type": "function",
+      "name": "create_location_api",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        1479,
+        1538
+      ],
+      "summary": "建立create location api 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/admin/routes.py:update_location_api",
+      "type": "function",
+      "name": "update_location_api",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        1543,
+        1573
+      ],
+      "summary": "更新update location api 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:delete_location_api",
+      "type": "function",
+      "name": "delete_location_api",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        1578,
+        1596
+      ],
+      "summary": "刪除或封存delete location api 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:create_shift_type_api",
+      "type": "function",
+      "name": "create_shift_type_api",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        1601,
+        1664
+      ],
+      "summary": "建立create shift type api 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/admin/routes.py:update_shift_type_api",
+      "type": "function",
+      "name": "update_shift_type_api",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        1670,
+        1735
+      ],
+      "summary": "更新update shift type api 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/admin/routes.py:delete_shift_type_api",
+      "type": "function",
+      "name": "delete_shift_type_api",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        1740,
+        1753
+      ],
+      "summary": "刪除或封存delete shift type api 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:decimal_field",
+      "type": "function",
+      "name": "decimal_field",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        1756,
+        1763
+      ],
+      "summary": "處理decimal field 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:save_minimum_wage",
+      "type": "function",
+      "name": "save_minimum_wage",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        1768,
+        1793
+      ],
+      "summary": "驗證並儲存save minimum wage 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:save_payroll_setting_api",
+      "type": "function",
+      "name": "save_payroll_setting_api",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        1798,
+        1852
+      ],
+      "summary": "驗證並儲存save payroll setting api 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/admin/routes.py:update_staff_payroll_api",
+      "type": "function",
+      "name": "update_staff_payroll_api",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        1857,
+        1888
+      ],
+      "summary": "更新update staff payroll api 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:payroll_report_api",
+      "type": "function",
+      "name": "payroll_report_api",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        1893,
+        1954
+      ],
+      "summary": "處理payroll report api 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/admin/routes.py:shift_events",
+      "type": "function",
+      "name": "shift_events",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        1959,
+        1998
+      ],
+      "summary": "處理shift events 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:create_shift_api",
+      "type": "function",
+      "name": "create_shift_api",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        2003,
+        2049
+      ],
+      "summary": "建立create shift api 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:update_shift_api",
+      "type": "function",
+      "name": "update_shift_api",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        2054,
+        2083
+      ],
+      "summary": "更新update shift api 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:delete_shift_api",
+      "type": "function",
+      "name": "delete_shift_api",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        2089,
+        2120
+      ],
+      "summary": "刪除或封存delete shift api 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:cancel_shift_records",
+      "type": "function",
+      "name": "cancel_shift_records",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        2123,
+        2154
+      ],
+      "summary": "取消cancel shift records 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:bulk_delete_shifts_api",
+      "type": "function",
+      "name": "bulk_delete_shifts_api",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        2160,
+        2177
+      ],
+      "summary": "處理bulk delete shifts api 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/admin/routes.py:monthly_hours_api",
+      "type": "function",
+      "name": "monthly_hours_api",
+      "filePath": "app/admin/routes.py",
+      "lineRange": [
+        2182,
+        2252
+      ],
+      "summary": "處理monthly hours api 的 HTTP 請求，完成後端授權、資料驗證與回應組裝。",
+      "tags": [
+        "api-handler",
+        "validation",
+        "application"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:app/services/accounts.py",
+      "type": "file",
+      "name": "accounts.py",
+      "filePath": "app/services/accounts.py",
+      "summary": "封裝管理員與工讀生帳號建立、欄位驗證、唯一性檢查與臨時密碼重設。",
+      "tags": [
+        "service",
+        "accounts",
+        "business-logic"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "採用 Python 與 SQLAlchemy service 分層。"
+    },
+    {
+      "id": "function:app/services/accounts.py:normalize_username",
+      "type": "function",
+      "name": "normalize_username",
+      "filePath": "app/services/accounts.py",
+      "lineRange": [
+        23,
+        27
+      ],
+      "summary": "處理normalize username 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "accounts"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/accounts.py:normalize_student_number",
+      "type": "function",
+      "name": "normalize_student_number",
+      "filePath": "app/services/accounts.py",
+      "lineRange": [
+        30,
+        34
+      ],
+      "summary": "處理normalize student number 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "accounts"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/accounts.py:validate_temporary_password",
+      "type": "function",
+      "name": "validate_temporary_password",
+      "filePath": "app/services/accounts.py",
+      "lineRange": [
+        37,
+        41
+      ],
+      "summary": "驗證validate temporary password 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "accounts"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/accounts.py:validate_profile_fields",
+      "type": "function",
+      "name": "validate_profile_fields",
+      "filePath": "app/services/accounts.py",
+      "lineRange": [
+        44,
+        50
+      ],
+      "summary": "驗證validate profile fields 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "accounts"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/accounts.py:validate_display_name",
+      "type": "function",
+      "name": "validate_display_name",
+      "filePath": "app/services/accounts.py",
+      "lineRange": [
+        53,
+        57
+      ],
+      "summary": "驗證validate display name 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "accounts"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/accounts.py:ensure_unique_username",
+      "type": "function",
+      "name": "ensure_unique_username",
+      "filePath": "app/services/accounts.py",
+      "lineRange": [
+        60,
+        67
+      ],
+      "summary": "處理ensure unique username 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "accounts"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/accounts.py:create_admin_account",
+      "type": "function",
+      "name": "create_admin_account",
+      "filePath": "app/services/accounts.py",
+      "lineRange": [
+        70,
+        105
+      ],
+      "summary": "建立create admin account 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "accounts"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/accounts.py:reset_admin_password",
+      "type": "function",
+      "name": "reset_admin_password",
+      "filePath": "app/services/accounts.py",
+      "lineRange": [
+        108,
+        129
+      ],
+      "summary": "處理reset admin password 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "accounts"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/accounts.py:create_student_account",
+      "type": "function",
+      "name": "create_student_account",
+      "filePath": "app/services/accounts.py",
+      "lineRange": [
+        132,
+        191
+      ],
+      "summary": "建立create student account 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "accounts"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/services/accounts.py:reset_student_password",
+      "type": "function",
+      "name": "reset_student_password",
+      "filePath": "app/services/accounts.py",
+      "lineRange": [
+        194,
+        213
+      ],
+      "summary": "處理reset student password 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "accounts"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/services/accounts.py:AccountError",
+      "type": "class",
+      "name": "AccountError",
+      "filePath": "app/services/accounts.py",
+      "lineRange": [
+        16,
+        20
+      ],
+      "summary": "AccountError 表示此領域可預期的驗證或流程錯誤。",
+      "tags": [
+        "data-model",
+        "service",
+        "accounts"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/services/audit.py",
+      "type": "file",
+      "name": "audit.py",
+      "filePath": "app/services/audit.py",
+      "summary": "建立不含敏感資料的操作稽核紀錄，並保存結構化設定變更差異。",
+      "tags": [
+        "service",
+        "application",
+        "business-logic"
+      ],
+      "complexity": "simple",
+      "languageNotes": "採用 Python 與 SQLAlchemy service 分層。"
+    },
+    {
+      "id": "function:app/services/audit.py:add_audit",
+      "type": "function",
+      "name": "add_audit",
+      "filePath": "app/services/audit.py",
+      "lineRange": [
+        11,
+        38
+      ],
+      "summary": "處理add audit 所代表的領域操作，集中封裝驗證、資料存取與狀態變更。",
+      "tags": [
+        "service",
+        "business-logic",
+        "application"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:dashboard",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:dashboard",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:notifications_page",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:notifications_page",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:audit_logs_page",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:audit_logs_page",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:nationalities_settings",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:nationalities_settings",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:create_country",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:create_country",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:update_country",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:update_country",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:delete_country",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:delete_country",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:scheduling_settings",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:scheduling_settings",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:update_scheduling_policy",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:update_scheduling_policy",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:_period_form_values",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:_period_form_values",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:create_scheduling_exception",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:create_scheduling_exception",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:update_scheduling_exception",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:update_scheduling_exception",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:delete_scheduling_exception",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:delete_scheduling_exception",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:schedule",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:schedule",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:shift_import_template",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:shift_import_template",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:import_shifts",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:import_shifts",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:shift_import_errors",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:shift_import_errors",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:undo_shift_import",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:undo_shift_import",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:staff",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:staff",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:admin_accounts",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:admin_accounts",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:create_administrator",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:create_administrator",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:reset_administrator_password",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:reset_administrator_password",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:delete_administrator",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:delete_administrator",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:restore_administrator",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:restore_administrator",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:create_staff",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:create_staff",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:reset_staff_password",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:reset_staff_password",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:delete_staff",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:delete_staff",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:restore_staff",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:restore_staff",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:documents_page",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:documents_page",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:review_staff_document",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:review_staff_document",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:update_document_retention",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:update_document_retention",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:run_document_cleanup",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:run_document_cleanup",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:view_staff_document",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:view_staff_document",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:download_staff_document",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:download_staff_document",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:download_staff_document_set",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:download_staff_document_set",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:payroll",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:payroll",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:update_staff",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:update_staff",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:reports_page",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:reports_page",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:_report_month",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:_report_month",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:_download_report",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:_download_report",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:monthly_hours_xlsx",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:monthly_hours_xlsx",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:daily_hours_matrix_xlsx",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:daily_hours_matrix_xlsx",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:shift_detail_report",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:shift_detail_report",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:payroll_cost_report",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:payroll_cost_report",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:workflow_history_report",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:workflow_history_report",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:document_expiry_report",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:document_expiry_report",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:requests_page",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:requests_page",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:review_leave",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:review_leave",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:review_swap",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:review_swap",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:parse_calendar_date",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:parse_calendar_date",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:get_assignment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:get_assignment",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:api_error",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:api_error",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:create_location_api",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:create_location_api",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:update_location_api",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:update_location_api",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:delete_location_api",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:delete_location_api",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:create_shift_type_api",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:create_shift_type_api",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:update_shift_type_api",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:update_shift_type_api",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:delete_shift_type_api",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:delete_shift_type_api",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:decimal_field",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:decimal_field",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:save_minimum_wage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:save_minimum_wage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:save_payroll_setting_api",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:save_payroll_setting_api",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:update_staff_payroll_api",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:update_staff_payroll_api",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:payroll_report_api",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:payroll_report_api",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:shift_events",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:shift_events",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:create_shift_api",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:create_shift_api",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:update_shift_api",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:update_shift_api",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:delete_shift_api",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:delete_shift_api",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:cancel_shift_records",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:cancel_shift_records",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:bulk_delete_shifts_api",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:bulk_delete_shifts_api",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:monthly_hours_api",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "function:app/admin/routes.py:monthly_hours_api",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/accounts.py",
+      "target": "function:app/services/accounts.py:normalize_username",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/accounts.py",
+      "target": "function:app/services/accounts.py:normalize_username",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/accounts.py",
+      "target": "function:app/services/accounts.py:normalize_student_number",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/accounts.py",
+      "target": "function:app/services/accounts.py:normalize_student_number",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/accounts.py",
+      "target": "function:app/services/accounts.py:validate_temporary_password",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/accounts.py",
+      "target": "function:app/services/accounts.py:validate_temporary_password",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/accounts.py",
+      "target": "function:app/services/accounts.py:validate_profile_fields",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/accounts.py",
+      "target": "function:app/services/accounts.py:validate_profile_fields",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/accounts.py",
+      "target": "function:app/services/accounts.py:validate_display_name",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/accounts.py",
+      "target": "function:app/services/accounts.py:validate_display_name",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/accounts.py",
+      "target": "function:app/services/accounts.py:ensure_unique_username",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/accounts.py",
+      "target": "function:app/services/accounts.py:ensure_unique_username",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/accounts.py",
+      "target": "function:app/services/accounts.py:create_admin_account",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/accounts.py",
+      "target": "function:app/services/accounts.py:create_admin_account",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/accounts.py",
+      "target": "function:app/services/accounts.py:reset_admin_password",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/accounts.py",
+      "target": "function:app/services/accounts.py:reset_admin_password",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/accounts.py",
+      "target": "function:app/services/accounts.py:create_student_account",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/accounts.py",
+      "target": "function:app/services/accounts.py:create_student_account",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/accounts.py",
+      "target": "function:app/services/accounts.py:reset_student_password",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/accounts.py",
+      "target": "function:app/services/accounts.py:reset_student_password",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/accounts.py",
+      "target": "class:app/services/accounts.py:AccountError",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/accounts.py",
+      "target": "class:app/services/accounts.py:AccountError",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/audit.py",
+      "target": "function:app/services/audit.py:add_audit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/audit.py",
+      "target": "function:app/services/audit.py:add_audit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "file:app/decorators.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "file:app/services/accounts.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "file:app/services/attendance.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "file:app/services/audit.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "file:app/services/compliance.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "file:app/services/documents.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "file:app/services/health.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "file:app/services/notifications.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "file:app/services/payroll.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "file:app/services/reports.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "file:app/services/requests.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "file:app/services/retention.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "file:app/services/scheduling.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "file:app/services/workflow_calendar.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/admin/routes.py",
+      "target": "file:app/time_utils.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/accounts.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/accounts.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/accounts.py",
+      "target": "file:app/services/audit.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/audit.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/audit.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:app/admin/routes.py:dashboard",
+      "target": "function:app/services/scheduling.py:month_bounds",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:dashboard",
+      "target": "function:app/services/health.py:system_health_summary",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:create_scheduling_exception",
+      "target": "function:app/admin/routes.py:_period_form_values",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:update_scheduling_exception",
+      "target": "function:app/admin/routes.py:_period_form_values",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:import_shifts",
+      "target": "function:app/services/scheduling.py:create_shift",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:undo_shift_import",
+      "target": "function:app/models.py:utc_now",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:delete_administrator",
+      "target": "function:app/models.py:utc_now",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:delete_staff",
+      "target": "function:app/models.py:utc_now",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:_report_month",
+      "target": "function:app/services/scheduling.py:month_bounds",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:monthly_hours_xlsx",
+      "target": "function:app/admin/routes.py:_report_month",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:monthly_hours_xlsx",
+      "target": "function:app/admin/routes.py:_download_report",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:daily_hours_matrix_xlsx",
+      "target": "function:app/admin/routes.py:_report_month",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:daily_hours_matrix_xlsx",
+      "target": "function:app/admin/routes.py:_download_report",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:shift_detail_report",
+      "target": "function:app/admin/routes.py:_report_month",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:shift_detail_report",
+      "target": "function:app/admin/routes.py:_download_report",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:payroll_cost_report",
+      "target": "function:app/admin/routes.py:_report_month",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:payroll_cost_report",
+      "target": "function:app/admin/routes.py:_download_report",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:workflow_history_report",
+      "target": "function:app/admin/routes.py:_report_month",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:workflow_history_report",
+      "target": "function:app/admin/routes.py:_download_report",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:document_expiry_report",
+      "target": "function:app/admin/routes.py:_download_report",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:requests_page",
+      "target": "function:app/services/scheduling.py:month_bounds",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:create_location_api",
+      "target": "function:app/admin/routes.py:api_error",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:update_location_api",
+      "target": "function:app/admin/routes.py:api_error",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:delete_location_api",
+      "target": "function:app/admin/routes.py:api_error",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:create_shift_type_api",
+      "target": "function:app/admin/routes.py:api_error",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:update_shift_type_api",
+      "target": "function:app/admin/routes.py:api_error",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:update_shift_type_api",
+      "target": "function:app/services/scheduling.py:validate_shift_assignment",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:delete_shift_type_api",
+      "target": "function:app/admin/routes.py:api_error",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:save_payroll_setting_api",
+      "target": "function:app/admin/routes.py:decimal_field",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:save_payroll_setting_api",
+      "target": "function:app/admin/routes.py:api_error",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:update_staff_payroll_api",
+      "target": "function:app/admin/routes.py:api_error",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:update_staff_payroll_api",
+      "target": "function:app/admin/routes.py:decimal_field",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:payroll_report_api",
+      "target": "function:app/services/scheduling.py:month_bounds",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:payroll_report_api",
+      "target": "function:app/admin/routes.py:api_error",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:shift_events",
+      "target": "function:app/admin/routes.py:parse_calendar_date",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:shift_events",
+      "target": "function:app/admin/routes.py:api_error",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:shift_events",
+      "target": "function:app/services/attendance.py:attendance_annotations",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:shift_events",
+      "target": "function:app/services/scheduling.py:shift_to_event",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:create_shift_api",
+      "target": "function:app/admin/routes.py:get_assignment",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:create_shift_api",
+      "target": "function:app/services/scheduling.py:create_weekly_shift_series",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:create_shift_api",
+      "target": "function:app/services/scheduling.py:create_shift",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:create_shift_api",
+      "target": "function:app/admin/routes.py:api_error",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:create_shift_api",
+      "target": "function:app/services/scheduling.py:shift_to_event",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:update_shift_api",
+      "target": "function:app/admin/routes.py:api_error",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:update_shift_api",
+      "target": "function:app/admin/routes.py:get_assignment",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:update_shift_api",
+      "target": "function:app/services/scheduling.py:update_shift",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:update_shift_api",
+      "target": "function:app/services/scheduling.py:shift_to_event",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:delete_shift_api",
+      "target": "function:app/admin/routes.py:api_error",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:delete_shift_api",
+      "target": "function:app/admin/routes.py:cancel_shift_records",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:bulk_delete_shifts_api",
+      "target": "function:app/admin/routes.py:api_error",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:bulk_delete_shifts_api",
+      "target": "function:app/admin/routes.py:cancel_shift_records",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:monthly_hours_api",
+      "target": "function:app/services/scheduling.py:month_bounds",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/admin/routes.py:monthly_hours_api",
+      "target": "function:app/admin/routes.py:api_error",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/accounts.py:normalize_username",
+      "target": "class:app/services/accounts.py:AccountError",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/accounts.py:normalize_student_number",
+      "target": "class:app/services/accounts.py:AccountError",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/accounts.py:validate_temporary_password",
+      "target": "class:app/services/accounts.py:AccountError",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/accounts.py:validate_profile_fields",
+      "target": "class:app/services/accounts.py:AccountError",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/accounts.py:validate_display_name",
+      "target": "class:app/services/accounts.py:AccountError",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/accounts.py:ensure_unique_username",
+      "target": "class:app/services/accounts.py:AccountError",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/accounts.py:create_admin_account",
+      "target": "function:app/services/accounts.py:normalize_username",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/accounts.py:create_admin_account",
+      "target": "function:app/services/accounts.py:validate_display_name",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/accounts.py:create_admin_account",
+      "target": "function:app/services/accounts.py:validate_temporary_password",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/accounts.py:create_admin_account",
+      "target": "function:app/services/accounts.py:ensure_unique_username",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/accounts.py:create_admin_account",
+      "target": "class:app/services/accounts.py:AccountError",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/accounts.py:reset_admin_password",
+      "target": "function:app/services/accounts.py:validate_temporary_password",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/accounts.py:reset_admin_password",
+      "target": "class:app/services/accounts.py:AccountError",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/accounts.py:create_student_account",
+      "target": "function:app/services/accounts.py:normalize_username",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/accounts.py:create_student_account",
+      "target": "function:app/services/accounts.py:normalize_student_number",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/accounts.py:create_student_account",
+      "target": "function:app/services/accounts.py:validate_temporary_password",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/accounts.py:create_student_account",
+      "target": "function:app/services/accounts.py:validate_profile_fields",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/accounts.py:create_student_account",
+      "target": "function:app/services/accounts.py:ensure_unique_username",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/accounts.py:create_student_account",
+      "target": "class:app/services/accounts.py:AccountError",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/accounts.py:reset_student_password",
+      "target": "function:app/services/accounts.py:validate_temporary_password",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:app/services/accounts.py:reset_student_password",
+      "target": "class:app/services/accounts.py:AccountError",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

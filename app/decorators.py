@@ -11,11 +11,10 @@ def role_required(role: Role):
         @wraps(view)
         @login_required
         def wrapped(*args, **kwargs):
-            if not current_user.has_role(role):
+            if not current_user.is_active or not current_user.has_role(role):
                 abort(403)
             return view(*args, **kwargs)
 
         return wrapped
 
     return decorator
-

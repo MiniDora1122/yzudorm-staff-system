@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
+from decimal import Decimal, InvalidOperation
 from io import BytesIO
 import ipaddress
 import re
 from zoneinfo import ZoneInfo
 
-from flask import current_app, flash, redirect, render_template, request, send_file, url_for
+from flask import abort, current_app, flash, redirect, render_template, request, send_file, url_for
 from flask_login import current_user
 from sqlalchemy.orm import joinedload
 
@@ -35,27 +36,44 @@ from ..services.attendance import (
     AttendanceError,
     card_uid_hash,
     create_provisioning_package,
+    calculated_hours_for_shifts,
     new_enrollment,
     normalize_uid,
     policy,
     review_event,
+    reconcile_shift_hours,
 )
 from ..services.audit import add_audit
-from ..services.scheduling import SchedulingConflict, create_shift
-from ..time_utils import local_today
+from ..services.scheduling import SchedulingConflict, create_shift, schedule_serialized
+from ..time_utils import local_date_utc_bounds, local_today
 
 
 @bp.get("/attendance")
 @role_required(Role.ADMIN)
 def attendance_page():
+    query_mode = request.args.get("mode", "day")
     selected_date = request.args.get("date", local_today().isoformat())
     try:
         day = datetime.fromisoformat(selected_date).date()
     except ValueError:
         day = local_today()
-    start = datetime.combine(day, datetime.min.time(), timezone.utc) - timedelta(hours=8)
-    end = start + timedelta(days=1)
-    events = db.session.scalars(
+    start, end = local_date_utc_bounds(day)
+    range_start_value = request.args.get("start", f"{day.isoformat()}T00:00")
+    range_end_value = request.args.get("end", f"{day.isoformat()}T23:59")
+    if query_mode == "range":
+        try:
+            local_tz = ZoneInfo(current_app.config["APP_TIMEZONE"])
+            local_start = datetime.fromisoformat(range_start_value).replace(tzinfo=local_tz)
+            local_end = datetime.fromisoformat(range_end_value).replace(tzinfo=local_tz)
+            if local_end < local_start or local_end - local_start > timedelta(days=366):
+                raise ValueError
+            start, end = local_start.astimezone(timezone.utc), local_end.astimezone(timezone.utc)
+        except ValueError:
+            flash("查詢區間格式錯誤、結束時間早於開始時間，或超過一年。", "danger")
+            query_mode = "day"
+            range_start_value, range_end_value = f"{day.isoformat()}T00:00", f"{day.isoformat()}T23:59"
+    end_filter = AttendanceEvent.occurred_at <= end if query_mode == "range" else AttendanceEvent.occurred_at < end
+    event_statement = (
         db.select(AttendanceEvent)
         .options(
             joinedload(AttendanceEvent.staff),
@@ -63,15 +81,38 @@ def attendance_page():
             joinedload(AttendanceEvent.shift).joinedload(Shift.shift_type),
             joinedload(AttendanceEvent.reviewer),
         )
-        .where(AttendanceEvent.occurred_at >= start, AttendanceEvent.occurred_at < end)
+        .where(AttendanceEvent.occurred_at >= start, end_filter)
         .order_by(AttendanceEvent.occurred_at.desc())
+    )
+    event_pagination = db.paginate(
+        event_statement,
+        page=max(1, request.args.get("page", 1, type=int)),
+        per_page=100,
+        error_out=False,
+    )
+    events = event_pagination.items
+    day_shifts = db.session.scalars(
+        db.select(Shift)
+        .options(
+            joinedload(Shift.staff),
+            joinedload(Shift.shift_type).joinedload(ShiftType.work_location),
+            joinedload(Shift.reconciliation),
+        )
+        .where(
+            Shift.shift_date == day,
+            Shift.status == ShiftStatus.SCHEDULED,
+            Shift.publication_status == ShiftPublicationStatus.PUBLISHED,
+        )
+        .join(Shift.shift_type)
+        .order_by(ShiftType.start_time, Shift.staff_id)
     ).all()
+    calculated_hours = calculated_hours_for_shifts(day_shifts)
     review_statuses = {
         AttendanceStatus.LATE_PENDING_REVIEW,
         AttendanceStatus.MISSING_CLOCK_IN,
         AttendanceStatus.UNMATCHED,
     }
-    pending_events = db.session.scalars(
+    pending_statement = (
         db.select(AttendanceEvent)
         .options(
             joinedload(AttendanceEvent.staff),
@@ -80,8 +121,14 @@ def attendance_page():
         )
         .where(AttendanceEvent.status.in_(review_statuses))
         .order_by(AttendanceEvent.occurred_at)
-        .limit(100)
-    ).all()
+    )
+    pending_pagination = db.paginate(
+        pending_statement,
+        page=max(1, request.args.get("pending_page", 1, type=int)),
+        per_page=50,
+        error_out=False,
+    )
+    pending_events = pending_pagination.items
     tz = ZoneInfo(current_app.config["APP_TIMEZONE"])
     event_dates = {
         event.id: (event.occurred_at.replace(tzinfo=timezone.utc) if event.occurred_at.tzinfo is None else event.occurred_at).astimezone(tz).date()
@@ -114,7 +161,9 @@ def attendance_page():
     return render_template(
         "admin/attendance.html",
         events=events,
+        event_pagination=event_pagination,
         pending_events=pending_events,
+        pending_pagination=pending_pagination,
         candidate_shifts=candidate_shifts,
         event_dates=event_dates,
         active_shift_types=db.session.scalars(
@@ -124,8 +173,31 @@ def attendance_page():
             .order_by(ShiftType.display_order)
         ).all(),
         selected_date=day.isoformat(),
+        query_mode=query_mode,
+        range_start=range_start_value,
+        range_end=range_end_value,
+        day_shifts=day_shifts,
+        calculated_hours=calculated_hours,
         review_statuses=review_statuses,
     )
+
+
+@bp.post("/attendance/shifts/<int:shift_id>/reconcile")
+@role_required(Role.ADMIN)
+def reconcile_attendance_shift(shift_id: int):
+    shift = db.get_or_404(Shift, shift_id)
+    try:
+        reconcile_shift_hours(
+            shift,
+            payable_hours=Decimal(request.form.get("payable_hours", "")),
+            note=request.form.get("note", ""),
+            actor_user_id=current_user.id,
+        )
+        flash("計薪時數已完成核對，薪資報表會立即採用此數值。 / Payable hours reconciled.", "success")
+    except (AttendanceError, InvalidOperation) as exc:
+        db.session.rollback()
+        flash(getattr(exc, "message", "計薪時數格式錯誤。 / Invalid payable hours."), "danger")
+    return redirect(url_for("admin.attendance_page", date=request.form.get("date", shift.shift_date.isoformat())))
 
 
 @bp.get("/settings/attendance")
@@ -133,7 +205,11 @@ def attendance_page():
 def attendance_settings():
     return render_template(
         "admin/attendance_settings.html",
-        devices=db.session.scalars(db.select(AttendanceDevice).order_by(AttendanceDevice.name)).all(),
+        devices=db.session.scalars(
+            db.select(AttendanceDevice)
+            .where(AttendanceDevice.deleted_at.is_(None))
+            .order_by(AttendanceDevice.is_active.desc(), AttendanceDevice.name)
+        ).all(),
         locations=db.session.scalars(
             db.select(WorkLocation).where(WorkLocation.is_active.is_(True)).order_by(WorkLocation.display_order)
         ).all(),
@@ -146,6 +222,13 @@ def attendance_settings():
 
 def _settings_url(section: str) -> str:
     return url_for("admin.attendance_settings") + f"#{section}"
+
+
+def _device_or_404(device_id: int) -> AttendanceDevice:
+    device = db.session.get(AttendanceDevice, device_id)
+    if device is None or device.deleted_at is not None:
+        abort(404)
+    return device
 
 
 def _card_return_url(staff_id: int | None = None) -> str:
@@ -174,6 +257,7 @@ def create_attendance_device():
         device = AttendanceDevice(
             device_code=code[:60], name=name[:120], location_id=location_id,
             allowed_cidr=allowed_cidr[:80] or None,
+            offline_threshold_minutes=policy().offline_threshold_minutes,
             created_by=current_user.id,
         )
         db.session.add(device)
@@ -210,7 +294,7 @@ def create_attendance_device():
 @bp.post("/attendance/devices/<int:device_id>/enrollment")
 @role_required(Role.ADMIN)
 def renew_attendance_enrollment(device_id: int):
-    device = db.get_or_404(AttendanceDevice, device_id)
+    device = _device_or_404(device_id)
     device.is_active = True
     token = new_enrollment(device)
     db.session.commit()
@@ -221,7 +305,7 @@ def renew_attendance_enrollment(device_id: int):
 @bp.post("/attendance/devices/<int:device_id>/package")
 @role_required(Role.ADMIN)
 def download_attendance_package(device_id: int):
-    device = db.get_or_404(AttendanceDevice, device_id)
+    device = _device_or_404(device_id)
     try:
         device.is_active = True
         device.revoked_at = None
@@ -248,7 +332,7 @@ def download_attendance_package(device_id: int):
 @bp.post("/attendance/devices/<int:device_id>/update")
 @role_required(Role.ADMIN)
 def update_attendance_device(device_id: int):
-    device = db.get_or_404(AttendanceDevice, device_id)
+    device = _device_or_404(device_id)
     name = request.form.get("name", "").strip()
     if not name or len(name) > 120:
         flash("裝置名稱不可空白且不得超過 120 個字元。", "danger")
@@ -260,10 +344,51 @@ def update_attendance_device(device_id: int):
     return redirect(_settings_url("devices"))
 
 
+@bp.post("/attendance/devices/<int:device_id>/offline-alert")
+@role_required(Role.ADMIN)
+def update_attendance_device_offline_alert(device_id: int):
+    device = _device_or_404(device_id)
+    try:
+        threshold = int(request.form.get("offline_threshold_minutes", ""))
+        weekdays = sorted({int(value) for value in request.form.getlist("offline_weekdays")})
+        start = datetime.strptime(request.form.get("offline_monitor_start", ""), "%H:%M").time()
+        end = datetime.strptime(request.form.get("offline_monitor_end", ""), "%H:%M").time()
+        enabled = request.form.get("offline_alert_enabled") == "1"
+        if not 5 <= threshold <= 1440 or any(day not in range(7) for day in weekdays) or enabled and not weekdays:
+            raise ValueError
+        before = {
+            "enabled": device.offline_alert_enabled,
+            "threshold": device.offline_threshold_minutes,
+            "weekdays": device.offline_monitor_weekdays,
+            "start": device.offline_monitor_start.isoformat(),
+            "end": device.offline_monitor_end.isoformat(),
+        }
+        device.offline_alert_enabled = enabled
+        device.offline_threshold_minutes = threshold
+        device.offline_monitor_weekdays = ",".join(map(str, weekdays))
+        device.offline_monitor_start = start
+        device.offline_monitor_end = end
+        add_audit(
+            current_user.id, "ATTENDANCE_DEVICE_ALERT_UPDATED", "AttendanceDevice", device.id,
+            f"更新打卡裝置 {device.device_code} 離線提醒",
+            changes={"before": before, "after": {
+                "enabled": enabled, "threshold": threshold,
+                "weekdays": device.offline_monitor_weekdays,
+                "start": start.isoformat(), "end": end.isoformat(),
+            }},
+        )
+        db.session.commit()
+        flash("裝置離線提醒設定已更新。 / Offline alert settings updated.", "success")
+    except (TypeError, ValueError):
+        db.session.rollback()
+        flash("請選擇有效的監控星期、時段與 5～1440 分鐘。 / Invalid offline alert settings.", "danger")
+    return redirect(_settings_url("devices"))
+
+
 @bp.post("/attendance/devices/<int:device_id>/confirm-identity")
 @role_required(Role.ADMIN)
 def confirm_attendance_device_identity(device_id: int):
-    device = db.get_or_404(AttendanceDevice, device_id)
+    device = _device_or_404(device_id)
     if not device.pending_mac_addresses_json:
         flash("此裝置沒有待確認的電腦或 MAC 異動。", "warning")
         return redirect(_settings_url("devices"))
@@ -278,47 +403,66 @@ def confirm_attendance_device_identity(device_id: int):
     return redirect(_settings_url("devices"))
 
 
-@bp.post("/attendance/devices/<int:device_id>/revoke")
-@role_required(Role.ADMIN)
-def revoke_attendance_device(device_id: int):
-    device = db.get_or_404(AttendanceDevice, device_id)
+def _disable_device(device: AttendanceDevice) -> None:
     device.is_active = False
     device.secret_encrypted = None
+    device.pending_secret_encrypted = None
     device.enrollment_token_hash = None
     device.enrollment_expires_at = None
+    device.enrolled_at = None
     device.revoked_by = current_user.id
     device.revoked_at = utc_now()
-    add_audit(current_user.id, "ATTENDANCE_DEVICE_REVOKED", "AttendanceDevice", device.id, f"撤銷打卡裝置 {device.device_code}")
+
+
+@bp.post("/attendance/devices/<int:device_id>/archive")
+@role_required(Role.ADMIN)
+def archive_attendance_device(device_id: int):
+    device = _device_or_404(device_id)
+    _disable_device(device)
+    add_audit(current_user.id, "ATTENDANCE_DEVICE_ARCHIVED", "AttendanceDevice", device.id, f"封存打卡裝置 {device.device_code}")
     db.session.commit()
-    flash("裝置授權已撤銷。 / Device revoked.", "warning")
+    flash("裝置已封存；既有打卡紀錄保留。恢復後必須重新註冊。 / Device archived.", "warning")
+    return redirect(_settings_url("devices"))
+
+
+@bp.post("/attendance/devices/<int:device_id>/restore")
+@role_required(Role.ADMIN)
+def restore_attendance_device(device_id: int):
+    device = _device_or_404(device_id)
+    if device.deleted_at:
+        flash("已刪除的裝置不可恢復。", "danger")
+        return redirect(_settings_url("devices"))
+    device.is_active = True
+    device.revoked_by = None
+    device.revoked_at = None
+    add_audit(current_user.id, "ATTENDANCE_DEVICE_RESTORED", "AttendanceDevice", device.id, f"恢復打卡裝置 {device.device_code}")
+    db.session.commit()
+    flash("裝置已恢復，請重新下載註冊包或產生註冊碼。 / Device restored; registration required.", "success")
     return redirect(_settings_url("devices"))
 
 
 @bp.post("/attendance/devices/<int:device_id>/delete")
 @role_required(Role.ADMIN)
 def delete_attendance_device(device_id: int):
-    device = db.get_or_404(AttendanceDevice, device_id)
+    device = _device_or_404(device_id)
+    original_code = device.device_code
     has_history = db.session.scalar(
         db.select(AttendanceEvent.id).where(AttendanceEvent.device_id == device.id).limit(1)
     ) is not None
+    from ..models import AttendanceDeviceNonce
+    db.session.execute(db.delete(AttendanceDeviceNonce).where(AttendanceDeviceNonce.device_id == device.id))
     if has_history:
-        device.is_active = False
-        device.secret_encrypted = None
-        device.revoked_by = current_user.id
-        device.revoked_at = utc_now()
-        action = "ATTENDANCE_DEVICE_ARCHIVED"
-        message = "裝置已有打卡歷史，已安全封存並保留紀錄。"
+        _disable_device(device)
+        device.deleted_at = utc_now()
+        device.installation_id = None
+        device.device_code = f"DELETED-{device.id}-{original_code}"[:60]
+        add_audit(current_user.id, "ATTENDANCE_DEVICE_DELETED", "AttendanceDevice", device.id, f"刪除打卡裝置 {original_code}；歷史紀錄保留")
+        db.session.commit()
     else:
-        from ..models import AttendanceDeviceNonce
-        db.session.execute(db.delete(AttendanceDeviceNonce).where(AttendanceDeviceNonce.device_id == device.id))
-        add_audit(current_user.id, "ATTENDANCE_DEVICE_DELETED", "AttendanceDevice", device.id, f"刪除未使用打卡裝置 {device.device_code}")
+        add_audit(current_user.id, "ATTENDANCE_DEVICE_DELETED", "AttendanceDevice", device.id, f"刪除未使用打卡裝置 {original_code}")
         db.session.delete(device)
         db.session.commit()
-        flash("未使用的裝置已刪除。 / Unused device deleted.", "success")
-        return redirect(_settings_url("devices"))
-    add_audit(current_user.id, action, "AttendanceDevice", device.id, f"封存打卡裝置 {device.device_code}")
-    db.session.commit()
-    flash(message, "warning")
+    flash("裝置已刪除且無法恢復；既有打卡紀錄不受影響。 / Device deleted.", "success")
     return redirect(_settings_url("devices"))
 
 
@@ -375,15 +519,22 @@ def disable_staff_card(card_id: int):
 def update_attendance_policy():
     try:
         item = policy()
+        before = {field: getattr(item, field) for field in ("early_checkin_minutes", "late_grace_minutes", "checkout_after_minutes", "duplicate_seconds", "offline_threshold_minutes")}
         for field, minimum, maximum in (
             ("early_checkin_minutes", 0, 240), ("late_grace_minutes", 0, 60),
             ("checkout_after_minutes", 0, 360), ("duplicate_seconds", 5, 600),
+            ("offline_threshold_minutes", 5, 1440),
         ):
             value = int(request.form.get(field, ""))
             if not minimum <= value <= maximum:
                 raise ValueError
             setattr(item, field, value)
         item.updated_by = current_user.id
+        add_audit(
+            current_user.id, "ATTENDANCE_POLICY_UPDATED", "AttendancePolicy", item.id,
+            "更新打卡判定設定",
+            changes={"before": before, "after": {field: getattr(item, field) for field in before}},
+        )
         db.session.commit()
         flash("打卡判定設定已更新。 / Attendance policy updated.", "success")
     except ValueError:
@@ -394,6 +545,7 @@ def update_attendance_policy():
 
 @bp.post("/attendance/events/<int:event_id>/review")
 @role_required(Role.ADMIN)
+@schedule_serialized
 def review_attendance_event(event_id: int):
     event = db.get_or_404(AttendanceEvent, event_id)
     try:
@@ -431,6 +583,7 @@ def review_attendance_event(event_id: int):
                     staff=event.staff,
                     actor_id=current_user.id,
                     allow_location_overlap=request.form.get("allow_location_overlap") == "yes",
+                    allow_availability_conflict=True,
                     publication_status=ShiftPublicationStatus.PUBLISHED,
                     commit=False,
                 )

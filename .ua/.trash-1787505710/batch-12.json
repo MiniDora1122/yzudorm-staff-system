@@ -1,0 +1,142 @@
+{
+  "nodes": [
+    {
+      "id": "document:deployment/DEPLOYMENT_WINDOWS_XAMPP.md",
+      "type": "document",
+      "name": "DEPLOYMENT_WINDOWS_XAMPP.md",
+      "filePath": "deployment/DEPLOYMENT_WINDOWS_XAMPP.md",
+      "summary": "Windows XAMPP 部署指南，說明 Apache、Waitress、環境變數與啟動。",
+      "tags": [
+        "documentation",
+        "application",
+        "operations"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:deployment/GIT_UPDATE_GUIDE.md",
+      "type": "document",
+      "name": "GIT_UPDATE_GUIDE.md",
+      "filePath": "deployment/GIT_UPDATE_GUIDE.md",
+      "summary": "Git 更新維運指南，涵蓋備份、migration、測試、回復與排錯。",
+      "tags": [
+        "documentation",
+        "application",
+        "operations"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:deployment/HTTP_MIGRATION_AND_SEED_RECOVERY_ZH_TW.md",
+      "type": "document",
+      "name": "HTTP_MIGRATION_AND_SEED_RECOVERY_ZH_TW.md",
+      "filePath": "deployment/HTTP_MIGRATION_AND_SEED_RECOVERY_ZH_TW.md",
+      "summary": "HTTP 內網部署、舊資料遷移、seed 復原與安全邊界操作手冊。",
+      "tags": [
+        "documentation",
+        "application",
+        "operations"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:deployment/create-portable-backup.ps1",
+      "type": "file",
+      "name": "create-portable-backup.ps1",
+      "filePath": "deployment/create-portable-backup.ps1",
+      "summary": "Windows 維運腳本，用來呼叫 Python 工具建立可攜備份。",
+      "tags": [
+        "deployment",
+        "automation",
+        "windows"
+      ],
+      "complexity": "simple",
+      "languageNotes": "以 Windows 原生服務與工作排程器支援部署維運。"
+    },
+    {
+      "id": "file:deployment/install-production.ps1",
+      "type": "file",
+      "name": "install-production.ps1",
+      "filePath": "deployment/install-production.ps1",
+      "summary": "Windows 維運腳本，用來建立生產虛擬環境、安裝依賴並執行 migration。",
+      "tags": [
+        "deployment",
+        "automation",
+        "windows"
+      ],
+      "complexity": "simple",
+      "languageNotes": "以 Windows 原生服務與工作排程器支援部署維運。"
+    },
+    {
+      "id": "file:deployment/register-startup-task.ps1",
+      "type": "file",
+      "name": "register-startup-task.ps1",
+      "filePath": "deployment/register-startup-task.ps1",
+      "summary": "Windows 維運腳本，用來註冊 Windows 開機自動啟動工作。",
+      "tags": [
+        "deployment",
+        "automation",
+        "windows"
+      ],
+      "complexity": "simple",
+      "languageNotes": "以 Windows 原生服務與工作排程器支援部署維運。"
+    },
+    {
+      "id": "file:deployment/restore-portable.ps1",
+      "type": "file",
+      "name": "restore-portable.ps1",
+      "filePath": "deployment/restore-portable.ps1",
+      "summary": "Windows 維運腳本，用來還原資料庫、文件、金鑰與設定。",
+      "tags": [
+        "deployment",
+        "automation",
+        "windows"
+      ],
+      "complexity": "simple",
+      "languageNotes": "以 Windows 原生服務與工作排程器支援部署維運。"
+    },
+    {
+      "id": "file:deployment/start-production.ps1",
+      "type": "file",
+      "name": "start-production.ps1",
+      "filePath": "deployment/start-production.ps1",
+      "summary": "Windows 維運腳本，用來載入環境並以 Waitress 啟動服務。",
+      "tags": [
+        "deployment",
+        "automation",
+        "windows"
+      ],
+      "complexity": "simple",
+      "languageNotes": "以 Windows 原生服務與工作排程器支援部署維運。"
+    },
+    {
+      "id": "file:deployment/unregister-startup-task.ps1",
+      "type": "file",
+      "name": "unregister-startup-task.ps1",
+      "filePath": "deployment/unregister-startup-task.ps1",
+      "summary": "Windows 維運腳本，用來移除 Windows 自動啟動工作。",
+      "tags": [
+        "deployment",
+        "automation",
+        "windows"
+      ],
+      "complexity": "simple",
+      "languageNotes": "以 Windows 原生服務與工作排程器支援部署維運。"
+    },
+    {
+      "id": "file:deployment/update-from-git.ps1",
+      "type": "file",
+      "name": "update-from-git.ps1",
+      "filePath": "deployment/update-from-git.ps1",
+      "summary": "Windows 維運腳本，用來自動完成更新前備份、Git 切換、migration、測試與失敗回復。",
+      "tags": [
+        "deployment",
+        "automation",
+        "windows"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "以 Windows 原生服務與工作排程器支援部署維運。"
+    }
+  ],
+  "edges": []
+}

@@ -39,7 +39,7 @@ try {
     Set-Content -LiteralPath $updateMarker -Value $PID -Encoding ASCII
 
     $repositoryUrl = Read-Setting "RepositoryUrl" ""
-    $branch = Read-Setting "GitBranch" "main"
+    $trustedCommit = Read-Setting "TrustedCommit" ""
     $uri = $null
     if (-not [Uri]::TryCreate($repositoryUrl, [UriKind]::Absolute, [ref]$uri) -or
         $uri.Scheme -ne "https" -or $uri.Host -ne "github.com" -or
@@ -51,17 +51,16 @@ try {
     if ($parts.Count -ne 2 -or $parts[0] -notmatch '^[A-Za-z0-9_.-]+$' -or $parts[1] -notmatch '^[A-Za-z0-9_.-]+(?:\.git)?$') {
         throw "GitHub repository URL must be https://github.com/owner/repository."
     }
-    if ($branch -notmatch '^[A-Za-z0-9._/-]+$' -or $branch.Contains('..') -or $branch.StartsWith('/') -or $branch.EndsWith('/')) {
-        throw "Git branch name is invalid."
+    if ($trustedCommit -notmatch '^[A-Fa-f0-9]{40,64}$') {
+        throw "Set a full TrustedCommit obtained through a trusted channel before updating."
     }
     $owner = $parts[0]
     $repository = $parts[1] -replace '\.git$', ''
     if ([string]::IsNullOrWhiteSpace($repository)) { throw "GitHub repository name is invalid." }
-    $escapedBranch = (($branch -split '/') | ForEach-Object { [Uri]::EscapeDataString($_) }) -join '/'
-    $archiveUrl = "https://codeload.github.com/$owner/$repository/zip/refs/heads/$escapedBranch"
+    $archiveUrl = "https://codeload.github.com/$owner/$repository/zip/$trustedCommit"
 
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-    Log "Downloading $repositoryUrl branch $branch."
+    Log "Downloading trusted commit $trustedCommit from $repositoryUrl."
     Invoke-WebRequest -Uri $archiveUrl -OutFile $archive -UseBasicParsing
     Expand-Archive -LiteralPath $archive -DestinationPath $expanded -Force
     $repositoryRoot = @(Get-ChildItem -LiteralPath $expanded -Directory)

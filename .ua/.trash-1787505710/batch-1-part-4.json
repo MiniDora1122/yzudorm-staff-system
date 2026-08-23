@@ -1,0 +1,1533 @@
+{
+  "nodes": [
+    {
+      "id": "file:tests/test_phase5.py",
+      "type": "file",
+      "name": "test_phase5.py",
+      "filePath": "tests/test_phase5.py",
+      "summary": "以 pytest 驗證phase5相關流程的權限、業務規則與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_phase5.py:logout",
+      "type": "function",
+      "name": "logout",
+      "filePath": "tests/test_phase5.py",
+      "lineRange": [
+        12,
+        13
+      ],
+      "summary": "logout 實作 test_phase5.py 所屬模組的一項可重用流程。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_phase5.py:test_key_primary_and_backup_are_created_and_primary_can_be_restored",
+      "type": "function",
+      "name": "test_key_primary_and_backup_are_created_and_primary_can_be_restored",
+      "filePath": "tests/test_phase5.py",
+      "lineRange": [
+        16,
+        26
+      ],
+      "summary": "驗證「key primary and backup are created and primary can be restored」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_phase5.py:test_work_permit_confirmation_only_requires_start_and_end",
+      "type": "function",
+      "name": "test_work_permit_confirmation_only_requires_start_and_end",
+      "filePath": "tests/test_phase5.py",
+      "lineRange": [
+        29,
+        63
+      ],
+      "summary": "驗證「work permit confirmation only requires start and end」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_phase5.py:test_admin_retention_policy_cleanup_deletes_bytes_and_keeps_audit",
+      "type": "function",
+      "name": "test_admin_retention_policy_cleanup_deletes_bytes_and_keeps_audit",
+      "filePath": "tests/test_phase5.py",
+      "lineRange": [
+        66,
+        96
+      ],
+      "summary": "驗證「admin retention policy cleanup deletes bytes and keeps audit」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_phase5.py:test_scheduled_tick_runs_once_policy_time_is_due",
+      "type": "function",
+      "name": "test_scheduled_tick_runs_once_policy_time_is_due",
+      "filePath": "tests/test_phase5.py",
+      "lineRange": [
+        99,
+        116
+      ],
+      "summary": "驗證「scheduled tick runs once policy time is due」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/test_recurring_and_deletion.py",
+      "type": "file",
+      "name": "test_recurring_and_deletion.py",
+      "filePath": "tests/test_recurring_and_deletion.py",
+      "summary": "以 pytest 驗證recurring、and、deletion相關流程的權限、業務規則與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_recurring_and_deletion.py:assignment_ids",
+      "type": "function",
+      "name": "assignment_ids",
+      "filePath": "tests/test_recurring_and_deletion.py",
+      "lineRange": [
+        9,
+        16
+      ],
+      "summary": "assignment_ids 實作 test_recurring_and_deletion.py 所屬模組的一項可重用流程。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_recurring_and_deletion.py:create_shift",
+      "type": "function",
+      "name": "create_shift",
+      "filePath": "tests/test_recurring_and_deletion.py",
+      "lineRange": [
+        19,
+        23
+      ],
+      "summary": "create_shift 實作 test_recurring_and_deletion.py 所屬模組的一項可重用流程。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_recurring_and_deletion.py:test_weekly_series_creates_real_shifts_through_end_date",
+      "type": "function",
+      "name": "test_weekly_series_creates_real_shifts_through_end_date",
+      "filePath": "tests/test_recurring_and_deletion.py",
+      "lineRange": [
+        26,
+        48
+      ],
+      "summary": "驗證「weekly series creates real shifts through end date」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_recurring_and_deletion.py:test_weekly_series_can_keep_staff_and_shift_for_next_entry",
+      "type": "function",
+      "name": "test_weekly_series_can_keep_staff_and_shift_for_next_entry",
+      "filePath": "tests/test_recurring_and_deletion.py",
+      "lineRange": [
+        51,
+        57
+      ],
+      "summary": "驗證「weekly series can keep staff and shift for next entry」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_recurring_and_deletion.py:test_weekly_series_rolls_back_every_occurrence_when_one_conflicts",
+      "type": "function",
+      "name": "test_weekly_series_rolls_back_every_occurrence_when_one_conflicts",
+      "filePath": "tests/test_recurring_and_deletion.py",
+      "lineRange": [
+        60,
+        78
+      ],
+      "summary": "驗證「weekly series rolls back every occurrence when one conflicts」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_recurring_and_deletion.py:test_recurring_shift_can_delete_this_and_following_occurrences",
+      "type": "function",
+      "name": "test_recurring_shift_can_delete_this_and_following_occurrences",
+      "filePath": "tests/test_recurring_and_deletion.py",
+      "lineRange": [
+        81,
+        104
+      ],
+      "summary": "驗證「recurring shift can delete this and following occurrences」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_recurring_and_deletion.py:test_bulk_delete_cancels_selected_different_shifts",
+      "type": "function",
+      "name": "test_bulk_delete_cancels_selected_different_shifts",
+      "filePath": "tests/test_recurring_and_deletion.py",
+      "lineRange": [
+        107,
+        116
+      ],
+      "summary": "驗證「bulk delete cancels selected different shifts」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_recurring_and_deletion.py:test_location_and_shift_type_delete_are_safe_archives",
+      "type": "function",
+      "name": "test_location_and_shift_type_delete_are_safe_archives",
+      "filePath": "tests/test_recurring_and_deletion.py",
+      "lineRange": [
+        119,
+        133
+      ],
+      "summary": "驗證「location and shift type delete are safe archives」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_recurring_and_deletion.py:test_admin_and_unused_student_accounts_can_be_deleted_but_not_current_admin",
+      "type": "function",
+      "name": "test_admin_and_unused_student_accounts_can_be_deleted_but_not_current_admin",
+      "filePath": "tests/test_recurring_and_deletion.py",
+      "lineRange": [
+        136,
+        154
+      ],
+      "summary": "驗證「admin and unused student accounts can be deleted but not current admin」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_recurring_and_deletion.py:test_student_with_future_shift_must_clear_schedule_before_deletion",
+      "type": "function",
+      "name": "test_student_with_future_shift_must_clear_schedule_before_deletion",
+      "filePath": "tests/test_recurring_and_deletion.py",
+      "lineRange": [
+        157,
+        167
+      ],
+      "summary": "驗證「student with future shift must clear schedule before deletion」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/test_reports.py",
+      "type": "file",
+      "name": "test_reports.py",
+      "filePath": "tests/test_reports.py",
+      "summary": "以 pytest 驗證reports相關流程的權限、業務規則與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_reports.py:add_august_shift",
+      "type": "function",
+      "name": "add_august_shift",
+      "filePath": "tests/test_reports.py",
+      "lineRange": [
+        12,
+        28
+      ],
+      "summary": "add_august_shift 實作 test_reports.py 所屬模組的一項可重用流程。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_reports.py:test_reference_style_monthly_report_contains_student_number_hours_and_formulas",
+      "type": "function",
+      "name": "test_reference_style_monthly_report_contains_student_number_hours_and_formulas",
+      "filePath": "tests/test_reports.py",
+      "lineRange": [
+        31,
+        51
+      ],
+      "summary": "驗證「reference style monthly report contains student number hours and formulas」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_reports.py:test_daily_hours_matrix_report_has_students_dates_totals_and_polish",
+      "type": "function",
+      "name": "test_daily_hours_matrix_report_has_students_dates_totals_and_polish",
+      "filePath": "tests/test_reports.py",
+      "lineRange": [
+        54,
+        88
+      ],
+      "summary": "驗證「daily hours matrix report has students dates totals and polish」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_reports.py:test_reports_are_admin_only_and_csv_has_utf8_bom_and_student_number",
+      "type": "function",
+      "name": "test_reports_are_admin_only_and_csv_has_utf8_bom_and_student_number",
+      "filePath": "tests/test_reports.py",
+      "lineRange": [
+        91,
+        103
+      ],
+      "summary": "驗證「reports are admin only and csv has utf8 bom and student number」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_reports.py:test_admin_can_update_student_number_but_duplicate_is_rejected",
+      "type": "function",
+      "name": "test_admin_can_update_student_number_but_duplicate_is_rejected",
+      "filePath": "tests/test_reports.py",
+      "lineRange": [
+        106,
+        141
+      ],
+      "summary": "驗證「admin can update student number but duplicate is rejected」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_reports.py:test_ocr_route_is_removed",
+      "type": "function",
+      "name": "test_ocr_route_is_removed",
+      "filePath": "tests/test_reports.py",
+      "lineRange": [
+        144,
+        146
+      ],
+      "summary": "驗證「ocr route is removed」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/test_schedule_management.py",
+      "type": "file",
+      "name": "test_schedule_management.py",
+      "filePath": "tests/test_schedule_management.py",
+      "summary": "以 pytest 驗證schedule、management相關流程的權限、業務規則與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_schedule_management.py:test_admin_can_edit_location_and_shift_type",
+      "type": "function",
+      "name": "test_admin_can_edit_location_and_shift_type",
+      "filePath": "tests/test_schedule_management.py",
+      "lineRange": [
+        9,
+        43
+      ],
+      "summary": "驗證「admin can edit location and shift type」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_schedule_management.py:test_student_cannot_edit_locations_or_shift_types",
+      "type": "function",
+      "name": "test_student_cannot_edit_locations_or_shift_types",
+      "filePath": "tests/test_schedule_management.py",
+      "lineRange": [
+        46,
+        49
+      ],
+      "summary": "驗證「student cannot edit locations or shift types」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_schedule_management.py:test_bulk_import_is_atomic_and_records_audit",
+      "type": "function",
+      "name": "test_bulk_import_is_atomic_and_records_audit",
+      "filePath": "tests/test_schedule_management.py",
+      "lineRange": [
+        52,
+        79
+      ],
+      "summary": "驗證「bulk import is atomic and records audit」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_schedule_management.py:test_bulk_import_location_overlap_needs_explicit_checkbox",
+      "type": "function",
+      "name": "test_bulk_import_location_overlap_needs_explicit_checkbox",
+      "filePath": "tests/test_schedule_management.py",
+      "lineRange": [
+        82,
+        104
+      ],
+      "summary": "驗證「bulk import location overlap needs explicit checkbox」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_schedule_management.py:test_dashboard_contains_today_and_tomorrow_sections",
+      "type": "function",
+      "name": "test_dashboard_contains_today_and_tomorrow_sections",
+      "filePath": "tests/test_schedule_management.py",
+      "lineRange": [
+        107,
+        115
+      ],
+      "summary": "驗證「dashboard contains today and tomorrow sections」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_schedule_management.py:test_shift_type_cannot_exceed_eight_hours",
+      "type": "function",
+      "name": "test_shift_type_cannot_exceed_eight_hours",
+      "filePath": "tests/test_schedule_management.py",
+      "lineRange": [
+        118,
+        135
+      ],
+      "summary": "驗證「shift type cannot exceed eight hours」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_schedule_management.py:test_student_request_chooser_and_wage_disclaimer_are_visible",
+      "type": "function",
+      "name": "test_student_request_chooser_and_wage_disclaimer_are_visible",
+      "filePath": "tests/test_schedule_management.py",
+      "lineRange": [
+        138,
+        160
+      ],
+      "summary": "驗證「student request chooser and wage disclaimer are visible」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/test_scheduling.py",
+      "type": "file",
+      "name": "test_scheduling.py",
+      "filePath": "tests/test_scheduling.py",
+      "summary": "以 pytest 驗證scheduling相關流程的權限、業務規則與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:tests/test_scheduling.py:ids",
+      "type": "function",
+      "name": "ids",
+      "filePath": "tests/test_scheduling.py",
+      "lineRange": [
+        18,
+        31
+      ],
+      "summary": "ids 實作 test_scheduling.py 所屬模組的一項可重用流程。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_scheduling.py:create_api_shift",
+      "type": "function",
+      "name": "create_api_shift",
+      "filePath": "tests/test_scheduling.py",
+      "lineRange": [
+        34,
+        43
+      ],
+      "summary": "create_api_shift 實作 test_scheduling.py 所屬模組的一項可重用流程。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_scheduling.py:test_legal_shift_can_be_created",
+      "type": "function",
+      "name": "test_legal_shift_can_be_created",
+      "filePath": "tests/test_scheduling.py",
+      "lineRange": [
+        46,
+        66
+      ],
+      "summary": "驗證「legal shift can be created」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_scheduling.py:test_same_location_and_time_requires_confirmation_then_is_allowed",
+      "type": "function",
+      "name": "test_same_location_and_time_requires_confirmation_then_is_allowed",
+      "filePath": "tests/test_scheduling.py",
+      "lineRange": [
+        69,
+        97
+      ],
+      "summary": "驗證「same location and time requires confirmation then is allowed」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_scheduling.py:test_same_staff_time_overlap_is_rejected",
+      "type": "function",
+      "name": "test_same_staff_time_overlap_is_rejected",
+      "filePath": "tests/test_scheduling.py",
+      "lineRange": [
+        100,
+        117
+      ],
+      "summary": "驗證「same staff time overlap is rejected」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_scheduling.py:test_admin_can_update_list_and_delete_shift",
+      "type": "function",
+      "name": "test_admin_can_update_list_and_delete_shift",
+      "filePath": "tests/test_scheduling.py",
+      "lineRange": [
+        120,
+        154
+      ],
+      "summary": "驗證「admin can update list and delete shift」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_scheduling.py:test_student_calendar_only_returns_own_shifts",
+      "type": "function",
+      "name": "test_student_calendar_only_returns_own_shifts",
+      "filePath": "tests/test_scheduling.py",
+      "lineRange": [
+        157,
+        217
+      ],
+      "summary": "驗證「student calendar only returns own shifts」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_scheduling.py:test_student_cannot_mutate_shifts",
+      "type": "function",
+      "name": "test_student_cannot_mutate_shifts",
+      "filePath": "tests/test_scheduling.py",
+      "lineRange": [
+        220,
+        229
+      ],
+      "summary": "驗證「student cannot mutate shifts」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_scheduling.py:test_single_shift_over_eight_hours_is_rejected",
+      "type": "function",
+      "name": "test_single_shift_over_eight_hours_is_rejected",
+      "filePath": "tests/test_scheduling.py",
+      "lineRange": [
+        232,
+        257
+      ],
+      "summary": "驗證「single shift over eight hours is rejected」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_scheduling.py:test_daily_total_over_eight_hours_is_rejected",
+      "type": "function",
+      "name": "test_daily_total_over_eight_hours_is_rejected",
+      "filePath": "tests/test_scheduling.py",
+      "lineRange": [
+        260,
+        275
+      ],
+      "summary": "驗證「daily total over eight hours is rejected」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_scheduling.py:test_sixth_consecutive_workday_is_rejected",
+      "type": "function",
+      "name": "test_sixth_consecutive_workday_is_rejected",
+      "filePath": "tests/test_scheduling.py",
+      "lineRange": [
+        278,
+        285
+      ],
+      "summary": "驗證「sixth consecutive workday is rejected」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/test_security_audit.py",
+      "type": "file",
+      "name": "test_security_audit.py",
+      "filePath": "tests/test_security_audit.py",
+      "summary": "以 pytest 驗證security、audit相關流程的權限、業務規則與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "regression"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_security_audit.py:test_failed_login_records_masked_account_and_request_source",
+      "type": "function",
+      "name": "test_failed_login_records_masked_account_and_request_source",
+      "filePath": "tests/test_security_audit.py",
+      "lineRange": [
+        7,
+        25
+      ],
+      "summary": "驗證「failed login records masked account and request source」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_security_audit.py:test_login_logout_and_password_change_are_audited",
+      "type": "function",
+      "name": "test_login_logout_and_password_change_are_audited",
+      "filePath": "tests/test_security_audit.py",
+      "lineRange": [
+        28,
+        52
+      ],
+      "summary": "驗證「login logout and password change are audited」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_security_audit.py:test_audit_page_is_admin_only_and_supports_filters",
+      "type": "function",
+      "name": "test_audit_page_is_admin_only_and_supports_filters",
+      "filePath": "tests/test_security_audit.py",
+      "lineRange": [
+        55,
+        73
+      ],
+      "summary": "驗證「audit page is admin only and supports filters」情境的預期行為、權限與資料一致性。",
+      "tags": [
+        "test",
+        "pytest",
+        "validation"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:tests/test_phase5.py",
+      "target": "function:tests/test_phase5.py:logout",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_phase5.py",
+      "target": "function:tests/test_phase5.py:logout",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_phase5.py",
+      "target": "function:tests/test_phase5.py:test_key_primary_and_backup_are_created_and_primary_can_be_restored",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_phase5.py",
+      "target": "function:tests/test_phase5.py:test_key_primary_and_backup_are_created_and_primary_can_be_restored",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_phase5.py",
+      "target": "function:tests/test_phase5.py:test_work_permit_confirmation_only_requires_start_and_end",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_phase5.py",
+      "target": "function:tests/test_phase5.py:test_work_permit_confirmation_only_requires_start_and_end",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_phase5.py",
+      "target": "function:tests/test_phase5.py:test_admin_retention_policy_cleanup_deletes_bytes_and_keeps_audit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_phase5.py",
+      "target": "function:tests/test_phase5.py:test_admin_retention_policy_cleanup_deletes_bytes_and_keeps_audit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_phase5.py",
+      "target": "function:tests/test_phase5.py:test_scheduled_tick_runs_once_policy_time_is_due",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_phase5.py",
+      "target": "function:tests/test_phase5.py:test_scheduled_tick_runs_once_policy_time_is_due",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_recurring_and_deletion.py",
+      "target": "function:tests/test_recurring_and_deletion.py:assignment_ids",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_recurring_and_deletion.py",
+      "target": "function:tests/test_recurring_and_deletion.py:assignment_ids",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_recurring_and_deletion.py",
+      "target": "function:tests/test_recurring_and_deletion.py:create_shift",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_recurring_and_deletion.py",
+      "target": "function:tests/test_recurring_and_deletion.py:create_shift",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_recurring_and_deletion.py",
+      "target": "function:tests/test_recurring_and_deletion.py:test_weekly_series_creates_real_shifts_through_end_date",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_recurring_and_deletion.py",
+      "target": "function:tests/test_recurring_and_deletion.py:test_weekly_series_creates_real_shifts_through_end_date",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_recurring_and_deletion.py",
+      "target": "function:tests/test_recurring_and_deletion.py:test_weekly_series_can_keep_staff_and_shift_for_next_entry",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_recurring_and_deletion.py",
+      "target": "function:tests/test_recurring_and_deletion.py:test_weekly_series_can_keep_staff_and_shift_for_next_entry",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_recurring_and_deletion.py",
+      "target": "function:tests/test_recurring_and_deletion.py:test_weekly_series_rolls_back_every_occurrence_when_one_conflicts",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_recurring_and_deletion.py",
+      "target": "function:tests/test_recurring_and_deletion.py:test_weekly_series_rolls_back_every_occurrence_when_one_conflicts",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_recurring_and_deletion.py",
+      "target": "function:tests/test_recurring_and_deletion.py:test_recurring_shift_can_delete_this_and_following_occurrences",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_recurring_and_deletion.py",
+      "target": "function:tests/test_recurring_and_deletion.py:test_recurring_shift_can_delete_this_and_following_occurrences",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_recurring_and_deletion.py",
+      "target": "function:tests/test_recurring_and_deletion.py:test_bulk_delete_cancels_selected_different_shifts",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_recurring_and_deletion.py",
+      "target": "function:tests/test_recurring_and_deletion.py:test_bulk_delete_cancels_selected_different_shifts",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_recurring_and_deletion.py",
+      "target": "function:tests/test_recurring_and_deletion.py:test_location_and_shift_type_delete_are_safe_archives",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_recurring_and_deletion.py",
+      "target": "function:tests/test_recurring_and_deletion.py:test_location_and_shift_type_delete_are_safe_archives",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_recurring_and_deletion.py",
+      "target": "function:tests/test_recurring_and_deletion.py:test_admin_and_unused_student_accounts_can_be_deleted_but_not_current_admin",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_recurring_and_deletion.py",
+      "target": "function:tests/test_recurring_and_deletion.py:test_admin_and_unused_student_accounts_can_be_deleted_but_not_current_admin",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_recurring_and_deletion.py",
+      "target": "function:tests/test_recurring_and_deletion.py:test_student_with_future_shift_must_clear_schedule_before_deletion",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_recurring_and_deletion.py",
+      "target": "function:tests/test_recurring_and_deletion.py:test_student_with_future_shift_must_clear_schedule_before_deletion",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_reports.py",
+      "target": "function:tests/test_reports.py:add_august_shift",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_reports.py",
+      "target": "function:tests/test_reports.py:add_august_shift",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_reports.py",
+      "target": "function:tests/test_reports.py:test_reference_style_monthly_report_contains_student_number_hours_and_formulas",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_reports.py",
+      "target": "function:tests/test_reports.py:test_reference_style_monthly_report_contains_student_number_hours_and_formulas",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_reports.py",
+      "target": "function:tests/test_reports.py:test_daily_hours_matrix_report_has_students_dates_totals_and_polish",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_reports.py",
+      "target": "function:tests/test_reports.py:test_daily_hours_matrix_report_has_students_dates_totals_and_polish",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_reports.py",
+      "target": "function:tests/test_reports.py:test_reports_are_admin_only_and_csv_has_utf8_bom_and_student_number",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_reports.py",
+      "target": "function:tests/test_reports.py:test_reports_are_admin_only_and_csv_has_utf8_bom_and_student_number",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_reports.py",
+      "target": "function:tests/test_reports.py:test_admin_can_update_student_number_but_duplicate_is_rejected",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_reports.py",
+      "target": "function:tests/test_reports.py:test_admin_can_update_student_number_but_duplicate_is_rejected",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_reports.py",
+      "target": "function:tests/test_reports.py:test_ocr_route_is_removed",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_reports.py",
+      "target": "function:tests/test_reports.py:test_ocr_route_is_removed",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_schedule_management.py",
+      "target": "function:tests/test_schedule_management.py:test_admin_can_edit_location_and_shift_type",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_schedule_management.py",
+      "target": "function:tests/test_schedule_management.py:test_admin_can_edit_location_and_shift_type",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_schedule_management.py",
+      "target": "function:tests/test_schedule_management.py:test_student_cannot_edit_locations_or_shift_types",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_schedule_management.py",
+      "target": "function:tests/test_schedule_management.py:test_student_cannot_edit_locations_or_shift_types",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_schedule_management.py",
+      "target": "function:tests/test_schedule_management.py:test_bulk_import_is_atomic_and_records_audit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_schedule_management.py",
+      "target": "function:tests/test_schedule_management.py:test_bulk_import_is_atomic_and_records_audit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_schedule_management.py",
+      "target": "function:tests/test_schedule_management.py:test_bulk_import_location_overlap_needs_explicit_checkbox",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_schedule_management.py",
+      "target": "function:tests/test_schedule_management.py:test_bulk_import_location_overlap_needs_explicit_checkbox",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_schedule_management.py",
+      "target": "function:tests/test_schedule_management.py:test_dashboard_contains_today_and_tomorrow_sections",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_schedule_management.py",
+      "target": "function:tests/test_schedule_management.py:test_dashboard_contains_today_and_tomorrow_sections",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_schedule_management.py",
+      "target": "function:tests/test_schedule_management.py:test_shift_type_cannot_exceed_eight_hours",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_schedule_management.py",
+      "target": "function:tests/test_schedule_management.py:test_shift_type_cannot_exceed_eight_hours",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_schedule_management.py",
+      "target": "function:tests/test_schedule_management.py:test_student_request_chooser_and_wage_disclaimer_are_visible",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_schedule_management.py",
+      "target": "function:tests/test_schedule_management.py:test_student_request_chooser_and_wage_disclaimer_are_visible",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_scheduling.py",
+      "target": "function:tests/test_scheduling.py:ids",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_scheduling.py",
+      "target": "function:tests/test_scheduling.py:ids",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_scheduling.py",
+      "target": "function:tests/test_scheduling.py:create_api_shift",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_scheduling.py",
+      "target": "function:tests/test_scheduling.py:create_api_shift",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_scheduling.py",
+      "target": "function:tests/test_scheduling.py:test_legal_shift_can_be_created",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_scheduling.py",
+      "target": "function:tests/test_scheduling.py:test_legal_shift_can_be_created",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_scheduling.py",
+      "target": "function:tests/test_scheduling.py:test_same_location_and_time_requires_confirmation_then_is_allowed",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_scheduling.py",
+      "target": "function:tests/test_scheduling.py:test_same_location_and_time_requires_confirmation_then_is_allowed",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_scheduling.py",
+      "target": "function:tests/test_scheduling.py:test_same_staff_time_overlap_is_rejected",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_scheduling.py",
+      "target": "function:tests/test_scheduling.py:test_same_staff_time_overlap_is_rejected",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_scheduling.py",
+      "target": "function:tests/test_scheduling.py:test_admin_can_update_list_and_delete_shift",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_scheduling.py",
+      "target": "function:tests/test_scheduling.py:test_admin_can_update_list_and_delete_shift",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_scheduling.py",
+      "target": "function:tests/test_scheduling.py:test_student_calendar_only_returns_own_shifts",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_scheduling.py",
+      "target": "function:tests/test_scheduling.py:test_student_calendar_only_returns_own_shifts",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_scheduling.py",
+      "target": "function:tests/test_scheduling.py:test_student_cannot_mutate_shifts",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_scheduling.py",
+      "target": "function:tests/test_scheduling.py:test_student_cannot_mutate_shifts",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_scheduling.py",
+      "target": "function:tests/test_scheduling.py:test_single_shift_over_eight_hours_is_rejected",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_scheduling.py",
+      "target": "function:tests/test_scheduling.py:test_single_shift_over_eight_hours_is_rejected",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_scheduling.py",
+      "target": "function:tests/test_scheduling.py:test_daily_total_over_eight_hours_is_rejected",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_scheduling.py",
+      "target": "function:tests/test_scheduling.py:test_daily_total_over_eight_hours_is_rejected",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_scheduling.py",
+      "target": "function:tests/test_scheduling.py:test_sixth_consecutive_workday_is_rejected",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_scheduling.py",
+      "target": "function:tests/test_scheduling.py:test_sixth_consecutive_workday_is_rejected",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_security_audit.py",
+      "target": "function:tests/test_security_audit.py:test_failed_login_records_masked_account_and_request_source",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_security_audit.py",
+      "target": "function:tests/test_security_audit.py:test_failed_login_records_masked_account_and_request_source",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_security_audit.py",
+      "target": "function:tests/test_security_audit.py:test_login_logout_and_password_change_are_audited",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_security_audit.py",
+      "target": "function:tests/test_security_audit.py:test_login_logout_and_password_change_are_audited",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_security_audit.py",
+      "target": "function:tests/test_security_audit.py:test_audit_page_is_admin_only_and_supports_filters",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:tests/test_security_audit.py",
+      "target": "function:tests/test_security_audit.py:test_audit_page_is_admin_only_and_supports_filters",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_phase5.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_phase5.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_phase5.py",
+      "target": "file:app/services/document_keys.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_phase5.py",
+      "target": "file:app/services/retention.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_phase5.py",
+      "target": "file:tests/conftest.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_phase5.py",
+      "target": "file:tests/test_documents.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_recurring_and_deletion.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_recurring_and_deletion.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_recurring_and_deletion.py",
+      "target": "file:tests/conftest.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_reports.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_reports.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_reports.py",
+      "target": "file:tests/conftest.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_schedule_management.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_schedule_management.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_schedule_management.py",
+      "target": "file:tests/conftest.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_scheduling.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_scheduling.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_scheduling.py",
+      "target": "file:tests/conftest.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_security_audit.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_security_audit.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_security_audit.py",
+      "target": "file:tests/conftest.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    }
+  ]
+}

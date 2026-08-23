@@ -119,6 +119,7 @@ def reset_admin_password(
         raise AccountError("SELF_RESET_NOT_ALLOWED", "不可在此重設自己的密碼，請使用導覽列的修改密碼功能。")
     user.set_password(temporary_password)
     user.must_change_password = True
+    user.invalidate_sessions()
     add_audit(
         actor_user_id,
         "ADMIN_PASSWORD_RESET",
@@ -203,6 +204,7 @@ def reset_student_password(
         raise AccountError("INVALID_ROLE", "只能重設工讀生帳號的密碼。")
     profile.user.set_password(temporary_password)
     profile.user.must_change_password = True
+    profile.user.invalidate_sessions()
     add_audit(
         actor_user_id,
         "STUDENT_PASSWORD_RESET",

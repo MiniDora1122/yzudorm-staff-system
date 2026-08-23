@@ -1,0 +1,1241 @@
+{
+  "nodes": [
+    {
+      "id": "file:app/attendance_api/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "app/attendance_api/__init__.py",
+      "summary": "建立獨立的打卡裝置 API blueprint，並在請求進入時強制套用傳輸安全條件。",
+      "tags": [
+        "attendance",
+        "security",
+        "service"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/attendance_api/__init__.py:enforce_transport",
+      "type": "function",
+      "name": "enforce_transport",
+      "filePath": "app/attendance_api/__init__.py",
+      "lineRange": [
+        11,
+        18
+      ],
+      "summary": "enforce_transport 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/attendance_api/routes.py",
+      "type": "file",
+      "name": "routes.py",
+      "filePath": "app/attendance_api/routes.py",
+      "summary": "提供裝置註冊、啟用、打卡、補填原因及健康回報 API，統一處理加密請求與回應。",
+      "tags": [
+        "attendance",
+        "security",
+        "service"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/attendance_api/routes.py:error",
+      "type": "function",
+      "name": "error",
+      "filePath": "app/attendance_api/routes.py",
+      "lineRange": [
+        23,
+        29
+      ],
+      "summary": "error 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/attendance_api/routes.py:device_request",
+      "type": "function",
+      "name": "device_request",
+      "filePath": "app/attendance_api/routes.py",
+      "lineRange": [
+        32,
+        36
+      ],
+      "summary": "device_request 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/attendance_api/routes.py:success",
+      "type": "function",
+      "name": "success",
+      "filePath": "app/attendance_api/routes.py",
+      "lineRange": [
+        39,
+        42
+      ],
+      "summary": "success 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/attendance_api/routes.py:enroll",
+      "type": "function",
+      "name": "enroll",
+      "filePath": "app/attendance_api/routes.py",
+      "lineRange": [
+        46,
+        60
+      ],
+      "summary": "enroll 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/attendance_api/routes.py:activate",
+      "type": "function",
+      "name": "activate",
+      "filePath": "app/attendance_api/routes.py",
+      "lineRange": [
+        64,
+        78
+      ],
+      "summary": "activate 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/attendance_api/routes.py:punch",
+      "type": "function",
+      "name": "punch",
+      "filePath": "app/attendance_api/routes.py",
+      "lineRange": [
+        82,
+        101
+      ],
+      "summary": "punch 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/attendance_api/routes.py:reason",
+      "type": "function",
+      "name": "reason",
+      "filePath": "app/attendance_api/routes.py",
+      "lineRange": [
+        105,
+        126
+      ],
+      "summary": "reason 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/attendance_api/routes.py:health",
+      "type": "function",
+      "name": "health",
+      "filePath": "app/attendance_api/routes.py",
+      "lineRange": [
+        130,
+        138
+      ],
+      "summary": "health 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/services/attendance.py",
+      "type": "file",
+      "name": "attendance.py",
+      "filePath": "app/services/attendance.py",
+      "summary": "實作打卡領域核心服務，涵蓋裝置佈建與驗證、加密傳輸、卡片識別、上下班判定、事件審核及計薪時數核對。",
+      "tags": [
+        "attendance",
+        "security",
+        "service"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:app/services/attendance.py:decrypt_device_payload",
+      "type": "function",
+      "name": "decrypt_device_payload",
+      "filePath": "app/services/attendance.py",
+      "lineRange": [
+        80,
+        137
+      ],
+      "summary": "decrypt_device_payload 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/services/attendance.py:encrypt_device_response",
+      "type": "function",
+      "name": "encrypt_device_response",
+      "filePath": "app/services/attendance.py",
+      "lineRange": [
+        140,
+        156
+      ],
+      "summary": "encrypt_device_response 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/attendance.py:create_provisioning_package",
+      "type": "function",
+      "name": "create_provisioning_package",
+      "filePath": "app/services/attendance.py",
+      "lineRange": [
+        159,
+        203
+      ],
+      "summary": "create_provisioning_package 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/attendance.py:_device_identity",
+      "type": "function",
+      "name": "_device_identity",
+      "filePath": "app/services/attendance.py",
+      "lineRange": [
+        206,
+        222
+      ],
+      "summary": "_device_identity 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/attendance.py:activate_device",
+      "type": "function",
+      "name": "activate_device",
+      "filePath": "app/services/attendance.py",
+      "lineRange": [
+        225,
+        256
+      ],
+      "summary": "activate_device 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/attendance.py:observe_device_identity",
+      "type": "function",
+      "name": "observe_device_identity",
+      "filePath": "app/services/attendance.py",
+      "lineRange": [
+        259,
+        277
+      ],
+      "summary": "observe_device_identity 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/attendance.py:policy",
+      "type": "function",
+      "name": "policy",
+      "filePath": "app/services/attendance.py",
+      "lineRange": [
+        280,
+        286
+      ],
+      "summary": "policy 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/attendance.py:normalize_uid",
+      "type": "function",
+      "name": "normalize_uid",
+      "filePath": "app/services/attendance.py",
+      "lineRange": [
+        289,
+        293
+      ],
+      "summary": "normalize_uid 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/attendance.py:card_uid_hash",
+      "type": "function",
+      "name": "card_uid_hash",
+      "filePath": "app/services/attendance.py",
+      "lineRange": [
+        296,
+        300
+      ],
+      "summary": "card_uid_hash 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/attendance.py:encrypt_device_secret",
+      "type": "function",
+      "name": "encrypt_device_secret",
+      "filePath": "app/services/attendance.py",
+      "lineRange": [
+        303,
+        304
+      ],
+      "summary": "encrypt_device_secret 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/attendance.py:decrypt_device_secret",
+      "type": "function",
+      "name": "decrypt_device_secret",
+      "filePath": "app/services/attendance.py",
+      "lineRange": [
+        307,
+        313
+      ],
+      "summary": "decrypt_device_secret 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/attendance.py:new_enrollment",
+      "type": "function",
+      "name": "new_enrollment",
+      "filePath": "app/services/attendance.py",
+      "lineRange": [
+        316,
+        320
+      ],
+      "summary": "new_enrollment 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/attendance.py:enroll_device",
+      "type": "function",
+      "name": "enroll_device",
+      "filePath": "app/services/attendance.py",
+      "lineRange": [
+        323,
+        339
+      ],
+      "summary": "enroll_device 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/attendance.py:verify_device_request",
+      "type": "function",
+      "name": "verify_device_request",
+      "filePath": "app/services/attendance.py",
+      "lineRange": [
+        351,
+        397
+      ],
+      "summary": "verify_device_request 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/attendance.py:identify_card",
+      "type": "function",
+      "name": "identify_card",
+      "filePath": "app/services/attendance.py",
+      "lineRange": [
+        400,
+        409
+      ],
+      "summary": "identify_card 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/attendance.py:identify_account",
+      "type": "function",
+      "name": "identify_account",
+      "filePath": "app/services/attendance.py",
+      "lineRange": [
+        412,
+        429
+      ],
+      "summary": "identify_account 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/attendance.py:_shift_window",
+      "type": "function",
+      "name": "_shift_window",
+      "filePath": "app/services/attendance.py",
+      "lineRange": [
+        432,
+        441
+      ],
+      "summary": "_shift_window 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/attendance.py:classify_punch",
+      "type": "function",
+      "name": "classify_punch",
+      "filePath": "app/services/attendance.py",
+      "lineRange": [
+        444,
+        498
+      ],
+      "summary": "classify_punch 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/services/attendance.py:parse_occurred_at",
+      "type": "function",
+      "name": "parse_occurred_at",
+      "filePath": "app/services/attendance.py",
+      "lineRange": [
+        505,
+        515
+      ],
+      "summary": "parse_occurred_at 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/attendance.py:create_event",
+      "type": "function",
+      "name": "create_event",
+      "filePath": "app/services/attendance.py",
+      "lineRange": [
+        518,
+        578
+      ],
+      "summary": "create_event 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/services/attendance.py:submit_reason",
+      "type": "function",
+      "name": "submit_reason",
+      "filePath": "app/services/attendance.py",
+      "lineRange": [
+        581,
+        618
+      ],
+      "summary": "submit_reason 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/attendance.py:review_event",
+      "type": "function",
+      "name": "review_event",
+      "filePath": "app/services/attendance.py",
+      "lineRange": [
+        621,
+        672
+      ],
+      "summary": "review_event 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/services/attendance.py:calculated_hours_for_shift",
+      "type": "function",
+      "name": "calculated_hours_for_shift",
+      "filePath": "app/services/attendance.py",
+      "lineRange": [
+        675,
+        706
+      ],
+      "summary": "calculated_hours_for_shift 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/attendance.py:reconcile_shift_hours",
+      "type": "function",
+      "name": "reconcile_shift_hours",
+      "filePath": "app/services/attendance.py",
+      "lineRange": [
+        709,
+        746
+      ],
+      "summary": "reconcile_shift_hours 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/services/attendance.py:attendance_annotations",
+      "type": "function",
+      "name": "attendance_annotations",
+      "filePath": "app/services/attendance.py",
+      "lineRange": [
+        749,
+        808
+      ],
+      "summary": "attendance_annotations 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:app/services/attendance.py:event_json",
+      "type": "function",
+      "name": "event_json",
+      "filePath": "app/services/attendance.py",
+      "lineRange": [
+        811,
+        826
+      ],
+      "summary": "event_json 實作裝置驗證、加密通訊、刷卡判定、審核或計薪時數核對流程。",
+      "tags": [
+        "function",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/services/attendance.py:AttendanceError",
+      "type": "class",
+      "name": "AttendanceError",
+      "filePath": "app/services/attendance.py",
+      "lineRange": [
+        50,
+        54
+      ],
+      "summary": "AttendanceError 封裝打卡通訊、資料保護或終端狀態與行為。",
+      "tags": [
+        "class",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:app/services/attendance.py:EncryptedRequestContext",
+      "type": "class",
+      "name": "EncryptedRequestContext",
+      "filePath": "app/services/attendance.py",
+      "lineRange": [
+        58,
+        61
+      ],
+      "summary": "EncryptedRequestContext 封裝打卡通訊、資料保護或終端狀態與行為。",
+      "tags": [
+        "class",
+        "attendance",
+        "security"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:app/attendance_api/__init__.py",
+      "target": "function:app/attendance_api/__init__.py:enforce_transport",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/attendance_api/__init__.py",
+      "target": "function:app/attendance_api/__init__.py:enforce_transport",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/attendance_api/routes.py",
+      "target": "function:app/attendance_api/routes.py:error",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/attendance_api/routes.py",
+      "target": "function:app/attendance_api/routes.py:error",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/attendance_api/routes.py",
+      "target": "function:app/attendance_api/routes.py:device_request",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/attendance_api/routes.py",
+      "target": "function:app/attendance_api/routes.py:device_request",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/attendance_api/routes.py",
+      "target": "function:app/attendance_api/routes.py:success",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/attendance_api/routes.py",
+      "target": "function:app/attendance_api/routes.py:success",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/attendance_api/routes.py",
+      "target": "function:app/attendance_api/routes.py:enroll",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/attendance_api/routes.py",
+      "target": "function:app/attendance_api/routes.py:enroll",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/attendance_api/routes.py",
+      "target": "function:app/attendance_api/routes.py:activate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/attendance_api/routes.py",
+      "target": "function:app/attendance_api/routes.py:activate",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/attendance_api/routes.py",
+      "target": "function:app/attendance_api/routes.py:punch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/attendance_api/routes.py",
+      "target": "function:app/attendance_api/routes.py:punch",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/attendance_api/routes.py",
+      "target": "function:app/attendance_api/routes.py:reason",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/attendance_api/routes.py",
+      "target": "function:app/attendance_api/routes.py:reason",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/attendance_api/routes.py",
+      "target": "function:app/attendance_api/routes.py:health",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/attendance_api/routes.py",
+      "target": "function:app/attendance_api/routes.py:health",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:decrypt_device_payload",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:decrypt_device_payload",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:encrypt_device_response",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:encrypt_device_response",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:create_provisioning_package",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:create_provisioning_package",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:_device_identity",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:activate_device",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:activate_device",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:observe_device_identity",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:observe_device_identity",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:policy",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:policy",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:normalize_uid",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:normalize_uid",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:card_uid_hash",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:card_uid_hash",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:encrypt_device_secret",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:encrypt_device_secret",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:decrypt_device_secret",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:decrypt_device_secret",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:new_enrollment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:new_enrollment",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:enroll_device",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:enroll_device",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:verify_device_request",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:verify_device_request",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:identify_card",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:identify_card",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:identify_account",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:identify_account",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:_shift_window",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:classify_punch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:classify_punch",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:parse_occurred_at",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:parse_occurred_at",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:create_event",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:create_event",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:submit_reason",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:submit_reason",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:review_event",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:review_event",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:calculated_hours_for_shift",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:calculated_hours_for_shift",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:reconcile_shift_hours",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:reconcile_shift_hours",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:attendance_annotations",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:attendance_annotations",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:event_json",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "function:app/services/attendance.py:event_json",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "class:app/services/attendance.py:AttendanceError",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "class:app/services/attendance.py:AttendanceError",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "class:app/services/attendance.py:EncryptedRequestContext",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "class:app/services/attendance.py:EncryptedRequestContext",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/attendance_api/__init__.py",
+      "target": "file:app/attendance_api/routes.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/attendance_api/__init__.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/attendance_api/routes.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/attendance_api/routes.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/attendance_api/routes.py",
+      "target": "file:app/services/attendance.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "file:app/extensions.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "file:app/models.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "file:app/services/audit.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:app/services/attendance.py",
+      "target": "file:app/services/notifications.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    }
+  ]
+}

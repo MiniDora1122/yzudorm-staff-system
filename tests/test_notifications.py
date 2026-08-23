@@ -111,7 +111,7 @@ def test_student_rejected_document_stays_open_until_resubmitted(client, app):
         assert notification.status == NotificationStatus.COMPLETED
 
 
-def test_notification_reconciliation_is_throttled_between_read_only_pages(client, monkeypatch):
+def test_notification_reconciliation_runs_on_every_page(client, monkeypatch):
     import app.services.notifications as notifications
 
     calls = 0
@@ -127,4 +127,4 @@ def test_notification_reconciliation_is_throttled_between_read_only_pages(client
     client.get("/admin/")
     client.get("/admin/schedule")
     client.get("/admin/notifications")
-    assert calls == 1
+    assert calls == 3

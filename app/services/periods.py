@@ -1,17 +1,29 @@
 from __future__ import annotations
 
-from datetime import date
+from collections import defaultdict
+from datetime import date, timedelta
 
 from ..extensions import db
 from ..models import (
+    AttendanceEvent,
+    AttendanceReconciliation,
+    AttendanceStatus,
+    LeaveRequest,
+    LeaveStatus,
     MonthlySettlement,
+    RequirementStatus,
     Shift,
     ShiftPublicationStatus,
     ShiftStatus,
+    StaffProfile,
+    StaffingRequirement,
+    SwapAdminStatus,
+    SwapRequest,
     utc_now,
 )
 from .audit import add_audit
 from .scheduling import month_bounds
+from .compliance import missing_required_document_types
 
 
 class PeriodError(ValueError):
@@ -49,12 +61,101 @@ def period_summary(value: date) -> dict:
         .group_by(Shift.publication_status)
     ).all()
     counts = {status.value: count for status, count in rows}
+    pending_leave_count = db.session.scalar(
+        db.select(db.func.count(LeaveRequest.id))
+        .join(Shift, LeaveRequest.shift_id == Shift.id)
+        .where(Shift.shift_date >= start, Shift.shift_date < end, LeaveRequest.status == LeaveStatus.PENDING)
+    ) or 0
+    pending_swap_count = db.session.scalar(
+        db.select(db.func.count(SwapRequest.id))
+        .join(Shift, SwapRequest.requester_shift_id == Shift.id)
+        .where(
+            Shift.shift_date >= start,
+            Shift.shift_date < end,
+            SwapRequest.admin_status.in_({SwapAdminStatus.NOT_READY, SwapAdminStatus.PENDING}),
+        )
+    ) or 0
+    pending_attendance_count = db.session.scalar(
+        db.select(db.func.count(db.distinct(AttendanceEvent.id)))
+        .join(Shift, AttendanceEvent.shift_id == Shift.id)
+        .where(
+            Shift.shift_date >= start,
+            Shift.shift_date < end,
+            AttendanceEvent.status.in_({
+                AttendanceStatus.LATE_REASON_REQUIRED,
+                AttendanceStatus.LATE_PENDING_REVIEW,
+                AttendanceStatus.MISSING_CLOCK_IN,
+                AttendanceStatus.UNMATCHED,
+            }),
+        )
+    ) or 0
+    unreconciled_count = db.session.scalar(
+        db.select(db.func.count(db.distinct(Shift.id)))
+        .join(AttendanceEvent, AttendanceEvent.shift_id == Shift.id)
+        .outerjoin(AttendanceReconciliation, AttendanceReconciliation.shift_id == Shift.id)
+        .where(
+            Shift.shift_date >= start,
+            Shift.shift_date < end,
+            Shift.status == ShiftStatus.SCHEDULED,
+            Shift.publication_status == ShiftPublicationStatus.PUBLISHED,
+            AttendanceReconciliation.id.is_(None),
+        )
+    ) or 0
+    open_requirement_count = db.session.scalar(
+        db.select(db.func.count(StaffingRequirement.id)).where(
+            StaffingRequirement.shift_date >= start,
+            StaffingRequirement.shift_date < end,
+            StaffingRequirement.status == RequirementStatus.OPEN,
+        )
+    ) or 0
+    month_shifts = db.session.scalars(
+        db.select(Shift).where(
+            Shift.shift_date >= start, Shift.shift_date < end,
+            Shift.status == ShiftStatus.SCHEDULED,
+        )
+    ).all()
+    daily_hours = defaultdict(float)
+    work_dates = defaultdict(set)
+    scheduled_staff_ids = set()
+    for shift in month_shifts:
+        daily_hours[(shift.staff_id, shift.shift_date)] += float(shift.shift_type.default_hours)
+        work_dates[shift.staff_id].add(shift.shift_date)
+        scheduled_staff_ids.add(shift.staff_id)
+    overtime_count = sum(hours > 8 for hours in daily_hours.values())
+    consecutive_count = 0
+    for dates in work_dates.values():
+        run = 0
+        previous = None
+        violated = False
+        for current in sorted(dates):
+            run = run + 1 if previous and current == previous + timedelta(days=1) else 1
+            previous = current
+            if run > 5:
+                violated = True
+        consecutive_count += int(violated)
+    profiles = db.session.scalars(
+        db.select(StaffProfile).where(StaffProfile.id.in_(scheduled_staff_ids))
+    ).all() if scheduled_staff_ids else []
+    missing_document_count = sum(bool(missing_required_document_types(profile)) for profile in profiles)
+    checklist = {
+        "draft_shifts": counts.get(ShiftPublicationStatus.DRAFT.value, 0),
+        "pending_leave": pending_leave_count,
+        "pending_swap": pending_swap_count,
+        "pending_attendance": pending_attendance_count,
+        "unreconciled_attendance": unreconciled_count,
+        "open_requirements": open_requirement_count,
+        "overtime_shifts": overtime_count,
+        "missing_documents": missing_document_count,
+        "consecutive_work": consecutive_count,
+    }
     settlement = settlement_for(start)
     return {
         "month_start": start,
         "draft_count": counts.get(ShiftPublicationStatus.DRAFT.value, 0),
         "published_count": counts.get(ShiftPublicationStatus.PUBLISHED.value, 0),
         "settlement": settlement,
+        "checklist": checklist,
+        "checklist_ready": not any(checklist.values()),
     }
 
 

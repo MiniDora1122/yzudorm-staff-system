@@ -18,6 +18,35 @@ PROXY_FIX_X_HOST=1
 
 只有在 Waitress 僅監聽本機且前方代理是本機 Apache 時，才可將 `TRUST_PROXY` 設為 `1`。
 
+### 暫時只有 HTTP 憑證時的最安全配置
+
+一般瀏覽器無法在純 HTTP 下取得與 HTTPS 相同的機密性；區網內任何能攔截流量的設備仍可能看到帳密、Session Cookie、個資與文件內容。系統已啟用伺服器端 Session、登入後更換 Session ID、CSRF、登入嘗試限制、`HttpOnly`／`SameSite=Lax` Cookie、禁止快取與安全回應標頭，但這些措施不能加密傳輸。
+
+`.env` 請明確設定 `WEB_TRANSPORT_MODE=TRUSTED_HTTP`（暫時使用受控內網）或 `WEB_TRANSPORT_MODE=HTTPS`。`ENCRYPTED_HTTP` 只供獨立打卡終端 API 使用，不能安全套用到一般登入網頁：攻擊者若能修改 HTTP 傳回的 JavaScript，也能竊取加密前的帳密及解密後的資料。
+
+若目前只能使用 HTTP，請採以下限制模式：
+
+1. 僅開放校內受控且隔離的有線／專用 Wi-Fi 網段，不做網際網路 Port forwarding，也不要在公共 Wi-Fi 使用。
+2. Waitress 仍只綁定 `127.0.0.1:8000`，由 Apache 提供唯一入口；Windows 防火牆只允許指定管理網段進入 Apache Port。
+3. `.env` 使用：
+
+```dotenv
+SESSION_COOKIE_SECURE=0
+TRUST_PROXY=1
+PROXY_FIX_X_FOR=1
+PROXY_FIX_X_PROTO=1
+PROXY_FIX_X_HOST=1
+LOGIN_RATE_WINDOW_MINUTES=15
+LOGIN_RATE_ACCOUNT_LIMIT=5
+LOGIN_RATE_IP_LIMIT=12
+```
+
+4. HTTP VirtualHost 必須覆寫 `X-Forwarded-For`，並設定 `X-Forwarded-Proto http`；不可接受使用者自行傳入的 forwarded headers。
+5. 管理員帳密不可與其他服務共用，離開電腦立即登出；證件下載完成後不要留在共用電腦。
+6. 純 HTTP 不可設定 HSTS，也不能把 `SESSION_COOKIE_SECURE` 設為 `1`，否則瀏覽器不會在 HTTP 傳回 Cookie。取得校方憑證後應優先切換 HTTPS，再把 `SESSION_COOKIE_SECURE=1`。
+
+Launcher 的「允許區域網路 HTTP 連線」現在會明確標示風險；除上述隔離內網情境外請保持未勾選。
+
 ## 2. 啟用 Apache 模組
 
 以管理員權限編輯 `C:\xampp\apache\conf\httpd.conf`，確認以下行沒有被 `#` 註解：
@@ -101,6 +130,8 @@ C:\xampp\apache\bin\httpd.exe -t
 - 完整正式部署與備份說明仍可參考專案的 `deployment\DEPLOYMENT_WINDOWS_XAMPP.md`。
 - 系統內建完整備份與自動驗證；管理員可在「設定 → 排班鎖定與備份」選擇每隔幾小時或每天固定時間執行。請在 `.env` 將 `AUTOMATIC_BACKUP_DIR` 指向另一顆受 BitLocker 保護的磁碟。多個 Waitress 程序只會有一個取得維護排程鎖，不會重複建立備份或清理文件。
 - 打卡裝置數量不固定，每台都應建立獨立裝置、綁定地點與內網 CIDR，不可共用註冊包或密鑰。Launcher 可選 `HTTPS` 或 `ENCRYPTED_HTTP`；儲存後會安全更新 `.env`，必須重新啟動系統才生效。
+- Launcher 與獨立打卡終端執行線上更新前，必須填入由可信管道（例如管理員直接核對 GitHub commit 頁面）取得的完整 Commit ID。更新器只接受與此 `TrustedUpdateCommit`／`TrustedCommit` 完全相同的版本；留白或遠端版本不同時會停止，不會自動追蹤可變動的 branch。
+- 每次發布新版本後，先由另一位管理員核對 Commit ID，再更新各 Launcher／終端的可信 Commit。不要從來路不明的郵件或聊天連結複製版本碼。
 
 ### 無法配置 HTTPS 時的打卡 API
 
