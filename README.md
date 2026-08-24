@@ -292,7 +292,8 @@ python -m pytest -q
 
 | 日期 | 版本節點 | 主要內容 |
 | --- | --- | --- |
-| 2026-08-24 | 目前版本 | Session 固定攻擊防護、登入限流、安全回應標頭、時區篩選修正、通知同步分流、SQLite 寫入協調、一致性備份與文件可解密驗證、復原演練、有效日最低工資、可排班時段、出勤核對與計薪時數、月份結束檢查清單 |
+| 2026-08-24 | 當前版本 | 剔除Trusted Commit 要求 |
+| 2026-08-24 | [`58a2624`](https://github.com/MiniDora1122/yzudorm-staff-system/commit/58a2624) | Session 固定攻擊防護、登入限流、安全回應標頭、時區篩選修正、通知同步分流、SQLite 寫入協調、一致性備份與文件可解密驗證、復原演練、有效日最低工資、可排班時段、出勤核對與計薪時數、月份結束檢查清單 |
 | 2026-08-23 | [`3e5b41b`](https://github.com/MiniDora1122/yzudorm-staff-system/commit/3e5b41b) | 修正自動備份；新增一次性限時打卡註冊包、裝置網路介面識別與打卡流程調整 |
 | 2026-08-20 | [`99f45f4`](https://github.com/MiniDora1122/yzudorm-staff-system/commit/99f45f4) | 修正代理來源 IP 判定並加入上下班打卡功能 |
 | 2026-08-18 | [`5fd039b`](https://github.com/MiniDora1122/yzudorm-staff-system/commit/5fd039b) | 改善管理員與學生班表顯示、日期資訊及已發布班表瀏覽 |
