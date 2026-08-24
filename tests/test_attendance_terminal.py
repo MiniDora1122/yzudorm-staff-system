@@ -71,9 +71,12 @@ def test_terminal_git_update_uses_saved_https_repository_url():
     assert 'uri.Host.Equals("github.com"' in launcher
     assert "UserInfo" in launcher
     assert 'Read-Setting "RepositoryUrl"' in updater
-    assert 'Read-Setting "TrustedCommit"' in updater
-    assert "zip/$trustedCommit" in updater
-    assert "zip/$branch" not in updater
+    assert 'Read-Setting "GitBranch" "main"' in updater
+    assert "api.github.com/repos/$owner/$repository/commits/" in updater
+    assert "zip/$onlineCommit" in updater
+    assert "trustedCommitBox" not in launcher
+    assert 'LoadSetting("TrustedCommit")' not in launcher
+    assert "TrustedCommit" not in updater
     assert 'https://codeload.github.com/' in updater
     assert "Invoke-WebRequest" in updater
     assert "Expand-Archive" in updater
@@ -108,3 +111,4 @@ def test_terminal_runtime_has_no_parent_project_or_portable_runtime_dependency()
     assert "TerminalRoot" in updater
     assert "RepositoryUrl=https://github.com/" in defaults
     assert "GitBranch=main" in defaults
+    assert "TrustedCommit" not in defaults

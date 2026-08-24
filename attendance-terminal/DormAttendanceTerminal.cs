@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -58,7 +59,6 @@ namespace DormAttendancePortable
         private readonly string controlFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "DormAttendanceTerminal", "kiosk-control.token");
         private readonly Label status = new Label();
         private readonly TextBox repositoryUrlBox = new TextBox();
-        private readonly TextBox trustedCommitBox = new TextBox();
         private readonly RichTextBox log = new RichTextBox();
         private Process terminalProcess;
         private bool busy;
@@ -79,7 +79,6 @@ namespace DormAttendancePortable
             BuildUi();
             FormClosing += OnClosing;
             repositoryUrlBox.Text = LoadSetting("RepositoryUrl");
-            trustedCommitBox.Text = LoadSetting("TrustedCommit");
             autoStartEnabled = IsAutoStartEnabled();
             foreach (string arg in args)
                 if (arg == "--update-result=success") WriteLog("Git 安全更新完成。 / Safe update completed.");
@@ -97,19 +96,17 @@ namespace DormAttendancePortable
             header.Controls.Add(status); Controls.Add(header);
 
             TableLayoutPanel body = new TableLayoutPanel { Dock = DockStyle.Fill, Padding = new Padding(20), RowCount = 4, ColumnCount = 1 };
-            body.RowStyles.Add(new RowStyle(SizeType.Absolute, 58)); body.RowStyles.Add(new RowStyle(SizeType.Absolute, 108)); body.RowStyles.Add(new RowStyle(SizeType.Absolute, 195)); body.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+            body.RowStyles.Add(new RowStyle(SizeType.Absolute, 58)); body.RowStyles.Add(new RowStyle(SizeType.Absolute, 76)); body.RowStyles.Add(new RowStyle(SizeType.Absolute, 195)); body.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
             Label help = new Label { Dock = DockStyle.Fill, Text = "首次使用：檢查資料夾檔案、啟動打卡畫面，再匯入管理員提供的 .dormclock 註冊包。\r\nFirst use: check this folder, start the kiosk, then import the encrypted registration package.", ForeColor = Color.FromArgb(70, 83, 99) };
             body.Controls.Add(help, 0, 0);
 
             GroupBox updateSource = new GroupBox { Text = "Git 更新來源 / Update source", Dock = DockStyle.Fill, Padding = new Padding(10) };
-            TableLayoutPanel sourceGrid = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 3, RowCount = 2 };
+            TableLayoutPanel sourceGrid = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 3, RowCount = 1 };
             sourceGrid.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 105)); sourceGrid.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100)); sourceGrid.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 105));
             sourceGrid.Controls.Add(new Label { Text = "HTTPS URL", Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleLeft }, 0, 0);
             repositoryUrlBox.Dock = DockStyle.Fill; repositoryUrlBox.Margin = new Padding(4, 5, 4, 5); sourceGrid.Controls.Add(repositoryUrlBox, 1, 0);
             Button saveUrl = new Button { Text = "儲存 / Save", Dock = DockStyle.Fill, Margin = new Padding(4), FlatStyle = FlatStyle.Flat };
-            saveUrl.Click += delegate { SaveUpdateSettings(true); }; sourceGrid.Controls.Add(saveUrl, 2, 0); sourceGrid.SetRowSpan(saveUrl, 2);
-            sourceGrid.Controls.Add(new Label { Text = "Trusted Commit", Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleLeft }, 0, 1);
-            trustedCommitBox.Dock = DockStyle.Fill; trustedCommitBox.Margin = new Padding(4, 5, 4, 5); sourceGrid.Controls.Add(trustedCommitBox, 1, 1);
+            saveUrl.Click += delegate { SaveUpdateSettings(true); }; sourceGrid.Controls.Add(saveUrl, 2, 0);
             updateSource.Controls.Add(sourceGrid); body.Controls.Add(updateSource, 0, 1);
 
             TableLayoutPanel buttons = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 3, RowCount = 3 };
@@ -279,7 +276,6 @@ namespace DormAttendancePortable
         private bool SaveUpdateSettings(bool showSuccess)
         {
             string value = repositoryUrlBox.Text.Trim();
-            string trustedCommit = trustedCommitBox.Text.Trim();
             Uri uri;
             string[] segments;
             if (!Uri.TryCreate(value, UriKind.Absolute, out uri) || uri.Scheme != Uri.UriSchemeHttps || !uri.Host.Equals("github.com", StringComparison.OrdinalIgnoreCase) || !String.IsNullOrEmpty(uri.UserInfo)
@@ -289,31 +285,22 @@ namespace DormAttendancePortable
                 MessageBox.Show("請輸入不含帳號、密碼或 Token 的公開 GitHub HTTPS repository URL。", "更新網址無效", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
-            if (!System.Text.RegularExpressions.Regex.IsMatch(trustedCommit, "^[A-Fa-f0-9]{40,64}$"))
-            {
-                MessageBox.Show("請填入由可信管道取得的完整 Git Commit ID；未設定時更新會安全停止。", "受信任版本未設定", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return false;
-            }
             try
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(terminalIni));
-                string[] lines = File.Exists(terminalIni) ? File.ReadAllLines(terminalIni, Encoding.UTF8) : new string[0];
-                bool replaced = false, commitReplaced = false;
-                for (int i = 0; i < lines.Length; i++)
+                List<string> lines = File.Exists(terminalIni) ? new List<string>(File.ReadAllLines(terminalIni, Encoding.UTF8)) : new List<string>();
+                lines.RemoveAll(delegate(string line) { return line.TrimStart().StartsWith("TrustedCommit=", StringComparison.OrdinalIgnoreCase); });
+                bool replaced = false;
+                for (int i = 0; i < lines.Count; i++)
                 {
                     if (lines[i].TrimStart().StartsWith("RepositoryUrl=", StringComparison.OrdinalIgnoreCase)) { lines[i] = "RepositoryUrl=" + value; replaced = true; }
-                    else if (lines[i].TrimStart().StartsWith("TrustedCommit=", StringComparison.OrdinalIgnoreCase)) { lines[i] = "TrustedCommit=" + trustedCommit; commitReplaced = true; }
                 }
                 if (!replaced)
                 {
-                    string[] expanded = new string[lines.Length + 1]; Array.Copy(lines, expanded, lines.Length); expanded[lines.Length] = "RepositoryUrl=" + value; lines = expanded;
+                    lines.Add("RepositoryUrl=" + value);
                 }
-                if (!commitReplaced)
-                {
-                    string[] expanded = new string[lines.Length + 1]; Array.Copy(lines, expanded, lines.Length); expanded[lines.Length] = "TrustedCommit=" + trustedCommit; lines = expanded;
-                }
-                File.WriteAllLines(terminalIni, lines, new UTF8Encoding(false));
-                if (showSuccess) WriteLog("更新網址與受信任 Commit 已儲存。 / Trusted update settings saved.");
+                File.WriteAllLines(terminalIni, lines.ToArray(), new UTF8Encoding(false));
+                if (showSuccess) WriteLog("更新網址已儲存。 / Update source saved.");
                 return true;
             }
             catch (Exception ex) { MessageBox.Show(ex.Message, "無法儲存更新網址", MessageBoxButtons.OK, MessageBoxIcon.Error); return false; }

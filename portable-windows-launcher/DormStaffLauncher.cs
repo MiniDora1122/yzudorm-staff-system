@@ -113,7 +113,6 @@ namespace DormStaffPortable
         public string GitRemote = "origin";
         public string GitBranch = "main";
         public string RepositoryUrl = "https://github.com/MiniDora1122/yzudorm-staff-system";
-        public string TrustedUpdateCommit = "";
         public int WatchdogIntervalMinutes = 5;
         public bool AutoStartEnabled;
         public bool OpenBrowserAfterStart = true;
@@ -138,7 +137,6 @@ namespace DormStaffPortable
                 else if (key.Equals("GitRemote", StringComparison.OrdinalIgnoreCase)) config.GitRemote = value;
                 else if (key.Equals("GitBranch", StringComparison.OrdinalIgnoreCase)) config.GitBranch = value;
                 else if (key.Equals("RepositoryUrl", StringComparison.OrdinalIgnoreCase)) config.RepositoryUrl = value;
-                else if (key.Equals("TrustedUpdateCommit", StringComparison.OrdinalIgnoreCase)) config.TrustedUpdateCommit = value;
                 else if (key.Equals("WatchdogIntervalMinutes", StringComparison.OrdinalIgnoreCase))
                 {
                     int minutes;
@@ -167,7 +165,6 @@ namespace DormStaffPortable
                 "GitRemote=" + GitRemote,
                 "GitBranch=" + GitBranch,
                 "RepositoryUrl=" + RepositoryUrl,
-                "TrustedUpdateCommit=" + TrustedUpdateCommit,
                 "WatchdogIntervalMinutes=" + WatchdogIntervalMinutes,
                 "AutoStartEnabled=" + (AutoStartEnabled ? "1" : "0"),
                 "OpenBrowserAfterStart=" + (OpenBrowserAfterStart ? "1" : "0"),
@@ -826,20 +823,9 @@ namespace DormStaffPortable
             if (Directory.Exists(destination) && Directory.GetFileSystemEntries(destination).Length > 0)
                 throw new InvalidOperationException("Clone 目的資料夾必須不存在或為空白。 ");
             Directory.CreateDirectory(destination);
-            string trustedCommit = NormalizeTrustedCommit(environment.Config.TrustedUpdateCommit);
             RunChecked(environment.GitExe, "clone --branch " + Quote(environment.Config.GitBranch) + " --single-branch " + Quote(environment.Config.RepositoryUrl) + " " + Quote(destination), environment.BaseDirectory);
-            string clonedCommit = RunChecked(environment.GitExe, "rev-parse HEAD", destination).Output.Trim();
-            if (!clonedCommit.Equals(trustedCommit, StringComparison.OrdinalIgnoreCase))
-                throw new InvalidOperationException("Clone 的版本不是設定的受信任 Commit，已停止安裝。 / Cloned commit is not trusted.");
+            RunChecked(environment.GitExe, "fsck --full", destination);
             log("專案 Clone 完成。請選擇該專案資料夾後安裝環境。 ");
-        }
-
-        private static string NormalizeTrustedCommit(string value)
-        {
-            string commit = (value ?? "").Trim();
-            if (!Regex.IsMatch(commit, "^[A-Fa-f0-9]{40,64}$"))
-                throw new InvalidOperationException("請先在設定中填入由可信管道取得的完整 Git Commit ID；未設定時更新會安全停止。 / Configure a trusted full commit ID first.");
-            return commit;
         }
 
         public bool PrepareGitUpdate()
@@ -867,10 +853,8 @@ namespace DormStaffPortable
             log("Git 更新來源：" + environment.Config.RepositoryUrl + "（" + environment.Config.GitBranch + "）");
             string oldCommit = RunChecked(environment.GitExe, "rev-parse HEAD", environment.ProjectRoot).Output.Trim();
             RunChecked(environment.GitExe, "fetch " + Quote(environment.Config.GitRemote) + " " + Quote(environment.Config.GitBranch), environment.ProjectRoot);
+            RunChecked(environment.GitExe, "fsck --full", environment.ProjectRoot);
             string targetCommit = RunChecked(environment.GitExe, "rev-parse " + Quote(environment.Config.GitRemote + "/" + environment.Config.GitBranch), environment.ProjectRoot).Output.Trim();
-            string trustedCommit = NormalizeTrustedCommit(environment.Config.TrustedUpdateCommit);
-            if (!targetCommit.Equals(trustedCommit, StringComparison.OrdinalIgnoreCase))
-                throw new InvalidOperationException("遠端最新 Commit 與設定的受信任 Commit 不一致，已拒絕更新。 / Remote commit does not match the trusted commit.");
             if (oldCommit.Equals(targetCommit, StringComparison.OrdinalIgnoreCase))
             {
                 log("目前已是最新版本，無需重啟 Launcher。 / Already up to date.");
@@ -890,7 +874,7 @@ namespace DormStaffPortable
                 "BackupPathBase64=" + Convert.ToBase64String(Encoding.UTF8.GetBytes(backup))
             };
             File.WriteAllLines(environment.UpdateStatePath, updateState, new UTF8Encoding(false));
-            log("Git 更新已比對受信任 Commit 並驗證為向前更新；即將關閉 Launcher 後套用。 / Trusted commit verified.");
+            log("Git 更新已完成線上物件驗證並確認為向前更新；即將關閉 Launcher 後套用。 / Online Git validation passed.");
             return true;
         }
 
@@ -1393,7 +1377,6 @@ namespace DormStaffPortable
         private readonly TextBox portBox = new TextBox();
         private readonly TextBox repositoryBox = new TextBox();
         private readonly TextBox branchBox = new TextBox();
-        private readonly TextBox trustedCommitBox = new TextBox();
         private readonly NumericUpDown watchdogMinutesBox = new NumericUpDown();
         private readonly CheckBox lanCheck = new CheckBox();
         private readonly CheckBox browserCheck = new CheckBox();
@@ -1476,26 +1459,25 @@ namespace DormStaffPortable
             Controls.Add(body); body.BringToFront();
 
             GroupBox settings = new GroupBox { Text = "設定 / Settings", Dock = DockStyle.Fill, Padding = new Padding(14) };
-            TableLayoutPanel settingGrid = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 3, RowCount = 10 };
+            TableLayoutPanel settingGrid = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 3, RowCount = 9 };
             settingGrid.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110)); settingGrid.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100)); settingGrid.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 76));
-            for (int i = 0; i < 10; i++) settingGrid.RowStyles.Add(new RowStyle(SizeType.Absolute, 38));
+            for (int i = 0; i < 9; i++) settingGrid.RowStyles.Add(new RowStyle(SizeType.Absolute, 38));
             AddSettingRow(settingGrid, 0, "專案資料夾", projectBox, MakeButton("選擇", delegate { ChooseProject(); }));
             AddSettingRow(settingGrid, 1, "監聽 Port", portBox, null);
             AddSettingRow(settingGrid, 2, "Git 分支", branchBox, null);
             AddSettingRow(settingGrid, 3, "Git 更新網址", repositoryBox, MakeButton("Clone", delegate { CloneProject(); }));
-            AddSettingRow(settingGrid, 4, "受信任 Commit", trustedCommitBox, null);
             lanCheck.Text = "允許區域網路 HTTP 連線（僅限受信任隔離內網；密碼與 Cookie 無傳輸加密）"; lanCheck.AutoSize = true;
-            settingGrid.Controls.Add(lanCheck, 1, 5); settingGrid.SetColumnSpan(lanCheck, 2);
+            settingGrid.Controls.Add(lanCheck, 1, 4); settingGrid.SetColumnSpan(lanCheck, 2);
             browserCheck.Text = "啟動後自動開啟瀏覽器"; browserCheck.AutoSize = true;
-            settingGrid.Controls.Add(browserCheck, 1, 6);
+            settingGrid.Controls.Add(browserCheck, 1, 5);
             attendanceCheck.Text = "啟用上下班打卡服務 / Enable attendance"; attendanceCheck.AutoSize = true;
-            settingGrid.Controls.Add(attendanceCheck, 1, 7); settingGrid.SetColumnSpan(attendanceCheck, 2);
+            settingGrid.Controls.Add(attendanceCheck, 1, 6); settingGrid.SetColumnSpan(attendanceCheck, 2);
             attendanceModeBox.DropDownStyle = ComboBoxStyle.DropDownList;
             attendanceModeBox.Items.AddRange(new object[] { "ENCRYPTED_HTTP", "HTTPS" });
-            AddSettingRow(settingGrid, 8, "打卡傳輸", attendanceModeBox, null);
-            Button save = MakeButton("儲存", delegate { SaveSettings(); }); settingGrid.Controls.Add(save, 2, 6);
+            AddSettingRow(settingGrid, 7, "打卡傳輸", attendanceModeBox, null);
+            Button save = MakeButton("儲存", delegate { SaveSettings(); }); settingGrid.Controls.Add(save, 2, 5);
             watchdogMinutesBox.Minimum = 1; watchdogMinutesBox.Maximum = 1440; watchdogMinutesBox.DecimalPlaces = 0;
-            AddSettingRow(settingGrid, 9, "巡檢分鐘（預設 5）", watchdogMinutesBox, null);
+            AddSettingRow(settingGrid, 8, "巡檢分鐘（預設 5）", watchdogMinutesBox, null);
             settings.Controls.Add(settingGrid); body.Controls.Add(settings, 0, 0);
 
             GroupBox actions = new GroupBox { Text = "操作 / Actions", Dock = DockStyle.Fill, Padding = new Padding(14) };
@@ -1551,7 +1533,6 @@ namespace DormStaffPortable
             portBox.Text = environment.Config.Port;
             branchBox.Text = environment.Config.GitBranch;
             repositoryBox.Text = environment.Config.RepositoryUrl;
-            trustedCommitBox.Text = environment.Config.TrustedUpdateCommit;
             lanCheck.Checked = environment.Config.ListenAddress == "0.0.0.0";
             browserCheck.Checked = environment.Config.OpenBrowserAfterStart;
             attendanceCheck.Checked = environment.Config.AttendanceEnabled;
@@ -1567,13 +1548,11 @@ namespace DormStaffPortable
             if (!Regex.IsMatch(branchBox.Text.Trim(), "^[A-Za-z0-9._/-]+$")) { MessageBox.Show("Git 分支名稱格式不正確。 ", "設定錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning); return false; }
             Uri repository;
             if (!Uri.TryCreate(repositoryBox.Text.Trim(), UriKind.Absolute, out repository) || repository.Scheme != Uri.UriSchemeHttps) { MessageBox.Show("Git 更新網址必須是完整的 HTTPS repository URL。", "設定錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning); return false; }
-            if (trustedCommitBox.Text.Trim().Length > 0 && !Regex.IsMatch(trustedCommitBox.Text.Trim(), "^[A-Fa-f0-9]{40,64}$")) { MessageBox.Show("受信任 Commit 必須是完整的 40～64 位十六進位 Commit ID。", "設定錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning); return false; }
             environment.Config.ProjectPath = environment.MakePortableProjectPath(projectBox.Text.Trim());
             environment.Config.Port = port.ToString();
             environment.Config.ListenAddress = lanCheck.Checked ? "0.0.0.0" : "127.0.0.1";
             environment.Config.GitBranch = branchBox.Text.Trim();
             environment.Config.RepositoryUrl = repositoryBox.Text.Trim();
-            environment.Config.TrustedUpdateCommit = trustedCommitBox.Text.Trim();
             environment.Config.WatchdogIntervalMinutes = Decimal.ToInt32(watchdogMinutesBox.Value);
             environment.Config.OpenBrowserAfterStart = browserCheck.Checked;
             environment.Config.AttendanceEnabled = attendanceCheck.Checked;

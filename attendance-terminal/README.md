@@ -16,8 +16,8 @@ HTTPS 模式仍可使用 10 分鐘的一次性註冊碼；`ENCRYPTED_HTTP` 必�
 
 ## 日常操作與更新
 
-- 「Git 更新來源」會顯示並保存公開 GitHub repository 的 HTTPS URL；不可輸入帳號、密碼或 Personal Access Token。另須填入透過可信管道取得的完整 `TrustedCommit`（40 位以上十六進位 Commit ID）。兩者保存在 `%LOCALAPPDATA%\DormAttendanceTerminal\terminal.ini`。
-- 「Git 安全更新」不需要安裝 Git：Windows PowerShell 只會下載固定的 `TrustedCommit`，不再直接信任可變動的 branch 最新版本。未設定可信 Commit、下載內容不完整或啟動驗證失敗時會安全停止並回復舊檔。裝置設定、密鑰與離線佇列都在 `%LOCALAPPDATA%`，不會被更新覆蓋。
+- 「Git 更新來源」會顯示並保存公開 GitHub repository 的 HTTPS URL；不可輸入帳號、密碼或 Personal Access Token。網址保存在 `%LOCALAPPDATA%\DormAttendanceTerminal\terminal.ini`。
+- 「Git 安全更新」不需要安裝 Git：Windows PowerShell 會向 GitHub API 線上確認設定分支的最新 Commit，再下載該次不可變的 Commit ZIP。來源、Commit 格式、必要檔案或啟動驗證失敗時會安全停止並回復舊檔。裝置設定、密鑰與離線佇列都在 `%LOCALAPPDATA%`，不會被更新覆蓋。
 - 「啟用自啟動」會建立目前 Windows 使用者的互動式工作排程：登入桌面時啟動終端，登入期間每 5 分鐘巡檢；若終端被關閉，會重新顯示管理程式、啟動 kiosk 並開啟打卡網頁。Windows 尚未登入時無法顯示桌面程式，因此不會在登入畫面背景啟動。
 - 「停用自啟動」會移除上述工作排程；若要長期停止終端，應先停用再關閉。移動專案資料夾後請重新啟用，讓排程改用新路徑。
 - 「啟動打卡」會啟動本機服務並開啟學生畫面；畫面被關閉時可按「開啟打卡網頁」重新開啟，不會重複啟動服務。

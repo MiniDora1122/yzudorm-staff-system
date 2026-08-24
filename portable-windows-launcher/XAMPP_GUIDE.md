@@ -130,8 +130,7 @@ C:\xampp\apache\bin\httpd.exe -t
 - 完整正式部署與備份說明仍可參考專案的 `deployment\DEPLOYMENT_WINDOWS_XAMPP.md`。
 - 系統內建完整備份與自動驗證；管理員可在「設定 → 排班鎖定與備份」選擇每隔幾小時或每天固定時間執行。請在 `.env` 將 `AUTOMATIC_BACKUP_DIR` 指向另一顆受 BitLocker 保護的磁碟。多個 Waitress 程序只會有一個取得維護排程鎖，不會重複建立備份或清理文件。
 - 打卡裝置數量不固定，每台都應建立獨立裝置、綁定地點與內網 CIDR，不可共用註冊包或密鑰。Launcher 可選 `HTTPS` 或 `ENCRYPTED_HTTP`；儲存後會安全更新 `.env`，必須重新啟動系統才生效。
-- Launcher 與獨立打卡終端執行線上更新前，必須填入由可信管道（例如管理員直接核對 GitHub commit 頁面）取得的完整 Commit ID。更新器只接受與此 `TrustedUpdateCommit`／`TrustedCommit` 完全相同的版本；留白或遠端版本不同時會停止，不會自動追蹤可變動的 branch。
-- 每次發布新版本後，先由另一位管理員核對 Commit ID，再更新各 Launcher／終端的可信 Commit。不要從來路不明的郵件或聊天連結複製版本碼。
+- Launcher 與獨立打卡終端不需手動輸入 Commit ID。Launcher 會驗證 HTTPS Git repository、Git 物件完整性與向前更新關係；獨立終端會透過 GitHub API 線上確認設定分支的最新 Commit，再下載該次不可變的 Commit ZIP。驗證失敗時都會停止並保留或回復舊版。
 
 ### 無法配置 HTTPS 時的打卡 API
 

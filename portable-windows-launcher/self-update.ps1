@@ -104,10 +104,8 @@ try {
     if ([string]::IsNullOrWhiteSpace($state.OldCommit) -or [string]::IsNullOrWhiteSpace($state.TargetCommit) -or [string]::IsNullOrWhiteSpace($state.BackupPathBase64)) {
         throw "Update rollback state is incomplete."
     }
-    if ($state.TargetCommit -notmatch '^[A-Fa-f0-9]{40,64}$' -or
-        [string]::IsNullOrWhiteSpace($config.TrustedUpdateCommit) -or
-        -not $state.TargetCommit.Equals($config.TrustedUpdateCommit, [StringComparison]::OrdinalIgnoreCase)) {
-        throw "Update state no longer matches the configured trusted commit."
+    if ($state.TargetCommit -notmatch '^[A-Fa-f0-9]{40,64}$') {
+        throw "Fetched update commit is invalid."
     }
     $projectSetting = if ([string]::IsNullOrWhiteSpace($config.ProjectPath)) { ".." } else { $config.ProjectPath }
     $projectRoot = if ([IO.Path]::IsPathRooted($projectSetting)) {

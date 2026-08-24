@@ -39,7 +39,7 @@ try {
     Set-Content -LiteralPath $updateMarker -Value $PID -Encoding ASCII
 
     $repositoryUrl = Read-Setting "RepositoryUrl" ""
-    $trustedCommit = Read-Setting "TrustedCommit" ""
+    $branch = Read-Setting "GitBranch" "main"
     $uri = $null
     if (-not [Uri]::TryCreate($repositoryUrl, [UriKind]::Absolute, [ref]$uri) -or
         $uri.Scheme -ne "https" -or $uri.Host -ne "github.com" -or
@@ -51,16 +51,18 @@ try {
     if ($parts.Count -ne 2 -or $parts[0] -notmatch '^[A-Za-z0-9_.-]+$' -or $parts[1] -notmatch '^[A-Za-z0-9_.-]+(?:\.git)?$') {
         throw "GitHub repository URL must be https://github.com/owner/repository."
     }
-    if ($trustedCommit -notmatch '^[A-Fa-f0-9]{40,64}$') {
-        throw "Set a full TrustedCommit obtained through a trusted channel before updating."
-    }
+    if ($branch -notmatch '^[A-Za-z0-9._/-]+$') { throw "Git branch name is invalid." }
     $owner = $parts[0]
     $repository = $parts[1] -replace '\.git$', ''
     if ([string]::IsNullOrWhiteSpace($repository)) { throw "GitHub repository name is invalid." }
-    $archiveUrl = "https://codeload.github.com/$owner/$repository/zip/$trustedCommit"
+    $headers = @{ "User-Agent" = "DormAttendanceTerminal"; "Accept" = "application/vnd.github+json" }
+    $commitApi = "https://api.github.com/repos/$owner/$repository/commits/$([Uri]::EscapeDataString($branch))"
 
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-    Log "Downloading trusted commit $trustedCommit from $repositoryUrl."
+    $onlineCommit = (Invoke-RestMethod -Uri $commitApi -Headers $headers -UseBasicParsing).sha
+    if ($onlineCommit -notmatch '^[A-Fa-f0-9]{40}$') { throw "GitHub returned an invalid commit identifier." }
+    $archiveUrl = "https://codeload.github.com/$owner/$repository/zip/$onlineCommit"
+    Log "Online verification passed for $branch at $onlineCommit; downloading from $repositoryUrl."
     Invoke-WebRequest -Uri $archiveUrl -OutFile $archive -UseBasicParsing
     Expand-Archive -LiteralPath $archive -DestinationPath $expanded -Force
     $repositoryRoot = @(Get-ChildItem -LiteralPath $expanded -Directory)

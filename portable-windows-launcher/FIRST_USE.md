@@ -46,7 +46,7 @@ SQLite 是每台電腦的執行資料，不是程式碼。若把空白 DB commit
 
 ## Git 更新
 
-執行更新前，請在 Launcher 設定填入透過可信管道核對的完整 Git Commit ID。Launcher 會要求遠端分支、更新狀態與 `TrustedUpdateCommit` 三者完全一致，且只允許向前更新；留白或不一致時會安全停止。
+Launcher 會透過 HTTPS 從設定的 repository 線上取得分支版本、驗證 Git 物件完整性，並只允許向前更新；不需要手動輸入 Commit ID。
 
 「Git 安全更新」只會在下列條件成立時執行：
 
