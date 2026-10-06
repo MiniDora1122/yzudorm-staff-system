@@ -1,3 +1,4 @@
+// Copyright (c) 2026 Tay Yang Long. All Rights Reserved. Designed & Developed by Tay Yang Long.
 document.addEventListener("DOMContentLoaded", () => {
   const app = document.getElementById("scheduleApp");
   if (!app || typeof FullCalendar === "undefined") return;
@@ -156,7 +157,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const label = row.querySelector(`.location-row-label[data-location-id="${location.id}"]`);
         lanes.forEach((lane) => { lane.style.height = "auto"; });
         if (label) label.style.height = "auto";
-        const height = Math.max(54, label?.scrollHeight || 0, ...lanes.map((lane) => lane.scrollHeight));
+        const minimumHeight = document.body.classList.contains("schedule-printing") ? 28 : 54;
+        const height = Math.max(minimumHeight, label?.scrollHeight || 0, ...lanes.map((lane) => lane.scrollHeight));
         lanes.forEach((lane) => { lane.style.height = `${height}px`; });
         if (label && !label.classList.contains("d-none")) label.style.height = `${height}px`;
       });
@@ -273,6 +275,20 @@ document.addEventListener("DOMContentLoaded", () => {
     modal.show();
   };
 
+  const printScheduleCalendar = () => {
+    document.body.classList.add("schedule-printing");
+    calendar.updateSize();
+    injectLocationColumn();
+    placeEventsInLocationLanes();
+    syncLaneHeights();
+    window.print();
+  };
+
+  window.addEventListener("afterprint", () => {
+    document.body.classList.remove("schedule-printing");
+    refreshResponsiveCalendarLayout();
+  });
+
   const calendar = new FullCalendar.Calendar(calendarElement, {
     initialView: "dayGridMonth",
     initialDate: /^\d{4}-\d{2}-\d{2}$/.test(requestedDate || "") ? requestedDate : undefined,
@@ -281,7 +297,14 @@ document.addEventListener("DOMContentLoaded", () => {
     height: "auto",
     dayMaxEvents: false,
     displayEventTime: false,
-    headerToolbar: { left: "prev,next today", center: "title", right: "dayGridMonth,listMonth" },
+    customButtons: {
+      printCalendar: {
+        text: "列印",
+        hint: "列印目前顯示的排班月曆 / Print the current schedule calendar",
+        click: printScheduleCalendar,
+      },
+    },
+    headerToolbar: { left: "prev,next today", center: "title", right: "printCalendar dayGridMonth,listMonth" },
     buttonText: { today: "今天", month: "月曆", list: "清單" },
     dayHeaderContent: (info) => {
       const wrapper = document.createElement("span");

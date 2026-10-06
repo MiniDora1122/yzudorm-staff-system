@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Tay Yang Long. All Rights Reserved. Designed & Developed by Tay Yang Long.
 import sqlite3
 
 from flask_login import LoginManager

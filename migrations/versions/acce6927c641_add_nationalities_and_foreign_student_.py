@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Tay Yang Long. All Rights Reserved. Designed & Developed by Tay Yang Long.
 """add nationalities and foreign student scheduling policy
 
 Revision ID: acce6927c641

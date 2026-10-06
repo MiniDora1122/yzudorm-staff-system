@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Tay Yang Long. All Rights Reserved. Designed & Developed by Tay Yang Long.
 from io import BytesIO
 
 from app.extensions import db
@@ -158,3 +159,26 @@ def test_student_request_chooser_and_wage_disclaimer_are_visible(client):
         assert b'info.view.type === "listMonth"' in calendar_js
         assert b"getMonth() + 1" in calendar_js
         assert b"getDate()" in calendar_js
+
+
+def test_admin_schedule_has_a4_calendar_print_action(client):
+    login(client)
+    page = client.get("/admin/schedule")
+    script = client.get("/static/js/admin_schedule.js")
+    stylesheet = client.get("/static/css/app.css")
+
+    assert b"schedule-calendar-card" in page.data
+    assert b'right: "printCalendar dayGridMonth,listMonth"' in script.data
+    assert b'window.print()' in script.data
+    assert b"body.schedule-printing #scheduleApp > :not(.schedule-calendar-card)" in stylesheet.data
+    assert b"size: A4 landscape" in stylesheet.data
+    assert stylesheet.data.count(b"width: 281mm") >= 2
+    assert b"white-space: nowrap" in stylesheet.data
+
+
+def test_global_web_copyright_is_visible(client):
+    response = client.get("/auth/login")
+
+    assert "© 2026 Tay Yang Long. All Rights Reserved.".encode() in response.data
+    assert b"Designed &amp; Developed by Tay Yang Long." in response.data
+    assert b"app-copyright" in response.data

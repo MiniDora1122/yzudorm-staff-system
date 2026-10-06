@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Tay Yang Long. All Rights Reserved. Designed & Developed by Tay Yang Long.
 from flask import Blueprint, current_app, jsonify, request
 
 from ..extensions import csrf

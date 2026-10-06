@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Tay Yang Long. All Rights Reserved. Designed & Developed by Tay Yang Long.
 """add attendance clocking
 
 Revision ID: f9a13d72c4e1

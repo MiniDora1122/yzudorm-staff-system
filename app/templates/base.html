@@ -1,3 +1,4 @@
+<!-- Copyright (c) 2026 Tay Yang Long. All Rights Reserved. Designed & Developed by Tay Yang Long. -->
 <!doctype html>
 <html lang="zh-Hant-TW">
 <head>
@@ -82,6 +83,11 @@
     {% endwith %}
     {% block content %}{% endblock %}
   </main>
+
+  <footer class="app-copyright" aria-label="版權與製作資訊 Copyright and credits">
+    <span>© 2026 Tay Yang Long. All Rights Reserved.</span>
+    <span>Designed &amp; Developed by Tay Yang Long.</span>
+  </footer>
 
   <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
   <script src="{{ url_for('static', filename='js/bilingual.js') }}"></script>

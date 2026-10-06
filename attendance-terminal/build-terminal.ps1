@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Tay Yang Long. All Rights Reserved. Designed & Developed by Tay Yang Long.
 param([switch]$Clean)
 
 $ErrorActionPreference = "Stop"
@@ -8,6 +9,12 @@ $projectRoot = Split-Path $root -Parent
 $builderPython = Join-Path $projectRoot ".venv\Scripts\python.exe"
 $compiler = Join-Path $env:WINDIR "Microsoft.NET\Framework64\v4.0.30319\csc.exe"
 if (-not (Test-Path -LiteralPath $compiler)) { throw ".NET Framework C# compiler not found: $compiler" }
+$runningKiosk = Get-Process -Name "DormAttendanceKiosk" -ErrorAction SilentlyContinue |
+    Where-Object { $_.Path -eq $kiosk }
+if ($runningKiosk) {
+    $processIds = ($runningKiosk.Id -join ", ")
+    throw "DormAttendanceKiosk.exe is running (PID: $processIds). Close the attendance kiosk before rebuilding it."
+}
 if ($Clean -and (Test-Path -LiteralPath $output)) { Remove-Item -LiteralPath $output }
 if ($Clean -and (Test-Path -LiteralPath $kiosk)) { Remove-Item -LiteralPath $kiosk }
 if (-not (Test-Path -LiteralPath $builderPython)) { throw "Development Python environment not found: $builderPython" }

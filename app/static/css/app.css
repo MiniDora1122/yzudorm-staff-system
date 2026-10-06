@@ -1,3 +1,4 @@
+/* Copyright (c) 2026 Tay Yang Long. All Rights Reserved. Designed & Developed by Tay Yang Long. */
 :root {
   --app-navy: #0b2447;
   --app-blue: #1556a3;
@@ -7,6 +8,7 @@
 
 body {
   min-height: 100vh;
+  padding-bottom: 3.25rem;
   background: var(--app-bg);
   color: #172033;
   font-family: "Noto Sans TC", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -52,9 +54,11 @@ th[data-en]::after,
 }
 .bilingual-english-block { display: block; margin: .18rem 0 0; }
 .fc .fc-today-button::after { content: "Today"; }
+.fc .fc-printCalendar-button::after { content: "Print"; }
 .fc .fc-dayGridMonth-button::after { content: "Month"; }
 .fc .fc-listMonth-button::after { content: "List"; }
 .fc .fc-today-button::after,
+.fc .fc-printCalendar-button::after,
 .fc .fc-dayGridMonth-button::after,
 .fc .fc-listMonth-button::after {
   display: block;
@@ -318,6 +322,100 @@ th[data-en]::after,
 .fc .fc-icon { font-family: inherit !important; }
 .fc .fc-icon-chevron-left::before { content: "‹"; }
 .fc .fc-icon-chevron-right::before { content: "›"; }
+
+.app-copyright {
+  position: fixed;
+  right: .8rem;
+  bottom: .55rem;
+  z-index: 1020;
+  max-width: calc(100vw - 1.6rem);
+  padding: .3rem .5rem;
+  border: 1px solid rgba(148, 163, 184, .28);
+  border-radius: .45rem;
+  background: rgba(255, 255, 255, .9);
+  color: #64748b;
+  font-size: .64rem;
+  line-height: 1.35;
+  text-align: right;
+  pointer-events: none;
+  backdrop-filter: blur(5px);
+}
+.app-copyright span { display: block; }
+
+/* Give FullCalendar one stable A4 content width before it calculates print columns. */
+body.schedule-printing #adminCalendar {
+  width: 281mm !important;
+  max-width: none !important;
+}
+
+@page schedule-calendar {
+  size: A4 landscape;
+  margin: 8mm;
+}
+
+@media print {
+  body.schedule-printing { min-height: 0; background: #fff; }
+  body.schedule-printing .app-navbar,
+  body.schedule-printing .app-copyright,
+  body.schedule-printing main > :not(#scheduleApp),
+  body.schedule-printing #scheduleApp > :not(.schedule-calendar-card),
+  body.schedule-printing .schedule-calendar-card .calendar-usage-hint {
+    display: none !important;
+  }
+  body.schedule-printing main {
+    width: 281mm;
+    max-width: none;
+    margin: 0;
+    padding: 0 !important;
+  }
+  body.schedule-printing .schedule-calendar-card {
+    page: schedule-calendar;
+    margin: 0 !important;
+    border: 0 !important;
+    border-radius: 0;
+    box-shadow: none !important;
+  }
+  body.schedule-printing .schedule-calendar-card .card-body { padding: 0 !important; }
+  body.schedule-printing #adminCalendar {
+    width: 281mm !important;
+    color: #000;
+    background: #fff;
+    font-size: 7pt;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  body.schedule-printing #adminCalendar .fc-header-toolbar {
+    margin-bottom: 3mm;
+    justify-content: center;
+  }
+  body.schedule-printing #adminCalendar .fc-toolbar-chunk:first-child,
+  body.schedule-printing #adminCalendar .fc-toolbar-chunk:last-child { display: none !important; }
+  body.schedule-printing #adminCalendar .fc-toolbar-title { font-size: 12pt; }
+  body.schedule-printing #adminCalendar .location-lane,
+  body.schedule-printing #adminCalendar .location-row-label { min-height: 28px; }
+  body.schedule-printing #adminCalendar .location-column-header,
+  body.schedule-printing #adminCalendar .location-column-cell {
+    width: 22mm;
+    min-width: 22mm;
+    max-width: 22mm;
+  }
+  body.schedule-printing #adminCalendar .fc-col-header,
+  body.schedule-printing #adminCalendar .fc-scrollgrid,
+  body.schedule-printing #adminCalendar .fc-scrollgrid-sync-table { width: 100% !important; }
+  body.schedule-printing #adminCalendar .location-row-label {
+    padding: .5mm;
+    font-size: 7pt;
+    white-space: nowrap;
+  }
+  body.schedule-printing #adminCalendar .location-row-label > small {
+    margin-top: 0;
+    font-size: 5.5pt;
+    white-space: nowrap;
+  }
+  body.schedule-printing #adminCalendar .calendar-event-time { font-size: 6.5pt; }
+  body.schedule-printing #adminCalendar .calendar-event-content strong { font-size: 7pt; }
+  body.schedule-printing #adminCalendar .calendar-workflow-badge { font-size: 6pt; }
+}
 
 @media (max-width: 575.98px) {
   .display-6 { font-size: 2rem; }

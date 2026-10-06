@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Tay Yang Long. All Rights Reserved. Designed & Developed by Tay Yang Long.
 """remove OCR and unused legacy document columns
 
 Revision ID: 39cb8e71d2a0

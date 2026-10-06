@@ -1,3 +1,4 @@
+<!-- Copyright (c) 2026 Tay Yang Long. All Rights Reserved. Designed & Developed by Tay Yang Long. -->
 {% extends "base.html" %}
 {% macro sort_heading(label, label_en, key, extra_class='') %}{% set active = sort_key == key %}{% set next_direction = 'desc' if active and sort_direction == 'asc' else 'asc' %}<th class="{{ extra_class }}"><a class="table-sort-link" href="{{ url_for('admin.staff', sort=key, direction=next_direction, status=account_status, q=search) }}" aria-label="依{{ label }}{{ '降冪' if next_direction == 'desc' else '升冪' }}排序"><span>{{ label }}</span><small>{{ label_en }}</small><i class="bi {{ 'bi-sort-down' if active and sort_direction == 'desc' else 'bi-sort-up' if active else 'bi-arrow-down-up' }}"></i></a></th>{% endmacro %}
 {% block title %}工讀生名冊 Student Roster｜宿舍工讀生系統{% endblock %}

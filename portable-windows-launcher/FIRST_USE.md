@@ -118,4 +118,10 @@ Windows 10/11 內建的 .NET Framework 可編譯本啟動器：
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\build-launcher.ps1 -Clean
 ```
 
+上述指令只重新編譯 Launcher，不會中斷或覆寫正在執行的打卡程式。如需一併重新編譯打卡程式，請先關閉 `DormAttendanceKiosk.exe`，再執行：
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\build-launcher.ps1 -Clean -IncludeAttendanceTerminal
+```
+
 一般使用者不需要執行此步驟，直接開啟已建立的 `DormStaffLauncher.exe` 即可。

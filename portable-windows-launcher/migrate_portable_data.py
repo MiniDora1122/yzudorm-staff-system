@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Tay Yang Long. All Rights Reserved. Designed & Developed by Tay Yang Long.
 """Validate and safely replace portable dorm-staff data.
 
 The launcher calls this helper with explicit project and source paths.  It never

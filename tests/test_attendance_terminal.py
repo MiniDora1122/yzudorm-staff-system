@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Tay Yang Long. All Rights Reserved. Designed & Developed by Tay Yang Long.
 import importlib.util
 import threading
 import urllib.error
@@ -12,6 +13,20 @@ def load_terminal_module():
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
+
+
+def test_terminal_launcher_has_copyright_footer():
+    source = (Path(__file__).parents[1] / "attendance-terminal" / "DormAttendanceTerminal.cs").read_text(encoding="utf-8")
+
+    assert source.startswith("// Copyright (c) 2026 Tay Yang Long.")
+    assert "Controls.Add(UiBranding.CreateCopyrightFooter())" in source
+
+
+def test_terminal_build_rejects_overwriting_a_running_kiosk_with_clear_message():
+    build = (Path(__file__).parents[1] / "attendance-terminal" / "build-terminal.ps1").read_text(encoding="utf-8")
+
+    assert 'Get-Process -Name "DormAttendanceKiosk"' in build
+    assert "Close the attendance kiosk before rebuilding it." in build
 
 
 def test_kiosk_page_exposes_card_scanner_and_authenticated_shutdown():

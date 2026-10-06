@@ -1,3 +1,4 @@
+// Copyright (c) 2026 Tay Yang Long. All Rights Reserved. Designed & Developed by Tay Yang Long.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -16,6 +17,24 @@ using System.Windows.Forms;
 
 namespace DormStaffPortable
 {
+    internal static class UiBranding
+    {
+        public const string CopyrightText = "© 2026 Tay Yang Long. All Rights Reserved.\r\nDesigned & Developed by Tay Yang Long.";
+
+        public static Label CreateCopyrightFooter()
+        {
+            return new Label {
+                Text = CopyrightText,
+                Dock = DockStyle.Bottom,
+                Height = 34,
+                Padding = new Padding(0, 2, 12, 2),
+                TextAlign = ContentAlignment.MiddleRight,
+                ForeColor = Color.FromArgb(100, 116, 139),
+                Font = new Font("Segoe UI", 7F)
+            };
+        }
+    }
+
     internal static class Program
     {
         [STAThread]
@@ -1279,6 +1298,7 @@ namespace DormStaffPortable
             buttons.Controls.Add(reset); buttons.Controls.Add(cancel);
             grid.Controls.Add(buttons, 0, 8); grid.SetColumnSpan(buttons, 2);
             Controls.Add(grid);
+            Controls.Add(UiBranding.CreateCopyrightFooter());
             CancelButton = cancel;
         }
 
@@ -1365,6 +1385,7 @@ namespace DormStaffPortable
             };
             buttons.Controls.Add(migrate); buttons.Controls.Add(cancel); grid.Controls.Add(buttons, 0, 6);
             AcceptButton = migrate; CancelButton = cancel; Controls.Add(grid);
+            Controls.Add(UiBranding.CreateCopyrightFooter());
         }
     }
 
@@ -1410,6 +1431,7 @@ namespace DormStaffPortable
             BackColor = Color.FromArgb(244, 247, 251);
             FormClosing += OnFormClosing;
             BuildUi();
+            Controls.Add(UiBranding.CreateCopyrightFooter());
             LoadSettingsIntoUi();
             CleanupOldLogs();
             UpdateStatus();

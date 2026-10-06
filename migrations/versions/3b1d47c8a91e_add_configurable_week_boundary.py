@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Tay Yang Long. All Rights Reserved. Designed & Developed by Tay Yang Long.
 """add configurable week boundary
 
 Revision ID: 3b1d47c8a91e

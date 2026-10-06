@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Tay Yang Long. All Rights Reserved. Designed & Developed by Tay Yang Long.
 """Create a self-contained, sensitive backup for moving the application."""
 
 from __future__ import annotations

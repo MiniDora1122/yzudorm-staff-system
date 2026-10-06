@@ -1,3 +1,4 @@
+<!-- Copyright (c) 2026 Tay Yang Long. All Rights Reserved. Designed & Developed by Tay Yang Long. -->
 {% macro notification_panel(items, limit=6) %}
 {% set center_url = url_for('admin.notifications_page') if current_user.role.value == 'ADMIN' else url_for('student.notifications_page') %}
 <section class="card app-card border-0 shadow-sm mb-4 important-actions-panel" aria-labelledby="importantActionsTitle">

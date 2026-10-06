@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Tay Yang Long. All Rights Reserved. Designed & Developed by Tay Yang Long.
 from datetime import date, datetime, time, timezone
 from decimal import Decimal
 import hashlib

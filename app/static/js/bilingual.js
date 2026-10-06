@@ -1,3 +1,4 @@
+// Copyright (c) 2026 Tay Yang Long. All Rights Reserved. Designed & Developed by Tay Yang Long.
 (() => {
   const translations = new Map(Object.entries({
     "登入成功。": "Signed in successfully.",

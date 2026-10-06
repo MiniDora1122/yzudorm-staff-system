@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Tay Yang Long. All Rights Reserved. Designed & Developed by Tay Yang Long.
 """Dorm attendance kiosk: keyboard-emulating card reader + online account punch.
 
 Device credentials and queued card payloads are protected with Windows DPAPI.

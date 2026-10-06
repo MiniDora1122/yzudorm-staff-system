@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Tay Yang Long. All Rights Reserved. Designed & Developed by Tay Yang Long.
 """add publication settlement workforce and operations indexes
 
 Revision ID: e7c5a2b91d40

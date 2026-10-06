@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Tay Yang Long. All Rights Reserved. Designed & Developed by Tay Yang Long.
 from pathlib import Path
 
 
@@ -10,6 +11,9 @@ def test_launcher_watchdog_uses_native_task_scheduler_and_health_check():
     watchdog = (LAUNCHER_ROOT / "watchdog.ps1").read_text(encoding="utf-8")
     stop_server = (LAUNCHER_ROOT / "stop-server.ps1").read_text(encoding="utf-8")
     launcher = (LAUNCHER_ROOT / "DormStaffLauncher.cs").read_text(encoding="utf-8")
+
+    assert launcher.startswith("// Copyright (c) 2026 Tay Yang Long.")
+    assert launcher.count("Controls.Add(UiBranding.CreateCopyrightFooter())") == 3
 
     assert "Register-ScheduledTask" in configure
     assert "Unregister-ScheduledTask" in configure
@@ -63,6 +67,13 @@ def test_launcher_watchdog_uses_native_task_scheduler_and_health_check():
     assert "RunMaintenanceBackground" in launcher
     assert "ExportSupportBundle" in launcher
     assert '"/healthz"' in launcher
+
+
+def test_launcher_build_does_not_rebuild_running_attendance_terminal_by_default():
+    build = (LAUNCHER_ROOT / "build-launcher.ps1").read_text(encoding="utf-8")
+
+    assert "[switch]$IncludeAttendanceTerminal" in build
+    assert "if ($IncludeAttendanceTerminal -and" in build
 
 
 def test_git_update_closes_launcher_before_replacing_it():

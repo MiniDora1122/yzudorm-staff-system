@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Tay Yang Long. All Rights Reserved. Designed & Developed by Tay Yang Long.
 from app.extensions import db
 from app.models import ShiftType, StaffProfile, WorkLocation
 

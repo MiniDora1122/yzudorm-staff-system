@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Tay Yang Long. All Rights Reserved. Designed & Developed by Tay Yang Long.
 """Create the first administrator after a Launcher-controlled fresh reset.
 
 Credentials are accepted only through stdin and are never written to logs.

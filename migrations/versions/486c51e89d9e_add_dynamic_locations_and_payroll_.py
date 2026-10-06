@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Tay Yang Long. All Rights Reserved. Designed & Developed by Tay Yang Long.
 """add dynamic locations and payroll settings
 
 Revision ID: 486c51e89d9e

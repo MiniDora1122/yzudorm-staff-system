@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Tay Yang Long. All Rights Reserved. Designed & Developed by Tay Yang Long.
 param([string]$ConfigPath = (Join-Path $PSScriptRoot "launcher.ini"))
 
 $ErrorActionPreference = "Stop"

@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Tay Yang Long. All Rights Reserved. Designed & Developed by Tay Yang Long.
 """harden sessions workflows and attendance event identity
 
 Revision ID: e36c84a91f20

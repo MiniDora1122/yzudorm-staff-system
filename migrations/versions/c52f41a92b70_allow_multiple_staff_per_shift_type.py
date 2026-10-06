@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Tay Yang Long. All Rights Reserved. Designed & Developed by Tay Yang Long.
 """allow multiple staff per shift type
 
 Revision ID: c52f41a92b70

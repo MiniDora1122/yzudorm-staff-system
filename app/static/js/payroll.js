@@ -1,3 +1,4 @@
+// Copyright (c) 2026 Tay Yang Long. All Rights Reserved. Designed & Developed by Tay Yang Long.
 document.addEventListener("DOMContentLoaded", () => {
   const app = document.getElementById("payrollApp");
   if (!app) return;

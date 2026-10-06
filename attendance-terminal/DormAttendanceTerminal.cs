@@ -1,3 +1,4 @@
+// Copyright (c) 2026 Tay Yang Long. All Rights Reserved. Designed & Developed by Tay Yang Long.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,6 +12,24 @@ using System.Windows.Forms;
 
 namespace DormAttendancePortable
 {
+    internal static class UiBranding
+    {
+        public const string CopyrightText = "© 2026 Tay Yang Long. All Rights Reserved.\r\nDesigned & Developed by Tay Yang Long.";
+
+        public static Label CreateCopyrightFooter()
+        {
+            return new Label {
+                Text = CopyrightText,
+                Dock = DockStyle.Bottom,
+                Height = 34,
+                Padding = new Padding(0, 2, 12, 2),
+                TextAlign = ContentAlignment.MiddleRight,
+                ForeColor = Color.FromArgb(100, 116, 139),
+                Font = new Font("Segoe UI", 7F)
+            };
+        }
+    }
+
     internal static class Program
     {
         private static Mutex instanceMutex;
@@ -77,6 +96,7 @@ namespace DormAttendancePortable
             Font = new Font("Microsoft JhengHei UI", 9F);
             BackColor = Color.FromArgb(244, 247, 251);
             BuildUi();
+            Controls.Add(UiBranding.CreateCopyrightFooter());
             FormClosing += OnClosing;
             repositoryUrlBox.Text = LoadSetting("RepositoryUrl");
             autoStartEnabled = IsAutoStartEnabled();
